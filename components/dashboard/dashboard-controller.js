@@ -30,7 +30,8 @@ trackerCapture.controller('DashboardController',
     
     //selections
     var orgUnitUrl = ($location.search()).ou;
-    
+    var queueRedirect = ($location.search()).queue;
+
     $scope.displayEnrollment = false;
     $scope.dataEntryMainMenuItemSelected = false;    
     $scope.metaDataCached = false;
@@ -530,7 +531,11 @@ trackerCapture.controller('DashboardController',
         });
     };
 
-    $scope.back = function () {
+    $scope.back = function () {debugger
+        if (queueRedirect){
+            $location.path('/queue').search();
+            return
+        }
         if (!$scope.dataEntryMainMenuItemSelected) {
             //reload OU tree
             selection.load();

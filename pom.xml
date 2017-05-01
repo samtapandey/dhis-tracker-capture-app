@@ -46,12 +46,12 @@
 
   <distributionManagement>
     <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <id>shimla-nexus</id>
+      <url>https://apps.hispindia.org/nexus/content/repositories/org/</url>
     </snapshotRepository>
     <repository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+      <id>shimla-nexus</id>
+      <url>https://apps.hispindia.org/nexus/content/repositories/org/</url>
     </repository>
   </distributionManagement>
 
@@ -69,7 +69,7 @@
         <extensions>true</extensions>
         <configuration>
           <serverId>ossrh</serverId>
-          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+          <nexusUrl>https://apps.hispindia.org/nexus</nexusUrl>
           <autoReleaseAfterClose>true</autoReleaseAfterClose>
         </configuration>
       </plugin>      
