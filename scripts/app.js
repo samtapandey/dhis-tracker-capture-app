@@ -38,6 +38,15 @@ import '../components/profile/profile-controller.js';
 import '../components/notes/notes-controller.js';
 import '../components/rulebound/rulebound-controller.js';
 import '../components/messaging/messaging-controller.js';
+//for PLAN
+import '../plan-customizations/scripts/custom-services.js';
+import '../plan-customizations/scripts/plan-service.js';
+import '../plan-customizations/components/association/association-controller.js';
+import '../plan-customizations/components/association/add-association-controller.js';
+import '../plan-customizations/components/contact_moment/invitation/invitation-controller.js';
+import '../plan-customizations/components/contact_moment/invitation/add-invitation-controller.js';
+import '../plan-customizations/components/contact_moment/attendance/attendance-controller.js';
+import '../plan-customizations/components/contact_moment/attendance/add-attendance-controller.js';
 
 import L from 'leaflet';
 import 'leaflet-geocoder-mapzen';

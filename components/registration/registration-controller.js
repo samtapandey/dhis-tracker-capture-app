@@ -26,7 +26,9 @@ trackerCapture.controller('RegistrationController',
                 TrackerRulesFactory,
                 TrackerRulesExecutionService,
                 TCStorageService,
-                ModalService) {
+                ModalService,
+               // for plan custom ID Generation
+                CustomIDGenerationService) {
     $scope.today = DateUtils.getToday();
     $scope.trackedEntityForm = null;
     $scope.customRegistrationForm = null;    
@@ -305,7 +307,12 @@ trackerCapture.controller('RegistrationController',
             broadcastTeiEnrolled();
         }
         else {
-            goToDashboard(destination ? destination : 'DASHBOARD', teiId);
+            //goToDashboard(destination ? destination : 'DASHBOARD', teiId);
+            // CustomIDGenerationService
+            // add for Generate CustomId for plan-customizations
+            CustomIDGenerationService.validateAndCreateCustomId($scope.tei,$scope.selectedEnrollment.program,$scope.attributes,destination,$scope.optionSets,$scope.attributesById,$scope.selectedEnrollment.enrollmentDate).then(function(){
+                goToDashboard( destination ? destination : 'DASHBOARD', teiId );
+            });
         }
     };
 

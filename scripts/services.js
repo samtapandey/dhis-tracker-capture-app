@@ -34,6 +34,9 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
     w.relationshipWidget = {title: 'relationships', view: "components/relationship/relationship.html", show: true, expand: true, parent: 'smallerWidget', order: 3};
     w.notesWidget = {title: 'notes', view: "components/notes/notes.html", show: true, expand: true, parent: 'smallerWidget', order: 4};
     w.messagingWidget = {title: 'messaging', view: "components/messaging/messaging.html", show: false, expand: true, parent: 'smallerWidget', order: 5};
+    // add for PLAN
+    w.associationWidget = {title: 'association', view: "plan-customizations/components/association/association.html", show: true, expand: true, parent: 'smallerWidget', order: 6};
+
     var defaultLayout = new Object();
     
     defaultLayout['DEFAULT'] = {widgets: w, program: 'DEFAULT'};
