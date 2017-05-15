@@ -1,0 +1,110 @@
+<style>
+    th ,td{
+        text-align: center;
+    }
+</style>
+<span id="showLeftBar" class="hideInPrint">
+    <a href="javascript:dhis2.leftBar.showAnimated()" title="$i18n.getString('show_menu' )"><i class="fa fa-arrow-right leftBarIcon"></i></a>
+</span>
+
+<div id="leftBar">
+
+    <d2-left-bar></d2-left-bar>
+
+    <div id="orgUnitTree">
+        <ul>
+        </ul>
+    </div>
+
+    <img id="ouwt_loader" src="../images/ajax-loader-bar.gif" alt="{{'in_progress'| translate}}"/>
+
+    <div class="small-horizontal-spacing" ng-if="!treeLoaded">
+        {{'loading_tree'| translate}}
+    </div>
+</div>
+
+
+<div id="mainPage">
+    <div style="width: 90%;" class="row col-sm-12">
+
+        <h2>Apex Lab Queue(size : {{queueEvents2.length}})</h2>
+
+        <table class="table table-striped dhis2-table-hover table-bordered ng-scope custom">
+            <thead>
+            <tr>
+                <th rowspan="2">S No</th>
+                <th rowspan="2">AES ID</th>
+                <th rowspan="2">NIMHANS AES ID</th>
+                <th rowspan="2">NAME</th>
+                <th rowspan="2">AGE</th>
+                <th rowspan="1" colspan="11">LAB RESULTS CSF</th>
+                <th rowspan="1" colspan="11">LAB RESULTS SERUM</th>
+                <th rowspan="1" colspan="2">LAB RESULTS WHOLE BLOOD</th>
+            </tr>
+            <tr>
+                <th rowspan="1" colspan="1">Bacterial Taqman Real Time PCR for Streptoc</th>
+                <th rowspan="1" colspan="1">Bacterial Taqman Real Time PCR for Neisseri</th>
+                <th rowspan="1" colspan="1">Bacterial Taqman Real Time PCR for Hemophil</th>
+                <th rowspan="1" colspan="1">Bacterial Taqman Real Time PCR for Scrub-Ty</th>
+                <th rowspan="1" colspan="1">HSV Taqman Real Time PCR</th>
+                <th rowspan="1" colspan="1">Enterovirus Taqman Real Time PCR</th>
+                <th rowspan="1" colspan="1">JE IgM</th>
+                <th rowspan="1" colspan="1">Bacterial Taqman Real Time PCR for Scrub_Ty</th>
+                <th rowspan="1" colspan="1">Bacterial Taqman Real Time PCR for Scrub Ty</th>
+                <th rowspan="1" colspan="1">JE IgM - Well 1</th>
+                <th rowspan="1" colspan="1">JE IgM - Well 2</th>
+                <th rowspan="1" colspan="1">Scrub typhus IgM ELISA</th>
+                <th rowspan="1" colspan="1">West Nile Virus IgM ELISA</th>
+                <th rowspan="1" colspan="1">Dengue IgM ELISA</th>
+                <th rowspan="1" colspan="1">JE IgM</th>
+                <th rowspan="1" colspan="1">Leptospira IgM ELISA</th>
+                <th rowspan="1" colspan="1">JE IgM - Well 1</th>
+                <th rowspan="1" colspan="1">JE IgM - Well 2</th>
+                <th rowspan="1" colspan="1">Dengue IgM ELISA - Well 1</th>
+                <th rowspan="1" colspan="1">Dengue IgM ELISA - Well 2</th>
+                <th rowspan="1" colspan="1">West Nile Virus IgM ELISA - Well 1</th>
+                <th rowspan="1" colspan="1">West Nile Virus IgM ELISA - Well 2</th>
+                <th rowspan="1" colspan="1">Scrub Typhus PCR</th>
+                <th rowspan="1" colspan="1">Scrub Typhus PCR - result date</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr ng-class="{'red': evv.clicked, '': !evv.clicked}"
+                ng-click="goToDashboard(evv)" ng-repeat="evv in queueEvents2">
+                <td>{{$index+1}}</td>
+                <td>{{evv.aesid}}</td>
+                <td>{{evv.nid}}</td>
+                <td>{{evv.name}}</td>
+                <td>{{evv.age}}</td>
+                <td>{{evv.result1}}</td>
+                <td>{{evv.result2}}</td>
+                <td>{{evv.result3}}</td>
+                <td>{{evv.result4}}</td>
+                <td>{{evv.result5}}</td>
+                <td>{{evv.result6}}</td>
+                <td>{{evv.result7}}</td>
+                <td>{{evv.result8}}</td>
+                <td>{{evv.result9}}</td>
+                <td>{{evv.result10}}</td>
+                <td>{{evv.result11}}</td>
+                <td>{{evv.result12}}</td>
+                <td>{{evv.result13}}</td>
+                <td>{{evv.result14}}</td>
+                <td>{{evv.result15}}</td>
+                <td>{{evv.result16}}</td>
+                <td>{{evv.result17}}</td>
+                <td>{{evv.result18}}</td>
+                <td>{{evv.result19}}</td>
+                <td>{{evv.result20}}</td>
+                <td>{{evv.result21}}</td>
+                <td>{{evv.result22}}</td>
+                <td>{{evv.result23}}</td>
+                <td>{{evv.result24}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+
+    </div>
+</div>
