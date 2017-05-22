@@ -2061,7 +2061,7 @@ trackerCapture.controller('DataEntryController',
                                       event : $scope.currentEvent.event,
                                       orgUnit :  $scope.currentEvent.orgUnit
                                   }
-                                  $http.post("http://ds-india.org:8001/sendSMS",data).then(function(response){
+                                  $http.post("http://ds-india.org/aessms/sendSMS",data).then(function(response){
 
                                   })
 
