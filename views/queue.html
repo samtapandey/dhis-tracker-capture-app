@@ -29,23 +29,25 @@
         <thead>
         <tr>
             <th rowspan="2">S No</th>
-            <th rowspan="2">AES ID</th>
-            <th rowspan="2">NIMHANS AES ID</th>
-            <th rowspan="2">NAME</th>
-            <th rowspan="2">AGE</th>
-            <th rowspan="1" colspan="3">SAMPLE COLLECTED</th>
-            <th rowspan="1" colspan="9">LAB RESULTS</th>
+            <th rowspan="2">Registeration date</th>
+            <th rowspan="2">Registering unit</th>
+            <th rowspan="2">Aes Id</th>
+            <th rowspan="2">Nimhans Aes Id</th>
+            <th rowspan="2">Name</th>
+            <th rowspan="2">Age</th>
+            <th rowspan="1" colspan="7">Lab Results</th>
         </tr>
 		<tr>
-			<th rowspan="1" colspan="1">CSF</th>
-			<th rowspan="1" colspan="1">SERUM</th>
-			<th rowspan="1" colspan="1">WHOLE BLOOD</th>
+			<th rowspan="2" colspan="1">CSF collected</th>
+			<th rowspan="2" colspan="1">CSF sent to Apex lab</th>
+			<th rowspan="2" colspan="1">Serum collected</th>
+			<th rowspan="2" colspan="1">Serum sent to Apex lab</th>
+			<th rowspan="2" colspan="1">Whole blood collected</th>
+			<th rowspan="2" colspan="1">Whole Blood</th>
 			<th rowspan="1" colspan="1">Csf WBC Count</th>
 			<th rowspan="1" colspan="1">CSF-JE IgM</th>
 			<th rowspan="1" colspan="1">CSF-Glucose</th>
 			<th rowspan="1" colspan="1">CSF-Protein</th>
-			<th rowspan="1" colspan="1">CSF-sample 2-WBC count</th>
-			<th rowspan="1" colspan="1">CSF sample 2-JE IgM</th>
 			<th rowspan="1" colspan="1">Serum-JE IgM</th>
 			<th rowspan="1" colspan="1">Serum-IgM DEN</th>
 			<th rowspan="1" colspan="1">Serum-Scrub typhus IgM</th>
@@ -56,19 +58,22 @@
             <tr ng-class="{'red': ev.clicked, '': !ev.clicked}"
                 ng-click="goToDashboard(ev)" ng-repeat="ev in queueEvents">
                 <td>{{$index+1}}</td>
+				<td>{{evv.date}}</td>
+                <td>{{evv.district}}</td>
                 <td>{{ev.aesid}}</td>
                 <td>{{ev.nid}}</td>
                 <td>{{ev.name}}</td>
                 <td>{{ev.age}}</td>
                 <td>{{ev.csfc}}</td>
+                <td>{{ev.csfs}}</td>
                 <td>{{ev.serumc}}</td>
+                <td>{{ev.serums}}</td>
                 <td>{{ev.wbc}}</td>
+                <td>{{ev.wbs}}</td>
                 <td>{{ev.csfwbcc}}</td>
                 <td>{{ev.csfje}}</td>
                 <td>{{ev.csfg}}</td>
                 <td>{{ev.csfp}}</td>
-                <td>{{ev.csfwbcc2}}</td>
-                <td>{{ev.csfje2}}</td>
                 <td>{{ev.serumje}}</td>
                 <td>{{ev.serumig}}</td>
                 <td>{{ev.serumsti}}</td>

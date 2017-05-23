@@ -546,7 +546,7 @@ table.table-striped tr td.optionset {
 
 
 .dhis2-table-hover > tbody > tr:hover > td, .table-hover > tbody > tr:hover > th {
-    background-color: #dfe9f4;
+    background-color: #7baadd;
     cursor: pointer;
 }
 
@@ -1426,7 +1426,7 @@ th, td {
 }
 
 .default-form-table > tbody > tr:hover > td, .default-form-table > tbody > tr:hover > th {
-    background-color: #dfe9f4;
+    background-color: #7baadd;
 }
 
 .input-label-table {

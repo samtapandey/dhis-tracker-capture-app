@@ -1,7 +1,7 @@
 {
     "version": "0.1",
-    "name": "Tracker Capture",
-    "description": "Tracker Capture App",
+    "name": "AES/AMES Data Entry",
+    "description": "AES/AMES Data Entry App",
     "launch_path": "index.html",
     "icons": {
         "16": "/img/icons/mortar-16.png",

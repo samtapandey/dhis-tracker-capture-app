@@ -15,5 +15,8 @@ trackerCapture.controller('LeftBarMenuController',
     $scope.showQueueInterface = function(){
         $location.path('/queue').search();
     };
+	$scope.showApexQueueInterface = function(){
+        $location.path('/apexqueue').search();
+    };
 
 });
