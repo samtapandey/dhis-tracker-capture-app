@@ -82,11 +82,21 @@ trackerCapture.controller('RegistrationController',
         });
     }
     
-    
+ 
+   // update for MSF for disable attribute patient_identifier
     $scope.isDisabled = function(attribute) {
-        return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
-    };
-
+        if( attribute.code === 'patient_identifier')
+        {
+            return true;
+        }
+        else
+        {
+            return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
+        }
+    }
+	
+	
+	
     var selectedOrgUnit = CurrentSelection.get()["orgUnit"];
 
     if (selectedOrgUnit) {
