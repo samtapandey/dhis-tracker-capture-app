@@ -197,8 +197,8 @@ angular.module('trackerCaptureServices')
 							
                           //  var customRegDate = regDate.split("-")[1]+regDate.split("-")[0].slice(-2);
 
-                            CustomIdService.getTotalTeiByProgramAndOrgUnit(programUid,tei.orgUnit).then(function(teiResponse){
-
+                            CustomIdService.getTotalTeiByOrgUnit( tei.orgUnit ).then(function(teiResponse){
+							
                                 var totalTei = teiResponse.trackedEntityInstances.length;
                                 CustomIdService.getOrgunitCode(tei.orgUnit).then(function(orgUnitCodeResponse){
                                 var orgUnitCode = orgUnitCodeResponse.code;
@@ -423,7 +423,16 @@ angular.module('trackerCaptureServices')
             });
             return def.promise;
         },
+		
+		//api/trackedEntityInstances.json?ou=CPtzIhyn36z
+        getTotalTeiByOrgUnit: function ( orgUnitId ) {
+            var def = $q.defer();
+            $http.get('../api/trackedEntityInstances.json?ou=' + orgUnitId + "&skipPaging=true").then(function (response) {
 
+                def.resolve(response.data);
+            });
+            return def.promise;
+        },
         getTotalTeiByProgramAndOrgUnit: function ( programUid,orgUnitId ) {
             var def = $q.defer();
             $http.get('../api/trackedEntityInstances.json?program=' + programUid + '&ou=' + orgUnitId + "&skipPaging=true").then(function (response) {
@@ -432,6 +441,7 @@ angular.module('trackerCaptureServices')
             });
             return def.promise;
         },
+		
         getOrgunitCode: function ( orgUnitUid ) {
             var def = $q.defer();
             $http.get('../api/organisationUnits/' + orgUnitUid + ".json?fields=id,name,code,parent[id],attributeValues[attribute[id,name,code],value]&paging=false").then(function (response) {
@@ -439,8 +449,16 @@ angular.module('trackerCaptureServices')
                 def.resolve(response.data);
             });
             return def.promise;
-        }
+        },
 
+        getOrgunitLevel: function ( orgUnitUid ) {
+            var def = $q.defer();
+            $http.get('../api/organisationUnits/' + orgUnitUid + ".json?fields=id,name,code,level&paging=false").then(function (response) {
+
+                def.resolve(response.data);
+            });
+            return def.promise;
+        }
     };
 })
 

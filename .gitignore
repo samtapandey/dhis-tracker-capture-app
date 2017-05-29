@@ -1,5 +1,6 @@
 *.iml
 node_modules/
+package.json
 lib/
 npm-debug.log
 .idea
