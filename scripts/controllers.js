@@ -24,7 +24,9 @@ function($rootScope,
          TEIService,
          EventReportService,
          TCStorageService,
-         GridColumnService) {
+         GridColumnService,
+         //for AES
+         CustomIdService) {
     var savedAdvancedSeachOptions = null;
     var defaultColumn = {
         id: 'created',
@@ -40,6 +42,9 @@ function($rootScope,
     $scope.availablePrograms = {};
     $scope.fileNames = {};
     $scope.orgUnitNames = {};
+
+    // for AES
+    $scope.selectedOrgUnitLevel = "";
 
     //Selection
     $scope.ouModes = [{name: 'SELECTED'}, {name: 'CHILDREN'}, {name: 'DESCENDANTS'}, {name: 'ACCESSIBLE'}];
@@ -254,6 +259,13 @@ function($rootScope,
                 $scope.restoreGridColumnsFromUserStore();
             });
         }
+
+        // for AES
+        CustomIdService.getOrgunitLevel( $scope.selectedOrgUnit.id ).then(function( responseOrgUnit ){
+            $scope.selectedOrgUnitLevel = responseOrgUnit.level;
+
+        });
+
     };
 
     $scope.getProgramAttributes = function(program){
