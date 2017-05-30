@@ -20,6 +20,8 @@ import '../scripts/sticky.min.js';
 import '../scripts/custom-services.js';
 import '../scripts/queue/queue-controller.js';
 import '../scripts/queue/ApexQueue.js';
+import '../scripts/queue/queue-controllerAEMS.js';
+import '../scripts/queue/ApexQueueAEMS.js';
 import '../components/dashboard/dashboard-controller.js';
 import '../components/dashboard/dashboard-widgets-controller.js';
 import '../components/registration/registration-controller.js';
@@ -89,6 +91,12 @@ angular.module('trackerCapture')
     }).when('/apexqueue',{
         templateUrl:'views/Apexqueue.html',
         controller: 'ApexQueueController'
+    }).when('/queueAEMS',{
+        templateUrl:'views/queueAEMS.html',
+        controller: 'QueueControllerAEMS'
+    }).when('/apexqueueAEMS',{
+        templateUrl:'views/ApexqueueAEMS.html',
+        controller: 'ApexQueueControllerAEMS'
     }).otherwise({
         redirectTo : '../dhis-web-commons/security/login.action'
     });

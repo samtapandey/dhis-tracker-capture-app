@@ -19,4 +19,10 @@ trackerCapture.controller('LeftBarMenuController',
         $location.path('/apexqueue').search();
     };
 
+  	$scope.showQueueInterfaceAEMS = function(){
+        $location.path('/queueAEMS').search();
+    };
+	$scope.showApexQueueInterfaceAEMS = function(){
+        $location.path('/apexqueueAEMS').search();
+    };
 });
