@@ -665,12 +665,12 @@ trackerCapture.controller('RegistrationController',
 		
 		 if( $scope.selectedTei[$scope.illnessOnsetDate] > $scope.selectedTei[$scope.admissionDate])
 		 {
-			 alert("Admission date cannot be before Illness Onset/Fever onset date");
+			 alert("Admission date cannot be before Illness Onset date");
 			 $scope.selectedTei[$scope.admissionDate] = "";
 		 }
 		 else if($scope.selectedTei[$scope.illnessOnsetDate] > $scope.selectedTei[$scope.feverOnsetDate])
 		 {	
-			alert("Admission date cannot be before Illness Onset/Fever onset date");
+			alert("Fever onset date cannot be before Illness Onset date");
 			 $scope.selectedTei[$scope.feverOnsetDate] = ""; 
 		 }
 		 else
