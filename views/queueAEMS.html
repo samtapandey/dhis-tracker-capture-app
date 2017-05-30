@@ -62,8 +62,8 @@ table thead tr th {
             <tr ng-class="{'red': ev.clicked, '': !ev.clicked}"
                 ng-click="goToDashboard(ev)" ng-repeat="ev in queueEvents">
                 <td>{{$index+1}}</td>
-				<td>{{evv.date}}</td>
-                <td>{{evv.district}}</td>
+				<td>{{ev.date}}</td>
+                <td>{{ev.district}}</td>
                 <td>{{ev.aesid}}</td>
                 <td>{{ev.nid}}</td>
                 <td>{{ev.name}}</td>
