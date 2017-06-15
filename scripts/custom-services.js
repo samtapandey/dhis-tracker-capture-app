@@ -458,7 +458,17 @@ angular.module('trackerCaptureServices')
                 def.resolve(response.data);
             });
             return def.promise;
+        },
+		
+		getLoginLevel: function () {
+            var def = $q.defer();
+            $http.get('../api/me.json?fields=organisationUnits[id,name,level]&paging=false').then(function (response) {
+
+                def.resolve(response.data);
+            });
+            return def.promise;
         }
+		
     };
 })
 

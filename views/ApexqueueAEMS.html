@@ -27,7 +27,7 @@
 <div id="mainPage">
     <div style="width: 90%;" class="row col-sm-12">
         <button class="btn btn-default" onclick="window.location.reload();">Update</button>
-        <h2>AMESApex Lab Queue(size : {{queueEvents2.length}})</h2>
+        <h2>AMES Apex Lab Queue(size : {{queueEvents2.length}})</h2>
 
         <table class="table table-striped dhis2-table-hover table-bordered ng-scope custom">
             <thead>
@@ -40,9 +40,9 @@
                 <th rowspan="2">Name</th>
                 <th rowspan="2">Age</th>
                 <th rowspan="1" colspan="3">Sample Received</th>
-                <th rowspan="1" colspan="11">Lab Results CSF</th>
-                <th rowspan="1" colspan="11">Lab Results Serum</th>
-                <th rowspan="1" colspan="2">Lab Results Whole Blood</th>
+                <th rowspan="1" colspan="7">Lab Results CSF</th>
+                <th rowspan="1" colspan="5">Lab Results Serum</th>
+                <th rowspan="1" colspan="1">Lab Results Whole Blood</th>
             </tr>
             <tr>
                 <th rowspan="1" colspan="1">CSF</th>
@@ -80,9 +80,12 @@
                 <td>{{evv.nid}}</td>
                 <td>{{evv.name}}</td>
                 <td>{{evv.age}}</td>
-                <td>{{evv.sampleReceivedCSF}}</td>
-                <td>{{evv.sampleReceivedSERUM}}</td>
-                <td>{{evv.sampleReceivedWB}}</td>
+                <td ng-if="evv.sampleReceivedCSF === 'No'" style="color:red">{{evv.sampleReceivedCSF}}</td>
+                <td ng-if="evv.sampleReceivedCSF === 'Yes'">{{evv.sampleReceivedCSF}}</td>
+                <td ng-if="evv.sampleReceivedSERUM === 'No'" style="color:red">{{evv.sampleReceivedSERUM}}</td>
+                <td ng-if="evv.sampleReceivedSERUM === 'Yes'">{{evv.sampleReceivedSERUM}}</td>
+                <td ng-if="evv.sampleReceivedWB === 'No'" style="color:red">{{evv.sampleReceivedWB}}</td>
+                <td ng-if="evv.sampleReceivedWB === 'Yes'">{{evv.sampleReceivedWB}}</td>
                 <td>{{evv.result1}}</td>
                 <td>{{evv.result2}}</td>
                 <td>{{evv.result3}}</td>

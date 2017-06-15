@@ -31,6 +31,7 @@ trackerCapture.controller('DashboardController',
     //selections
     var orgUnitUrl = ($location.search()).ou;
     var queueRedirect = ($location.search()).queue;
+	var fromd = ($location.search()).from;
 
     $scope.displayEnrollment = false;
     $scope.dataEntryMainMenuItemSelected = false;    
@@ -533,8 +534,13 @@ trackerCapture.controller('DashboardController',
 
     $scope.back = function () {debugger
         if (queueRedirect){
-            $location.path('/queue').search();
-            return
+			debugger
+			if(fromd == 'aesdistrict'){$location.path('/queue').search();}
+			else if(fromd == 'aesapex'){$location.path('/apexqueue').search();}
+			else if(fromd == 'amesdistrict'){$location.path('/queueAEMS').search();}
+			else if(fromd == 'amesapex'){$location.path('/apexqueueAEMS').search();}
+            
+            return;
         }
         if (!$scope.dataEntryMainMenuItemSelected) {
             //reload OU tree

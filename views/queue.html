@@ -27,10 +27,10 @@ table thead tr th {
 <div id="mainPage">
     <div style="width: 90%;" class="row col-sm-12">        
       
-        <h2>District Lab Queue(size : {{queueEvents.length}})</h2>
+        <h2>AMES District Lab Queue(size : {{queueEvents.length}})</h2>
 
     <table class="table table-striped dhis2-table-hover table-bordered ng-scope">
-        <thead>
+       <thead>
         <tr>
             <th rowspan="2">S No</th>
             <th rowspan="2">Registeration date</th>
@@ -39,16 +39,16 @@ table thead tr th {
             <th rowspan="2">Nimhans Aes Id</th>
             <th rowspan="2">Name</th>
             <th rowspan="2">Age</th>
+            <th rowspan="1" colspan="13">Lab Results</th>
+        </tr>
+		<tr>
 			<th rowspan="2" colspan="1">CSF collected</th>
 			<th rowspan="2" colspan="1">CSF sent to Apex lab</th>
 			<th rowspan="2" colspan="1">Serum collected</th>
 			<th rowspan="2" colspan="1">Serum sent to Apex lab</th>
 			<th rowspan="2" colspan="1">Whole blood collected</th>
-			<th rowspan="2" colspan="1">Whole Bloodsent to Apex lab</th>
-            <th rowspan="1" colspan="7">Lab Results</th>
-        </tr>
-		<tr>
-			<th rowspan="1" colspan="1">Csf WBC Count</th>
+			<th rowspan="2" colspan="1">Whole Blood</th>
+			<th rowspan="1" colspan="1">CSF WBC Count</th>
 			<th rowspan="1" colspan="1">CSF-JE IgM</th>
 			<th rowspan="1" colspan="1">CSF-Glucose</th>
 			<th rowspan="1" colspan="1">CSF-Protein</th>
@@ -68,12 +68,18 @@ table thead tr th {
                 <td>{{ev.nid}}</td>
                 <td>{{ev.name}}</td>
                 <td>{{ev.age}}</td>
-                <td>{{ev.csfc}}</td>
-                <td>{{ev.csfs}}</td>
-                <td>{{ev.serumc}}</td>
-                <td>{{ev.serums}}</td>
-                <td>{{ev.wbc}}</td>
-                <td>{{ev.wbs}}</td>
+                <td ng-if="ev.csfc === 'No'" style="color:red">{{ev.csfc}}</td>
+                <td ng-if="ev.csfc === 'Yes'">{{ev.csfc}}</td>
+				<td ng-if="ev.csfs === 'No'" style="color:red">{{ev.csfs}}</td>
+                <td ng-if="ev.csfs === 'Yes'">{{ev.csfs}}</td>
+                <td ng-if="ev.serumc === 'No'" style="color:red">{{ev.serumc}}</td>
+                <td ng-if="ev.serumc === 'Yes'">{{ev.serumc}}</td>
+                <td ng-if="ev.serums === 'No'" style="color:red">{{ev.serums}}</td>
+                <td ng-if="ev.serums === 'Yes'">{{ev.serums}}</td>
+                <td ng-if="ev.wbc === 'No'" style="color:red">{{ev.wbc}}</td>
+                <td ng-if="ev.wbc === 'Yes'">{{ev.wbc}}</td>
+                <td ng-if="ev.wbs === 'No'" style="color:red">{{ev.wbs}}</td>
+                <td ng-if="ev.wbs === 'Yes'">{{ev.wbs}}</td>
                 <td>{{ev.csfwbcc}}</td>
                 <td>{{ev.csfje}}</td>
                 <td>{{ev.csfg}}</td>
