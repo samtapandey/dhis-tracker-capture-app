@@ -1424,7 +1424,23 @@ trackerCapture.controller('DataEntryController',
         
         return def.promise;
     };
-    
+
+// for AES validate lenght
+    //put calculated value in kg from lbs into text box
+    $scope.validateLength = function (inputValue,psDataElementUid) {
+
+        if( inputValue.toString().length > 4 )
+        {
+            //alert(inputValue + ' -- ' + inputValue.toString().length + " -- " + psDataElementUid);
+            alert( "Result value should not be more than 4 digits");
+            $scope.currentEvent[psDataElementUid] = "";
+        }
+
+
+    };
+
+
+
     $scope.saveDataValueForEvent = function (prStDe, field, eventToSave, backgroundUpdate) {
         
         if( !prStDe ){

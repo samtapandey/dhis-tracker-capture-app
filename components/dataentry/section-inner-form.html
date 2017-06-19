@@ -32,7 +32,7 @@
         </div>
     </div>
     <div ng-if="!prStDes[de.dataElement.id].dataElement.optionSetValue" ng-switch="prStDes[de.dataElement.id].dataElement.valueType">
-        <div ng-switch-when="NUMBER">
+        <div ng-switch-when="NUMBER" ng-if="prStDes[de.dataElement.id].dataElement.id != 'S36x7Lu6LcO' && prStDes[de.dataElement.id].dataElement.id != 'nAH31Dqs57t' && prStDes[de.dataElement.id].dataElement.id != 'CXys4IuR7ti' && prStDes[de.dataElement.id].dataElement.id != 'rZhHel9Ran6'">
             <div class="hideInPrint">
                     <input type="number"
                            d2-number-validator
@@ -49,6 +49,28 @@
                 <input type="text" class="form-control" value={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}>
             </div>
         </div>
+
+        <div ng-switch-when="NUMBER" ng-if="prStDes[de.dataElement.id].dataElement.id === 'S36x7Lu6LcO' || prStDes[de.dataElement.id].dataElement.id === 'nAH31Dqs57t' || prStDes[de.dataElement.id].dataElement.id === 'CXys4IuR7ti' || prStDes[de.dataElement.id].dataElement.id === 'rZhHel9Ran6'">
+          <div class="hideInPrint">
+            <input type="number"
+                   d2-number-validator
+                   number-type={{prStDes[de.dataElement.id].dataElement.valueType}}
+                   class="form-control"
+                   ng-class="getInputNotifcationClass(prStDes[de.dataElement.id].dataElement.id,false, currentEvent)"
+                   ng-model="currentEvent[prStDes[de.dataElement.id].dataElement.id]"
+                   ng-required={{isCompulsory(de.dataElement)}}
+                   ng-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.dataElement.id]"
+                   ng-blur="saveDatavalue(prStDes[de.dataElement.id], innerForm.foo)"
+                   ng-change="validateLength(currentEvent[prStDes[de.dataElement.id].dataElement.id],prStDes[de.dataElement.id].dataElement.id)"
+                   name="foo"/>
+          </div>
+          <div class="not-for-screen">
+            <input type="text" class="form-control" value={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}>
+          </div>
+        </div>
+
+
+
         <div ng-switch-when="PERCENTAGE">
             <div class="hideInPrint">
                 <input type="number"

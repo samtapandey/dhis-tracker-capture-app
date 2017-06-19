@@ -18,6 +18,7 @@ import '../scripts/report-types-controller.js';
 import '../scripts/display-mode-controller.js';
 import '../scripts/sticky.min.js';
 import '../scripts/custom-services.js';
+import '../scripts/aes-custom-services.js';
 import '../scripts/queue/queue-controller.js';
 import '../scripts/queue/ApexQueue.js';
 import '../scripts/queue/queue-controllerAEMS.js';

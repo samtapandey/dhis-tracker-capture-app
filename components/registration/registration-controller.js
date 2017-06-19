@@ -27,7 +27,10 @@ trackerCapture.controller('RegistrationController',
                 TrackerRulesExecutionService,
                 TCStorageService,
                 ModalService,
-                 CustomIDGenerationService) {
+                // for AES
+                 CustomIDGenerationService,
+                 OrganisationUnitService,
+                 AESService) {
     $scope.today = DateUtils.getToday();
     $scope.trackedEntityForm = null;
     $scope.customRegistrationForm = null;    
@@ -45,10 +48,27 @@ trackerCapture.controller('RegistrationController',
     $scope.helpTexts = {};
     $scope.registrationMode = 'REGISTRATION';
 
-    //for AES
-	  $scope.admissionDate ='frHKjT3SpU9';
+//for AES
+    $scope.admissionDate ='frHKjT3SpU9';
     $scope.illnessOnsetDate = 'h5k2QBRqKdK';
-	  $scope.feverOnsetDate = 'l5ArtCcXvbr';
+    $scope.feverOnsetDate = 'l5ArtCcXvbr';
+    $scope.stateList = [];
+    $scope.districtList = [];
+    $scope.blockTalukOrgUnits = [];
+    $scope.villageList = [];
+    $scope.tempAllChildrenList = [];
+    $scope.level5OrgList = [];
+    $scope.tempSelectedStateName = null;
+    $scope.tempVillageExist = 'yes';
+    $scope.ageInMonths ='oQioOj2ECeU';
+    $scope.ageInYears = 'g6aPl383VUZ';
+
+
+    $scope.selectedStateName = null;
+    $scope.selectedDistrictName = null;
+    $scope.selectedBlockTalukName = null;
+    $scope.selectedVillageName = null;
+
 		
     var flag = {debug: true, verbose: false};
     $rootScope.ruleeffects = {};
@@ -139,6 +159,153 @@ trackerCapture.controller('RegistrationController',
             });
         }
     };
+
+
+
+    // for casecading 
+    OrganisationUnitService.getLevel3OrganisationUnit().then(function(level3OrgUnit){
+            $scope.stateList = level3OrgUnit.organisationUnits;
+        });
+
+        $scope.getDistrict = function( selectedStateUid ) {
+            
+            // alert( selectedStateUid );
+            $scope.selectedStateName = null;
+            $scope.selectedDistrictName = null;
+            $scope.selectedBlockTalukName = null;
+            $scope.selectedVillageName = null;
+            //$scope.tempVillageExist = 'yes';
+
+            $scope.districtList = [];
+            $scope.blockTalukOrgUnits = [];
+            $scope.villageList = [];
+            OrganisationUnitService.getAllChildrenOrganisationUnits( selectedStateUid ).then(function(allChildren){
+                $scope.tempAllChildrenList = allChildren.organisationUnits;
+
+                OrganisationUnitService.getLevel5OrganisationUnit().then(function(level5OrgUnit){
+                    $scope.level5OrgList = level5OrgUnit.organisationUnits;
+
+                    angular.forEach( $scope.tempAllChildrenList, function(child){
+                            angular.forEach( $scope.level5OrgList, function(level5Org){
+                                if( child.id === level5Org.id )
+                                {
+                                    $scope.districtList.push( level5Org );
+                                }
+                            });
+                        });
+                        console.log( "district OrgUnit List length  is -- " + $scope.districtList.length );
+                       OrganisationUnitService.getOrganisationUnitObject( selectedStateUid ).then(function(orgUnitStateObject){
+                            //$scope.selectedDistrict = orgUnitObject;
+                            $scope.selectedStateName = orgUnitStateObject.displayName;
+                            $scope.tempSelectedStateName = $scope.selectedStateName;
+                            if( $scope.tempSelectedStateName == 'Out of India')
+                            {
+                                $scope.tempVillageExist = 'no';
+                            }
+                            else
+                            {
+                                $scope.tempVillageExist = 'yes';
+                            }
+                            
+                           //alert($scope.tempSelectedStateName);
+                          
+                    });
+
+                });
+            });
+
+        /*
+          $scope.filteredOrgUnitList=[];
+            OrganisationUnitService.getAllChildrenOfSelectedOrgUnit( $scope.selOrgUnit ).then(function(orgUnitList){
+                    $scope.allChildrenList = orgUnitList.organisationUnits;
+                    angular.forEach( $scope.allChildrenList, function(child){
+                        angular.forEach( $scope.dataSetSource, function(dataSetSource){
+                            if( child.id === dataSetSource.id )
+                            {
+                                $scope.filteredOrgUnitList.push( dataSetSource );
+                            }
+                        });
+                    });
+                    console.log( "filtered OrgUnit List length  is -- " + $scope.filteredOrgUnitList.length );
+                }
+            );
+    */
+
+
+    };
+
+
+    $scope.getAnotherDistrict = function( anotherDistrictName ){
+        //alert( anotherDistrictName );
+        $scope.selectedDistrictName = anotherDistrictName;
+    };
+
+ $scope.getBlockTaluk = function( districtUid ){
+
+    //alert(districtUid);
+    $scope.blockTalukOrgUnits = [];
+    $scope.villageList = [];
+    
+    $scope.selectedDistrictName = null;
+    $scope.selectedBlockTalukName = null;
+    $scope.selectedVillageName = null;
+    //$scope.tempVillageExist = 'yes';
+
+    OrganisationUnitService.getChildrenOrganisationUnits( districtUid ).then(function(blockTalukOrganisationUnits){
+        $scope.blockTalukOrgUnits = blockTalukOrganisationUnits.children;
+                                
+        OrganisationUnitService.getOrganisationUnitObject( districtUid ).then(function(orgUnitDistrictObject){
+            //$scope.selectedDistrict = orgUnitObject;
+            $scope.selectedDistrictName = orgUnitDistrictObject.displayName;
+            
+         });
+     });
+}
+
+
+    $scope.getVillage = function( blockTalukUid ){
+    //alert(districtUid);
+        $scope.villageList = [];
+        $scope.selectedBlockTalukName = null;
+        $scope.selectedVillageName = null;
+
+        OrganisationUnitService.getChildrenOrganisationUnits( blockTalukUid ).then(function(villageOrganisationUnits){
+            $scope.villageList = villageOrganisationUnits.children;
+           
+                OrganisationUnitService.getOrganisationUnitObject( blockTalukUid ).then(function(orgUnitBlockTalukObject){
+                //$scope.selectedDistrict = orgUnitObject;
+                $scope.selectedBlockTalukName = orgUnitBlockTalukObject.displayName;
+                if( $scope.villageList.length < 1 )
+                {
+                    $scope.tempVillageExist = 'no';
+                    //alert($scope.villageList.length + " -- "  + tempVillageExist);
+                }
+                else
+                {
+                    $scope.tempVillageExist = 'yes';
+                    //alert($scope.villageList.length + " -- "  + tempVillageExist);
+                }
+            });
+        });
+}
+
+
+    $scope.getVillageName = function( villageUid ){
+       //alert(villageUid);
+        
+        $scope.selectedVillageName = null;
+        OrganisationUnitService.getOrganisationUnitObject( villageUid ).then(function(orgUnitVillageObject){
+            $scope.selectedVillageName = orgUnitVillageObject.displayName;
+            //alert($scope.selectedStateName + " --- " + $scope.selectedDistrictName + " --- " + $scope.selectedBlockTalukName + " --- " + $scope.selectedVillageName);
+        });
+    }
+
+     $scope.getAnotherVillage = function( anotherVillageName ){
+        //alert( anotherDistrictName );
+      //  $scope.selectedVillageName = null;
+        $scope.selectedVillageName = anotherVillageName;
+    };   
+
 
     //watch for selection of program
     $scope.$watch('selectedProgram', function (newValue, oldValue) {
@@ -440,7 +607,8 @@ trackerCapture.controller('RegistrationController',
         //get tei attributes and their values
         //but there could be a case where attributes are non-mandatory and
         //registration form comes empty, in this case enforce at least one value
-        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById);
+        //var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById);
+        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById,$scope.selectedStateName,$scope.selectedDistrictName,$scope.selectedBlockTalukName,$scope.selectedVillageName);
         $scope.formEmpty = result.formEmpty;
         $scope.tei = result.tei;
 
@@ -595,6 +763,20 @@ trackerCapture.controller('RegistrationController',
                 $scope.selectedTei[selectedAttribute.id] = res.id;
             }
         });
+    };
+
+// custom methods
+
+    $scope.yearToMonths = function (ageInYear) {
+        $scope.ToMonths = ageInYear*12;
+        $scope.selectedTei[$scope.ageInMonths] =( Math.round($scope.ToMonths*100))/100;//put calculated value in month text box
+        
+    };
+
+    $scope.monthsToYear = function (ageInMonth) {
+        $scope.ToYear = ageInMonth/12;
+        $scope.selectedTei[$scope.ageInYears] = ( Math.round($scope.ToYear*100))/100;//put calculated value in year text box
+        
     };
 
     $scope.cancelRegistrationWarning = function (cancelFunction) {

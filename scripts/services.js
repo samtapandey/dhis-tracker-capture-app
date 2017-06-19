@@ -452,11 +452,52 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                 return def.promise;
             }            
         },
-        processForm: function(existingTei, formTei, originalTei, attributesById){
+        processForm: function(existingTei, formTei, originalTei, attributesById,stateName,districtName,blockTalukName,villageName){
             var tei = angular.copy(existingTei);            
             tei.attributes = [];
             var formEmpty = true;            
             for(var k in attributesById){
+
+                if( stateName != null )
+                {
+                    //state
+                    if(  attributesById[k].code === 'state' ) 
+                    {
+                        formTei[k] = stateName;
+                        console.log( " State Name -- " + stateName );
+                    }
+                }
+                if( districtName != null )
+                {
+                    //district
+                    if(  attributesById[k].code === 'district' ) 
+                    {
+                        formTei[k] = districtName;
+                        console.log( " District Name -- " + districtName );
+                    }
+                }
+                
+                if( blockTalukName != null )
+                {
+                    //Block/Taluk
+                    if(  attributesById[k].code === 'block_taluk' ) 
+                    {
+                        formTei[k] = blockTalukName;
+                        console.log( " Block/Taluk Name -- " + blockTalukName );
+                    }
+                }
+                
+                if( villageName != null )
+                {
+                    //Village
+                    if(  attributesById[k].code === 'village' ) 
+                    {
+                        formTei[k] = villageName;
+                        alert(villageName);
+                        console.log( " Village Name -- " + villageName );
+                    }
+                }
+
                 if(originalTei && formTei[k] !== originalTei[k] && !formTei[k] && !originalTei[k]){
                     formChanged = true;
                 }

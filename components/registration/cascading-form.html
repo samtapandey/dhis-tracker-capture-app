@@ -1,0 +1,190 @@
+
+<!-- custom cascading table Starts-->
+<table class="dhis2-list-table-striped default-form-table">
+  <tr>
+    <td>
+      {{'state' | translate}}
+    </td>
+    <td class="absorbing-column">
+      <select name="selectedState" id="selectedState" ng-model="selectedState" ng-change="getDistrict(selectedState)"
+              class="form-control"
+              ng-options="state.id as state.name for state in stateList | orderBy: 'name'"
+              ng-disabled="stateList.length < 1">
+              <option value="">{{'please_select'| translate}}</option>
+      </select>
+    </td>
+  </tr>
+</table>
+
+<div ng-if="tempSelectedStateName === 'Out of India'">
+  <table class="dhis2-list-table-striped default-form-table">
+    <tr  class="absorbing-column">
+      <td>
+        {{'specify_country' | translate}}
+      </td>
+      <td class="absorbing-column">
+        <div>
+          <input type="text" class="form-control"  ng-model="selectedDistrict" name="selectedDistrict" id="selectedDistrict" ng-change="getAnotherDistrict( selectedDistrict )">
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div ng-if="tempSelectedStateName != 'Out of India'">
+  <table class="dhis2-list-table-striped default-form-table">
+    <tr  class="absorbing-column">
+      <td>
+         {{'district' | translate}}
+      </td>
+       <td class="absorbing-column">
+        <div>
+          <select ng-model="selectedDistrict" name="selectedDistrict" id="selectedDistrict" ng-change="getBlockTaluk(selectedDistrict)"
+                  class="form-control"
+                  ng-options="districtOrgUnit.id as districtOrgUnit.name for districtOrgUnit in districtList | orderBy: 'name'"
+                  ng-disabled="districtList.length < 1">
+           <option value="">{{'please_select'| translate}}</option>
+          </select>
+        </div>
+     </td>
+    </tr>
+    <tr class="absorbing-column">
+      <td>
+        {{'block_taluk' | translate}}
+      </td>
+      <td class="absorbing-column" >
+        <div>
+          <select ng-model="selectedBlockTaluk" ng-change="getVillage(selectedBlockTaluk)"
+                  class="form-control"
+                  ng-options="blockTalukOrgUnit.id as blockTalukOrgUnit.name for blockTalukOrgUnit in blockTalukOrgUnits | orderBy: 'name'"
+                  ng-disabled="blockTalukOrgUnits.length < 1">
+            <option value="">{{'please_select'| translate}}</option>
+          </select>
+        </div>
+      </td>
+    </tr>
+   <tr  class="absorbing-column" >
+      <td>
+        {{'village' | translate}}
+      </td>
+       <td class="absorbing-column" ng-if="tempVillageExist === 'yes'">
+        <div>
+          <select ng-model="selectedVillage" name="selectedVillage" id="selectedVillage" ng-change="getVillageName(selectedVillage)"
+                  class="form-control"
+                  ng-options="villageOrgUnit.id as villageOrgUnit.name for villageOrgUnit in villageList | orderBy: 'name'"
+                  ng-disabled="villageList.length < 1">
+            <option value="">{{'please_select'| translate}}</option>
+          </select>
+        </div>
+      </td>
+      <td ng-if="tempVillageExist === 'no'">
+        <div>
+          <input type="text" class="form-control"  ng-model="selectedVillage" name="selectedVillage" id="selectedVillage" ng-change="getAnotherVillage( selectedVillage )">
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+
+
+
+<!--
+<table class="dhis2-list-table-striped default-form-table">
+ 
+    <tr>
+      <td>
+        {{'state' | translate}}
+      </td>
+  <td class="absorbing-column">
+
+
+
+       <select name="selectedState" id="selectedState" ng-model="selectedState" ng-change="getDistrict(selectedState)"
+                class="form-control"
+                ng-options="state.id as state.name for state in stateList | orderBy: 'name'"
+                ng-disabled="stateList.length < 1">
+                <option value="">{{'please_select'| translate}}</option>
+        </select>
+       
+      </td>
+    </tr>
+ 
+    <tr  class="absorbing-column" ng-if="tempSelectedStateName == 'Out of India' && tempVillageExist == 'no'">
+      <td>
+        {{'specify_country' | translate}}
+      </td>
+      
+      <td>
+        <div>
+          <input type="text" class="form-control"  ng-model="selectedDistrict" name="selectedDistrict" id="selectedDistrict" ng-change="getAnotherDistrict( selectedDistrict )">
+        </div>
+      </td>
+    </tr>
+
+    <tr  class="absorbing-column" ng-if="tempSelectedStateName != 'Out of India' && tempVillageExist == 'yes'">
+      <td>
+        {{'district' | translate}}
+      </td>
+ 
+      <td class="absorbing-column">
+        <div>
+          <select ng-model="selectedDistrict" name="selectedDistrict" id="selectedDistrict" ng-change="getBlockTaluk(selectedDistrict)"
+                  class="form-control"
+                  ng-options="districtOrgUnit.id as districtOrgUnit.name for districtOrgUnit in districtList | orderBy: 'name'"
+                  ng-disabled="districtList.length < 1">
+           <option value="">{{'please_select'| translate}}</option>
+          </select>
+        </div>
+     </td>
+    </tr>
+
+    <tr   class="absorbing-column" ng-if="tempSelectedStateName != 'Out of India' && tempVillageExist == 'yes'">
+      <td>
+        {{'block_taluk' | translate}}
+      </td>
+      <td class="absorbing-column" >
+        <div>
+          <select ng-model="selectedBlockTaluk" ng-change="getVillage(selectedBlockTaluk)"
+                  class="form-control"
+                  ng-options="blockTalukOrgUnit.id as blockTalukOrgUnit.name for blockTalukOrgUnit in blockTalukOrgUnits | orderBy: 'name'"
+                  ng-disabled="blockTalukOrgUnits.length < 1">
+            <option value="">{{'please_select'| translate}}</option>
+          </select>
+        </div>
+      </td>
+    </tr>
+
+
+    <tr  class="absorbing-column" ng-if="tempSelectedStateName != 'Out of India' && tempVillageExist =='no'">
+      <td>
+        {{'village' | translate}}
+      </td>
+
+      <td>
+        <div>
+          <input type="text" class="form-control"  ng-model="selectedVillage" name="selectedVillage" id="selectedVillage" ng-change="getAnotherVillage( selectedvillage )">
+        </div>
+      </td>
+    </tr>
+
+
+    <tr  class="absorbing-column" ng-if="tempSelectedStateName != 'Out of India' && tempVillageExist == 'yes'">
+      <td>
+        {{'village' | translate}}
+      </td>
+       <td class="absorbing-column">
+        <div>
+          <select ng-model="selectedVillage" name="selectedVillage" id="selectedVillage" ng-change="getVillageName(selectedvillage)"
+                  class="form-control"
+                  ng-options="villageOrgUnit.id as villageOrgUnit.name for villageOrgUnit in villageList | orderBy: 'name'"
+                  ng-disabled="villageList.length < 1">
+            <option value="">{{'please_select'| translate}}</option>
+          </select>
+        </div>
+      </td>
+    </tr>
+ 
+</table>
+-->
+
+<!-- custom cascading table Ends-->
