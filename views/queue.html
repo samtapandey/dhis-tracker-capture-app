@@ -39,7 +39,7 @@ table thead tr th {
             <th rowspan="2">Nimhans Aes Id</th>
             <th rowspan="2">Name</th>
             <th rowspan="2">Age</th>
-            <th rowspan="1" colspan="13">Lab Results</th>
+            <th rowspan="1" colspan="15">Lab Results</th>
         </tr>
 		<tr>
 			<th rowspan="2" colspan="1">CSF collected</th>
@@ -47,14 +47,16 @@ table thead tr th {
 			<th rowspan="2" colspan="1">Serum collected</th>
 			<th rowspan="2" colspan="1">Serum sent to Apex lab</th>
 			<th rowspan="2" colspan="1">Whole blood collected</th>
-			<th rowspan="2" colspan="1">Whole Blood</th>
+			<th rowspan="2" colspan="1">Whole Blood sent to Apex lab</th>
 			<th rowspan="1" colspan="1">CSF WBC Count</th>
 			<th rowspan="1" colspan="1">CSF-JE IgM</th>
 			<th rowspan="1" colspan="1">CSF-Glucose</th>
 			<th rowspan="1" colspan="1">CSF-Protein</th>
 			<th rowspan="1" colspan="1">Serum-JE IgM</th>
-			<th rowspan="1" colspan="1">Serum-IgM DEN</th>
-			<th rowspan="1" colspan="1">Serum-Scrub typhus IgM</th>
+			<th rowspan="1" colspan="1">Dengue IgM ELISA</th>
+			<th rowspan="1" colspan="1">Dengue NS1 rapid</th>
+			<th rowspan="1" colspan="1">Dengue NS1 ELISA</th>
+			<th rowspan="1" colspan="1">Scrub typhus IgM ELISA</th>
 		</tr>
         </thead>
 
@@ -85,8 +87,10 @@ table thead tr th {
                 <td>{{ev.csfg}}</td>
                 <td>{{ev.csfp}}</td>
                 <td>{{ev.serumje}}</td>
-                <td>{{ev.serumig}}</td>
-                <td>{{ev.serumsti}}</td>
+                <td>{{ev.serumige}}</td>
+                <td>{{ev.dnsr}}</td>
+                <td>{{ev.dnse}}</td>
+                <td>{{ev.serumstie}}</td>
 
             </tr>
         </tbody>

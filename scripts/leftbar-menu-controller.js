@@ -33,4 +33,10 @@ trackerCapture.controller('LeftBarMenuController',["$rootScope", "$scope", "$tim
 	$scope.showApexQueueInterfaceAEMS = function(){
         $location.path('/apexqueueAEMS').search();
     };
+	$scope.showaesNimhansQueueInterface = function(){
+        $location.path('/aesNimhansQueue').search();
+    };
+	$scope.showamesNimhansQueueInterface = function(){
+        $location.path('/amesNimhansQueue').search();
+    };
 }]);

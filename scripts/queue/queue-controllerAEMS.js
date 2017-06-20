@@ -47,8 +47,10 @@
 																	events[i].csfg = response.rows[i][16];
 																	events[i].csfp = response.rows[i][17];
 																	events[i].serumje = response.rows[i][18];
-																	events[i].serumig = response.rows[i][19];
-																	events[i].serumsti = response.rows[i][20];
+																	events[i].serumige = response.rows[i][19];
+																	events[i].dnsr = response.rows[i][20];
+																	events[i].dnse = response.rows[i][21];
+																	events[i].serumstie = response.rows[i][22];
 																	if (response.rows[i][8] != "") {
 																					events[i].csfc = "Yes";
 																	} else {

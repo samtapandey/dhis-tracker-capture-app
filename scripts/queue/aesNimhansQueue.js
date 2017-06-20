@@ -1,7 +1,7 @@
 /* global trackerCapture, angular */
 	
-	var trackerCaptureapex = angular.module('trackerCapture');
-	trackerCaptureapex.controller('ApexQueueController', ["$rootScope", "$scope", "$timeout", "$location", "SessionStorageService", "CurrentSelection", function ($rootScope, $scope, $timeout, $location, SessionStorageService, CurrentSelection) {
+	var trackerCaptureaesNimhans = angular.module('trackerCapture');
+	trackerCaptureaesNimhans.controller('aesNimhansQueueController', ["$rootScope", "$scope", "$timeout", "$location", "SessionStorageService", "CurrentSelection", function ($rootScope, $scope, $timeout, $location, SessionStorageService, CurrentSelection) {
 	
 		var ouid2 = SessionStorageService.get('ouSelected');
 		var selections = CurrentSelection.get();
@@ -12,17 +12,17 @@
 			evv.clicked = true;
 			var base = location.protocol + '//' + location.host + "/dhis"; //+window.location.pathname;
 			$location.path('/dashboard').search({ tei: evv.tei,
-				program: "a9cQSlDVI2n",
+				program: "eV13Hfo7qiv",
 				//  ou: "CPtzIhyn36z",
 				ou: ouid2,
 				queue: true,
-				from:'aesapex'});
+				from:'amesapex'});
 			// $window.open(base+'/dhis-web-tracker-capture/index.html#/dashboard?tei='+ev.tei+'&program=a9cQSlDVI2n&ou=CPtzIhyn36z'+$scope.ouId, '_blank');
 		};
 	
 		$scope.loadQueue2 = function () {
 			var filtered_events2 = [];
-			$.getJSON('../api/sqlViews/GsiGUuHemvy/data.json?var=orgunit:' + ouid2, function (response) {
+			$.getJSON('../api/sqlViews/TNEACle8fKx/data.json?var=orgunit:' + ouid2, function (response) {
 	
 				var events2 = response.rows;
 				var sampleCollectedFlag = false;
@@ -48,12 +48,6 @@
 					events2[i].result11 = response.rows[i][21];
 					events2[i].result12 = response.rows[i][22];
 					events2[i].result13 = response.rows[i][23];
-					events2[i].result13 = response.rows[i][24];
-					events2[i].result13 = response.rows[i][25];
-					events2[i].result13 = response.rows[i][26];
-					events2[i].result13 = response.rows[i][27];
-					events2[i].result13 = response.rows[i][28];
-					events2[i].result13 = response.rows[i][29];
 	
 					if (response.rows[i][8] != "") {
 						events2[i].sampleReceivedCSF = "Yes";
