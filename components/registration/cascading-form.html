@@ -6,15 +6,58 @@
       {{'state' | translate}}
     </td>
     <td class="absorbing-column">
-      <select name="selectedState" id="selectedState" ng-model="selectedState" ng-change="getDistrict(selectedState)"
-              class="form-control"
-              ng-options="state.id as state.name for state in stateList | orderBy: 'name'"
-              ng-disabled="stateList.length < 1">
-              <option value="">{{'please_select'| translate}}</option>
-      </select>
+      <!--
+        <select name="selectedState" id="selectedState" ng-model="selectedState" ng-change="getDistrict(selectedState)"
+                class="form-control"
+                ng-options="state.id as state.name for state in stateList | orderBy: 'name'"
+                ng-disabled="stateList.length < 1">
+                <option value="">{{'please_select'| translate}}</option>
+        </select>
+      -->
+      <ui-select name="selectedState" id="selectedState" ng-model="selectedState" ng-change="getDistrict(selectedState)"  theme="select2" class="ui-select-style">
+
+        <ui-select-match allow-clear="true" class="form-control-ui-select"  placeholder="{{'select_or_search' | translate}}">
+          {{$select.selected.name  || $select.selected}}</ui-select-match>
+        <ui-select-choices  repeat="state.id as state in stateList | filter: $select.search | limitTo:maxOptionSize">
+          <span ng-bind-html="state.name | highlight: $select.search"></span>
+        </ui-select-choices>
+      </ui-select>
     </td>
   </tr>
 </table>
+<!--
+<ui-select  ng-model="selectedTei[attribute.id]"
+                                    theme="select2"
+                                    ng-required="attribute.mandatory"
+                                    name="foo"
+                                    d2-attribute-validator
+                                    attribute-data={{attribute}}
+                                    selected-program-id={{selectedProgram.id}}
+                                    selected-tei-id={{selectedTei.trackedEntityInstance}}
+                                    ng-disabled="selectedOrgUnit.closedStatus || isDisabled(attribute)"
+                                    on-select="teiValueUpdated(selectedTei, attribute.id)"
+                                    class="ui-select-style">
+                          <ui-select-match allow-clear="true"  class="form-control-ui-select"  placeholder="{{'select_or_search' | translate}}">{{$select.selected.displayName  || $select.selected}}</ui-select-match>
+                          <ui-select-choices  repeat="option.displayName as option in optionSets[attributesById[attribute.id].optionSet.id].options | filter: $select.search | limitTo:maxOptionSize">
+                            <span ng-bind-html="option.displayName | highlight: $select.search"></span>
+                          </ui-select-choices>
+                        </ui-select>
+
+
+          <ui-select  ng-model="currentEvent[prStDes[de.dataElement.id].dataElement.id]"
+                      theme="select2"
+                      ng-required={{isCompulsory(de.dataElement)}}
+                      ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.dataElement.id]"
+                      name="foo"
+                      on-select="saveDatavalue(prStDes[de.dataElement.id], innerForm.foo)"
+                      ng-style="{'width':'100%'}">
+            <ui-select-match allow-clear="true" ng-class="getInputNotifcationClass(prStDes[de.dataElement.id].dataElement.id,true, currentEvent)"  class="form-control-ui-select"  placeholder="{{'select_or_search' | translate}}">{{$select.selected.name  || $select.selected}}</ui-select-match>
+            <ui-select-choices  repeat="user.name as user in userGroupMember | filter: $select.search | limitTo:maxOptionSize">
+              <span ng-bind-html="user.name | highlight: $select.search"></span>
+            </ui-select-choices>
+          </ui-select>
+-->
+
 
 <div ng-if="tempSelectedStateName === 'Out of India'">
   <table class="dhis2-list-table-striped default-form-table">
@@ -35,18 +78,28 @@
   <table class="dhis2-list-table-striped default-form-table">
     <tr  class="absorbing-column">
       <td>
-         {{'district' | translate}}
+        {{'district' | translate}}
       </td>
-       <td class="absorbing-column">
+      <td class="absorbing-column">
         <div>
+          <!--
           <select ng-model="selectedDistrict" name="selectedDistrict" id="selectedDistrict" ng-change="getBlockTaluk(selectedDistrict)"
                   class="form-control"
                   ng-options="districtOrgUnit.id as districtOrgUnit.name for districtOrgUnit in districtList | orderBy: 'name'"
                   ng-disabled="districtList.length < 1">
-           <option value="">{{'please_select'| translate}}</option>
+            <option value="">{{'please_select'| translate}}</option>
           </select>
+          -->
+          <ui-select name="selectedDistrict" id="selectedDistrict" ng-model="selectedDistrict" ng-change="getBlockTaluk(selectedDistrict)" theme="select2" class="ui-select-style">
+
+            <ui-select-match allow-clear="true" class="form-control-ui-select"  placeholder="{{'select_or_search' | translate}}">
+              {{$select.selected.name  || $select.selected}}</ui-select-match>
+            <ui-select-choices  repeat="districtOrgUnit.id as districtOrgUnit in districtList | filter: $select.search | limitTo:maxOptionSize">
+              <span ng-bind-html="districtOrgUnit.name | highlight: $select.search"></span>
+            </ui-select-choices>
+          </ui-select>
         </div>
-     </td>
+      </td>
     </tr>
     <tr class="absorbing-column">
       <td>
@@ -54,27 +107,51 @@
       </td>
       <td class="absorbing-column" >
         <div>
+          <!--
           <select ng-model="selectedBlockTaluk" ng-change="getVillage(selectedBlockTaluk)"
                   class="form-control"
                   ng-options="blockTalukOrgUnit.id as blockTalukOrgUnit.name for blockTalukOrgUnit in blockTalukOrgUnits | orderBy: 'name'"
                   ng-disabled="blockTalukOrgUnits.length < 1">
             <option value="">{{'please_select'| translate}}</option>
           </select>
+          -->
+          <ui-select name="selectedBlockTaluk" id="selectedBlockTaluk" ng-model="selectedBlockTaluk" ng-change="getVillage(selectedBlockTaluk)" theme="select2" class="ui-select-style">
+
+            <ui-select-match allow-clear="true" class="form-control-ui-select"  placeholder="{{'select_or_search' | translate}}">
+              {{$select.selected.name  || $select.selected}}</ui-select-match>
+            <ui-select-choices  repeat="blockTalukOrgUnit.id as blockTalukOrgUnit in blockTalukOrgUnits | filter: $select.search | limitTo:maxOptionSize">
+              <span ng-bind-html="blockTalukOrgUnit.name | highlight: $select.search"></span>
+            </ui-select-choices>
+          </ui-select>
+
         </div>
       </td>
     </tr>
-   <tr  class="absorbing-column" >
+    <tr  class="absorbing-column" >
       <td>
         {{'village' | translate}}
       </td>
-       <td class="absorbing-column" ng-if="tempVillageExist === 'yes'">
+      <td class="absorbing-column" ng-if="tempVillageExist === 'yes'">
         <div>
+          <!--
           <select ng-model="selectedVillage" name="selectedVillage" id="selectedVillage" ng-change="getVillageName(selectedVillage)"
                   class="form-control"
                   ng-options="villageOrgUnit.id as villageOrgUnit.name for villageOrgUnit in villageList | orderBy: 'name'"
                   ng-disabled="villageList.length < 1">
             <option value="">{{'please_select'| translate}}</option>
           </select>
+          -->
+          <ui-select name="selectedVillage" id="selectedVillage" ng-model="selectedVillage" ng-change="getVillageName(selectedVillage)" theme="select2" class="ui-select-style">
+
+            <ui-select-match allow-clear="true" class="form-control-ui-select"  placeholder="{{'select_or_search' | translate}}">
+              {{$select.selected.name  || $select.selected}}</ui-select-match>
+            <ui-select-choices  repeat="villageOrgUnit.id as villageOrgUnit in villageList | filter: $select.search | limitTo:maxOptionSize">
+              <span ng-bind-html="villageOrgUnit.name | highlight: $select.search"></span>
+            </ui-select-choices>
+          </ui-select>
+
+
+
         </div>
       </td>
       <td ng-if="tempVillageExist === 'no'">

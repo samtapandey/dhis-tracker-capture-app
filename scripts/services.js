@@ -493,7 +493,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                     if(  attributesById[k].code === 'village' ) 
                     {
                         formTei[k] = villageName;
-                        alert(villageName);
+                        //alert(villageName);
                         console.log( " Village Name -- " + villageName );
                     }
                 }
