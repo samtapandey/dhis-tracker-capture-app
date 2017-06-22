@@ -29,7 +29,9 @@ trackerCapture.controller('DataEntryController',
                 OptionSetService,
                 AttributesFactory,
                 TrackerRulesFactory,
-                EventCreationService) {
+                EventCreationService,
+                OrganisationUnitService,
+                EventAndDataValueService) {
     
     //Unique instance id for the controller:
     $scope.instanceId = Math.floor(Math.random() * 1000000000);
@@ -1398,7 +1400,61 @@ trackerCapture.controller('DataEntryController',
     $scope.saveDataValueForRadio = function(prStDe, event, value){
         
         var def = $q.defer();
-        
+
+        // for AES create Event For Parent
+
+        if( prStDe.dataElement.id === 'tFZQIt6d9pk' || prStDe.dataElement.id === 'jDiCrciKu7Z' || prStDe.dataElement.id === 'fczAudE6eS6')
+        {
+            if( value === 'true')
+            {
+                $timeout(function() {
+                    var dhis2ParentEvents = {events: []};
+                    //yyyy-mm-dd format 'yyyy-mm-dd'
+                    var today = new Date().toISOString().slice(0, 10);//yyyy-mm-dd format
+                    OrganisationUnitService.getParentOrganisationUnit( event.orgUnit ).then(function(responseOrgUnit){
+                        //$scope.selectedDistrict = orgUnitObject;
+                        $scope.parentOrgUnitUid = responseOrgUnit.parent.id;
+
+                        EventAndDataValueService.getEventByTeiAndProgramStageAndOrgUnit( event.trackedEntityInstance,'GOWaC9DJ8ua',$scope.parentOrgUnitUid).then(function(responseEvent){
+
+                            if( responseEvent.events.length > 0 && responseEvent.events[0].event != undefined  )
+                            {
+                                //alert( "Event Already Exits - " + responseEvent.event);
+                            }
+
+                            else{
+
+                                var newEvent = {
+                                    trackedEntityInstance: event.trackedEntityInstance,
+                                    program: event.program,
+                                    //programStage: event.programStage,
+                                    programStage: 'GOWaC9DJ8ua',
+                                    //orgUnit: orgUnit.id,
+                                    orgUnit: $scope.parentOrgUnitUid,
+                                    enrollment: event.enrollment,
+                                    eventDate: today,
+                                    status:'ACTIVE'
+                                };
+                                dhis2ParentEvents.events.push(newEvent);
+                                if (dhis2ParentEvents.events.length > 0) {
+                                    DHIS2EventFactory.create(dhis2ParentEvents).then(function () {
+                                        console.log("Parent Event Created -- " + event.trackedEntityInstance);
+
+                                    });
+                                } else {
+                                    console.log("Parent Event Not Created -- " + event.trackedEntityInstance);
+                                }
+
+                                //alert( "Event Created -- " + $scope.parentOrgUnitUid + " -- " + today );
+                            }
+                        });
+                    });
+                }, 0);
+
+                //console.log("current Event -- " + event);
+            }
+        }
+
         event[prStDe.dataElement.id] = value;
         
         var saveReturn = $scope.saveDataValueForEvent(prStDe, null, event, false);
@@ -1425,8 +1481,8 @@ trackerCapture.controller('DataEntryController',
         return def.promise;
     };
 
-// for AES validate lenght
-    //put calculated value in kg from lbs into text box
+    // for AES validate Length
+    //
     $scope.validateLength = function (inputValue,psDataElementUid) {
 
         if( inputValue.toString().length > 4 )
@@ -1439,8 +1495,21 @@ trackerCapture.controller('DataEntryController',
 
     };
 
+    // for AES create Event For Parent
+    //
+    /*
+    $scope.createEventForParent = function (inputValue,psDataElementUid) {
 
+        if( psDataElementUid === 'tFZQIt6d9pk' || psDataElementUid === 'jDiCrciKu7Z' || psDataElementUid === 'fczAudE6eS6')
+        {
+            if( inputValue === 'true')
+            {
+                console.log("current Event -- " + $scope.currentEvent);
+            }
+        }
 
+    };
+    */
     $scope.saveDataValueForEvent = function (prStDe, field, eventToSave, backgroundUpdate) {
         
         if( !prStDe ){

@@ -69,8 +69,6 @@
           </div>
         </div>
 
-
-
         <div ng-switch-when="PERCENTAGE">
             <div class="hideInPrint">
                 <input type="number"
@@ -198,6 +196,27 @@
                 <label class="radio-inline"><input type="radio" value="false" ng-checked="currentEvent[prStDes[de.dataElement.id].dataElement.id]">{{'no' | translate}}</label>
             </div>
         </div>
+      <!--
+        <div ng-switch-when="BOOLEAN" ng-if="prStDes[de.dataElement.id].dataElement.id === 'tFZQIt6d9pk' || prStDes[de.dataElement.id].dataElement.id === 'jDiCrciKu7Z' || prStDes[de.dataElement.id].dataElement.id === 'fczAudE6eS6'">
+          <div class="hideInPrint form-control">
+          <d2-radio-button
+              dh-required="isCompulsory(de.dataElement)"
+              dh-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.dataElement.id] === true"
+              dh-value="currentEvent[prStDes[de.dataElement.id].dataElement.id]"
+              dh-name="foo"
+              dh-current-element="currentElement"
+              dh-event="currentEvent.event"
+              dh-id="de.dataElement.id"
+              ng-change="createEventForParent(currentEvent[prStDes[de.dataElement.id].dataElement.id],prStDes[de.dataElement.id].dataElement.id)"
+              dh-click="saveDataValueForRadio(prStDes[de.dataElement.id], currentEvent, value)">
+          </d2-radio-button>
+        </div>
+        <div class="not-for-screen">
+          <label class="radio-inline"><input type="radio" value="true" ng-model="currentEvent[prStDes[de.dataElement.id].dataElement.id]">{{'yes' | translate}}</label>
+          <label class="radio-inline"><input type="radio" value="false" ng-checked="currentEvent[prStDes[de.dataElement.id].dataElement.id]">{{'no' | translate}}</label>
+        </div>
+      </div>
+      -->
         <div ng-switch-when="DATE">
             <div class="hideInPrint">
                 <input type="text"

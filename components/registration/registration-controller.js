@@ -62,7 +62,7 @@ trackerCapture.controller('RegistrationController',
     $scope.tempVillageExist = 'yes';
     $scope.ageInMonths ='oQioOj2ECeU';
     $scope.ageInYears = 'g6aPl383VUZ';
-
+    $scope.level2OrgUnitUid  = 'jeaBUFagj6m';
 
     $scope.selectedStateName = null;
     $scope.selectedDistrictName = null;
@@ -162,10 +162,15 @@ trackerCapture.controller('RegistrationController',
 
 
 
-    // for casecading 
+    // for casecading
+    /*
     OrganisationUnitService.getLevel3OrganisationUnit().then(function(level3OrgUnit){
             $scope.stateList = level3OrgUnit.organisationUnits;
         });
+    */
+    OrganisationUnitService.getChildrenOrganisationUnits( $scope.level2OrgUnitUid   ).then(function(level3OrgUnit){
+        $scope.stateList = level3OrgUnit.children;
+    });
 
         $scope.getDistrict = function( selectedStateUid ) {
             
@@ -179,6 +184,39 @@ trackerCapture.controller('RegistrationController',
             $scope.districtList = [];
             $scope.blockTalukOrgUnits = [];
             $scope.villageList = [];
+
+
+            OrganisationUnitService.getLevel5OrganisationUnitsByLevel3( selectedStateUid).then(function(responseOrgUnitList){
+                $scope.tempAllOrgUnitList = responseOrgUnitList.children;
+
+                for (var i in $scope.tempAllOrgUnitList) {
+
+                    for (var j in $scope.tempAllOrgUnitList[i].children) {
+
+                        $scope.districtList.push( $scope.tempAllOrgUnitList[i].children[j] );
+                    }
+                }
+                console.log( "district OrgUnit List length  is -- " + $scope.districtList.length );
+
+                OrganisationUnitService.getOrganisationUnitObject( selectedStateUid ).then(function(orgUnitStateObject){
+                    //$scope.selectedDistrict = orgUnitObject;
+                    $scope.selectedStateName = orgUnitStateObject.displayName;
+                    $scope.tempSelectedStateName = $scope.selectedStateName;
+                    if( $scope.tempSelectedStateName == 'Out of India')
+                    {
+                        $scope.tempVillageExist = 'no';
+                    }
+                    else
+                    {
+                        $scope.tempVillageExist = 'yes';
+                    }
+
+                    //alert($scope.tempSelectedStateName);
+
+                });
+            });
+
+            /*
             OrganisationUnitService.getAllChildrenOrganisationUnits( selectedStateUid ).then(function(allChildren){
                 $scope.tempAllChildrenList = allChildren.organisationUnits;
 
@@ -213,7 +251,7 @@ trackerCapture.controller('RegistrationController',
 
                 });
             });
-
+            */
         /*
           $scope.filteredOrgUnitList=[];
             OrganisationUnitService.getAllChildrenOfSelectedOrgUnit( $scope.selOrgUnit ).then(function(orgUnitList){

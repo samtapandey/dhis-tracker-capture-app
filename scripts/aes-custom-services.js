@@ -16,7 +16,7 @@ angular.module('trackerCaptureServices')
             //http://127.0.0.1:8090/dhis/api/organisationUnits.json?fields=id,name&filter=level:eq:1&paging=false
             getRootOrganisationUnit: function () {
                 var def = $q.defer();
-                $http.get('../api/organisationUnits.json.json?fields=id,name&filter=level:eq:1&paging=false').then(function (response) {
+                $http.get('../api/organisationUnits.json?fields=id,name&filter=level:eq:1&paging=false').then(function (response) {
 
                     def.resolve(response.data);
                 });
@@ -34,7 +34,7 @@ angular.module('trackerCaptureServices')
 
             getLevel3OrganisationUnit: function () {
                 var def = $q.defer();
-                $http.get('../api/organisationUnits.json.json?fields=id,name&filter=level:eq:3&sortOrder=ASC&paging=false').then(function (response) {
+                $http.get('../api/organisationUnits.json?fields=id,name&filter=level:eq:3&sortOrder=ASC&paging=false').then(function (response) {
                     def.resolve(response.data);
                 });
                 return def.promise;
@@ -42,7 +42,7 @@ angular.module('trackerCaptureServices')
 
             getLevel5OrganisationUnit: function () {
                 var def = $q.defer();
-                $http.get('../api/organisationUnits.json.json?fields=id,name&filter=level:eq:5&sortOrder=ASC&paging=false').then(function (response) {
+                $http.get('../api/organisationUnits.json?fields=id,name&filter=level:eq:5&sortOrder=ASC&paging=false').then(function (response) {
                     def.resolve(response.data);
                 });
                 return def.promise;
@@ -67,6 +67,14 @@ angular.module('trackerCaptureServices')
             return def.promise;
           },
 
+          // http://localhost:8090/dhis/api/organisationUnits/AIFbJiJBxJZ.json?fields=id,name,children[children[id,name]]&paging=false
+          getLevel5OrganisationUnitsByLevel3: function ( orgUnitUid ) {
+            var def = $q.defer();
+            $http.get('../api/organisationUnits/' + orgUnitUid + ".json?fields=id,name,children[children[id,name]]&paging=false").then(function (response) {
+              def.resolve(response.data);
+            });
+            return def.promise;
+          },
 
           //http://127.0.0.1:8090/dhis/api/organisationUnits/Jgc02tIKupW.json?fields=id,name,children[id,name]
           getOrganisationUnitObject: function ( orgUnitUid ) {
@@ -77,6 +85,17 @@ angular.module('trackerCaptureServices')
 
             return def.promise;
           },
+
+          //http://127.0.0.1:8090/dhis/api/organisationUnits/CPtzIhyn36z.json?fields=id,name,parent[id,displayName]
+          getParentOrganisationUnit: function ( orgUnitUid ) {
+            var def = $q.defer();
+            $http.get('../api/organisationUnits/' + orgUnitUid + ".json?fields=id,name,displayName,parent[id,displayName]&paging=false").then(function (response) {
+              def.resolve(response.data);
+            });
+
+            return def.promise;
+          },
+
 
             //http://127.0.0.1:8090/dhis/api/organisationUnits/Jgc02tIKupW.json?fields=id,name,children[id,name]
           getOrganisationUnitObjectForTEI: function ( orgUnitUid ) {
@@ -136,6 +155,51 @@ angular.module('trackerCaptureServices')
         }
       };
     })
+
+      //http://127.0.0.1:8090/dhis/api/events.json?trackedEntityInstance=KwLJwA6w6Rl&programStage=GOWaC9DJ8ua&orgUnit=zpkwWCuP8oc&skipPaging=true
+    .service('EventAndDataValueService', function (DHIS2EventFactory,$http,$q) {
+      return {
+
+        createEventForParentOrgUnit: function ( eventForSave, parentOrgUnit) {
+          var def = $.Deferred();
+          var teiParentEvent = {event: eventForSave.event,
+            orgUnit: parentOrgUnit,
+            program: eventForSave.program,
+            programStage: 'GOWaC9DJ8ua',
+            status: eventForSave.status,
+            trackedEntityInstance: eventForSave.trackedEntityInstance,
+            dataValues: [
+              {
+
+              }
+            ]
+          };
+
+          DHIS2EventFactory.updateForSingleValue(teiParentEvent).then(function ( responseEventCreate ) {
+
+            if( responseEventCreate.httpStatus === "OK")
+            {
+              def.resolve( responseEventCreate );
+            }
+          });
+
+          return def;
+        },
+        //http://127.0.0.1:8090/dhis/api/events.json?trackedEntityInstance=KwLJwA6w6Rl&programStage=GOWaC9DJ8ua&orgUnit=zpkwWCuP8oc&skipPaging=true
+        getEventByTeiAndProgramStageAndOrgUnit: function ( teiUid,programStageUid,orgUnitUid ) {
+          var def = $q.defer();
+          $http.get('../api/events.json?trackedEntityInstance=' + teiUid + '&programStage=' + programStageUid + '&orgUnit=' + orgUnitUid + "&skipPaging=true").then(function (response) {
+
+            def.resolve(response.data);
+          });
+          return def.promise;
+        }
+
+
+      }
+
+    })
+
 
     .service('AESService',  function ($http,  $q){
       return {
