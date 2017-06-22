@@ -16,7 +16,7 @@
 				//  ou: "CPtzIhyn36z",
 				ou: ouid2,
 				queue: true,
-				from:'amesapex'});
+				from:'amesnimhans'});
 			// $window.open(base+'/dhis-web-tracker-capture/index.html#/dashboard?tei='+ev.tei+'&program=a9cQSlDVI2n&ou=CPtzIhyn36z'+$scope.ouId, '_blank');
 		};
 	

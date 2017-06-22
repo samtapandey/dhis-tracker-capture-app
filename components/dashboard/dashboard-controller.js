@@ -539,6 +539,8 @@ trackerCapture.controller('DashboardController',
 			else if(fromd == 'aesapex'){$location.path('/apexqueue').search();}
 			else if(fromd == 'amesdistrict'){$location.path('/queueAEMS').search();}
 			else if(fromd == 'amesapex'){$location.path('/apexqueueAEMS').search();}
+			else if(fromd == 'aesnimhans'){$location.path('/aesNimhansQueue').search();}
+			else if(fromd == 'amesnimhans'){$location.path('/amesNimhansQueue').search();}
             
             return;
         }
