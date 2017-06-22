@@ -22,7 +22,7 @@
 	
 		$scope.loadQueue2 = function () {
 			var filtered_events2 = [];
-			$.getJSON('../api/sqlViews/TNEACle8fKx/data.json?var=orgunit:' + ouid2, function (response) {
+			$.getJSON('../api/sqlViews/Ig7DXsj5Hgk/data.json?var=orgunit:' + ouid2, function (response) {
 	
 				var events2 = response.rows;
 				var sampleCollectedFlag = false;

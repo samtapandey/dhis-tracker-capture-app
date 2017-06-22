@@ -48,12 +48,11 @@
 					events2[i].result11 = response.rows[i][21];
 					events2[i].result12 = response.rows[i][22];
 					events2[i].result13 = response.rows[i][23];
-					events2[i].result13 = response.rows[i][24];
-					events2[i].result13 = response.rows[i][25];
-					events2[i].result13 = response.rows[i][26];
-					events2[i].result13 = response.rows[i][27];
-					events2[i].result13 = response.rows[i][28];
-					events2[i].result13 = response.rows[i][29];
+					events2[i].result14 = response.rows[i][24];
+					events2[i].result15 = response.rows[i][25];
+					events2[i].result16 = response.rows[i][26];
+					events2[i].result17 = response.rows[i][27];
+					events2[i].result18 = response.rows[i][28];
 	
 					if (response.rows[i][8] != "") {
 						events2[i].sampleReceivedCSF = "Yes";
