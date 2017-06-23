@@ -26,7 +26,9 @@ trackerCapture.controller('RegistrationController',
                 TrackerRulesFactory,
                 TrackerRulesExecutionService,
                 TCStorageService,
-                ModalService) {
+                ModalService,
+				// add for Generate CustomId for msf-customizations
+                CustomIDGenerationService) {
     $scope.today = DateUtils.getToday();
     $scope.trackedEntityForm = null;
     $scope.customRegistrationForm = null;    
@@ -45,6 +47,10 @@ trackerCapture.controller('RegistrationController',
     $scope.registrationMode = 'REGISTRATION';
     var flag = {debug: true, verbose: false};
     $rootScope.ruleeffects = {};
+	
+	// for msf-customizations display on load
+	$scope.fileNumber = 'lYrG0wc9kI3';
+	$scope.phoneNumber = 'FzXnQEnYFa5';
 
     $scope.attributesById = CurrentSelection.getAttributesById();
 
@@ -81,11 +87,27 @@ trackerCapture.controller('RegistrationController',
         });
     }
     
-    
+    /*
     $scope.isDisabled = function(attribute) {
         return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
     };
-
+	*/
+	
+	// update for MSF for disable attribute patient_identifier
+    $scope.isDisabled = function(attribute) {
+	    if( attribute.code === 'patient_identifier')
+        {
+            return true;
+        }
+        else
+        {
+            return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
+        }
+    }	
+	
+	
+	
+	
     var selectedOrgUnit = CurrentSelection.get()["orgUnit"];
 
     if (selectedOrgUnit) {
@@ -185,6 +207,20 @@ trackerCapture.controller('RegistrationController',
 
         AttributesFactory.getByProgram($scope.selectedProgram).then(function (atts) {
             $scope.attributes = TEIGridService.generateGridColumns(atts, null, false).columns;
+			// change for msf-customizations display on load
+			$timeout( function (){
+
+				if( !$scope.selectedTei[$scope.fileNumber] && $scope.selectedTei[$scope.fileNumber] == undefined)
+				{
+					$scope.selectedTei[$scope.fileNumber] = 'NCD-16-'; //put default value on load form
+				}
+				if( !$scope.selectedTei[$scope.phoneNumber] && $scope.selectedTei[$scope.phoneNumber] == undefined)
+				{
+					$scope.selectedTei[$scope.phoneNumber] = '00961'; //put default value on load form
+				}
+
+			},0);					
+			
             fetchGeneratedAttributes();
             if ($scope.selectedProgram && $scope.selectedProgram.id) {
                 if ($scope.selectedProgram.dataEntryForm && $scope.selectedProgram.dataEntryForm.htmlCode) {
@@ -305,7 +341,11 @@ trackerCapture.controller('RegistrationController',
             broadcastTeiEnrolled();
         }
         else {
-            goToDashboard(destination ? destination : 'DASHBOARD', teiId);
+			// add for Generate CustomId for msf-customizations
+			CustomIDGenerationService.validateAndCreateCustomId($scope.tei,$scope.selectedEnrollment.program,$scope.attributes,destination,$scope.optionSets,$scope.attributesById,$scope.selectedEnrollment.enrollmentDate).then(function(){
+				goToDashboard( destination ? destination : 'DASHBOARD', teiId );
+			});		
+            //goToDashboard(destination ? destination : 'DASHBOARD', teiId);
         }
     };
 
