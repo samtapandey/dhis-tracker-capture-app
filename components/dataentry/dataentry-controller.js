@@ -1401,12 +1401,13 @@ trackerCapture.controller('DataEntryController',
         
         var def = $q.defer();
 
-        // for AES create Event For Parent
+        // for AES create Event For Parent for APEX Lab
 
         if( prStDe.dataElement.id === 'tFZQIt6d9pk' || prStDe.dataElement.id === 'jDiCrciKu7Z' || prStDe.dataElement.id === 'fczAudE6eS6')
         {
             if( value === 'true')
             {
+                var newProgramStage = "";
                 $timeout(function() {
                     var dhis2ParentEvents = {events: []};
                     //yyyy-mm-dd format 'yyyy-mm-dd'
@@ -1414,8 +1415,15 @@ trackerCapture.controller('DataEntryController',
                     OrganisationUnitService.getParentOrganisationUnit( event.orgUnit ).then(function(responseOrgUnit){
                         //$scope.selectedDistrict = orgUnitObject;
                         $scope.parentOrgUnitUid = responseOrgUnit.parent.id;
-
-                        EventAndDataValueService.getEventByTeiAndProgramStageAndOrgUnit( event.trackedEntityInstance,'GOWaC9DJ8ua',$scope.parentOrgUnitUid).then(function(responseEvent){
+                        if( event.program === 'eV13Hfo7qiv' )
+                        {
+                            newProgramStage = 'u75cboMxKPs'
+                        }
+                        else if( event.program === 'a9cQSlDVI2n' )
+                        {
+                            newProgramStage = 'GOWaC9DJ8ua'
+                        }
+                        EventAndDataValueService.getEventByTeiAndProgramStageAndOrgUnit( event.trackedEntityInstance,newProgramStage,$scope.parentOrgUnitUid).then(function(responseEvent){
 
                             if( responseEvent.events.length > 0 && responseEvent.events[0].event != undefined  )
                             {
@@ -1428,7 +1436,7 @@ trackerCapture.controller('DataEntryController',
                                     trackedEntityInstance: event.trackedEntityInstance,
                                     program: event.program,
                                     //programStage: event.programStage,
-                                    programStage: 'GOWaC9DJ8ua',
+                                    programStage: newProgramStage,
                                     //orgUnit: orgUnit.id,
                                     orgUnit: $scope.parentOrgUnitUid,
                                     enrollment: event.enrollment,
@@ -1454,6 +1462,71 @@ trackerCapture.controller('DataEntryController',
                 //console.log("current Event -- " + event);
             }
         }
+
+        // for AES create Event For Parent for NIMHANS Lab
+
+        if( prStDe.dataElement.id === 'UUkruYKpd0P' || prStDe.dataElement.id === 'NNzfSz0GT5l' || prStDe.dataElement.id === 'FMjQDMqKhPQ')
+        {
+            if( value === 'true')
+            {
+                var nimhansProgramStage = "";
+                $timeout(function() {
+                    var dhis2ParentEvents = {events: []};
+                    //yyyy-mm-dd format 'yyyy-mm-dd'
+                    var today = new Date().toISOString().slice(0, 10);//yyyy-mm-dd format
+                    //OrganisationUnitService.getParentOrganisationUnit( event.orgUnit ).then(function(responseOrgUnit){
+                        //$scope.selectedDistrict = orgUnitObject;
+                        $scope.parentOrgUnitUid = 'jeaBUFagj6m';
+
+                        if( event.program === 'eV13Hfo7qiv' )
+                        {
+                            nimhansProgramStage = 'MEmsKMPTFQ5'
+                        }
+                        else if( event.program === 'a9cQSlDVI2n' )
+                        {
+                            nimhansProgramStage = 'xuNYdOl17GZ'
+                        }
+
+                        EventAndDataValueService.getEventByTeiAndProgramStageAndOrgUnit( event.trackedEntityInstance,nimhansProgramStage,$scope.parentOrgUnitUid).then(function(responseEvent){
+
+                            if( responseEvent.events.length > 0 && responseEvent.events[0].event != undefined  )
+                            {
+                                //alert( "Event Already Exits - " + responseEvent.event);
+                            }
+
+                            else{
+
+                                var newEvent = {
+                                    trackedEntityInstance: event.trackedEntityInstance,
+                                    program: event.program,
+                                    //programStage: event.programStage,
+                                    programStage: nimhansProgramStage,
+                                    //orgUnit: orgUnit.id,
+                                    orgUnit: $scope.parentOrgUnitUid,
+                                    enrollment: event.enrollment,
+                                    eventDate: today,
+                                    status:'ACTIVE'
+                                };
+                                dhis2ParentEvents.events.push(newEvent);
+                                if (dhis2ParentEvents.events.length > 0) {
+                                    DHIS2EventFactory.create(dhis2ParentEvents).then(function () {
+                                        console.log("Parent Event Created -- " + event.trackedEntityInstance);
+
+                                    });
+                                } else {
+                                    console.log("Parent Event Not Created -- " + event.trackedEntityInstance);
+                                }
+
+                                //alert( "Event Created -- " + $scope.parentOrgUnitUid + " -- " + today );
+                            }
+                        });
+                    //});
+                }, 0);
+
+                //console.log("current Event -- " + event);
+            }
+        }
+
 
         event[prStDe.dataElement.id] = value;
         
