@@ -1441,7 +1441,14 @@ trackerCapture.controller('DataEntryController',
                                     orgUnit: $scope.parentOrgUnitUid,
                                     enrollment: event.enrollment,
                                     eventDate: today,
-                                    status:'ACTIVE'
+                                    status:'ACTIVE',
+                                    dataValues: [
+                                        {
+                                            dataElement: prStDe.dataElement.id,
+                                            value: value,
+                                            providedElsewhere: event.providedElsewhere[prStDe.dataElement.id] ? true : false
+                                        }
+                                    ]
                                 };
                                 dhis2ParentEvents.events.push(newEvent);
                                 if (dhis2ParentEvents.events.length > 0) {
@@ -1505,7 +1512,15 @@ trackerCapture.controller('DataEntryController',
                                     orgUnit: $scope.parentOrgUnitUid,
                                     enrollment: event.enrollment,
                                     eventDate: today,
-                                    status:'ACTIVE'
+                                    status:'ACTIVE',
+                                    dataValues: [
+                                        {
+                                            dataElement: prStDe.dataElement.id,
+                                            value: value,
+                                            providedElsewhere: event.providedElsewhere[prStDe.dataElement.id] ? true : false
+                                        }
+                                    ]
+
                                 };
                                 dhis2ParentEvents.events.push(newEvent);
                                 if (dhis2ParentEvents.events.length > 0) {
