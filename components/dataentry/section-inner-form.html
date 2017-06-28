@@ -217,7 +217,7 @@
         </div>
       </div>
       -->
-        <div ng-switch-when="DATE">
+        <div ng-switch-when="DATE" ng-if="prStDes[de.dataElement.id].dataElement.id != 'RRdSWQkjsBn'">
             <div class="hideInPrint">
                 <input type="text"
                        placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
@@ -236,6 +236,30 @@
                 <input type="text" class="form-control" value={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}>
             </div>
         </div>
+      <!-- fro AES -->
+        <div ng-switch-when="DATE" ng-if="prStDes[de.dataElement.id].dataElement.id === 'RRdSWQkjsBn'">
+          <div class="hideInPrint">
+            <input type="text"
+                   placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
+                   d2-date
+                   d2-date-validator
+                   max-date="prStDes[de.dataElement.id].allowFutureDate ? '' : 0"
+                   class="form-control"
+                   ng-class="getInputNotifcationClass(prStDes[de.dataElement.id].dataElement.id,false, currentEvent)"
+                   ng-model="currentEvent[prStDes[de.dataElement.id].dataElement.id]"
+                   ng-required={{isCompulsory(de.dataElement)}}
+                   ng-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.dataElement.id]"
+                   blur-or-change="saveDatavalue(prStDes[de.dataElement.id])"
+                   ng-change="validateDate(currentEvent[prStDes[de.dataElement.id].dataElement.id],prStDes[de.dataElement.id].dataElement.id)"
+                   name="foo"/>
+          </div>
+          <div class="not-for-screen">
+            <input type="text" class="form-control" value={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}>
+          </div>
+        </div>
+
+
+
         <div ng-switch-when="TRUE_ONLY">
             <div class="hideInPrint">
                 <input type="checkbox"

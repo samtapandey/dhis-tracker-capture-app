@@ -108,8 +108,20 @@ angular.module('trackerCaptureServices')
 
             //return def.promise;
             return def;
-          }
+          },
 
+          //http://127.0.0.1:8090/dhis/api/trackedEntityInstances/wwrDjEJInqE.json?skipPaging=true
+          getTEIAttributesValue: function ( teiUid ) {
+            //var def = $q.defer();
+            var def = $.Deferred();
+            $http.get('../api/trackedEntityInstances/' + teiUid + ".json?paging=false").then(function (response) {
+              //def.resolve(response.data);
+              def.resolve( response.data );
+            });
+
+            //return def.promise;
+            return def;
+          }
 
           /*
           getTEAttributesAttributeAndValue: function () {

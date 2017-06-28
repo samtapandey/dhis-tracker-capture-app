@@ -1583,6 +1583,49 @@ trackerCapture.controller('DataEntryController',
 
     };
 
+    $scope.validateDate = function (inputValue,psDataElementUid) {
+
+        $scope.admissionDate = "";
+        //alert($scope.currentEvent.trackedEntityInstance);
+
+        $scope.selectedTeEntityinstance = CurrentSelection.get().tei;
+        if ($scope.selectedTeEntityinstance) {
+            for (var i = 0; i < $scope.selectedTeEntityinstance.attributes.length; i++) {
+                if ($scope.selectedTeEntityinstance.attributes[i].code == "Admission_date") {
+                    $scope.admissionDate = $scope.selectedTeEntityinstance.attributes[i].value;
+                }
+            }
+
+            if( $scope.admissionDate > inputValue)
+            {
+                alert("Date of hospitalisation outcome cannot be before admission date");
+                $scope.currentEvent[psDataElementUid] = "";
+            }
+        }
+
+        /*
+        OrganisationUnitService.getTEIAttributesValue( $scope.currentEvent.trackedEntityInstance ).then(function(responseTeiAttributeValue){
+
+            $scope.level2OtherList = level2OrgUnitOther.children;
+            $scope.tempStateList = $scope.level2NimhList.concat( $scope.level2NeighList);
+            $scope.stateList = $scope.tempStateList.concat($scope.level2OtherList);
+
+            //$scope.stateList = level2OrgUnitNeigh.children;
+        });
+
+
+        if( inputValue.toString().length > 4 )
+        {
+            //alert(inputValue + ' -- ' + inputValue.toString().length + " -- " + psDataElementUid);
+            alert( "Result value should not be more than 4 digits");
+            $scope.currentEvent[psDataElementUid] = "";
+        }
+        */
+
+    };
+
+
+
     // for AES create Event For Parent
     //
     /*
