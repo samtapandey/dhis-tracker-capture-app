@@ -911,7 +911,7 @@ trackerCapture.controller('RegistrationController',
         if(($scope.selectedTei[$scope.illnessOnsetDate]) != null || ($scope.selectedTei[$scope.illnessOnsetDate]) != undefined) {
             var illnessOnsetDate = ($scope.selectedTei[$scope.illnessOnsetDate]).split("-");
 
-            var illnessOnsetDate = new Date(illnessOnsetDate[2] + "-" +
+             illnessOnsetDate = new Date(illnessOnsetDate[2] + "-" +
                 illnessOnsetDate[1] + "-" +
                 illnessOnsetDate[0]);
         }
@@ -919,7 +919,7 @@ trackerCapture.controller('RegistrationController',
         if(($scope.selectedTei[$scope.admissionDate]) != null || ($scope.selectedTei[$scope.admissionDate]) != undefined) {
             var admissionDate = ($scope.selectedTei[$scope.admissionDate]).split("-");
 
-            var admissionDate = new Date(admissionDate[2] + "-" +
+             admissionDate = new Date(admissionDate[2] + "-" +
                 admissionDate[1] + "-" +
                 admissionDate[0]);
         }
@@ -927,7 +927,7 @@ trackerCapture.controller('RegistrationController',
          if(($scope.selectedTei[$scope.feverOnsetDate]) != null || ($scope.selectedTei[$scope.feverOnsetDate]) != undefined) {
              var feverOnsetDate = ($scope.selectedTei[$scope.feverOnsetDate]).split("-");
 
-             var feverOnsetDate = new Date(feverOnsetDate[2] + "-" +
+              feverOnsetDate = new Date(feverOnsetDate[2] + "-" +
                  feverOnsetDate[1] + "-" +
                  feverOnsetDate[0]);
          }

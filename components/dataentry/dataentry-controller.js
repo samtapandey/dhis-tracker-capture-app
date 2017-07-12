@@ -1596,7 +1596,19 @@ trackerCapture.controller('DataEntryController',
                 }
             }
 
-            if( $scope.admissionDate > inputValue)
+            var admissionDate = ($scope.admissionDate).split("-");
+
+            admissionDate = new Date(admissionDate[2] + "-" +
+                admissionDate[1] + "-" +
+                admissionDate[0]);
+
+            var inputValue = inputValue.split("-");
+
+            inputValue = new Date(inputValue[2] + "-" +
+                inputValue[1] + "-" +
+                inputValue[0]);
+
+            if( admissionDate > inputValue)
             {
                 alert("Date of hospitalisation outcome cannot be before admission date");
                 $scope.currentEvent[psDataElementUid] = "";
