@@ -51,32 +51,32 @@
 																	events[i].dnsr = response.rows[i][20];
 																	events[i].dnse = response.rows[i][21];
 																	events[i].serumstie = response.rows[i][22];
-																	if (response.rows[i][8] == "true" ) {
+																	if (response.rows[i][8] != "") {
 																					events[i].csfc = "Yes";
 																	} else {
 																					events[i].csfc = "No";
 																	}
-																	if (response.rows[i][9] == "true") {
+																	if (response.rows[i][9] != "") {
 																					events[i].csfs = "Yes";
 																	} else {
 																					events[i].csfs = "No";
 																	}
-																	if (response.rows[i][10] == "true") {
+																	if (response.rows[i][10] != "") {
 																					events[i].serumc = "Yes";
 																	} else {
 																					events[i].serumc = "No";
 																	}
-																	if (response.rows[i][11] == "true") {
+																	if (response.rows[i][11] != "") {
 																					events[i].serums = "Yes";
 																	} else {
 																					events[i].serums = "No";
 																	}
-																	if (response.rows[i][12] == "true") {
+																	if (response.rows[i][12] != "") {
 																					events[i].wbc = "Yes";
 																	} else {
 																					events[i].wbc = "No";
 																	}
-																	if (response.rows[i][13] == "true") {
+																	if (response.rows[i][13] != "") {
 																					events[i].wbs = "Yes";
 																	} else {
 																					events[i].wbs = "No";
