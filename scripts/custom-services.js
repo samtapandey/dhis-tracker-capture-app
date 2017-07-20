@@ -467,7 +467,48 @@ angular.module('trackerCaptureServices')
                 def.resolve(response.data);
             });
             return def.promise;
-        }
+        },
+
+            getParentId: function (orgUnitUid) {
+                var def = $q.defer();
+                $http.get('../api/organisationUnits/' + orgUnitUid + '.json?fields=parent[id,name,level]').then(function (response) {
+
+                    def.resolve(response.data);
+                });
+                return def.promise;
+            },
+            getUsersId: function (orgUnitUid) {
+                var def = $q.defer();
+                $http.get('../api/organisationUnits/' + orgUnitUid + '.json?fields=users[phoneNumber]').then(function (response) {
+
+                    def.resolve(response.data);
+                });
+                return def.promise;
+            },
+            sendMessages: function (msg,phones) {
+                var def = $q.defer();
+                $http.get('http://bulksms.mysmsmantra.com:8080/WebSMS/SMSAPI.jsp?username=hispindia&password=hisp1234&sendername=HSSPIN&mobileno='+phones+'&message='+msg).then(function (response) {
+
+                    def.resolve(response.data);
+                });
+                return def.promise;
+            },
+            getPhysiciansNum: function (tei) {
+                var def = $q.defer();
+                $http.get('../api/trackedEntityInstances/'+tei+'.json').then(function (response) {
+
+                    def.resolve(response.data);
+                });
+                return def.promise;
+            },
+            getDataValues: function (eventc, tei) {
+                var def = $q.defer();
+                $http.get('../api/events/'+eventc+'.json?trackedEntityInstance='+tei).then(function (response) {
+
+                    def.resolve(response.data);
+                });
+                return def.promise;
+            }
 		
     };
 })
