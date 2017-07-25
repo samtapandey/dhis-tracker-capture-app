@@ -51,7 +51,7 @@
                 </span>
 
                 <span ng-if="!attribute.optionSetValue" ng-switch="attribute.valueType">
-                    <span ng-switch-when="DATE" && ng-if="attribute.code != 'Illness_onset_date' && attribute.code != 'Fever_onset_date' && attribute.code != 'Admission_date'">
+                    <span ng-switch-when="DATE">
                         <input type="text"
                                placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
                                name="foo"
@@ -67,26 +67,6 @@
                                selected-tei-id={{selectedTei.trackedEntityInstance}}
                                ng-disabled="selectedOrgUnit.closedStatus || isDisabled(attribute)"
                                blur-or-change="teiValueUpdated(selectedTei, attribute.id)"
-                               ng-required="attribute.mandatory"/>
-                    </span>
-					<span ng-switch-when="DATE" && ng-if="attribute.code == 'Illness_onset_date' || attribute.code == 'Fever_onset_date' || attribute.code =='Admission_date'">
-                        <input type="text"
-                               placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
-                               name="foo"
-                               class="form-control"
-                               d2-date
-                               d2-date-validator
-                               max-date="attribute.allowFutureDate ? '' : 0"
-                               min-date="attribute.allowFutureDate ? '' : -180"
-                               ng-model="selectedTei[attribute.id]"
-                               ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
-                               d2-attribute-validator
-                               attribute-data={{attribute}}
-                               selected-program-id={{selectedProgram.id}}
-                               selected-tei-id={{selectedTei.trackedEntityInstance}}
-                               ng-disabled="selectedOrgUnit.closedStatus || isDisabled(attribute)"
-                               ng-blur="teiValueUpdated(selectedTei, attribute.id)"
-                               ng-change="dateValidationCheck(selectedTei[attribute.id])"
                                ng-required="attribute.mandatory"/>
                     </span>
                     <span ng-switch-when="TRUE_ONLY">
@@ -121,6 +101,7 @@
                             <label class="radio-inline"><input type="radio" value="false" ng-model="selectedTei[attribute.id]" >{{'no' | translate}}</label>
                         </span>
                     </span>
+                    <!-- add for AES -->
                     <span ng-switch-when="NUMBER" && ng-if="attribute.code === 'age_in_months'" >
                         <input type="number"
                                name="foo"
@@ -154,11 +135,29 @@
                                ng-disabled="selectedOrgUnit.closedStatus || isDisabled(attribute)"
                                ng-blur="teiValueUpdated(selectedTei, attribute.id)"
                                ng-required="attribute.mandatory"
-                               ng-required="attribute.mandatory" max="100"
                                ng-change="yearToMonths(selectedTei[attribute.id])"/>
                      </span>
-                     <span  class="required" ng-show='innerForm.$error.max'>* Age should not be more than 100</span>					
-                     <span ng-switch-when="NUMBER" && ng-if="attribute.code != 'age_in_months' && attribute.code != 'age'"> 
+                     
+                     <span ng-switch-when="NUMBER" && ng-if="attribute.code === 'contact_number'" >
+                        <input type="number"
+                               name="foo"
+                               class="form-control"
+                               ng-model="selectedTei[attribute.id]"
+                               ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
+                               d2-attribute-validator
+                               attribute-data={{attribute}}
+                               selected-program-id={{selectedProgram.id}}
+                               selected-tei-id={{selectedTei.trackedEntityInstance}}
+                               d2-number-validator
+                               number-type={{attribute.valueType}}
+                               ng-disabled="selectedOrgUnit.closedStatus || isDisabled(attribute)"
+                               ng-blur="teiValueUpdated(selectedTei, attribute.id)"
+                               ng-required="attribute.mandatory"
+                               />
+                     </span>
+                     <!-- add for AES -->
+
+                     <span ng-switch-when="NUMBER" && ng-if="attribute.code != 'age_in_months' && attribute.code != 'age'">
                         <input type="number"
                                name="foo"
                                class="form-control"
@@ -207,26 +206,7 @@
                                ng-required="attribute.mandatory"
                             />
                     </span>
-                  <!--
-                    <span ng-switch-when="INTEGER_POSITIVE" && ng-if="attribute.code == 'age'">
-                                  <input type="number"
-                                         name="foo"
-                                         class="form-control"
-                                         ng-model="selectedTei[attribute.id]"
-                                         ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
-                                         d2-attribute-validator
-                                         attribute-data={{attribute}}
-                                         selected-program-id={{selectedProgram.id}}
-                                         selected-tei-id={{selectedTei.trackedEntityInstance}}
-                                         d2-number-validator
-                                         number-type={{attribute.valueType}}
-                                         ng-disabled="selectedOrgUnit.closedStatus || isDisabled(attribute)"
-                                         ng-blur="teiValueUpdated(selectedTei, attribute.id)"
-                                         ng-required="attribute.mandatory" max="100"
-                                         ng-change="yearToMonths(selectedTei[attribute.id])"/>
-                    </span>
-					          <span  class="required" ng-show='innerForm.$error.max'>* Age should not be more than 100</span>
-                    -->
+
                     <span ng-switch-when="INTEGER_NEGATIVE">
                         <input type="number"
                                name="foo"
