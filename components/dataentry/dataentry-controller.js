@@ -1428,13 +1428,13 @@ var tei = $scope.currentEvent.trackedEntityInstance;
                     }
                 }
                         if(prStDe.dataElement.id === 'tFZQIt6d9pk'){
-                            CustomIdService.sendMessages("CSF samples sent to apex lab, patient name :"+patientName+"AES Id :"+AesId, phones);
+                            CustomIdService.sendMessages("CSF samples sent to apex lab, patient name :"+patientName+", AES Id :"+AesId, phones);
                         }
                         else if(prStDe.dataElement.id === 'jDiCrciKu7Z'){
-                            CustomIdService.sendMessages("Serum samples sent to apex lab, patient name :"+patientName+"AES Id :"+AesId, phones);
+                            CustomIdService.sendMessages("Serum samples sent to apex lab, patient name :"+patientName+", AES Id :"+AesId, phones);
                         }
                         else if(prStDe.dataElement.id === 'fczAudE6eS6'){
-                            CustomIdService.sendMessages("Whole Blood samples sent to apex lab, patient name :"+patientName+"AES Id :"+AesId, phones);
+                            CustomIdService.sendMessages("Whole Blood samples sent to apex lab, patient name :"+patientName+", AES Id :"+AesId, phones);
                         }
                     });
                 });
@@ -1504,8 +1504,7 @@ var tei = $scope.currentEvent.trackedEntityInstance;
             if (prStDe.dataElement.id === 'UUkruYKpd0P' || prStDe.dataElement.id === 'NNzfSz0GT5l' || prStDe.dataElement.id === 'FMjQDMqKhPQ') {
                 if (value === 'true') {
        var tei = $scope.currentEvent.trackedEntityInstance;            
-                   CustomIdService.getParentId(event.orgUnit).then(function (data1) {
-                    var ouid = data1.parent.id;
+                    var ouid ="jeaBUFagj6m";
                     CustomIdService.getUsersId(ouid).then(function (data) {
                         var users = data.users;
                         var phones = "";
@@ -1529,17 +1528,17 @@ var tei = $scope.currentEvent.trackedEntityInstance;
                 }
 
                         if(prStDe.dataElement.id === 'UUkruYKpd0P'){
-                            CustomIdService.sendMessages("CSF samples sent to NIMHANS lab, patient name :"+patientName+"AES Id :"+AesId, phones);
+                            CustomIdService.sendMessages("CSF samples sent to NIMHANS lab, patient name :"+patientName+", AES Id :"+AesId, phones);
                         }
                         else if(prStDe.dataElement.id === 'NNzfSz0GT5l'){
-                            CustomIdService.sendMessages("Serum samples sent to NIMHANS lab, patient name :"+patientName+"AES Id :"+AesId, phones);
+                            CustomIdService.sendMessages("Serum samples sent to NIMHANS lab, patient name :"+patientName+", AES Id :"+AesId, phones);
                         }
                         else if(prStDe.dataElement.id === 'FMjQDMqKhPQ'){
-                            CustomIdService.sendMessages("Whole Blood samples sent to NIMHANS lab, patient name :"+patientName+"AES Id :"+AesId, phones);
+                            CustomIdService.sendMessages("Whole Blood samples sent to NIMHANS lab, patient name :"+patientName+", AES Id :"+AesId, phones);
                         }
                     });
                 });
-                   });
+                 
 
                     var nimhansProgramStage = "";
                     $timeout(function () {
