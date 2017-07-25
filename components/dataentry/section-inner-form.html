@@ -176,7 +176,8 @@
                 <label class="radio-inline"><input type="radio" value="false" ng-checked="currentEvent[prStDes[de.dataElement.id].dataElement.id]">{{'no' | translate}}</label>
             </div>
         </div>
-        <div ng-switch-when="DATE">
+
+        <div ng-switch-when="DATE"  ng-if="prStDes[de.dataElement.id].dataElement.id != 'BvMIQ4bznKm'">
             <div class="hideInPrint">
                 <input type="text"
                        placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
@@ -187,9 +188,32 @@
                        ng-class="getInputNotifcationClass(prStDes[de.dataElement.id].dataElement.id,false, currentEvent)"
                        ng-model="currentEvent[prStDes[de.dataElement.id].dataElement.id]"
                        ng-required={{isCompulsory(de.dataElement)}}
-                       ng-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.dataElement.id]"
+                       ng-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.dataElement.id]"
                        blur-or-change="saveDatavalue(prStDes[de.dataElement.id])"
                        name="foo"/>
+            </div>
+            <div class="not-for-screen">
+                <input type="text" class="form-control" value={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}>
+            </div>
+        </div>
+<!-- For INTPART -->
+        <div ng-switch-when="DATE" ng-if="prStDes[de.dataElement.id].dataElement.id === 'BvMIQ4bznKm'">
+            <div class="hideInPrint">
+                <input type="text"
+                ng-controller="DataEntryController"
+                      
+                       d2-date
+                       d2-date-validator
+                       placeholder="{{EDDDate}}"
+                       max-date="prStDes[de.dataElement.id].allowFutureDate ? '' : 0"
+                       class="form-control"
+                       ng-class="getInputNotifcationClass(prStDes[de.dataElement.id].dataElement.id,false, currentEvent)"
+                       ng-model="currentEvent[prStDes[de.dataElement.id].dataElement.id]"
+                       ng-required={{isCompulsory(de.dataElement)}}
+                       ng-disabled="EDDDate!=null"
+                       blur-or-change="saveDatavalue(prStDes[de.dataElement.id])"
+                       name="foo"
+                       disabled/>
             </div>
             <div class="not-for-screen">
                 <input type="text" class="form-control" value={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}>

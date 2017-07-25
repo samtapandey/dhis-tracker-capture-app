@@ -65,6 +65,8 @@ trackerCapture.controller('DataEntryController',
     $scope.dashBoardWidgetFirstRun = true;
     $scope.showSelf = true;
     $scope.orgUnitNames = {};
+    $scope.selectedIncidentDate = '';
+    $scope.incidentDateToBeUsed = '';
     
     var eventLockEnabled = false;
     var eventLockHours = 8; //Number of hours before event is locked after completing.
@@ -657,6 +659,20 @@ trackerCapture.controller('DataEntryController',
             $scope.selectedEntity = selections.tei;
             $scope.selectedProgram = selections.pr;
             $scope.selectedEnrollment = selections.selectedEnrollment;
+
+            $scope.selectedIncidentDate = selections.selectedEnrollment.incidentDate;
+            $scope.incidentDateToBeUsed = new Date($scope.selectedIncidentDate);
+
+             var EDDDate = $scope.incidentDateToBeUsed;
+             var numberOfDaysToAdd = 280;
+
+                EDDDate.setDate(EDDDate.getDate()+numberOfDaysToAdd);
+
+                var dd = EDDDate.getDate();
+                var mm = EDDDate.getMonth() + 1;
+                var y = EDDDate.getFullYear();
+
+              $scope.EDDDate = y + '-'+ mm + '-'+ dd;
             
             var ouNames = CurrentSelection.getOrgUnitNames();            
             ouNames[$scope.selectedOrgUnit.id] = $scope.selectedOrgUnit.displayName;
