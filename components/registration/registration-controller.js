@@ -61,8 +61,10 @@ trackerCapture.controller('RegistrationController',
     $scope.tempSelectedStateName = null;
     $scope.tempVillageExist = 'yes';
     $scope.ageInMonths ='oQioOj2ECeU';
-    $scope.ageInYears = 'g6aPl383VUZ';
-    $scope.level2OrgUnitUid  = 'jeaBUFagj6m';
+    $scope.ageInYears = 'g6aPl383VUZ'; 
+    $scope.level2OrgUnitNimhUid  = 'jeaBUFagj6m';
+    $scope.level2OrgUnitNeighUid  = 'dFYKXu8G59t';
+    $scope.level2OrgUnitOtherUid  = 'L3xlHLkhVDf';
 
     $scope.selectedStateName = null;
     $scope.selectedDistrictName = null;
@@ -162,15 +164,29 @@ trackerCapture.controller('RegistrationController',
 
 
 
-    // for casecading
-    /*
-    OrganisationUnitService.getLevel3OrganisationUnit().then(function(level3OrgUnit){
-            $scope.stateList = level3OrgUnit.organisationUnits;
+    // for AES casecading
+        /*
+        OrganisationUnitService.getLevel3OrganisationUnit().then(function(level3OrgUnit){
+                $scope.stateList = level3OrgUnit.organisationUnits;
+            });
+        */
+        OrganisationUnitService.getChildrenOrganisationUnits( $scope.level2OrgUnitNimhUid ).then(function(level2OrgUnitNimh){
+
+            $scope.level2NimhList = level2OrgUnitNimh.children;
+            OrganisationUnitService.getChildrenOrganisationUnits( $scope.level2OrgUnitNeighUid ).then(function(level2OrgUnitNeigh){
+
+                $scope.level2NeighList = level2OrgUnitNeigh.children;
+
+                OrganisationUnitService.getChildrenOrganisationUnits( $scope.level2OrgUnitOtherUid ).then(function(level2OrgUnitOther){
+
+                    $scope.level2OtherList = level2OrgUnitOther.children;
+                    $scope.tempStateList = $scope.level2NimhList.concat( $scope.level2NeighList);
+                    $scope.stateList = $scope.tempStateList.concat($scope.level2OtherList);
+
+                    //$scope.stateList = level2OrgUnitNeigh.children;
+                });
+            });
         });
-    */
-    OrganisationUnitService.getChildrenOrganisationUnits( $scope.level2OrgUnitUid   ).then(function(level3OrgUnit){
-        $scope.stateList = level3OrgUnit.children;
-    });
 
         $scope.getDistrict = function( selectedStateUid ) {
             
@@ -809,6 +825,16 @@ trackerCapture.controller('RegistrationController',
         $scope.ToMonths = ageInYear*12;
         $scope.selectedTei[$scope.ageInMonths] =( Math.round($scope.ToMonths*100))/100;//put calculated value in month text box
         
+    };
+
+     $scope.validateContactNumberLength = function (contactNumber,attributeUid) {
+        if( contactNumber.toString().length > 12 )
+        {
+            //alert(inputValue + ' -- ' + inputValue.toString().length + " -- " + attributeUid);
+            alert( "Please enter valid mobile / landline number. It cannot be more than 12 digits");
+            $scope.selectedTei[attributeUid] = "";
+        }
+
     };
 
     $scope.monthsToYear = function (ageInMonth) {
