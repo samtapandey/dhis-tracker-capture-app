@@ -66,7 +66,9 @@ trackerCapture.controller('DataEntryController',
     $scope.showSelf = true;
     $scope.orgUnitNames = {};
     $scope.selectedIncidentDate = '';
+    $scope.selectedEnrollmentDate = '';
     $scope.incidentDateToBeUsed = '';
+    $scope.numberOfWeeksOfPregancy = '';
     
     var eventLockEnabled = false;
     var eventLockHours = 8; //Number of hours before event is locked after completing.
@@ -659,8 +661,10 @@ trackerCapture.controller('DataEntryController',
             $scope.selectedEntity = selections.tei;
             $scope.selectedProgram = selections.pr;
             $scope.selectedEnrollment = selections.selectedEnrollment;
-
+// FOR INTPART
             $scope.selectedIncidentDate = selections.selectedEnrollment.incidentDate;
+            $scope.selectedEnrollmentDate = selections.selectedEnrollment.enrollmentDate;
+
             $scope.incidentDateToBeUsed = new Date($scope.selectedIncidentDate);
 
              var EDDDate = $scope.incidentDateToBeUsed;
@@ -674,6 +678,21 @@ trackerCapture.controller('DataEntryController',
 
               $scope.EDDDate = y + '-'+ mm + '-'+ dd;
             
+     $scope.nWeeks = function(date1, date2) {
+            var WEEK = 1000 * 60 * 60 * 24 * 7;
+
+            var date1 = new Date(date1);
+            var date2 = new Date(date2);
+            
+            var date1ms = date1.getTime();
+            var date2ms = date2.getTime();
+
+            var diff = Math.abs(date2ms - date1ms);
+            $scope.numberOfWeeksOfPregancy = Math.floor(diff / WEEK);
+                return ( $scope.numberOfWeeksOfPregancy );
+        }
+
+
             var ouNames = CurrentSelection.getOrgUnitNames();            
             ouNames[$scope.selectedOrgUnit.id] = $scope.selectedOrgUnit.displayName;
             CurrentSelection.setOrgUnitNames( ouNames );

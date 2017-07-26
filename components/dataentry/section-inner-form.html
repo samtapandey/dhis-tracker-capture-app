@@ -32,7 +32,8 @@
         </div>
     </div>
     <div ng-if="!prStDes[de.dataElement.id].dataElement.optionSetValue" ng-switch="prStDes[de.dataElement.id].dataElement.valueType">
-        <div ng-switch-when="NUMBER">
+
+        <div ng-switch-when="NUMBER" ng-if="prStDes[de.dataElement.id].dataElement.id != 'nqd02WZwjqn'">
             <div class="hideInPrint">
                     <input type="number"
                            d2-number-validator
@@ -49,6 +50,27 @@
                 <input type="text" class="form-control" value={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}>
             </div>
         </div>
+<!-- INTPART -->
+        <div ng-switch-when="NUMBER" ng-if="prStDes[de.dataElement.id].dataElement.id === 'nqd02WZwjqn'">
+            <div class="hideInPrint">
+                    <input type="number"
+                           d2-number-validator
+                           placeholder="{{numberOfWeeksOfPregancy}}"
+                           number-type={{prStDes[de.dataElement.id].dataElement.valueType}}
+                           class="form-control"
+                            data-ng-init="nWeeks(selectedIncidentDate,selectedEnrollmentDate)"
+                           ng-class="getInputNotifcationClass(prStDes[de.dataElement.id].dataElement.id,false, currentEvent)"
+                           ng-model="currentEvent[prStDes[de.dataElement.id].dataElement.id]"
+                           ng-required={{isCompulsory(de.dataElement)}}
+                           ng-disabled="numberOfWeeksOfPregancy!=null"
+                           ng-blur="saveDatavalue(prStDes[de.dataElement.id], innerForm.foo)"
+                           name="foo"/>
+            </div>
+            <div class="not-for-screen">
+                <input type="text" class="form-control" value={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}>
+            </div>
+        </div>
+
         <div ng-switch-when="PERCENTAGE">
             <div class="hideInPrint">
                 <input type="number"
