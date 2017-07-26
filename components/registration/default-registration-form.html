@@ -138,7 +138,7 @@
                                ng-required="attribute.mandatory" max="100"
                                ng-change="yearToMonths(selectedTei[attribute.id])"/>
                      </span>
-                     <span  class="required" ng-show='innerForm.$error.max'>* Age should not be more than 100</span>					
+                     					
                      <span ng-switch-when="NUMBER" && ng-if="attribute.code != 'age_in_months' && attribute.code != 'age'"> 
                         <input type="number"
                                name="foo"
