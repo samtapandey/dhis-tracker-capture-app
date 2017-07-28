@@ -672,8 +672,8 @@ trackerCapture.controller('DataEntryController',
 
                 EDDDate.setDate(EDDDate.getDate()+numberOfDaysToAdd);
 
-                var dd = EDDDate.getDate();
-                var mm = EDDDate.getMonth() + 1;
+                var dd = ("0" + EDDDate.getDate()).slice(-2);
+                var mm = ("0"+(EDDDate.getMonth()+1)).slice(-2);
                 var y = EDDDate.getFullYear();
 
               $scope.EDDDate = y + '-'+ mm + '-'+ dd;
