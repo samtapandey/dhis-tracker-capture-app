@@ -58,7 +58,7 @@
                                class="form-control"
                                d2-date
                                d2-date-validator 
-                               max-date="attribute.allowFutureDate ? '' : 0"
+                               max-date="attribute.allowFutureDate ? '' : 500"
                                ng-model="selectedTei[attribute.id]"                               
                                ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
                                d2-attribute-validator 

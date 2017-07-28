@@ -44,7 +44,8 @@
                    min-date=""
                    ng-model="selectedEnrollment.incidentDate"
                    ng-disabled="selectedOrgUnit.closedStatus"
-                   ng-change="verifyExpiryDate('selectedEnrollment.incidentDate')"/>
+                   ng-change="verifyExpiryDate('selectedEnrollment.incidentDate')"
+                   blur-or-change="calculateEDDDate()"/>
             <input type="text" class="form-control not-for-screen"/>
         </td>
     </tr>
