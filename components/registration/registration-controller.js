@@ -30,7 +30,7 @@ trackerCapture.controller('RegistrationController',
                 // for AES
                  CustomIDGenerationService,
                  OrganisationUnitService,
-                 AESService) {
+                 DialogService) {
     $scope.today = DateUtils.getToday();
     $scope.trackedEntityForm = null;
     $scope.customRegistrationForm = null;    
@@ -658,6 +658,36 @@ trackerCapture.controller('RegistrationController',
             $scope.selectedTei.attributes = $scope.tei.attributes = [];
         }
 
+        if( !$scope.selectedTei.trackedEntityInstance && ($scope.selectedStateName == "" ||$scope.selectedStateName == null))
+        {
+            var dialogOptions = {
+                headerText: 'registration_error',
+                bodyText: $translate.instant('Please Select State')
+            };
+            DialogService.showDialog({}, dialogOptions);
+            return;
+        }
+        else if( !$scope.selectedTei.trackedEntityInstance && $scope.selectedDistrictName == "" ||$scope.selectedDistrictName == null)
+        {
+            if( $scope.selectedStateName === 'Out of India')
+            {
+                var dialogOptions = {
+                    headerText: 'registration_error',
+                    bodyText: $translate.instant('Please Specify Your Country')
+                };
+            }
+
+            else{
+                var dialogOptions = {
+                    headerText: 'registration_error',
+                    bodyText: $translate.instant('Please Select District')
+                };
+            }
+
+            DialogService.showDialog({}, dialogOptions);
+            return;
+        }
+
         //get tei attributes and their values
         //but there could be a case where attributes are non-mandatory and
         //registration form comes empty, in this case enforce at least one value
@@ -670,6 +700,12 @@ trackerCapture.controller('RegistrationController',
             NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("form_is_empty_fill_at_least_one"));
             return;
         }
+
+
+
+
+
+
         performRegistration(destination);
     };
 
