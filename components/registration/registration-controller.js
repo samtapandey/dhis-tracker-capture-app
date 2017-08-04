@@ -658,34 +658,37 @@ trackerCapture.controller('RegistrationController',
             $scope.selectedTei.attributes = $scope.tei.attributes = [];
         }
 
-        if( !$scope.selectedTei.trackedEntityInstance && ($scope.selectedStateName == "" ||$scope.selectedStateName == null))
+        if ($scope.registrationMode === 'REGISTRATION')
         {
-            var dialogOptions = {
-                headerText: 'registration_error',
-                bodyText: $translate.instant('Please Select State')
-            };
-            DialogService.showDialog({}, dialogOptions);
-            return;
-        }
-        else if( !$scope.selectedTei.trackedEntityInstance && $scope.selectedDistrictName == "" ||$scope.selectedDistrictName == null)
-        {
-            if( $scope.selectedStateName === 'Out of India')
+            if( !$scope.selectedTei.trackedEntityInstance && ($scope.selectedStateName == "" ||$scope.selectedStateName == null))
             {
                 var dialogOptions = {
                     headerText: 'registration_error',
-                    bodyText: $translate.instant('Please Specify Your Country')
+                    bodyText: $translate.instant('Please Select State')
                 };
+                DialogService.showDialog({}, dialogOptions);
+                return;
             }
+            else if( !$scope.selectedTei.trackedEntityInstance && $scope.selectedDistrictName == "" ||$scope.selectedDistrictName == null)
+            {
+                if( $scope.selectedStateName === 'Out of India')
+                {
+                    var dialogOptions = {
+                        headerText: 'registration_error',
+                        bodyText: $translate.instant('Please Specify Your Country')
+                    };
+                }
 
-            else{
-                var dialogOptions = {
-                    headerText: 'registration_error',
-                    bodyText: $translate.instant('Please Select District')
-                };
+                else{
+                    var dialogOptions = {
+                        headerText: 'registration_error',
+                        bodyText: $translate.instant('Please Select District')
+                    };
+                }
+
+                DialogService.showDialog({}, dialogOptions);
+                return;
             }
-
-            DialogService.showDialog({}, dialogOptions);
-            return;
         }
 
         //get tei attributes and their values
@@ -700,11 +703,6 @@ trackerCapture.controller('RegistrationController',
             NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("form_is_empty_fill_at_least_one"));
             return;
         }
-
-
-
-
-
 
         performRegistration(destination);
     };
