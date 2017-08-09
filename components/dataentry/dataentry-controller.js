@@ -65,6 +65,7 @@ trackerCapture.controller('DataEntryController',
     $scope.dashBoardWidgetFirstRun = true;
     $scope.showSelf = true;
     $scope.orgUnitNames = {};
+    //FOR INTPART
     $scope.selectedIncidentDate = '';
     $scope.selectedEnrollmentDate = '';
     $scope.incidentDateToBeUsed = '';
@@ -661,7 +662,9 @@ trackerCapture.controller('DataEntryController',
             $scope.selectedEntity = selections.tei;
             $scope.selectedProgram = selections.pr;
             $scope.selectedEnrollment = selections.selectedEnrollment;
-// FOR INTPART
+            
+
+            // FOR INTPART
             $scope.selectedIncidentDate = selections.selectedEnrollment.incidentDate;
             $scope.selectedEnrollmentDate = selections.selectedEnrollment.enrollmentDate;
 
@@ -2081,23 +2084,7 @@ trackerCapture.controller('DataEntryController',
                     }
                     else {
                         if ($scope.currentStage.allowGenerateNextVisit) {
-                            if($scope.currentStage.repeatable){
-                                $scope.showCreateEvent($scope.currentStage, $scope.eventCreationActions.schedule);
-                            }
-                            else{
-                                var index = -1, stage = null;
-                                for(var i=0; i<$scope.programStages.length && index===-1; i++){
-                                    if($scope.currentStage.id === $scope.programStages[i].id){
-                                        index = i;
-                                        stage = $scope.programStages[i+1];
-                                    }
-                                }
-                                if(stage ){
-                                    if(!$scope.eventsByStage[stage.id] || $scope.eventsByStage[stage.id] && $scope.eventsByStage[stage.id].length === 0){
-                                        $scope.showCreateEvent(stage, $scope.eventCreationActions.schedule);
-                                    }
-                                }                                
-                            }
+                            $scope.showCreateEvent(null, $scope.eventCreationActions.schedule);
                         }
                     }
                 }
