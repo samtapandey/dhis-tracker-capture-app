@@ -452,11 +452,22 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                 return def.promise;
             }            
         },
-        processForm: function(existingTei, formTei, originalTei, attributesById){
+        processForm: function(existingTei, formTei, originalTei, attributesById, finalCustomId){
             var tei = angular.copy(existingTei);            
             tei.attributes = [];
             var formEmpty = true;            
             for(var k in attributesById){
+
+                if( finalCustomId != null && finalCustomId != "" )
+                {
+                    //state
+                    if(  attributesById[k].code === 'doh_id_no' )
+                    {
+                        formTei[k] = finalCustomId;
+                        console.log( " Final Custome Id -- " + finalCustomId );
+                    }
+                }
+
                 if(originalTei && formTei[k] !== originalTei[k] && !formTei[k] && !originalTei[k]){
                     formChanged = true;
                 }
