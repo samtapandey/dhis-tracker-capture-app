@@ -70,6 +70,9 @@ trackerCapture.controller('DataEntryController',
     $scope.selectedEnrollmentDate = '';
     $scope.incidentDateToBeUsed = '';
     $scope.numberOfWeeksOfPregancy = '';
+    $scope.maternalHealthProgramStage = 'Medical & Obstetric history';
+    $scope.eddDateValue = 'BvMIQ4bznKm';
+    $scope.weeksOfPregnencyValue = 'nqd02WZwjqn';
     
     var eventLockEnabled = false;
     var eventLockHours = 8; //Number of hours before event is locked after completing.
@@ -681,19 +684,22 @@ trackerCapture.controller('DataEntryController',
 
               $scope.EDDDate = y + '-'+ mm + '-'+ dd;
             
-     $scope.nWeeks = function(date1, date2) {
+   
+
+       var date1 = $scope.selectedIncidentDate;
+       var date2 = $scope.selectedEnrollmentDate;
             var WEEK = 1000 * 60 * 60 * 24 * 7;
 
-            var date1 = new Date(date1);
-            var date2 = new Date(date2);
+             date1 = new Date(date1);
+             date2 = new Date(date2);
             
             var date1ms = date1.getTime();
             var date2ms = date2.getTime();
 
             var diff = Math.abs(date2ms - date1ms);
             $scope.numberOfWeeksOfPregancy = Math.floor(diff / WEEK);
-                return ( $scope.numberOfWeeksOfPregancy );
-        }
+                
+       
 
 
             var ouNames = CurrentSelection.getOrgUnitNames();            
@@ -1409,7 +1415,7 @@ trackerCapture.controller('DataEntryController',
         }
         else {
             $scope.displayCustomForm = "DEFAULT";
-        }
+        }   
 
         $scope.currentEvent.editingNotAllowed = EventUtils.getEditingStatus($scope.currentEvent, $scope.currentStage, $scope.selectedOrgUnit, $scope.selectedTei, $scope.selectedEnrollment);
         
@@ -1419,7 +1425,31 @@ trackerCapture.controller('DataEntryController',
         
         var period = {event: $scope.currentEvent.event, stage: $scope.currentEvent.programStage, name: $scope.currentEvent.sortingDate};
         $scope.currentPeriod[$scope.currentEvent.programStage] = period;        
-        
+       
+       
+        // for getting EDD AND PRAGNANCY WEEKS
+
+                if ($scope.currentEvent.name === $scope.maternalHealthProgramStage) {
+
+var myEDDValueId ={dataElement:{
+    id: $scope.eddDateValue
+}
+
+}
+                    $scope.currentEvent.BvMIQ4bznKm = $scope.EDDDate;
+$scope.saveDataValueForEvent(myEDDValueId, null , $scope.currentEvent, false);
+
+var numberOfWeeksOfPregancyId ={dataElement:{
+    id: $scope.weeksOfPregnencyValue
+}
+
+}
+
+                    $scope.currentEvent.nqd02WZwjqn = $scope.numberOfWeeksOfPregancy;
+        $scope.saveDataValueForEvent(numberOfWeeksOfPregancyId, null , $scope.currentEvent, false);
+                }
+
+
         //Because of separatae dataentry-controllers for tabular and timeline data entry,
         //the rule effects might already be in place:
         processRuleEffect($scope.currentEvent.event);
