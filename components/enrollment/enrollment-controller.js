@@ -18,6 +18,9 @@ trackerCapture.controller('EnrollmentController',
     
         var selections;
 
+        $scope.selectedEddDate = '';
+        $scope.customEddDate = 'EDD';
+
         //listen for the selected items
         $scope.$on('selectedItems', function (event, args) {
             selections = CurrentSelection.get();
@@ -176,6 +179,11 @@ trackerCapture.controller('EnrollmentController',
             $scope.selectedTei = angular.copy(selections.tei);
             angular.forEach($scope.selectedTei.attributes, function (att) {
                 $scope.selectedTei[att.attribute] = att.value;
+
+                if( att.attribute === 'vvqXiTuKL9V')
+                {
+                    $scope.selectedEddDate = att.value;
+                }
             });
         };
 

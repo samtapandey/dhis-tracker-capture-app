@@ -24,7 +24,9 @@ function($rootScope,
          TEIService,
          EventReportService,
          TCStorageService,
-         GridColumnService) {
+         GridColumnService,
+         //for Tibet
+         CustomIdService) {
     var savedAdvancedSeachOptions = null;
     var defaultColumn = {
         id: 'created',
@@ -40,6 +42,9 @@ function($rootScope,
     $scope.availablePrograms = {};
     $scope.fileNames = {};
     $scope.orgUnitNames = {};
+
+    // for Tibet
+    $scope.selectedOrgUnitLevel = "";
 
     //Selection
     $scope.ouModes = [{name: 'SELECTED'}, {name: 'CHILDREN'}, {name: 'DESCENDANTS'}, {name: 'ACCESSIBLE'}];
@@ -254,6 +259,14 @@ function($rootScope,
                 $scope.restoreGridColumnsFromUserStore();
             });
         }
+
+        // for Tibet
+        CustomIdService.getOrgUnitLevel( $scope.selectedOrgUnit.id ).then(function( responseOrgUnit ){
+            $scope.selectedOrgUnitLevel = responseOrgUnit.level;
+
+        });
+
+
     };
 
     $scope.getProgramAttributes = function(program){
