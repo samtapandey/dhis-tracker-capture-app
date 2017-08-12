@@ -198,7 +198,7 @@ angular.module('trackerCaptureServices')
                                 //var level3OrgUnitCode = responseOrgUnit.organisationUnits[0].code;
                                 CustomIdService.getGrandParentOrgunitCode(tei.orgUnit).then(function(grandParentOrgUnitCodeResponse){
                                 var grandParentOrgUnitCode = grandParentOrgUnitCodeResponse.parent.parent.code;
-								var level3OrgUnitCode = grandParentOrgUnitCodeResponse.parent.parent.parent.code;
+								                var level3OrgUnitCode = grandParentOrgUnitCodeResponse.parent.parent.parent.code;
 								
                                     thiz.createCustomIdAndSave(tei,customIDAttribute,optionSets,attributesById,customRegDate,level3OrgUnitCode,grandParentOrgUnitCode).then(function(response){
                                         def.resolve(response);
@@ -207,14 +207,11 @@ angular.module('trackerCaptureServices')
                                 });
 
                             //});
-
                         }
                         else
                         {
                             def.resolve("Validation Failed");
                         }
-
-
                     });
 
                 });
