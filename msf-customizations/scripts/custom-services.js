@@ -195,7 +195,7 @@ angular.module('trackerCaptureServices')
                             var customRegDate = regDate.split("-")[0].slice(-2);
 
                             CustomIdService.getLevel3OrganisationUnit().then(function(responseOrgUnit){
-                                var level3OrgUnitCode = responseOrgUnit.organisationUnits[0].code;
+                                var level3OrgUnitCode = responseOrgUnit.organisationUnits[1].code;
                                 CustomIdService.getGrandParentOrgunitCode(tei.orgUnit).then(function(grandParentOrgUnitCodeResponse){
                                 var grandParentOrgUnitCode = grandParentOrgUnitCodeResponse.parent.parent.code;
                                     thiz.createCustomIdAndSave(tei,customIDAttribute,optionSets,attributesById,customRegDate,level3OrgUnitCode,grandParentOrgUnitCode).then(function(response){

@@ -342,10 +342,10 @@ trackerCapture.controller('RegistrationController',
         }
         else {
 			// add for Generate CustomId for msf-customizations
-			CustomIDGenerationService.validateAndCreateCustomId($scope.tei,$scope.selectedEnrollment.program,$scope.attributes,destination,$scope.optionSets,$scope.attributesById,$scope.selectedEnrollment.enrollmentDate).then(function(){
-				goToDashboard( destination ? destination : 'DASHBOARD', teiId );
-			});		
-            //goToDashboard(destination ? destination : 'DASHBOARD', teiId);
+			//CustomIDGenerationService.validateAndCreateCustomId($scope.tei,$scope.selectedEnrollment.program,$scope.attributes,destination,$scope.optionSets,$scope.attributesById,$scope.selectedEnrollment.enrollmentDate).then(function(){
+			//	goToDashboard( destination ? destination : 'DASHBOARD', teiId );
+			//});
+            goToDashboard(destination ? destination : 'DASHBOARD', teiId);
         }
     };
 
