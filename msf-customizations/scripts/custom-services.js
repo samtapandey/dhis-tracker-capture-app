@@ -194,17 +194,19 @@ angular.module('trackerCaptureServices')
                             //var customRegDate = regDate.split("-")[1]+regDate.split("-")[0].slice(-2);
                             var customRegDate = regDate.split("-")[0].slice(-2);
 
-                            CustomIdService.getLevel3OrganisationUnit().then(function(responseOrgUnit){
-                                var level3OrgUnitCode = responseOrgUnit.organisationUnits[1].code;
+                            //CustomIdService.getLevel3OrganisationUnit().then(function(responseOrgUnit){
+                                //var level3OrgUnitCode = responseOrgUnit.organisationUnits[0].code;
                                 CustomIdService.getGrandParentOrgunitCode(tei.orgUnit).then(function(grandParentOrgUnitCodeResponse){
                                 var grandParentOrgUnitCode = grandParentOrgUnitCodeResponse.parent.parent.code;
+								var level3OrgUnitCode = grandParentOrgUnitCodeResponse.parent.parent.parent.code;
+								
                                     thiz.createCustomIdAndSave(tei,customIDAttribute,optionSets,attributesById,customRegDate,level3OrgUnitCode,grandParentOrgUnitCode).then(function(response){
                                         def.resolve(response);
                                     });
 
                                 });
 
-                            });
+                            //});
 
                         }
                         else
@@ -440,7 +442,7 @@ angular.module('trackerCaptureServices')
         //http://127.0.0.1:8090/dhis/api/organisationUnits.json?fields=id,name,code,parent[id,name,code,parent[id,name,code]],attributeValues[attribute[id,name,code],value]&paging=false"
         getGrandParentOrgunitCode: function ( orgUnitUid ) {
             var def = $q.defer();
-            $http.get('../api/organisationUnits/' + orgUnitUid+ ".json?fields=id,name,code,parent[id,name,code,parent[id,name,code]],attributeValues[attribute[id,name,code],value]&paging=false").then(function (response) {
+            $http.get('../api/organisationUnits/' + orgUnitUid+ ".json?fields=id,name,code,parent[id,name,code,parent[id,name,code,parent[id,name,code]]],attributeValues[attribute[id,name,code],value]&paging=false").then(function (response) {
 
                 def.resolve(response.data);
             });

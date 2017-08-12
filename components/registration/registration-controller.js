@@ -107,7 +107,6 @@ trackerCapture.controller('RegistrationController',
 	
 	
 	
-	
     var selectedOrgUnit = CurrentSelection.get()["orgUnit"];
 
     if (selectedOrgUnit) {
@@ -220,7 +219,6 @@ trackerCapture.controller('RegistrationController',
 				}
 
 			},0);					
-			
             fetchGeneratedAttributes();
             if ($scope.selectedProgram && $scope.selectedProgram.id) {
                 if ($scope.selectedProgram.dataEntryForm && $scope.selectedProgram.dataEntryForm.htmlCode) {
@@ -342,10 +340,9 @@ trackerCapture.controller('RegistrationController',
         }
         else {
 			// add for Generate CustomId for msf-customizations
-			//CustomIDGenerationService.validateAndCreateCustomId($scope.tei,$scope.selectedEnrollment.program,$scope.attributes,destination,$scope.optionSets,$scope.attributesById,$scope.selectedEnrollment.enrollmentDate).then(function(){
-			//	goToDashboard( destination ? destination : 'DASHBOARD', teiId );
-			//});
-            goToDashboard(destination ? destination : 'DASHBOARD', teiId);
+			
+				goToDashboard(destination ? destination : 'DASHBOARD', teiId);
+			
         }
     };
 
@@ -357,6 +354,8 @@ trackerCapture.controller('RegistrationController',
             var reg = registrationResponse.response ? registrationResponse.response : {};
             if (reg.reference && reg.status === 'SUCCESS') {
                 $scope.tei.trackedEntityInstance = reg.reference;
+				
+				
 
                 if ($scope.registrationMode === 'PROFILE') {
                     reloadProfileWidget();
@@ -410,6 +409,12 @@ trackerCapture.controller('RegistrationController',
                         $scope.model.savingRegistration = false;
                     }
                 }
+				
+				CustomIDGenerationService.validateAndCreateCustomId($scope.tei,$scope.selectedProgram.id,$scope.attributes,destination,$scope.optionSets,$scope.attributesById,$scope.selectedEnrollment.enrollmentDate).then(function(){
+				
+				});	
+				
+	
             }
             else {//update/registration has failed
                 var headerText = $scope.tei && $scope.tei.trackedEntityInstance ? $translate.instant('update_error') :
