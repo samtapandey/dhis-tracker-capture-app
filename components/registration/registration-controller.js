@@ -228,7 +228,7 @@ trackerCapture.controller('RegistrationController',
           if( !$scope.selectedTei[$scope.parentName] && $scope.selectedTei[$scope.parentName] == undefined)
           {
               //alert( $scope.parentDisplayName );
-              $scope.selectedTei[$scope.parentName] = $scope.parentDisplayName;//put default value on load form
+              $scope.selectedTei[$scope.parentName] = $scope.selectedOrgUnit.displayName;//put default value on load for
           }
 
            $scope.calculateEDDDate();
