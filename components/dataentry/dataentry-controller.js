@@ -700,8 +700,16 @@ trackerCapture.controller('DataEntryController',
             $scope.selectedEnrollment = selections.selectedEnrollment;
 
             // For TIBET
-            $scope.selectedDateOfBirth = selections.tei.attributes[9].value;
-            //alert($scope.selectedDateOfBirth);
+
+            for(var i=0;i<selections.tei.attributes.length;i++)
+                {
+                    if(selections.tei.attributes[i].displayName === 'DOB')
+                        {
+                            $scope.selectedDateOfBirth = selections.tei.attributes[i].value;
+                        }
+                }
+
+           //alert($scope.selectedDateOfBirth);
             $scope.selectedDateOfBirthToBeUsed = new Date($scope.selectedDateOfBirth);
 
             //Six Weeks Addition in Date Of Birth
