@@ -65,6 +65,47 @@ trackerCapture.controller('DataEntryController',
     $scope.dashBoardWidgetFirstRun = true;
     $scope.showSelf = true;
     $scope.orgUnitNames = {};
+    //For TIBET
+    $scope.selectedDateOfBirth = '';
+    $scope.selectedDateOfBirthToBeUsed = '';
+    $scope.immunizationProgramStage = 'Immunization';
+    $scope.BCGVaccineDateUid = 'ojKf9W56rbm';
+    $scope.Polio0vaccineUid = 'yXVVdbflNPc';
+    $scope.DPTPolioVaccine1Uid = 'QFptOwhCLIe';
+    $scope.DPTPolioVaccine2Uid = 'pCT69XtxZvZ';
+    $scope.DPTPolioVaccine3Uid = 'zZGKWWwgmZ4';
+    $scope.DPTPolioVaccine4Uid = 'idUNG4gzLAj';
+    $scope.DPTPolioVaccine5Uid = 'D3caGcviSOj';
+    $scope.HepatitisBvaccineatbirthUid = 'xLRqrZMpGh7';
+    $scope.HepatitisBvaccine1Uid = 'paXFclJDxnI';
+    $scope.HepatitisBvaccine2Uid = 'ecimXGwFG7p';
+    $scope.HepatitisBvaccine3Uid = 'GJXre52Sn1e';
+    $scope.HaemophilusinfluenzaBvaccine1Uid = 'DdnXoaRcmkd';
+	$scope.HaemophilusinfluenzaBvaccine2Uid = 'LBuoYJLa1LO';
+	$scope.HaemophilusinfluenzaBvaccine3Uid = 'w5YN6tYNiep';
+    $scope.HaemophilusinfluenzaBvaccine4Uid = 'kx3Uwqk3fg3';
+    $scope.Measlesvaccine1Uid = 'BXLMwk2eQXT';
+	$scope.Measlesvaccine2Uid = 'PuY8Qzml7Ow';
+    $scope.MMRUid = 'KQQN1fUblE6';
+
+    $scope.Rotavaccine1Uid = 'wDsKEnzm3Cm';
+	$scope.Rotavaccine2Uid = 'BagVOQ9v0GM';
+	$scope.Rotavaccine3Uid = 'UxWRsxnRMJH';
+	
+	$scope.HepatitisAvaccine1Uid = 'vimWoihiGHl';
+	$scope.HepatitisAvaccine2Uid = 'KxCbR5aMd8b';
+	
+	$scope.Typhoidvaccine1Uid = 'z12pSn8xrUp';
+	$scope.Typhoidvaccine2Uid = 'nhA9ZOILHDM';
+	
+	$scope.ChickenpoxvaccineUid = 'BO4uKi8W9AD';
+	
+	$scope.VitaminA1Uid = 'JmHKSf8i3vx';
+	$scope.VitaminA2Uid = 'AIYeA0da66p';
+	
+	$scope.IPVVaccineDateUid = 'AUEEhbYuylr';
+	
+	$scope.OthersVaccineUid = 'TNWCkS6aOEV';
     
     var eventLockEnabled = false;
     var eventLockHours = 8; //Number of hours before event is locked after completing.
@@ -657,6 +698,128 @@ trackerCapture.controller('DataEntryController',
             $scope.selectedEntity = selections.tei;
             $scope.selectedProgram = selections.pr;
             $scope.selectedEnrollment = selections.selectedEnrollment;
+
+            // For TIBET
+            $scope.selectedDateOfBirth = selections.tei.attributes[9].value;
+            //alert($scope.selectedDateOfBirth);
+            $scope.selectedDateOfBirthToBeUsed = new Date($scope.selectedDateOfBirth);
+
+            //Six Weeks Addition in Date Of Birth
+            var sixWeeksIncrementDate = new Date($scope.selectedDateOfBirth);
+            var sixWeeksAddition = 7*6;
+            sixWeeksIncrementDate.setDate(sixWeeksIncrementDate.getDate()+sixWeeksAddition);
+
+            var dd = ("0" + sixWeeksIncrementDate.getDate()).slice(-2);
+            var mm = ("0"+(sixWeeksIncrementDate.getMonth()+1)).slice(-2);
+            var y = sixWeeksIncrementDate.getFullYear();
+          $scope.sixWeeksIncrementDate = y + '-'+ mm + '-'+ dd;
+
+          //Eight Weeks Addition in Date Of Birth
+          var eightWeeksIncrementDate = new Date($scope.selectedDateOfBirth);
+          var eightWeeksAddition = 7*8;
+          eightWeeksIncrementDate.setDate(eightWeeksIncrementDate.getDate()+eightWeeksAddition);
+
+          var dd = ("0" + eightWeeksIncrementDate.getDate()).slice(-2);
+          var mm = ("0"+(eightWeeksIncrementDate.getMonth()+1)).slice(-2);
+          var y = eightWeeksIncrementDate.getFullYear();
+        $scope.eightWeeksIncrementDate = y + '-'+ mm + '-'+ dd;
+
+          //Ten Weeks Addition in Date Of Birth
+          var tenWeeksIncrementDate = new Date($scope.selectedDateOfBirth);
+          var tenWeeksAddition = 7*10;
+
+          tenWeeksIncrementDate.setDate(tenWeeksIncrementDate.getDate()+tenWeeksAddition);
+          
+            var dd = ("0" + tenWeeksIncrementDate.getDate()).slice(-2);
+            var mm = ("0"+(tenWeeksIncrementDate.getMonth()+1)).slice(-2);
+            var y = tenWeeksIncrementDate.getFullYear();
+            $scope.tenWeeksIncrementDate = y + '-'+ mm + '-'+ dd;
+
+        //Forteen Weeks Addition in Date Of Birth
+        var forteenWeeksIncrementDate = new Date($scope.selectedDateOfBirth);
+        var forteenWeeksAddition = 7*14;
+
+        forteenWeeksIncrementDate.setDate(forteenWeeksIncrementDate.getDate()+forteenWeeksAddition);
+        
+        var dd = ("0" + forteenWeeksIncrementDate.getDate()).slice(-2);
+        var mm = ("0"+(forteenWeeksIncrementDate.getMonth()+1)).slice(-2);
+        var y = forteenWeeksIncrementDate.getFullYear();
+        $scope.forteenWeeksIncrementDate = y + '-'+ mm + '-'+ dd;
+
+        //2 Months addition in DOB
+        var twoMonthsIncrementDate = new Date($scope.selectedDateOfBirth);
+        var twoMonthsAddition = 2;
+        twoMonthsIncrementDate.setMonth(twoMonthsIncrementDate.getMonth() + twoMonthsAddition);
+        var dd = ("0" + twoMonthsIncrementDate.getDate()).slice(-2);
+        var mm = ("0"+(twoMonthsIncrementDate.getMonth()+1)).slice(-2);
+        var y = twoMonthsIncrementDate.getFullYear();
+        $scope.twoMonthsIncrementDate = y + '-'+ mm + '-'+ dd;
+
+        //8 Months addition in DOB
+        var eightMonthsIncrementDate = new Date($scope.selectedDateOfBirth);
+        var eightMonthsAddition = 8;
+        eightMonthsIncrementDate.setMonth(eightMonthsIncrementDate.getMonth() + eightMonthsAddition);
+        var dd = ("0" + eightMonthsIncrementDate.getDate()).slice(-2);
+        var mm = ("0"+(eightMonthsIncrementDate.getMonth()+1)).slice(-2);
+        var y = eightMonthsIncrementDate.getFullYear();
+        $scope.eightMonthsIncrementDate = y + '-'+ mm + '-'+ dd;
+
+        //9 Months addition in DOB
+        var nineMonthsIncrementDate = new Date($scope.selectedDateOfBirth);
+        var nineMonthsAddition = 9;
+        nineMonthsIncrementDate.setMonth(nineMonthsIncrementDate.getMonth() + nineMonthsAddition);
+        var dd = ("0" + nineMonthsIncrementDate.getDate()).slice(-2);
+        var mm = ("0"+(nineMonthsIncrementDate.getMonth()+1)).slice(-2);
+        var y = nineMonthsIncrementDate.getFullYear();
+        $scope.nineMonthsIncrementDate = y + '-'+ mm + '-'+ dd;
+
+        //12 Months addition in DOB
+        var twelveMonthsIncrementDate = new Date($scope.selectedDateOfBirth);
+        var twelveMonthsAddition = 12;
+        twelveMonthsIncrementDate.setMonth(twelveMonthsIncrementDate.getMonth() + twelveMonthsAddition);
+        var dd = ("0" + twelveMonthsIncrementDate.getDate()).slice(-2);
+        var mm = ("0"+(twelveMonthsIncrementDate.getMonth()+1)).slice(-2);
+        var y = twelveMonthsIncrementDate.getFullYear();
+        $scope.twelveMonthsIncrementDate = y + '-'+ mm + '-'+ dd;
+
+        //15 Months addition in DOB
+        var fifteenMonthsIncrementDate = new Date($scope.selectedDateOfBirth);
+        var fifteenMonthsAddition = 15;
+        fifteenMonthsIncrementDate.setMonth(fifteenMonthsIncrementDate.getMonth() + fifteenMonthsAddition);
+        var dd = ("0" + fifteenMonthsIncrementDate.getDate()).slice(-2);
+        var mm = ("0"+(fifteenMonthsIncrementDate.getMonth()+1)).slice(-2);
+        var y = fifteenMonthsIncrementDate.getFullYear();
+        $scope.fifteenMonthsIncrementDate = y + '-'+ mm + '-'+ dd;
+
+        //18 Months addition in DOB
+        var eighteenMonthsIncrementDate = new Date($scope.selectedDateOfBirth);
+        var eighteenMonthsAddition = 18;
+        eighteenMonthsIncrementDate.setMonth(eighteenMonthsIncrementDate.getMonth() + eighteenMonthsAddition);
+        var dd = ("0" + eighteenMonthsIncrementDate.getDate()).slice(-2);
+        var mm = ("0"+(eighteenMonthsIncrementDate.getMonth()+1)).slice(-2);
+        var y = eighteenMonthsIncrementDate.getFullYear();
+        $scope.eighteenMonthsIncrementDate = y + '-'+ mm + '-'+ dd;
+
+        //24 Months addition in DOB
+        var twentyFourMonthsIncrementDate = new Date($scope.selectedDateOfBirth);
+        var twentyFourMonthsAddition = 24;
+        twentyFourMonthsIncrementDate.setMonth(twentyFourMonthsIncrementDate.getMonth() + twentyFourMonthsAddition);
+       // alert(twentyFourMonthsIncrementDate);
+        var dd = ("0" + twentyFourMonthsIncrementDate.getDate()).slice(-2);
+        var mm = ("0"+(twentyFourMonthsIncrementDate.getMonth()+1)).slice(-2);
+        var y = twentyFourMonthsIncrementDate.getFullYear();
+        $scope.twentyFourMonthsIncrementDate = y + '-'+ mm + '-'+ dd;
+        
+        
+        //6 Years addition in DOB
+        var sixYearsIncrementDate = new Date($scope.selectedDateOfBirth);
+        var sixYearsAddition = 12*6;
+        sixYearsIncrementDate.setMonth(sixYearsIncrementDate.getMonth() + sixYearsAddition);
+        
+        var dd = ("0" + sixYearsIncrementDate.getDate()).slice(-2);
+        var mm = ("0"+(sixYearsIncrementDate.getMonth()+1)).slice(-2);
+        var y = sixYearsIncrementDate.getFullYear();
+        $scope.sixYearsIncrementDate = y + '-'+ mm + '-'+ dd;
             
             var ouNames = CurrentSelection.getOrgUnitNames();            
             ouNames[$scope.selectedOrgUnit.id] = $scope.selectedOrgUnit.displayName;
@@ -1380,7 +1543,255 @@ trackerCapture.controller('DataEntryController',
         $scope.currentStageEventsOriginal = angular.copy($scope.currentStageEvents);
         
         var period = {event: $scope.currentEvent.event, stage: $scope.currentEvent.programStage, name: $scope.currentEvent.sortingDate};
-        $scope.currentPeriod[$scope.currentEvent.programStage] = period;        
+        $scope.currentPeriod[$scope.currentEvent.programStage] = period;     
+        //For TIBET
+        if($scope.currentEvent.name === $scope.immunizationProgramStage)
+            {
+               //1 BCG Vaccine Date (As per schedule ) 
+                var BCGVaccineDate={
+                    dataElement:{
+                        id:$scope.BCGVaccineDateUid
+                    }
+                }
+                
+                $scope.currentEvent.ojKf9W56rbm = $scope.selectedDateOfBirth;
+                $scope.saveDataValueForEvent(BCGVaccineDate, null , $scope.currentEvent, false);
+                //2 Polio 0 vaccine (As per As per schedule ) 
+                var Polio0vaccine={
+                    dataElement:{
+                        id:$scope.Polio0vaccineUid
+                    }
+                }
+                $scope.currentEvent.yXVVdbflNPc = $scope.selectedDateOfBirth;
+                $scope.saveDataValueForEvent(Polio0vaccine, null , $scope.currentEvent, false);
+                //3 DPT /Polio vaccine 1 (As per schedule) 
+                var DPTPolioVaccine1={
+                    dataElement:{
+                        id:$scope.DPTPolioVaccine1Uid
+                    }
+                }
+                $scope.currentEvent.QFptOwhCLIe = $scope.sixWeeksIncrementDate;
+                $scope.saveDataValueForEvent(DPTPolioVaccine1, null , $scope.currentEvent, false);
+                //4 DPT /Polio vaccine 2 (As per schedule) 
+                var DPTPolioVaccine2={
+                    dataElement:{
+                        id:$scope.DPTPolioVaccine2Uid
+                    }
+                }
+                $scope.currentEvent.pCT69XtxZvZ = $scope.tenWeeksIncrementDate;
+                $scope.saveDataValueForEvent(DPTPolioVaccine2, null , $scope.currentEvent, false);
+                //5 DPT /Polio vaccine 3 (As per schedule)
+                var DPTPolioVaccine3={
+                    dataElement:{
+                        id:$scope.DPTPolioVaccine3Uid
+                    }
+                }
+                $scope.currentEvent.zZGKWWwgmZ4 = $scope.forteenWeeksIncrementDate;
+                $scope.saveDataValueForEvent(DPTPolioVaccine3, null , $scope.currentEvent, false);
+                //6 DPT /Polio vaccine 4 (As per schedule)
+                var DPTPolioVaccine4={
+                    dataElement:{
+                        id:$scope.DPTPolioVaccine4Uid
+                    }
+                }
+                $scope.currentEvent.idUNG4gzLAj = $scope.twentyFourMonthsIncrementDate;
+                $scope.saveDataValueForEvent(DPTPolioVaccine4, null , $scope.currentEvent, false);
+                //7 DPT /Polio vaccine 5 (As per schedule)
+                var DPTPolioVaccine5={
+                    dataElement:{
+                        id:$scope.DPTPolioVaccine5Uid
+                    }
+                }
+                $scope.currentEvent.D3caGcviSOj = $scope.sixYearsIncrementDate;
+                $scope.saveDataValueForEvent(DPTPolioVaccine5, null , $scope.currentEvent, false);
+                //8 Date Given - As per schedule - At-birth within 12 hrs  
+                var HepatitisBvaccineatbirth={
+                    dataElement:{
+                        id:$scope.HepatitisBvaccineatbirthUid
+                    }
+                }
+                $scope.currentEvent.xLRqrZMpGh7 = $scope.selectedDateOfBirth;
+                $scope.saveDataValueForEvent(HepatitisBvaccineatbirth, null , $scope.currentEvent, false);
+                //9 Date Given - As per schedule - 6 Week - Autopopulated as per DOB  
+                var HepatitisBvaccine1={
+                    dataElement:{
+                        id:$scope.HepatitisBvaccine1Uid
+                    }
+                }
+                $scope.currentEvent.paXFclJDxnI = $scope.sixWeeksIncrementDate;
+                $scope.saveDataValueForEvent(HepatitisBvaccine1, null , $scope.currentEvent, false);
+                //10 Date Given - As per schedule - 10 weeks - Autopopulated as per DOB 
+                var HepatitisBvaccine2={
+                    dataElement:{
+                        id:$scope.HepatitisBvaccine2Uid
+                    }
+                }
+                $scope.currentEvent.ecimXGwFG7p = $scope.tenWeeksIncrementDate;
+                $scope.saveDataValueForEvent(HepatitisBvaccine2, null , $scope.currentEvent, false);
+                //11 Date Given - As per schedule - 14 weeks - Autopopulated as per DOB 
+                var HepatitisBvaccine3={
+                    dataElement:{
+                        id:$scope.HepatitisBvaccine3Uid
+                    }
+                }
+                $scope.currentEvent.GJXre52Sn1e = $scope.forteenWeeksIncrementDate;
+                $scope.saveDataValueForEvent(HepatitisBvaccine3, null , $scope.currentEvent, false);
+                //12 Date Given - As per schedule - 6 Weeks  - Autopopulated as per DOB 
+                var HaemophilusinfluenzaBvaccine1={
+                    dataElement:{
+                        id:$scope.HaemophilusinfluenzaBvaccine1Uid
+                    }
+                }
+                $scope.currentEvent.DdnXoaRcmkd = $scope.sixWeeksIncrementDate;
+                $scope.saveDataValueForEvent(HaemophilusinfluenzaBvaccine1, null , $scope.currentEvent, false);
+                //13 Date Given - As per schedule - 10 week - Autopopulated as per DOB 
+                var HaemophilusinfluenzaBvaccine2={
+                    dataElement:{
+                        id:$scope.HaemophilusinfluenzaBvaccine2Uid
+                    }
+                }
+                $scope.currentEvent.LBuoYJLa1LO = $scope.tenWeeksIncrementDate;
+                $scope.saveDataValueForEvent(HaemophilusinfluenzaBvaccine2, null , $scope.currentEvent, false);
+                //14 Date Given - As per schedule - 14 Weeks - Autopopulated as per DOB 
+                var HaemophilusinfluenzaBvaccine3={
+                    dataElement:{
+                        id:$scope.HaemophilusinfluenzaBvaccine3Uid
+                    }
+                }
+                $scope.currentEvent.w5YN6tYNiep = $scope.forteenWeeksIncrementDate;
+                $scope.saveDataValueForEvent(HaemophilusinfluenzaBvaccine3, null , $scope.currentEvent, false);
+                //15 Date Given - As per schedule - 12- 18 Months - Autopopulated as per DOB  
+                var HaemophilusinfluenzaBvaccine4={
+                    dataElement:{
+                        id:$scope.HaemophilusinfluenzaBvaccine4Uid
+                    }
+                }
+                $scope.currentEvent.kx3Uwqk3fg3 = $scope.eighteenMonthsIncrementDate;
+                $scope.saveDataValueForEvent(HaemophilusinfluenzaBvaccine4, null , $scope.currentEvent, false);
+                //16 Date Given - As per schedule - end of 9 month - 12 Month - Autopopulated as per DOB 
+                var Measlesvaccine1={
+                    dataElement:{
+                        id:$scope.Measlesvaccine1Uid
+                    }
+                }
+                $scope.currentEvent.BXLMwk2eQXT = $scope.twelveMonthsIncrementDate;
+                $scope.saveDataValueForEvent(Measlesvaccine1, null , $scope.currentEvent, false);
+                 //17 Date Given - As per schedule - 16 - 24 Month - Autopopulated as per DOB 
+                 var Measlesvaccine2={
+                    dataElement:{
+                        id:$scope.Measlesvaccine2Uid
+                    }
+                }
+                $scope.currentEvent.PuY8Qzml7Ow = $scope.twentyFourMonthsIncrementDate;
+                $scope.saveDataValueForEvent(Measlesvaccine2, null , $scope.currentEvent, false);
+                //18 Date Given - As per schedule - 15 - 24 Month - Autopopulated as per DOB  
+                var MMR={
+                    dataElement:{
+                        id:$scope.MMRUid
+                    }
+                }
+                $scope.currentEvent.KQQN1fUblE6 = $scope.twentyFourMonthsIncrementDate;
+                $scope.saveDataValueForEvent(MMR, null , $scope.currentEvent, false);
+
+                //19 Date Given - As per schedule -  8 week - Autopopulated as per DOB 
+                var Rotavaccine1={
+                    dataElement:{
+                        id:$scope.Rotavaccine1Uid
+                    }
+                }
+                $scope.currentEvent.wDsKEnzm3Cm = $scope.eightWeeksIncrementDate;
+                $scope.saveDataValueForEvent(Rotavaccine1, null , $scope.currentEvent, false);
+
+                //20 Date Given - As per schedule - 14 weeks - Autopopulated as per DOB   
+                var Rotavaccine2={
+                    dataElement:{
+                        id:$scope.Rotavaccine2Uid
+                    }
+                }
+                $scope.currentEvent.BagVOQ9v0GM = $scope.forteenWeeksIncrementDate;
+                $scope.saveDataValueForEvent(Rotavaccine2, null , $scope.currentEvent, false);
+
+                //21 Date Given - As per schedule - 8 Month - Autopopulated as per DOB 
+                var Rotavaccine3={
+                    dataElement:{
+                        id:$scope.Rotavaccine3Uid
+                    }
+                }
+                $scope.currentEvent.UxWRsxnRMJH = $scope.eightMonthsIncrementDate;
+                $scope.saveDataValueForEvent(Rotavaccine3, null , $scope.currentEvent, false);
+
+                //22 Date Given - As per schedule - 12 Months  - 18 months Autopopulated as per DOB  
+                var HepatitisAvaccine1={
+                    dataElement:{
+                        id:$scope.HepatitisAvaccine1Uid
+                    }
+                }
+                $scope.currentEvent.vimWoihiGHl = $scope.eighteenMonthsIncrementDate;
+                $scope.saveDataValueForEvent(HepatitisAvaccine1, null , $scope.currentEvent, false);
+
+                //23 Date Given - As per schedule - Seprate by 6 - 18 Month - Autopopulated as per DOB (only for inactivated vaccine)
+                var HepatitisAvaccine2={
+                    dataElement:{
+                        id:$scope.HepatitisAvaccine2Uid
+                    }
+                }
+                $scope.currentEvent.KxCbR5aMd8b = $scope.eighteenMonthsIncrementDate;
+                $scope.saveDataValueForEvent(HepatitisAvaccine2, null , $scope.currentEvent, false);
+
+                //24 Date Given - As per schedule - 9 Month - Autopopulated as per DOB 
+                var Typhoidvaccine1={
+                    dataElement:{
+                        id:$scope.Typhoidvaccine1Uid
+                    }
+                }
+                $scope.currentEvent.z12pSn8xrUp = $scope.nineMonthsIncrementDate;
+                $scope.saveDataValueForEvent(Typhoidvaccine1, null , $scope.currentEvent, false);
+
+                //25 Date Given - As per schedule - Booster dose - 2 Years or 15 Month interval - Autopopulated as per DOB
+                var Typhoidvaccine2={
+                    dataElement:{
+                        id:$scope.Typhoidvaccine2Uid
+                    }
+                }
+                $scope.currentEvent.nhA9ZOILHDM = $scope.twentyFourMonthsIncrementDate;
+                $scope.saveDataValueForEvent(Typhoidvaccine2, null , $scope.currentEvent, false);
+
+                //26 Date Given - As per schedule - 12 - 15 Months - Autopopulated as per DOB
+                var Chickenpoxvaccine={
+                    dataElement:{
+                        id:$scope.ChickenpoxvaccineUid
+                    }
+                }
+                $scope.currentEvent.BO4uKi8W9AD = $scope.fifteenMonthsIncrementDate;
+                $scope.saveDataValueForEvent(Chickenpoxvaccine, null , $scope.currentEvent, false);
+
+                //27 Date Given - As per schedule - 9 - 12 Month - Autopopulated as per DOB 
+                var VitaminA1={
+                    dataElement:{
+                        id:$scope.VitaminA1Uid
+                    }
+                }
+                $scope.currentEvent.JmHKSf8i3vx = $scope.twelveMonthsIncrementDate;
+                $scope.saveDataValueForEvent(VitaminA1, null , $scope.currentEvent, false);
+
+                //28 Date Given - As per schedule - 16 - 24 Month - Autopopulated as per DOB 
+                var VitaminA2={
+                    dataElement:{
+                        id:$scope.VitaminA2Uid
+                    }
+                }
+                $scope.currentEvent.AIYeA0da66p = $scope.fifteenMonthsIncrementDate;
+                $scope.saveDataValueForEvent(VitaminA2, null , $scope.currentEvent, false);
+
+                //29 Date Given - As per schedule - 2 Month  - Autopopulated as per DOB
+                var IPVVaccineDate={
+                    dataElement:{
+                        id:$scope.IPVVaccineDateUid
+                    }
+                }
+                $scope.currentEvent.AUEEhbYuylr = $scope.twoMonthsIncrementDate;
+                $scope.saveDataValueForEvent(IPVVaccineDate, null , $scope.currentEvent, false);
+            }
         
         //Because of separatae dataentry-controllers for tabular and timeline data entry,
         //the rule effects might already be in place:
