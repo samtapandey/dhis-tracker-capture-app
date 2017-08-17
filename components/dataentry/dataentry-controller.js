@@ -1404,41 +1404,41 @@ trackerCapture.controller('DataEntryController',
 
             if (prStDe.dataElement.id === 'tFZQIt6d9pk' || prStDe.dataElement.id === 'jDiCrciKu7Z' || prStDe.dataElement.id === 'fczAudE6eS6') {
                 if (value === 'true') {
-var tei = $scope.currentEvent.trackedEntityInstance;
-                CustomIdService.getParentId(event.orgUnit).then(function (data1) {
-                    var ouid = data1.parent.id;
-                    CustomIdService.getUsersId(ouid).then(function (data) {
-                        var users = data.users;
-                        var phones = "";
-                        for (var i = 0; i < users.length; i++) {
-                            if (users[i].phoneNumber) {
-                                phones = phones + users[i].phoneNumber + ",";
+                    var tei = $scope.currentEvent.trackedEntityInstance;
+                    CustomIdService.getParentId(event.orgUnit).then(function (data1) {
+                        var ouid = data1.parent.id;
+                        CustomIdService.getUsersId(ouid).then(function (data) {
+                            var users = data.users;
+                            var phones = "";
+                            for (var i = 0; i < users.length; i++) {
+                                if (users[i].phoneNumber) {
+                                    phones = phones + users[i].phoneNumber + ",";
+                                }
                             }
-                        }
-                        CustomIdService.getPhysiciansNum(tei).then(function (data) {
-                var physicians = data.attributes;
-                var patientName = "";
-                var AesId = "";
-                for (var i = 0; i < physicians.length; i++) {
-                    if (physicians[i].attribute === 'B8Ohks1Zf91') {
-                        patientName = physicians[i].value;
-                    }
-                    if (physicians[i].attribute === 'eZAMzTucu0x') {
-                        AesId = physicians[i].value;
-                    }
-                }
-                        if(prStDe.dataElement.id === 'tFZQIt6d9pk'){
-                            CustomIdService.sendMessages("CSF samples sent to apex lab, patient name :"+patientName+", AES Id :"+AesId, phones);
-                        }
-                        else if(prStDe.dataElement.id === 'jDiCrciKu7Z'){
-                            CustomIdService.sendMessages("Serum samples sent to apex lab, patient name :"+patientName+", AES Id :"+AesId, phones);
-                        }
-                        else if(prStDe.dataElement.id === 'fczAudE6eS6'){
-                            CustomIdService.sendMessages("Whole Blood samples sent to apex lab, patient name :"+patientName+", AES Id :"+AesId, phones);
-                        }
+                            CustomIdService.getPhysiciansNum(tei).then(function (data) {
+                                var physicians = data.attributes;
+                                var patientName = "";
+                                var AesId = "";
+                                for (var i = 0; i < physicians.length; i++) {
+                                    if (physicians[i].attribute === 'B8Ohks1Zf91') {
+                                        patientName = physicians[i].value;
+                                    }
+                                    if (physicians[i].attribute === 'eZAMzTucu0x') {
+                                        AesId = physicians[i].value;
+                                    }
+                                }
+                                if (prStDe.dataElement.id === 'tFZQIt6d9pk') {
+                                    CustomIdService.sendMessages("CSF samples sent to apex lab, patient name :" + patientName + ", AES Id :" + AesId, phones);
+                                }
+                                else if (prStDe.dataElement.id === 'jDiCrciKu7Z') {
+                                    CustomIdService.sendMessages("Serum samples sent to apex lab, patient name :" + patientName + ", AES Id :" + AesId, phones);
+                                }
+                                else if (prStDe.dataElement.id === 'fczAudE6eS6') {
+                                    CustomIdService.sendMessages("Whole Blood samples sent to apex lab, patient name :" + patientName + ", AES Id :" + AesId, phones);
+                                }
+                            });
+                        });
                     });
-                });
-                });
                     var newProgramStage = "";
                     $timeout(function () {
                         var dhis2ParentEvents = { events: [] };
@@ -1503,8 +1503,8 @@ var tei = $scope.currentEvent.trackedEntityInstance;
 
             if (prStDe.dataElement.id === 'UUkruYKpd0P' || prStDe.dataElement.id === 'NNzfSz0GT5l' || prStDe.dataElement.id === 'FMjQDMqKhPQ') {
                 if (value === 'true') {
-       var tei = $scope.currentEvent.trackedEntityInstance;            
-                    var ouid ="jeaBUFagj6m";
+                    var tei = $scope.currentEvent.trackedEntityInstance;
+                    var ouid = "jeaBUFagj6m";
                     CustomIdService.getUsersId(ouid).then(function (data) {
                         var users = data.users;
                         var phones = "";
@@ -1514,31 +1514,31 @@ var tei = $scope.currentEvent.trackedEntityInstance;
                             }
                         }
 
-                          CustomIdService.getPhysiciansNum(tei).then(function (data) {
-                var physicians = data.attributes;
-                var patientName = "";
-                var AesId = "";
-                for (var i = 0; i < physicians.length; i++) {
-                    if (physicians[i].attribute === 'B8Ohks1Zf91') {
-                        patientName = physicians[i].value;
-                    }
-                    if (physicians[i].attribute === 'eZAMzTucu0x') {
-                        AesId = physicians[i].value;
-                    }
-                }
+                        CustomIdService.getPhysiciansNum(tei).then(function (data) {
+                            var physicians = data.attributes;
+                            var patientName = "";
+                            var AesId = "";
+                            for (var i = 0; i < physicians.length; i++) {
+                                if (physicians[i].attribute === 'B8Ohks1Zf91') {
+                                    patientName = physicians[i].value;
+                                }
+                                if (physicians[i].attribute === 'eZAMzTucu0x') {
+                                    AesId = physicians[i].value;
+                                }
+                            }
 
-                        if(prStDe.dataElement.id === 'UUkruYKpd0P'){
-                            CustomIdService.sendMessages("CSF samples sent to NIMHANS lab, patient name :"+patientName+", AES Id :"+AesId, phones);
-                        }
-                        else if(prStDe.dataElement.id === 'NNzfSz0GT5l'){
-                            CustomIdService.sendMessages("Serum samples sent to NIMHANS lab, patient name :"+patientName+", AES Id :"+AesId, phones);
-                        }
-                        else if(prStDe.dataElement.id === 'FMjQDMqKhPQ'){
-                            CustomIdService.sendMessages("Whole Blood samples sent to NIMHANS lab, patient name :"+patientName+", AES Id :"+AesId, phones);
-                        }
+                            if (prStDe.dataElement.id === 'UUkruYKpd0P') {
+                                CustomIdService.sendMessages("CSF samples sent to NIMHANS lab, patient name :" + patientName + ", AES Id :" + AesId, phones);
+                            }
+                            else if (prStDe.dataElement.id === 'NNzfSz0GT5l') {
+                                CustomIdService.sendMessages("Serum samples sent to NIMHANS lab, patient name :" + patientName + ", AES Id :" + AesId, phones);
+                            }
+                            else if (prStDe.dataElement.id === 'FMjQDMqKhPQ') {
+                                CustomIdService.sendMessages("Whole Blood samples sent to NIMHANS lab, patient name :" + patientName + ", AES Id :" + AesId, phones);
+                            }
+                        });
                     });
-                });
-                 
+
 
                     var nimhansProgramStage = "";
                     $timeout(function () {
@@ -2348,54 +2348,91 @@ var tei = $scope.currentEvent.trackedEntityInstance;
                     CustomIdService.getDataValues(eventc, tei).then(function (data2) {
                         var values = data2.dataValues;
                         var arrayDEs = "";
+                        var arrayDEs2 = [];
                         for (var i = 0; i < values.length; i++) {
-
-                            if (values[i].dataElement === 'cQb70BNRVP2' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "CSF- Haemophilus influenzae PCR,"; }
-                            if (values[i].dataElement === 'z8cBAMynjMD' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + " CSF- Neisseria meningitidis PCR,"; }
-                            if (values[i].dataElement === 'TEwh6deEqLx' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "CSF- Scrub Typhus PCR,"; }
-                            if (values[i].dataElement === 'u1tVuQK0SdP' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "CSF- Streptococcus pneumoniae PCR,"; }
-                            if (values[i].dataElement === 'FOcozyCNLRg' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "CSF- Enterovirus PCR,"; }
-                            if (values[i].dataElement === 'UELFMLIBwIB' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "CSF - HSV PCR,"; }
-                            if (values[i].dataElement === 'S8WGc5h1GLh' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "Serum - West Nile Virus IgM ELISA,"; }
-                            if (values[i].dataElement === 'xw487RVnvqZ' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "Serum - Dengue IgM ELISA,"; }
-                            if (values[i].dataElement === 'JGUJLviOcFS' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "CSF - JE IgM,"; }
-                            if (values[i].dataElement === 'rshKNXqDUUG' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "Serum - JE IgM,"; }
-                            if (values[i].dataElement === 'zTcOSPpQv1U' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "CSF - Leptospira DNA PCR,"; }
-                            if (values[i].dataElement === 'FUmazOWerB5' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "CSF - Trioplex PCR,"; }
-                            if (values[i].dataElement === 'PEzWnQoTQuc' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "Serum - Trioplex PCR,"; }
-                            if (values[i].dataElement === 'AlGyRi4L2Dq' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "Serum - Scrub typhus IgM ELISA,"; }
-                            if (values[i].dataElement === 'UDnFjfw1b1l' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "Serum- Leptospira IgM ELISA,"; }
-                            if (values[i].dataElement === 'njvwZYFjBX5' && (values[i].value === 'Scrub typhus positive')) { arrayDEs = arrayDEs + "Whole blood - Scrub Typhus PCR,"; }
-                            if (values[i].dataElement === 'K24hMmaJvrV' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "CSF sample 2 - JE IgM,"; }
-                            if (values[i].dataElement === 'KVJSXRivsHL' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "Serum sample 2 - JE IgM,"; }
-                            if (values[i].dataElement === 'DG9PTsQmliZ' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "Serum - JE IgM,"; }
-                            if (values[i].dataElement === 'LpT8hxDYDHq' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "Serum - JE IgM,"; }
-                            if (values[i].dataElement === 'N6Yfs0jO6FY' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "CSF - JE IgM,"; }
-                            if (values[i].dataElement === 'SyVZXV49iO9' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "Serum - Scrub typhus IgM,"; }
-                            if (values[i].dataElement === 'gPIcDt4ug3L' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "Discharge serum - JE IgM,"; }
-                            if (values[i].dataElement === 'e03UnsK7g4Y' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "Discharge serum - Scrub typhus IgM,"; }
-                            if (values[i].dataElement === 'tNhYQKLuGnM' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "Serum - Scrub typhus IgM ELISA,"; }
-                            if (values[i].dataElement === 'DHpb0qQ61ZE' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "Serum - Dengue NS1 rapid,"; }
-                            if (values[i].dataElement === 'vVBtXVY5Mwf' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "Serum - Dengue NS1 ELISA,"; }
-                            if (values[i].dataElement === 'mcZ5Pb1SIcU' && (values[i].value === 'Positive' || values[i].value === 'Equivocal')) { arrayDEs = arrayDEs + "Serum - Dengue IgM ELISA,"; }
-                            if (values[i].dataElement === 'GBLuVWTAzYM' && (values[i].value === 'Probable scrub typhus' || values[i].value === 'Confirmed scrub typhus')) { arrayDEs = arrayDEs + "Serum - Scrub Typhus IFA,"; }
-                            if (values[i].dataElement === 'wBZftjodDAi') { arrayDEs = arrayDEs + "CSF - PRNT,"; }
-                            if (values[i].dataElement === 'CvndfGdof4G' && (values[i].value === 'Zika positive' || values[i].value === 'Dengue positive' || values[i].value === 'Chikungunya positive' || values[i].value === 'Multiple positive for Zika, Dengue and Chikungunya')) { arrayDEs = arrayDEs + "CSF - Trioplex PCR,"; }
-                            if (values[i].dataElement === 'sGWZEwEHEKJ' && (values[i].value === 'JE positive' || values[i].value === 'Dengue 1 positive' || values[i].value === 'Dengue 2 positive' || values[i].value === 'Dengue 3 positive' || values[i].value === 'Dengue 4 positive' || values[i].value === 'West Nile positive' || values[i].value === 'Flavivirus positive')) { arrayDEs = arrayDEs + "Serum - PRNT,"; }
-                            if (values[i].dataElement === 'R1oKDLzfRxA' && (values[i].value === 'Zika positive' || values[i].value === 'Dengue positive' || values[i].value === 'Chikungunya positive' || values[i].value === 'Multiple positive for Zika, Dengue and Chikungunya')) { arrayDEs = arrayDEs + "Serum - Trioplex PCR,"; }
-
+                            if (values[i].value === 'Positive') {
+                                arrayDEs = arrayDEs + "Positive : ";
+                                if (values[i].dataElement === 'cQb70BNRVP2') { arrayDEs = arrayDEs + "CSF- Haemophilus influenzae PCR,"; }
+                                if (values[i].dataElement === 'z8cBAMynjMD') { arrayDEs = arrayDEs + " CSF- Neisseria meningitidis PCR,"; }
+                                if (values[i].dataElement === 'TEwh6deEqLx') { arrayDEs = arrayDEs + "CSF- Scrub Typhus PCR,"; }
+                                if (values[i].dataElement === 'u1tVuQK0SdP') { arrayDEs = arrayDEs + "CSF- Streptococcus pneumoniae PCR,"; }
+                                if (values[i].dataElement === 'FOcozyCNLRg') { arrayDEs = arrayDEs + "CSF- Enterovirus PCR,"; }
+                                if (values[i].dataElement === 'UELFMLIBwIB') { arrayDEs = arrayDEs + "CSF - HSV PCR,"; }
+                                if (values[i].dataElement === 'S8WGc5h1GLh') { arrayDEs = arrayDEs + "Serum - West Nile Virus IgM ELISA,"; }
+                                if (values[i].dataElement === 'xw487RVnvqZ') { arrayDEs = arrayDEs + "Serum - Dengue IgM ELISA,"; }
+                                if (values[i].dataElement === 'JGUJLviOcFS') { arrayDEs = arrayDEs + "CSF - JE IgM,"; }
+                                if (values[i].dataElement === 'rshKNXqDUUG') { arrayDEs = arrayDEs + "Serum - JE IgM,"; }
+                                if (values[i].dataElement === 'zTcOSPpQv1U') { arrayDEs = arrayDEs + "CSF - Leptospira DNA PCR,"; }
+                                if (values[i].dataElement === 'FUmazOWerB5') { arrayDEs = arrayDEs + "CSF - Trioplex PCR,"; }
+                                if (values[i].dataElement === 'PEzWnQoTQuc') { arrayDEs = arrayDEs + "Serum - Trioplex PCR,"; }
+                                if (values[i].dataElement === 'AlGyRi4L2Dq') { arrayDEs = arrayDEs + "Serum - Scrub typhus IgM ELISA,"; }
+                                if (values[i].dataElement === 'UDnFjfw1b1l') { arrayDEs = arrayDEs + "Serum- Leptospira IgM ELISA,"; }
+                                if (values[i].dataElement === 'njvwZYFjBX5' && (values[i].value === 'Scrub typhus positive')) { arrayDEs = arrayDEs + "Whole blood - Scrub Typhus PCR,"; }
+                                if (values[i].dataElement === 'K24hMmaJvrV') { arrayDEs = arrayDEs + "CSF sample 2 - JE IgM,"; }
+                                if (values[i].dataElement === 'KVJSXRivsHL') { arrayDEs = arrayDEs + "Serum sample 2 - JE IgM,"; }
+                                if (values[i].dataElement === 'DG9PTsQmliZ') { arrayDEs = arrayDEs + "Serum - JE IgM,"; }
+                                if (values[i].dataElement === 'LpT8hxDYDHq') { arrayDEs = arrayDEs + "Serum - JE IgM,"; }
+                                if (values[i].dataElement === 'N6Yfs0jO6FY') { arrayDEs = arrayDEs + "CSF - JE IgM,"; }
+                                if (values[i].dataElement === 'SyVZXV49iO9') { arrayDEs = arrayDEs + "Serum - Scrub typhus IgM,"; }
+                                if (values[i].dataElement === 'gPIcDt4ug3L') { arrayDEs = arrayDEs + "Discharge serum - JE IgM,"; }
+                                if (values[i].dataElement === 'e03UnsK7g4Y') { arrayDEs = arrayDEs + "Discharge serum - Scrub typhus IgM,"; }
+                                if (values[i].dataElement === 'tNhYQKLuGnM') { arrayDEs = arrayDEs + "Serum - Scrub typhus IgM ELISA,"; }
+                                if (values[i].dataElement === 'DHpb0qQ61ZE') { arrayDEs = arrayDEs + "Serum - Dengue NS1 rapid,"; }
+                                if (values[i].dataElement === 'vVBtXVY5Mwf') { arrayDEs = arrayDEs + "Serum - Dengue NS1 ELISA,"; }
+                                if (values[i].dataElement === 'mcZ5Pb1SIcU') { arrayDEs = arrayDEs + "Serum - Dengue IgM ELISA,"; }
+                                if (values[i].dataElement === 'GBLuVWTAzYM' && (values[i].value === 'Probable scrub typhus' || values[i].value === 'Confirmed scrub typhus')) { arrayDEs = arrayDEs + "Serum - Scrub Typhus IFA,"; }
+                                if (values[i].dataElement === 'wBZftjodDAi') { arrayDEs = arrayDEs + "CSF - PRNT,"; }
+                                if (values[i].dataElement === 'CvndfGdof4G' && (values[i].value === 'Zika positive' || values[i].value === 'Dengue positive' || values[i].value === 'Chikungunya positive' || values[i].value === 'Multiple positive for Zika, Dengue and Chikungunya')) { arrayDEs = arrayDEs + "CSF - Trioplex PCR,"; }
+                                if (values[i].dataElement === 'sGWZEwEHEKJ' && (values[i].value === 'JE positive' || values[i].value === 'Dengue 1 positive' || values[i].value === 'Dengue 2 positive' || values[i].value === 'Dengue 3 positive' || values[i].value === 'Dengue 4 positive' || values[i].value === 'West Nile positive' || values[i].value === 'Flavivirus positive')) { arrayDEs = arrayDEs + "Serum - PRNT,"; }
+                                if (values[i].dataElement === 'R1oKDLzfRxA' && (values[i].value === 'Zika positive' || values[i].value === 'Dengue positive' || values[i].value === 'Chikungunya positive' || values[i].value === 'Multiple positive for Zika, Dengue and Chikungunya')) { arrayDEs = arrayDEs + "Serum - Trioplex PCR,"; }
+                            }
+                            if (values[i].value === 'Equivocal') {
+                                arrayDEs = arrayDEs + "Equivocal : ";
+                                if (values[i].dataElement === 'cQb70BNRVP2') { arrayDEs = arrayDEs + "CSF- Haemophilus influenzae PCR,"; }
+                                if (values[i].dataElement === 'z8cBAMynjMD') { arrayDEs = arrayDEs + " CSF- Neisseria meningitidis PCR,"; }
+                                if (values[i].dataElement === 'TEwh6deEqLx') { arrayDEs = arrayDEs + "CSF- Scrub Typhus PCR,"; }
+                                if (values[i].dataElement === 'u1tVuQK0SdP') { arrayDEs = arrayDEs + "CSF- Streptococcus pneumoniae PCR,"; }
+                                if (values[i].dataElement === 'FOcozyCNLRg') { arrayDEs = arrayDEs + "CSF- Enterovirus PCR,"; }
+                                if (values[i].dataElement === 'UELFMLIBwIB') { arrayDEs = arrayDEs + "CSF - HSV PCR,"; }
+                                if (values[i].dataElement === 'S8WGc5h1GLh') { arrayDEs = arrayDEs + "Serum - West Nile Virus IgM ELISA,"; }
+                                if (values[i].dataElement === 'xw487RVnvqZ') { arrayDEs = arrayDEs + "Serum - Dengue IgM ELISA,"; }
+                                if (values[i].dataElement === 'JGUJLviOcFS') { arrayDEs = arrayDEs + "CSF - JE IgM,"; }
+                                if (values[i].dataElement === 'rshKNXqDUUG') { arrayDEs = arrayDEs + "Serum - JE IgM,"; }
+                                if (values[i].dataElement === 'zTcOSPpQv1U') { arrayDEs = arrayDEs + "CSF - Leptospira DNA PCR,"; }
+                                if (values[i].dataElement === 'FUmazOWerB5') { arrayDEs = arrayDEs + "CSF - Trioplex PCR,"; }
+                                if (values[i].dataElement === 'PEzWnQoTQuc') { arrayDEs = arrayDEs + "Serum - Trioplex PCR,"; }
+                                if (values[i].dataElement === 'AlGyRi4L2Dq') { arrayDEs = arrayDEs + "Serum - Scrub typhus IgM ELISA,"; }
+                                if (values[i].dataElement === 'UDnFjfw1b1l') { arrayDEs = arrayDEs + "Serum- Leptospira IgM ELISA,"; }
+                                if (values[i].dataElement === 'K24hMmaJvrV') { arrayDEs = arrayDEs + "CSF sample 2 - JE IgM,"; }
+                                if (values[i].dataElement === 'KVJSXRivsHL') { arrayDEs = arrayDEs + "Serum sample 2 - JE IgM,"; }
+                                if (values[i].dataElement === 'DG9PTsQmliZ') { arrayDEs = arrayDEs + "Serum - JE IgM,"; }
+                                if (values[i].dataElement === 'LpT8hxDYDHq') { arrayDEs = arrayDEs + "Serum - JE IgM,"; }
+                                if (values[i].dataElement === 'N6Yfs0jO6FY') { arrayDEs = arrayDEs + "CSF - JE IgM,"; }
+                                if (values[i].dataElement === 'SyVZXV49iO9') { arrayDEs = arrayDEs + "Serum - Scrub typhus IgM,"; }
+                                if (values[i].dataElement === 'gPIcDt4ug3L') { arrayDEs = arrayDEs + "Discharge serum - JE IgM,"; }
+                                if (values[i].dataElement === 'e03UnsK7g4Y') { arrayDEs = arrayDEs + "Discharge serum - Scrub typhus IgM,"; }
+                                if (values[i].dataElement === 'tNhYQKLuGnM') { arrayDEs = arrayDEs + "Serum - Scrub typhus IgM ELISA,"; }
+                                if (values[i].dataElement === 'DHpb0qQ61ZE') { arrayDEs = arrayDEs + "Serum - Dengue NS1 rapid,"; }
+                                if (values[i].dataElement === 'vVBtXVY5Mwf') { arrayDEs = arrayDEs + "Serum - Dengue NS1 ELISA,"; }
+                                if (values[i].dataElement === 'mcZ5Pb1SIcU') { arrayDEs = arrayDEs + "Serum - Dengue IgM ELISA,"; }
+                                if (values[i].dataElement === 'wBZftjodDAi') { arrayDEs = arrayDEs + "CSF - PRNT,"; }
+                            }
 
                         }
                         if (arrayDEs !== "") {
+                            for (var i = 0, charsLength = arrayDEs.length; i < charsLength; i += 80) {
+                                arrayDEs2.push(arrayDEs.substring(i, i + 80));
+                            }
+                        for(var l=0;l<arrayDEs2.length;l++){
+                            if (phones1 !== "") {
+                                CustomIdService.sendMessages("Patient Name : "+ patientName + " and ID : " + AesId + " Test results : " + arrayDEs2[l], phones1);
+                            }
+                            if (phones2 !== "") {
+                                CustomIdService.sendMessages("Patient Name : "+ patientName + " and ID : " + AesId + " Test results : " + arrayDEs2[l], phones2);
+                            }
+                        }
 
-                            if(phones1 !== ""){
-                                CustomIdService.sendMessages("These Samples are positive " + arrayDEs + "of patient : " + patientName + "and ID : " + AesId, phones1);
-                            }
-                            if(phones2 !== ""){
-                                CustomIdService.sendMessages("These Samples are positive " + arrayDEs + "of patient : " + patientName + "and ID : " + AesId, phones2);
-                            }
-                            
- 
+
                         }
                     });
                 });
