@@ -58,6 +58,11 @@ trackerCapture.controller('RegistrationController',
   $scope.updatedEDDDate = '';
   $scope.generatedCustomId = '';
 
+  $scope.calculatedDOB ='anFTfRZyC1Q';
+  $scope.ageInYears = 'GjdO5wHfmru'; 
+  $scope.selectedDOB = '';
+  $scope.selectedDOBToBeUsed = '';
+
 
     $scope.attributesById = CurrentSelection.getAttributesById();
 
@@ -669,6 +674,46 @@ trackerCapture.controller('RegistrationController',
             }
         });
     };
+
+
+    // custom methods
+
+    $scope.ageToDob = function (inputAge) {
+        if(inputAge != undefined && inputAge!= ''){
+
+        var coustomDate = new Date();
+        var coustomYear = coustomDate.getFullYear();
+
+        var yearOfDob = parseInt( coustomYear ) - parseInt( inputAge )
+        
+        $scope.selectedTei[$scope.calculatedDOB] = yearOfDob + '-07-01';//put calculated value in month text box
+        }
+        else{
+            $scope.selectedTei[$scope.calculatedDOB] = '';
+        }
+    };
+
+    $scope.dobToAge = function (inputDob) {
+        if(inputDob != undefined && inputDob!= ''){
+        
+            var selectedDOBObject = new Date(inputDob);
+
+            var currentDateObject = new Date();
+
+            var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+            
+            var diffDays = Math.round(Math.abs((currentDateObject.getTime() - selectedDOBObject.getTime()) / (oneDay)));
+
+            var diffYear = diffDays/365;
+            
+            $scope.selectedTei[$scope.ageInYears] = ( Math.round(diffYear*100))/100;//put calculated value in month text box
+        }
+        else{
+            $scope.selectedTei[$scope.ageInYears] = '';
+        }
+    };
+
+    
 
     $scope.cancelRegistrationWarning = function (cancelFunction) {
         var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById);
