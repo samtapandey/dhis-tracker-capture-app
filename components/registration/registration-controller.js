@@ -700,11 +700,15 @@ trackerCapture.controller('RegistrationController',
 
             var currentDateObject = new Date();
 
-            var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+            //var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
             
-            var diffDays = Math.round(Math.abs((currentDateObject.getTime() - selectedDOBObject.getTime()) / (oneDay)));
+            //var diffDays = Math.round(Math.abs((currentDateObject.getTime() - selectedDOBObject.getTime()) / (oneDay)));
 
-            var diffYear = diffDays/365;
+            //var diffYear = diffDays/365;
+
+            var differenceInMonths = (currentDateObject.getFullYear()*12 + currentDateObject.getMonth()) - (selectedDOBObject.getFullYear()*12 + selectedDOBObject.getMonth());
+            var diffYear = differenceInMonths/12;
+
             
             $scope.selectedTei[$scope.ageInYears] = ( Math.round(diffYear*100))/100;//put calculated value in month text box
         }
