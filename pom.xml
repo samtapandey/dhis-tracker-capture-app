@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.hisp.dhis</groupId>
-  <artifactId>dhis-app-tracker-capture</artifactId>
+  <artifactId>dhis-app-tracker-capture-tibet</artifactId>
   <version>2.26-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>Tracker capture</name>
@@ -45,14 +45,21 @@
   </issueManagement>
 
   <distributionManagement>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
+
     <repository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+      <id>shimla-nexus</id>
+      <name>Shimla nexus repo</name>
+      <url>http://hospdev.hispindia.org/nexus/content/repositories/org.hispindia.dhis2/</url>
     </repository>
+    <!-- use the following if you ARE using a snapshot version. -->
+    <snapshotRepository>
+      <id>shimla-nexus</id>
+      <name>Shimla nexus repo</name>
+      <url>http://hospdev.hispindia.org/nexus/content/repositories/org.hispindia.dhis2/</url>
+      <uniqueVersion>false</uniqueVersion>
+    </snapshotRepository>
+
+
   </distributionManagement>
 
   <build>
