@@ -709,8 +709,23 @@ trackerCapture.controller('RegistrationController',
             var differenceInMonths = (currentDateObject.getFullYear()*12 + currentDateObject.getMonth()) - (selectedDOBObject.getFullYear()*12 + selectedDOBObject.getMonth());
             var diffYear = differenceInMonths/12;
 
+            var yearInDecimal = ( Math.round(diffYear*100))/100;
+
+            var year = yearInDecimal.toString().split(".")[0];
+            var ageInMonth = ( yearInDecimal.toString().split(".")[1]*12)/100;
+
+            ageInMonth = Math.round(ageInMonth);
+
+            //ageInMonth = ( Math.round(ageInMonth*100))/100;
+
+            if( isNaN(ageInMonth)){
+                $scope.selectedTei[$scope.ageInYears] = year + ".0";
+            }
+
+            else{
+                $scope.selectedTei[$scope.ageInYears] = year + "." + ageInMonth.toString().split(".")[0];//put calculated value in month text box
+            }    
             
-            $scope.selectedTei[$scope.ageInYears] = ( Math.round(diffYear*100))/100;//put calculated value in month text box
         }
         else{
             $scope.selectedTei[$scope.ageInYears] = '';
