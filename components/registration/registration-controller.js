@@ -458,9 +458,9 @@ trackerCapture.controller('RegistrationController',
                 var str = $scope.selectedTei.gVGIL7DJp4b;
                 lastName = str.substr(0, 2).toUpperCase();
             }
-            if( $scope.selectedTei.dusXGzDqnoZ != undefined)
+            if( $scope.selectedTei.fOVzjBOZdvQ != undefined)
             {
-                var dob = $scope.selectedTei.dusXGzDqnoZ;
+                var dob = $scope.selectedTei.fOVzjBOZdvQ;
                 dobYear = dob.substr(2, 2);
             }
             if( $scope.selectedTei.TN7r3ws7IG9 != undefined)
