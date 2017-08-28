@@ -89,22 +89,23 @@ trackerCapture.controller('outgoingController', ["$rootScope", "$scope", "$timeo
 					//	console.log(data1);
 					for (var i = 0; i < data1.trackedEntityInstances.length; i++) {
 						tei = data1.trackedEntityInstances[i].trackedEntityInstance;
-						pdata = data1;
+						
 
 						$.ajax({
 							async: false,
 							type: "GET",
 							url: "../api/events.json?program=L78QzNqadTV&trackedEntityInstance=" + tei + "&paging=none",
-							success: function (data) {
+							success: function (data5) {
 
-								for (var p = 0; p < data.events.length; p++) {
-									if ($scope.selectedOrgUnitUid == data.events[p].orgUnit) { }
+								for (var p = 0; p < data5.events.length; p++) {
+									if ($scope.selectedOrgUnitUid == data5.events[p].orgUnit) { }
 									else {
 
-										if (data.events[p].status == "COMPLETED") { }
+										if (data5.events[p].status == "COMPLETED") { }
 										else {
+											pdata = data5.events[p];
 											var psd = "";
-											var ps = data.events[p].programStage;
+											var ps = data5.events[p].programStage;
 											if (ps == "zLxGw3kEplq") { psd = "ART-HIV Counselling and Testing"; }
 											else if (ps == "YRSdePjzzfs") { psd = "ART Follow-up"; }
 											else {
@@ -146,7 +147,7 @@ trackerCapture.controller('outgoingController', ["$rootScope", "$scope", "$timeo
 														}
 
 													}
-													var ouname = $scope.getOuName(data.orgUnit);
+													var ouname = $scope.getOuName(pdata.orgUnit);
 													teidata.rf = ouname;
 													filtered_data.push(teidata);
 													//console.log(filtered_data);
