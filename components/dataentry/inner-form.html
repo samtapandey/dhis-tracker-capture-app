@@ -32,7 +32,7 @@
         </div>
     </div>
     <div ng-if="!prStDe.dataElement.optionSetValue" ng-switch="prStDe.dataElement.valueType">
-        <div ng-switch-when="NUMBER">
+        <div ng-switch-when="NUMBER" ng-if="prStDe.dataElement.id != 'nqd02WZwjqn' && prStDe.dataElement.id != 'o7CzR6ACgOn'">
             <div class="hideInPrint">
                 <input type="number"
                        number-type={{prStDe.dataElement.valueType}}
@@ -49,6 +49,27 @@
                 <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
             </div>
         </div>
+
+        <!-- FOR INTPART -->
+
+        <div ng-switch-when="NUMBER" ng-if="prStDe.dataElement.id === 'nqd02WZwjqn' || prStDe.dataElement.id === 'o7CzR6ACgOn'">
+            <div class="hideInPrint">
+                <input type="number"
+                       number-type={{prStDe.dataElement.valueType}}
+                       class="form-control"
+                       ng-class="getInputNotifcationClass(prStDe.dataElement.id,false, currentEvent)"
+                       ng-model="currentEvent[prStDe.dataElement.id]"
+                       d2-number-validator
+                       ng-required={{prStDe.compulsory}}
+                       disabled="disabled"
+                       ng-blur="saveDatavalue(prStDe, innerForm.foo)"
+                       name="foo"/>
+            </div>
+            <div class="not-for-screen">
+                <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
+            </div>
+        </div>
+
         <div ng-switch-when="PERCENTAGE">
             <div class="hideInPrint">
                 <input type="number"
@@ -208,7 +229,7 @@
                 <label class="radio-inline"><input type="radio" value="false" ng-model="currentEvent[prStDe.dataElement.id]">{{'no' | translate}}</label>
             </div>
         </div>
-        <div ng-switch-when="DATE">
+        <div ng-switch-when="DATE" ng-if="prStDe.dataElement.id != 'BvMIQ4bznKm'">
             <div class="hideInPrint">
                 <input type="text"
                        placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
@@ -227,6 +248,29 @@
                 <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
             </div>
         </div>
+
+<!-- FOR INTPART -->
+
+            <div ng-switch-when="DATE" ng-if="prStDe.dataElement.id === 'BvMIQ4bznKm'">
+                <div class="hideInPrint">
+                    <input type="text"
+                        placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
+                        d2-date
+                        d2-date-validator
+                        max-date="prStDe.allowFutureDate ? '' : 0"
+                        class="form-control"
+                        ng-class="getInputNotifcationClass(prStDe.dataElement.id,false, currentEvent)"
+                        ng-model="currentEvent[prStDe.dataElement.id]"
+                        ng-required={{prStDe.compulsory}}
+                        disabled="disabled";
+                        blur-or-change="saveDatavalue(prStDe, innerForm.foo)"
+                        name="foo"/>
+                </div>
+                <div class="not-for-screen">
+                    <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
+                </div>
+            </div>
+
         <div ng-switch-when="TRUE_ONLY">
             <div class="hideInPrint">
                 <input type="checkbox"

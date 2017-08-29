@@ -70,9 +70,13 @@ trackerCapture.controller('DataEntryController',
     $scope.selectedEnrollmentDate = '';
     $scope.incidentDateToBeUsed = '';
     $scope.numberOfWeeksOfPregancy = '';
+    $scope.ANCnumberOfWeeksOfPregancy = '';
     $scope.maternalHealthProgramStage = 'Medical & Obstetric history';
+    $scope.ANCFirstVisit ='ANC first visit';
+    $scope.ANCVisits = 'ANC visits 2-4';
     $scope.eddDateValue = 'BvMIQ4bznKm';
     $scope.weeksOfPregnencyValue = 'nqd02WZwjqn';
+    $scope.NoOfWeeksOfPregnencyUid = 'o7CzR6ACgOn';
     
     var eventLockEnabled = false;
     var eventLockHours = 8; //Number of hours before event is locked after completing.
@@ -698,9 +702,7 @@ trackerCapture.controller('DataEntryController',
 
             var diff = Math.abs(date2ms - date1ms);
             $scope.numberOfWeeksOfPregancy = Math.floor(diff / WEEK);
-                
-       
-
+            
 
             var ouNames = CurrentSelection.getOrgUnitNames();            
             ouNames[$scope.selectedOrgUnit.id] = $scope.selectedOrgUnit.displayName;
@@ -926,7 +928,7 @@ trackerCapture.controller('DataEntryController',
         
         return $scope.stageNeedsEvent(stage, completeRequired, errorResponseContainer);
     };
-    
+
     $scope.stageNeedsEvent = function (stage, completeRequired, errorResponseContainer) {
         
         if(!stage){
@@ -1429,26 +1431,49 @@ trackerCapture.controller('DataEntryController',
        
         // for getting EDD AND PRAGNANCY WEEKS
 
-                if ($scope.currentEvent.name === $scope.maternalHealthProgramStage) {
+            var date01 = $scope.currentEvent.dueDate;
+            var date02 = $scope.selectedIncidentDate;
 
-var myEDDValueId ={dataElement:{
-    id: $scope.eddDateValue
-}
+            var WEEK = 1000 * 60 * 60 * 24 * 7;
+            
+            date01 = new Date(date01);
+            date02 = new Date(date02);
 
-}
+            var date01ms = date01.getTime();
+            var date02ms = date02.getTime();
+
+            var diff = Math.abs(date02ms - date01ms);
+            $scope.ANCnumberOfWeeksOfPregancy = Math.floor(diff / WEEK);
+            
+
+
+                if ($scope.currentEvent.name === $scope.maternalHealthProgramStage || $scope.currentEvent.name ===  $scope.ANCFirstVisit || $scope.currentEvent.name ===  $scope.ANCVisits) {
+
+                var myEDDValueId ={
+                    dataElement:{
+                    id: $scope.eddDateValue
+                        }
+                    }
                     $scope.currentEvent.BvMIQ4bznKm = $scope.EDDDate;
-$scope.saveDataValueForEvent(myEDDValueId, null , $scope.currentEvent, false);
+                    $scope.saveDataValueForEvent(myEDDValueId, null , $scope.currentEvent, false);
 
-var numberOfWeeksOfPregancyId ={dataElement:{
-    id: $scope.weeksOfPregnencyValue
-}
-
-}
+                var numberOfWeeksOfPregancyId ={
+                    dataElement:{
+                    id: $scope.weeksOfPregnencyValue
+                        }
+                    }
 
                     $scope.currentEvent.nqd02WZwjqn = $scope.numberOfWeeksOfPregancy;
-        $scope.saveDataValueForEvent(numberOfWeeksOfPregancyId, null , $scope.currentEvent, false);
-                }
+                    $scope.saveDataValueForEvent(numberOfWeeksOfPregancyId, null , $scope.currentEvent, false);
+                    }
 
+                    var NoOfWeeksOfPregnencyId ={
+                        dataElement:{
+                        id: $scope.NoOfWeeksOfPregnencyUid
+                            }
+                        }
+                        $scope.currentEvent.o7CzR6ACgOn = $scope.ANCnumberOfWeeksOfPregancy;
+                        $scope.saveDataValueForEvent(NoOfWeeksOfPregnencyId, null , $scope.currentEvent, false);
 
         //Because of separatae dataentry-controllers for tabular and timeline data entry,
         //the rule effects might already be in place:
