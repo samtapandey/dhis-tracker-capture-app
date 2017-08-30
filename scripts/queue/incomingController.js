@@ -69,7 +69,7 @@ trackerCapture.controller('incomingController', ["$rootScope", "$scope", "$timeo
 		$.ajax({
 			async: false,
 			type: "GET",
-			url: '../api/organisationUnits/'+ ou + '.json',
+			url: '../api/organisationUnits/' + ou + '.json',
 			success: function (data) {
 				ounamee = data.displayName;
 			}
@@ -77,11 +77,26 @@ trackerCapture.controller('incomingController', ["$rootScope", "$scope", "$timeo
 		return ounamee;
 	};
 
+	var oun = "";
+	$scope.getOu = function (tei) {
+		$.ajax({
+			async: false,
+			type: "GET",
+			url: '../api/events.json?program=L78QzNqadTV&programStage=zLxGw3kEplq&trackedEntityInstance='+tei,
+			success: function (data) {
+				if(data.events.length == 0){oun = "";}
+				else{oun = data.events[0].orgUnit;}
+			}
+		});
+		return oun;
+	};
+
 
 	$scope.loadQueue = function () {
 		var filtered_data = [];
 		var tei = "";
 		var pdata = "";
+		var flag;
 		CustomService.getOuLevel($scope.selectedOrgUnitUid).then(function (response) {
 			if (response.level == 5) {
 				CustomService.getAllEvents($scope.selectedOrgUnitUid).then(function (data1) {
@@ -89,7 +104,7 @@ trackerCapture.controller('incomingController', ["$rootScope", "$scope", "$timeo
 					for (var i = 0; i < data1.events.length; i++) {
 						tei = data1.events[i].trackedEntityInstance;
 						pdata = data1.events[i];
-
+						
 						$.ajax({
 							async: false,
 							type: "GET",
@@ -101,10 +116,11 @@ trackerCapture.controller('incomingController', ["$rootScope", "$scope", "$timeo
 
 									if (pdata.status == "COMPLETED") { }
 									else {
+										flag = 0;
 										var psd = "";
 										var ps = pdata.programStage;
 										if (ps == "zLxGw3kEplq") { psd = "ART-HIV Counselling and Testing"; }
-										else if (ps == "YRSdePjzzfs") { psd = "ART Follow-up"; }
+										else if (ps == "YRSdePjzzfs") { psd = "ART Follow-up"; flag = 1; }
 										else {
 											var psd = "";
 											return;
@@ -135,10 +151,16 @@ trackerCapture.controller('incomingController', ["$rootScope", "$scope", "$timeo
 												var ep = $scope.getEntryPoint(data.attributes[j].value);
 												teidata.entrypoint = ep;
 											}
-											
+
 										}
 										var ouname = $scope.getOuName(data.orgUnit);
-											teidata.rf = ouname;
+										if (flag == 1) {
+											var ouname2 = $scope.getOu(teidata.tei);
+												if(teidata.orgUnit != ouname2){
+													ouname = $scope.getOuName(ouname2);
+												}
+										}
+										teidata.rf = ouname;
 										filtered_data.push(teidata);
 										//console.log(filtered_data);
 									}
