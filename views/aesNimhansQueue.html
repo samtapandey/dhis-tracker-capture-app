@@ -39,15 +39,13 @@
                 <th rowspan="2">NIMHANS AES ID</th>
                 <th rowspan="2">Name</th>
                 <th rowspan="2">Age</th>
-                <th rowspan="1" colspan="3">Sample Received</th>
+                <th rowspan="1" colspan="2">Sample Received</th>
                 <th rowspan="1" colspan="2">Lab Results CSF</th>
                 <th rowspan="1" colspan="3">Lab Results Serum</th>
-                <th rowspan="1" colspan="1">Lab Results Whole Blood</th>
             </tr>
             <tr>
                 <th rowspan="1" colspan="1">CSF</th>
                 <th rowspan="1" colspan="1">Serum</th>
-                <th rowspan="1" colspan="1">Whole Blood</th>
 				
 				 <th rowspan="1" colspan="1">PRNT</th>
 				  <th rowspan="1" colspan="1">Trioplex PCR</th>
@@ -59,7 +57,6 @@
 				<th rowspan="1" colspan="1">Scrub Typhus IFA</th>
 				
 				
-                <th rowspan="1" colspan="1">Scrub Typhus PCR</th>
             </tr>
             </thead>
 
@@ -77,14 +74,11 @@
                 <td ng-if="evv.sampleReceivedCSF === 'Yes'">{{evv.sampleReceivedCSF}}</td>
                 <td ng-if="evv.sampleReceivedSERUM === 'No'" style="color:red">{{evv.sampleReceivedSERUM}}</td>
                 <td ng-if="evv.sampleReceivedSERUM === 'Yes'">{{evv.sampleReceivedSERUM}}</td>
-                <td ng-if="evv.sampleReceivedWB === 'No'" style="color:red">{{evv.sampleReceivedWB}}</td>
-                <td ng-if="evv.sampleReceivedWB === 'Yes'">{{evv.sampleReceivedWB}}</td>
                 <td>{{evv.result1}}</td>
                 <td>{{evv.result2}}</td>
                 <td>{{evv.result3}}</td>
                 <td>{{evv.result4}}</td>
                 <td>{{evv.result5}}</td>
-                <td>{{evv.result6}}</td>
             </tr>
             </tbody>
         </table>
