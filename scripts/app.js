@@ -39,6 +39,8 @@ import '../components/profile/profile-controller.js';
 import '../components/notes/notes-controller.js';
 import '../components/rulebound/rulebound-controller.js';
 import '../components/messaging/messaging-controller.js';
+//for MSF
+import '../msf-customizations/scripts/custom-services.js';
 
 import L from 'leaflet';
 import 'leaflet-geocoder-mapzen';

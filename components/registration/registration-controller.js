@@ -26,7 +26,9 @@ trackerCapture.controller('RegistrationController',
                 TrackerRulesFactory,
                 TrackerRulesExecutionService,
                 TCStorageService,
-                ModalService) {
+                ModalService,
+                 // add for Generate CustomId for msf-customizations
+                 CustomIDGenerationService) {
     $scope.today = DateUtils.getToday();
     $scope.trackedEntityForm = null;
     $scope.customRegistrationForm = null;    
@@ -80,13 +82,20 @@ trackerCapture.controller('RegistrationController',
             CurrentSelection.setOptionSets($scope.optionSets);
         });
     }
-    
-    
-    $scope.isDisabled = function(attribute) {
-        return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
-    };
 
-    var selectedOrgUnit = CurrentSelection.get()["orgUnit"];
+
+    // update for MSF for disable attribute patient_identifier
+    $scope.isDisabled = function(attribute) {
+        if( attribute.code === 'patient_identifier')
+        {
+            return true;
+        }
+        else
+        {
+            return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
+        }
+    };
+            var selectedOrgUnit = CurrentSelection.get()["orgUnit"];
 
     if (selectedOrgUnit) {
         $scope.selectedOrgUnit = selectedOrgUnit;
@@ -381,6 +390,12 @@ trackerCapture.controller('RegistrationController',
                         $scope.model.savingRegistration = false;
                     }
                 }
+
+                // create custom id for MSF
+                CustomIDGenerationService.validateAndCreateCustomId($scope.tei,$scope.selectedProgram.id,$scope.attributes,destination,$scope.optionSets,$scope.attributesById,$scope.selectedEnrollment.enrollmentDate).then(function(){
+
+                });
+
             }
             else {//update/registration has failed
                 var headerText = $scope.tei && $scope.tei.trackedEntityInstance ? $translate.instant('update_error') :
