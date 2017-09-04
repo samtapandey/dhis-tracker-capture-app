@@ -55,7 +55,7 @@
                                             {{selectedProgram.incidentDateLabel}}
                                         </td>
                                         <td class="absorbing-column">
-                                            <input type="text" placeholder="{{dhis2CalendarFormat.keyDateFormat}}" class="form-control" d2-date ng-model="selectedEnrollment.incidentDate" ng-change="verifyExpiryDate('selectedEnrollment.incidentDate')" ng-disabled="true"/>
+                                            <input type="text" placeholder="{{dhis2CalendarFormat.keyDateFormat}}" class="form-control" d2-date ng-model="selectedEnrollment.incidentDate" ng-change="verifyExpiryDate('selectedEnrollment.incidentDate')" ng-disabled="false"/>
                                         </td>
                                     </tr>
                                     <tr ng-if="selectedProgram.captureCoordinates">

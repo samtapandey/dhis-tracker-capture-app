@@ -28,6 +28,8 @@ trackerCapture.controller('DashboardController',
             OrgUnitFactory,
             NotificationService) {
     
+	$scope.names = 'working';
+    
     //selections
     var orgUnitUrl = ($location.search()).ou;
     
@@ -549,6 +551,185 @@ trackerCapture.controller('DashboardController',
         }
     };
 
+		 $scope.eventmodel = function () {
+		 var addtomarque;
+        var screen;
+       var blood;
+       var sugar;
+	   var count=0;
+        var Table = document.getElementById("table1");
+        Table.innerHTML = "";
+		var emptymarque=document.getElementById("marq");
+		emptymarque.innerHTML = "";
+             var url = window.location.href;
+			 var params = url.split('=');
+			 var per =params[1];
+			 var finper=per.split('&');
+	var trackid=finper[0];
+	
+	var perr =params[2];
+			 var finperr=perr.split('&');
+	var programidd=finperr[0];
+			//alert(programidd);
+			var npcdcsid="jC8Gprj4pWV";
+			if(npcdcsid==programidd){
+		  $.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=jC8Gprj4pWV&trackedEntityInstance="+trackid+"&order=eventDate:asc", function (data1) {
+			  var trackdata=data1;
+			  for(var j=0;j<trackdata.events.length;j++)
+				{
+				
+				
+				var screenoutcome="<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#5BC0DE'><b>Screening Outcome<b></td>";
+				var bloodpressure="<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:orange'><b>Blood Pressure<b></td>";
+				var sugarfastning="<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#D9534F'><b>Sugar Fastning<b></td>";
+					           	           
+				// leng=eventdata.events.length;
+				var dateofvisit= trackdata.events[j].eventDate;  //
+			     //  console.log(leng);
+				   var dataval=trackdata.events[j].dataValues;
+				   if(dataval.length >1){
+					    count++;
+				   for(var q=0;q<dataval.length;q++)
+				   {
+				   var id=dataval[q].dataElement;
+				 
+				   if(id=="ObkhLek0zZf")// oral ca
+				   {
+				   	          screenoutcome=screenoutcome+"<td style='border:1px solid black;text-align:center'><b>Oral Ca<b></td>";
+					           
+				  // var aa="you have oral ca";
+				  //  $(".reporttt").append(first);
+				 // $(".report").append(name);
+
+				   }
+				   else if(id=="xFhzzBJ4Z6K")// RF
+				   {
+				    screenoutcome=screenoutcome+"<td style='border:1px solid black;text-align:center'><b>RF<b></td>";
+					          
+				   // var bb="you have RF";
+				  
+				 //  alert("you have RF");
+
+				   }
+				    else if(id=="C4YdSPG3Mr0")// Brease CA
+				   {
+				   
+				    screenoutcome=screenoutcome+"<td style='border:1px solid black;text-align:center'><b>Breast CA<b></td>";
+
+				   }
+				    else if(id=="gpJWjauP93y")// cervical CA
+				   {
+				   
+				    screenoutcome=screenoutcome+"<td style='border:1px solid black;text-align:center'><b>Cervical CA<b></td>";
+
+				   }
+				    else if(id=="Fay65bFZIkC")// CKD
+				   {
+				   
+				   screenoutcome=screenoutcome+"<td style='border:1px solid black;text-align:center'><b>CKD<b></td>";
+
+				   }
+				    else if(id=="doZmhIPTR2O")// COPD
+				   {
+				   
+				   screenoutcome=screenoutcome+"<td style='border:1px solid black;text-align:center'><b>COPD<b></td>";
+
+				   }
+				    else if(id=="GREEuTukX3P")// DM
+				   {
+				   
+				   screenoutcome=screenoutcome+"<td style='border:1px solid black;text-align:center'><b>DM<b></td>";
+
+				   }
+				    else if(id=="FSD6mDILc7l")// HTN
+				   {
+				   
+				   screenoutcome=screenoutcome+"<td style='border:1px solid black;text-align:center'><b>HTN<b></td>";
+
+				   }
+				    else if(id=="m63ulx9T3Ri")// CVD1   
+				   {
+				   
+				   screenoutcome=screenoutcome+"<td style='border:1px solid black;text-align:center'><b>CVD1<b></td>";
+
+				   }
+				    else if(id=="bv7PMXbyOZD")// CA-other   
+				   {
+				   
+				  screenoutcome=screenoutcome+"<td style='border:1px solid black;text-align:center'><b>CA-Other<b></td>";
+
+				   }
+				    else if(id=="HQz8UUWfvo0")// systolic blood presure  
+				   {
+				      var systol=dataval[q].value;
+				  bloodpressure=bloodpressure+"<td style='border:1px solid black;text-align:center'><b>"+systol+"&nbsp&nbsp&nbspSystolic"+"<b></td>";
+                        //  alert("hyy");
+				   }
+				     else if(id=="pTuKCcPRn9k")// diasitoli cblood presure
+				   {
+				   var diasit=dataval[q].value;
+				  bloodpressure=bloodpressure+"<td style='border:1px solid black;text-align:center'><b>"+diasit+"&nbsp&nbspDiasitolic"+"<b></td>";
+                         // alert("hyy");
+				   }
+				    else if(id=="kfqBvvoWuzA")//FBS (mg/dl)
+				   {
+				   var fbs=dataval[q].value;
+				  sugarfastning=sugarfastning+"<td style='border:1px solid black;text-align:center'><b>"+fbs+"&nbsp&nbspFBS(mg/dl)"+"<b></td>";
+                         // alert("hyy");
+				   }
+				    else if(id=="XtI1MSP154r")// PPBS (mg/dl)
+				   {
+				   var ppbs=dataval[q].value;
+				  sugarfastning=sugarfastning+"<td style='border:1px solid black;text-align:center'><b>"+ppbs+"&nbsp&nbspPPBS(mg/dl)"+"<b></td>";
+                         // alert("hyy");
+				   }
+				    else if(id=="FHBrdgsPgDY")// RBS (mg/dl)
+				   {
+				   var rbs=dataval[q].value;
+				  sugarfastning=sugarfastning+"<td style='border:1px solid black;text-align:center'><b>"+rbs+"&nbsp&nbspRBS(mg/dl)"+"<b></td>";
+                         // alert("hyy");
+				   }
+				   }
+				   screenoutcome=screenoutcome+"</tr>";
+				   bloodpressure=bloodpressure+"</tr>"
+				   sugarfastning=sugarfastning+"</tr>";
+				   var visitnno ="<tr><td >Visit No: "+count+"</td><td>"+dateofvisit.substring(0, 10);+"</td></tr>";
+				    var emptyRoww ="<tr class='emptyRow'><td height='35px'></td><tr>";
+					 var blankmarque ="<td width='50px'></td>";
+					   $(".reporttt").append(visitnno);
+				     $(".reporttt").append(screenoutcome);
+				   $(".reporttt").append(bloodpressure);
+				   $(".reporttt").append(sugarfastning);
+				   $(".reporttt").append(emptyRoww);
+				   }
+				   }
+				  
+				   screen=screenoutcome;
+				   screen=screen.slice(0, -5);
+				   blood=bloodpressure;
+				   blood=blood.slice(0, -5);
+				  blood = blood.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+				  sugarfastning=sugarfastning.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+				    addtomarque=screen+blankmarque+blood+blankmarque+sugarfastning;
+				  // console.log("check"+addtomarque);
+			
+			// 
+			 
+			  });
+			 // $("#myModal").modal();
+			   $("#myModal").modal('show');
+         $("#myModal").on('hidden.bs.modal', function () {
+               $("#marq").append(addtomarque);
+			   addtomarque="";
+    });
+		
+		 }
+		 else{
+			 window.alert("This Functionality is only for NPCDCS program");
+		 }
+    };
+	
+	
     $scope.showEnrollment = function () {
         $scope.displayEnrollment = true;
     };
