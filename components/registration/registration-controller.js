@@ -48,6 +48,10 @@ trackerCapture.controller('RegistrationController',
     var flag = {debug: true, verbose: false};
     $rootScope.ruleeffects = {};
 
+		// for msf-customizations display on load
+	$scope.fileNumber = 'lYrG0wc9kI3';
+	$scope.phoneNumber = 'FzXnQEnYFa5';
+	
     $scope.attributesById = CurrentSelection.getAttributesById();
 
     if(!$scope.attributesById){
@@ -195,6 +199,23 @@ trackerCapture.controller('RegistrationController',
 
         AttributesFactory.getByProgram($scope.selectedProgram).then(function (atts) {
             $scope.attributes = TEIGridService.generateGridColumns(atts, null, false).columns;
+			
+			// change for msf-customizations display on load
+			$timeout( function (){
+
+				if( !$scope.selectedTei[$scope.fileNumber] && $scope.selectedTei[$scope.fileNumber] == undefined)
+				{
+					$scope.selectedTei[$scope.fileNumber] = 'NCD-16-'; //put default value on load form
+				}
+				if( !$scope.selectedTei[$scope.phoneNumber] && $scope.selectedTei[$scope.phoneNumber] == undefined)
+				{
+					$scope.selectedTei[$scope.phoneNumber] = '00961'; //put default value on load form
+				}
+
+			},0);			
+			
+			
+			
             fetchGeneratedAttributes();
             if ($scope.selectedProgram && $scope.selectedProgram.id) {
                 if ($scope.selectedProgram.dataEntryForm && $scope.selectedProgram.dataEntryForm.htmlCode) {
