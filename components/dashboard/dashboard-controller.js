@@ -552,6 +552,8 @@ trackerCapture.controller('DashboardController',
     };
 
 		 $scope.eventmodel = function () {
+			 var test;
+			 
 		 var addtomarque;
         var screen;
        var blood;
