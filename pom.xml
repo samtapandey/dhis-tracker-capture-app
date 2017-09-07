@@ -35,9 +35,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:git@github.com:dhis2/tracker-capture-app.git</connection>
-    <developerConnection>scm:git:git@github.com:dhis2/tracker-capture-app.git</developerConnection>
-    <url>git@github.com:dhis2/tracker-capture-app.git</url>
+    <connection>scm:git:git@github.com:hispindia/tracker-capture-app.git</connection>
+    <developerConnection>scm:git:git@github.com:hispindia/tracker-capture-app.git</developerConnection>
+    <url>git@github.com:hispindia/tracker-capture-app.git</url>
   </scm>
 
   <issueManagement>
@@ -74,6 +74,7 @@
   </distributionManagement>
 
 
+  <!--
   <build>
     <resources>
       <resource>
@@ -94,5 +95,27 @@
       </plugin>      
     </plugins>
   </build>
-
+  -->
+   <build>
+    <resources>
+      <resource>
+        <directory>build</directory>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.6</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://apps.hispindia.org/nexus</nexusUrl>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+        </configuration>
+      </plugin>      
+    </plugins>
+  </build> 
+  
+  
 </project>
