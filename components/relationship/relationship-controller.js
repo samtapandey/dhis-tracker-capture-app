@@ -139,7 +139,188 @@ trackerCapture.controller('RelationshipController',
     
         $location.path('/dashboard').search({tei: teiId, program: dashboardProgram, ou: $scope.selectedOrgUnit.id}); 
     };
-    
+	// modal creation for household members...
+     $scope.householdmembers = function (){
+		  	 $.ajaxSetup({
+        async: false
+    });
+		var Table = document.getElementById("tablehouse");
+        Table.innerHTML = "";
+var objhouse=[];
+var objattribute=[];
+var objtrack1=[];
+ var count=1;
+ var objatt=[];
+	    var namee=[];
+		var adharnumber=[];
+		var familyuniqueid=[];
+		var sex=[];
+		var dateofbirth=[];
+		var maritalstatus=[];
+		var housedetailss=["xalnzkNfD77","nHR1zCU0maL","Dnm1mq6iq2d","PbEhJPnon0o","kelN057pfhq","zLsKdtlBCIx"];
+	// selct_date=document.getElementById('Start').value;
+	   var url = window.location.href;
+			 var params = url.split('=');
+			 var per =params[1];
+			 var finper=per.split('&');
+	var trackid=finper[0];
+	
+
+			
+
+  $.get("../api/trackedEntityInstances/"+trackid+".json?", function (data) {
+			  var trackdata=data;
+			 
+			  			  
+			   
+			  for(var q=0;q<trackdata.attributes.length;q++)
+                    {
+			
+				if(trackdata.attributes[q].attribute=="ZQMF7taSAw8")//house number
+				  {
+				var housenumber=trackdata.attributes[q].value;
+				objhouse.push(housenumber);
+			
+	               }
+				  }		      
+				  
+
+				   }); 
+				   
+		$.get("../api/trackedEntityInstances.json?ou=lZtSBQjZCaX&program=TcaMMqHJxK5&filter=YFjB0zhySP6:EQ:"+objhouse[0]+"&skipPaging=true", function (data1) {
+	
+			 var trackkdata=data1;
+			
+			  			  for(var i=0;i<trackkdata.trackedEntityInstances.length;i++)
+				{
+		
+			var attributepath=trackkdata.trackedEntityInstances[i].attributes; 
+			  for(var q=0;q<attributepath.length;q++)
+                    {
+					 
+				if(attributepath[q].displayName=="Household")
+				  {
+				var aa=attributepath[q].value;
+				 if(objhouse[0]==aa)
+				 {
+				
+				 var track1= trackkdata.trackedEntityInstances[i].trackedEntityInstance;
+				   
+				   objtrack1.push(track1);
+				     
+				 
+				    }
+				 }
+				 
+				   
+				   }
+				   }
+				 
+				  
+				   
+			    }); 
+				
+ for(var x=0;x<objtrack1.length;x++)
+		  {
+	   var url1=  "../api/trackedEntityInstances/"+objtrack1[x]+".json?";
+         $.get(url1, function (data1) {
+			
+			var trackdata=data1;
+					
+				
+				 for(var q=0;q<trackdata.attributes.length;q++)
+                    {
+					var idd =trackdata.attributes[q].attribute;
+					 objatt.push(idd);
+				if(trackdata.attributes[q].attribute=="xalnzkNfD77")//name of family member
+				{
+				 
+				var aa=trackdata.attributes[q].value;
+				 namee.push(aa);
+				
+				}
+				if(trackdata.attributes[q].attribute=="nHR1zCU0maL")  //adhar number
+				{
+				
+				var aa=trackdata.attributes[q].value;
+				adharnumber.push(aa);
+				
+				}
+				if(trackdata.attributes[q].attribute=="Dnm1mq6iq2d")//family unique id
+				{
+				
+				var aa=trackdata.attributes[q].value;
+				familyuniqueid.push(aa);
+				
+				}
+				if(trackdata.attributes[q].attribute=="PbEhJPnon0o")//sex
+				{
+				
+				var aa=trackdata.attributes[q].value;
+				sex.push(aa);
+				
+				}
+				if(trackdata.attributes[q].attribute=="kelN057pfhq")//date of birth
+				{
+				
+				var aa=trackdata.attributes[q].value;
+			         dateofbirth.push(aa);
+				
+				}
+				if(trackdata.attributes[q].attribute=="zLsKdtlBCIx")//marital status
+				{
+				
+				var aa=trackdata.attributes[q].value;
+				maritalstatus.push(aa);
+				
+				}
+				
+			
+					 
+
+				 }
+				 
+				  var array3 = housedetailss.filter(function(obj) { return objatt.indexOf(obj) == -1; });
+		          for(var t=0;t<array3.length;t++)
+					{
+					if(array3[t]=="xalnzkNfD77")
+				      namee.push("NA");
+					else if(array3[t]=="nHR1zCU0maL")
+					adharnumber.push("NA");
+					else if(array3[t]=="Dnm1mq6iq2d")
+					familyuniqueid.push("NA");
+					else if(array3[t]=="PbEhJPnon0o")
+					sex.push("NA");
+					else if(array3[t]=="kelN057pfhq")
+					dateofbirth.push("NA");
+					else if(array3[t]=="zLsKdtlBCIx")
+					maritalstatus.push("NA");
+					
+					}
+					
+				 		objatt=[];
+				   
+				  });
+				  }
+				  var tabl2="<tr style='border:1px solid black;background-color:#fff2cc;height:30px'> <td ><b>S.No</b><td>	<b>Individual Name	</b>	<td><b>	Aadhaar ID	</b></td>	<td>	<b>Individual Health ID </b></td><td><b>Sex</b></td><td><b>Date of Birth</b></td><tr>";
+				 $(".reporthouse").append(tabl2);
+				 
+				 for(var p=0;p<objtrack1.length;p++)
+					{
+			var group ="<tr style='border:1px solid black;background-color:white;height:30px'><td style= 'text-align:center' >"+count+"</td> <td style= 'text-align:center'>" +namee[p]+ "</td><td style= 'text-align:center'  >" +adharnumber[p] + "</td> <td style= 'text-align:center' >"+familyuniqueid[p]+" </td> <td style= 'text-align:center'>" +sex[p]+ "</td> <td style= 'text-align:center'>"+dateofbirth[p]+"</td></tr>";
+             
+			
+			    $(".reporthouse").append(group);
+				count++;
+				}
+				
+				$("#myModalhouse").modal();
+			 
+		 
+		 
+		 
+		 
+	 }
     var setRelationships = function(){
         $scope.relatedTeis = [];
         angular.forEach($scope.selectedTei.relationships, function(rel){
