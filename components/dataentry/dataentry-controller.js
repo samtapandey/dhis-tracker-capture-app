@@ -77,6 +77,7 @@ trackerCapture.controller('DataEntryController',
     $scope.eddDateValue = 'BvMIQ4bznKm';
     $scope.weeksOfPregnencyValue = 'nqd02WZwjqn';
     $scope.NoOfWeeksOfPregnencyUid = 'o7CzR6ACgOn';
+    $scope.programName = '';
     
     var eventLockEnabled = false;
     var eventLockHours = 8; //Number of hours before event is locked after completing.
@@ -674,6 +675,7 @@ trackerCapture.controller('DataEntryController',
             // FOR INTPART
             $scope.selectedIncidentDate = selections.selectedEnrollment.incidentDate;
             $scope.selectedEnrollmentDate = selections.selectedEnrollment.enrollmentDate;
+            $scope.programName = selections.pr.name;
 
             $scope.incidentDateToBeUsed = new Date($scope.selectedIncidentDate);
 
@@ -1431,24 +1433,24 @@ trackerCapture.controller('DataEntryController',
        
         // for getting EDD AND PRAGNANCY WEEKS
 
-            var date01 = $scope.currentEvent.dueDate;
-            var date02 = $scope.selectedIncidentDate;
+                if ($scope.programName ="Maternal Health" && ($scope.currentEvent.name === $scope.maternalHealthProgramStage || $scope.currentEvent.name ===  $scope.ANCFirstVisit || $scope.currentEvent.name ===  $scope.ANCVisits)) 
+                {
 
-            var WEEK = 1000 * 60 * 60 * 24 * 7;
-            
-            date01 = new Date(date01);
-            date02 = new Date(date02);
-
-            var date01ms = date01.getTime();
-            var date02ms = date02.getTime();
-
-            var diff = Math.abs(date02ms - date01ms);
-            $scope.ANCnumberOfWeeksOfPregancy = Math.floor(diff / WEEK);
-            
-
-
-                if ($scope.currentEvent.name === $scope.maternalHealthProgramStage || $scope.currentEvent.name ===  $scope.ANCFirstVisit || $scope.currentEvent.name ===  $scope.ANCVisits) {
-
+                    var date01 = $scope.currentEvent.dueDate;
+                    var date02 = $scope.selectedIncidentDate;
+        
+                    var WEEK = 1000 * 60 * 60 * 24 * 7;
+                    
+                    date01 = new Date(date01);
+                    date02 = new Date(date02);
+        
+                    var date01ms = date01.getTime();
+                    var date02ms = date02.getTime();
+        
+                    var diff = Math.abs(date02ms - date01ms);
+                    $scope.ANCnumberOfWeeksOfPregancy = Math.floor(diff / WEEK);
+                    
+        
                 var myEDDValueId ={
                     dataElement:{
                     id: $scope.eddDateValue
