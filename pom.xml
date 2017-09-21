@@ -12,7 +12,6 @@
   <description>DHIS 2 tracker capture app INPART</description>
   <url>https://github.com/hispindia/tracker-capture-app</url>
 
-
   <organization>
     <name>DHIS 2</name>
     <url>https://www.dhis2.org</url>
@@ -44,8 +43,7 @@
 	<system>GitHub</system>
 	<url>https://github.com/dhis2/tracker-capture-app</url>
   </issueManagement>
-
-  <!--
+<!-->
   <distributionManagement>
     <snapshotRepository>
       <id>ossrh</id>
@@ -56,8 +54,9 @@
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
     </repository>
   </distributionManagement>
-  -->
-  <!-- add for get tracker capture app from HISP-INDIA Repo -->
+-->
+
+<!-- add for get tracker capture app from HISP-INDIA Repo -->
   <distributionManagement>
     <repository>
       <id>shimla-nexus</id>
@@ -73,8 +72,7 @@
     </snapshotRepository>
   </distributionManagement>
 
-
-  <!--
+<!-->
   <build>
     <resources>
       <resource>
@@ -95,7 +93,8 @@
       </plugin>      
     </plugins>
   </build>
-  -->
+-->
+
    <build>
     <resources>
       <resource>
@@ -116,6 +115,4 @@
       </plugin>      
     </plugins>
   </build> 
-  
-  
 </project>
