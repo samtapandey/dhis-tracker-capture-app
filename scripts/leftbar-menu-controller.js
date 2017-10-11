@@ -18,5 +18,5 @@ trackerCapture.controller('LeftBarMenuController',
 
     $scope.showRefSQueue = function(){
       $location.path('/outgoing-referrals').search();
-    }; 
+    };
 });

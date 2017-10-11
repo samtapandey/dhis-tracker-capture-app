@@ -2069,6 +2069,51 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
         };
         this.eventCreationActions = { add: 'ADD',  schedule: 'SCHEDULE', referral: 'REFERRAL'};
 })
+.service('CustomService', function ($http, $q) {
+    return {
+
+        getOuLevel: function (orgUnitUid) {
+            var def = $q.defer();
+            $http.get('../api/organisationUnits/' + orgUnitUid + ".json?fields=id,name,code,level&paging=false").then(function (response) {
+
+                def.resolve(response.data);
+            });
+            return def.promise;
+        },
+        getTeiData: function (tei) {
+            var def = $q.defer();
+            $http.get('../api/trackedEntityInstances/'+tei+'.json').then(function (response) {
+
+                def.resolve(response.data);
+            });
+            return def.promise;
+        },
+        getAllEvents: function (ou) {
+            var def = $q.defer();
+            $http.get('../api/events.json?program=L78QzNqadTV&orgUnit='+ ou).then(function (response) {
+
+                def.resolve(response.data);
+            });
+            return def.promise;
+        },
+        getAllTeis: function (ou) {
+            var def = $q.defer();
+            $http.get('../api/trackedEntityInstances.json?ou='+ ou).then(function (response) {
+
+                def.resolve(response.data);
+            });
+            return def.promise;
+        },
+        getouname: function (ou) {
+            var def = $q.defer();
+            $http.get('../api/organisationUnits/'+ ou + '.json').then(function (response) {
+
+                def.resolve(response.data);
+            });
+            return def.promise;
+        }
+    };
+})
 
 .service('MessagingService', function($http, $translate,  NotificationService, DHIS2URL){
     return {
