@@ -46,6 +46,7 @@ trackerCapture.controller('RegistrationController',
     var flag = {debug: true, verbose: false};
     $rootScope.ruleeffects = {};
 
+    $scope.generatedCustomId = '';
     $scope.attributesById = CurrentSelection.getAttributesById();
 
     if(!$scope.attributesById){
@@ -82,10 +83,21 @@ trackerCapture.controller('RegistrationController',
     }
     
     
-    $scope.isDisabled = function(attribute) {
-        return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
-    };
+    //$scope.isDisabled = function(attribute) {
+    //    return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
+    //};
+    //
 
+    // update for SAVE CHILD  for disable attribute patient_identifier
+    $scope.isDisabled = function(attribute) {
+        if( attribute.code === 'Client_code')
+        {
+            return true;
+        }
+        else{
+            return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
+        }
+    };
     var selectedOrgUnit = CurrentSelection.get()["orgUnit"];
 
     if (selectedOrgUnit) {
@@ -428,7 +440,51 @@ trackerCapture.controller('RegistrationController',
         //get tei attributes and their values
         //but there could be a case where attributes are non-mandatory and
         //registration form comes empty, in this case enforce at least one value
-        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById);
+
+        // custom-code for SAVE CHILD for generate Custom-Id
+
+        if ($scope.registrationMode === 'REGISTRATION')
+        {
+            var lastName = "";
+            var dobYear = "";
+            var sex = "";
+            var serviceRegNo = "";
+            if( $scope.selectedTei.gVGIL7DJp4b != undefined)
+            {
+                var str = $scope.selectedTei.gVGIL7DJp4b;
+                lastName = str.substr(0, 2).toUpperCase();
+            }
+            if( $scope.selectedTei.fOVzjBOZdvQ != undefined)
+            {
+                var dob = $scope.selectedTei.fOVzjBOZdvQ;
+                dobYear = dob.substr(2, 2);
+            }
+            if( $scope.selectedTei.TN7r3ws7IG9 != undefined)
+            {
+                if( $scope.selectedTei.TN7r3ws7IG9 === 'Female')
+                {
+                    sex = "1";
+                }
+                else if( $scope.selectedTei.TN7r3ws7IG9 === 'Male')
+                {
+                    sex = "2";
+                }
+                else if( $scope.selectedTei.TN7r3ws7IG9 === 'Other')
+                {
+                    sex = "3";
+                }
+            }
+            if( $scope.selectedTei.Fu4LhjNsJZL != undefined)
+            {
+                serviceRegNo = $scope.selectedTei.Fu4LhjNsJZL;
+
+            }
+
+            $scope.generatedCustomId = lastName + dobYear +  sex + serviceRegNo;
+
+        }
+
+        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById, $scope.generatedCustomId);
         $scope.formEmpty = result.formEmpty;
         $scope.tei = result.tei;
 
