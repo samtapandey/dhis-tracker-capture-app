@@ -11,4 +11,12 @@ trackerCapture.controller('LeftBarMenuController',
     $scope.showReportTypes = function(){
         $location.path('/report-types').search();
     };
+
+    $scope.showRefRQueue = function(){
+      $location.path('/incoming-referrals').search();
+    };
+
+    $scope.showRefSQueue = function(){
+      $location.path('/outgoing-referrals').search();
+    }; 
 });
