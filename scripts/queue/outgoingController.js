@@ -212,7 +212,7 @@ var outei ="";
 						$.ajax({
 							async: false,
 							type: "GET",
-							url: "../api/events.json?program=L78QzNqadTV&trackedEntityInstance=" + tei + "&paging=none",
+							url: "../api/events.json?program=L78QzNqadTV&trackedEntityInstance=" + tei + "&skipPaging=false",
 							success: function (data5) {
 
 								for (var p = 0; p < data5.events.length; p++) {
