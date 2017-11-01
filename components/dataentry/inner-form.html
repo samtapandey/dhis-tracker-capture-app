@@ -32,7 +32,7 @@
         </div>
     </div>
     <div ng-if="!prStDe.dataElement.optionSetValue" ng-switch="prStDe.dataElement.valueType">
-        <div ng-switch-when="NUMBER" ng-if="prStDe.dataElement.id != 'nqd02WZwjqn' && prStDe.dataElement.id != 'o7CzR6ACgOn'">
+        <div ng-switch-when="NUMBER" ng-if="prStDe.dataElement.id != 'nqd02WZwjqn'">
             <div class="hideInPrint">
                 <input type="number"
                        number-type={{prStDe.dataElement.valueType}}
@@ -52,7 +52,7 @@
 
         <!-- FOR INTPART -->
 
-        <div ng-switch-when="NUMBER" ng-if="prStDe.dataElement.id === 'nqd02WZwjqn' || prStDe.dataElement.id === 'o7CzR6ACgOn'">
+        <div ng-switch-when="NUMBER" ng-if="prStDe.dataElement.id === 'nqd02WZwjqn'">
             <div class="hideInPrint">
                 <input type="number"
                        number-type={{prStDe.dataElement.valueType}}
