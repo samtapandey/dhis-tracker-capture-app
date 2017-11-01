@@ -554,7 +554,16 @@ trackerCapture.controller('DashboardController',
         		 var addtomarque;
                 var screen;
                var blood;
+			   var objbirth=[];
+			   var objfeeding=[];
+			   var objaefi=[];
+			   var objsixweeks=[];
+			   var objtenweeks=[];
+			   var objfourteenweeks=[];
+			   var objninemonth=[];
+			   var objsixteen24months=[];
                var sugar;
+			   var objvitamin=[];
         	   var count=0;
                 var Table = document.getElementById("table1");
                 Table.innerHTML = "";
@@ -571,7 +580,7 @@ trackerCapture.controller('DashboardController',
         	var programidd=finperr[0];
         			//alert(programidd);
         			var npcdcsid="jC8Gprj4pWV";
-        			if(npcdcsid==programidd){
+        			if(programidd==npcdcsid){
         		  $.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=jC8Gprj4pWV&trackedEntityInstance="+trackid+"&order=eventDate:asc", function (data1) {
         			  var trackdata=data1;
         			  for(var j=0;j<trackdata.events.length;j++)
@@ -700,19 +709,19 @@ trackerCapture.controller('DashboardController',
         				   $(".reporttt").append(bloodpressure);
         				   $(".reporttt").append(sugarfastning);
         				   $(".reporttt").append(emptyRoww);
-        				   }
-        				   }
-        				  
-        				   screen=screenoutcome;
+						    screen=screenoutcome;
         				   screen=screen.slice(0, -5);
         				   blood=bloodpressure;
         				   blood=blood.slice(0, -5);
         				  blood = blood.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
         				  sugarfastning=sugarfastning.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
         				    addtomarque=screen+blankmarque+blood+blankmarque+sugarfastning;
-        				  // console.log("check"+addtomarque);
-        			
-        			// 
+        				   }
+						   
+        				   }
+        				  
+        				  
+        		  
         			 
         			  });
         			 // $("#myModal").modal();
@@ -723,8 +732,456 @@ trackerCapture.controller('DashboardController',
             });
         		
         		 }
-        		 else{
-        			 window.alert("This Functionality is only for NPCDCS program");
+        		 else if(programidd=="JdZ3gv6cx54"){
+        			// alert("found you");
+	  $.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=JdZ3gv6cx54&trackedEntityInstance="+trackid+"&order=eventDate:asc", function (data1) {
+        			  var trackdata=data1;
+        			  for(var j=0;j<trackdata.events.length;j++)
+        				{
+        				
+        				
+        				var Birth_Dose="<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#5BC0DE'>Birth Dose</td>";
+        				var ChildFeeding="<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:orange'><b>Breast Feeding<b></td>";
+        				var AEFI="<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#D9534F'><b>AEFI<b></td>";
+        				var immunistaion_at_sixweeks="<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#32CD32'><b>6 weeks<b></td>";           	           
+        				var immunistaion_at_tenweeks="<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#8B8682'><b>10 weeks<b></td>";           	           
+						var immunistaion_at_fourteenweeks="<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#5BC0DE'><b>14 weeks<b></td>";           	           
+						var immunistaion_at_ninemonths="<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:orange'><b>9 months<b></td>";           	           
+						var immunistaion_at_sixteen24months="<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#D9534F'><b>16-24 months<b></td>";           	           
+						var vitaminss="<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#32CD32'><b>Vitamins<b></td>";           	           
+						
+        				var dateofvisit= trackdata.events[j].eventDate;  //
+        			     //  console.log(leng);
+        				   var dataval=trackdata.events[j].dataValues;
+        				   if(dataval.length >1){
+        					    count++;
+        				   for(var q=0;q<dataval.length;q++)
+        				   {
+        				   var id=dataval[q].dataElement;
+        				 
+        				   if(id=="KO9GNZ6bsvP")// Vit K(Birth Dose)   
+        				   {
+							    var vall=dataval[q].value;
+				                    if(vall=="true"){
+										objbirth.push(vall);
+        				   	          Birth_Dose=Birth_Dose+"<td style='border:1px solid black;text-align:center'><b>Vit K<b></td>";
+									}
+        				  
+        
+        				   }
+        				   else if(id=="X0LM2G9QrRq")// BCG(Birth Dose) 
+        				   {
+							   var vall=dataval[q].value;
+				                    if(vall=="true"){
+										objbirth.push(vall);
+        				    Birth_Dose=Birth_Dose+"<td style='border:1px solid black;text-align:center'><b>BCG<b></td>";
+									}
+        				
+        
+        				   }
+        				    else if(id=="geB0cJnqUuw")//  OPV(Birth Dose) 
+        				   {
+        				   var vall=dataval[q].value;
+				                    if(vall=="true"){
+										objbirth.push(vall);
+        				    Birth_Dose=Birth_Dose+"<td style='border:1px solid black;text-align:center'><b>OPV<b></td>";
+									}
+        				   }
+        				    else if(id=="LomeCfySW2p")//HEP B(Birth Dose) 
+        				   {
+        				   var vall=dataval[q].value;
+				                    if(vall=="true"){
+										objbirth.push(vall);
+        				    Birth_Dose=Birth_Dose+"<td style='border:1px solid black;text-align:center'><b>HEP B<b></td>";
+									}
+        				   }
+        				    else if(id=="wNBq0a4HVG2")// breastfeeding was given upto 6 months
+        				   {
+        				   var vall=dataval[q].value;
+				                    if(vall=="true"){
+										objfeeding.push(vall);
+        				   ChildFeeding=ChildFeeding+"<td style='border:1px solid black;text-align:center'><b> breastfeeding given upto 6 months 	<b></td>";
+									}
+        				   }
+        				    else if(id=="MmiNSPetHLN")// Complementary feeding after 6 months
+        				   {
+							   var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objfeeding.push(vall);
+        				   ChildFeeding=ChildFeeding+"<td style='border:1px solid black;text-align:center'><b>Complementary feeding after 6 months<b></td>";
+							}
+        				   }
+        				    else if(id=="RsXNgPyCy8O")// AEFI
+        				   {
+        				   var vall=dataval[q].value;
+                                  var aefivalue=vall;
+								  objaefi.push(aefivalue);
+        				   AEFI=AEFI+"<td style='border:1px solid black;text-align:center'><b>"+aefivalue+"<b></td>";
+						
+        				   }
+        				    else if(id=="Y70xDmi3Y7F")// Details of Vaccine
+        				   {
+        				    var vall=dataval[q].value;
+                                  var aefi_detail=vall;
+								   objaefi.push(aefivalue);
+        				   AEFI=AEFI+"<td style='border:1px solid black;text-align:center'><b>"+aefi_detail+"<b></td>";
+        
+        				   }
+        				    else if(id=="RiTLb8I7Ko5")// OPV 1 
+        				   {
+        				       var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objsixweeks.push(vall);
+        				   immunistaion_at_sixweeks=immunistaion_at_sixweeks+"<td style='border:1px solid black;text-align:center'><b>OPV 1<b></td>";
+							}
+        				   }
+        				    else if(id=="pY9t6s0BPcx")// DPT/Penta 1 
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objsixweeks.push(vall);
+        				   immunistaion_at_sixweeks=immunistaion_at_sixweeks+"<td style='border:1px solid black;text-align:center'><b>DPT/Penta 1 <b></td>";
+							}
+        				   }
+						    else if(id=="UcWvna0WpdU")// IPV 1
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objsixweeks.push(vall);
+        				   immunistaion_at_sixweeks=immunistaion_at_sixweeks+"<td style='border:1px solid black;text-align:center'><b>IPV 1<b></td>";
+							}
+        				   }
+						    else if(id=="Hb9dY5gedpI")// HEP B1
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objsixweeks.push(vall);
+        				   immunistaion_at_sixweeks=immunistaion_at_sixweeks+"<td style='border:1px solid black;text-align:center'><b>HEP B1<b></td>";
+							}
+        				   }
+						    else if(id=="NV6p0JaJacm")// OPV 2
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objtenweeks.push(vall);
+        				   immunistaion_at_tenweeks=immunistaion_at_tenweeks+"<td style='border:1px solid black;text-align:center'><b>OPV 2<b></td>";
+							}
+        				   }
+						    else if(id=="pqBNLJWicCs")//DPT/Penta 2
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objtenweeks.push(vall);
+        				   immunistaion_at_tenweeks=immunistaion_at_tenweeks+"<td style='border:1px solid black;text-align:center'><b>DPT/Penta 2<b></td>";
+							}
+        				   }
+						    else if(id=="sRN7mG6Q0ky")//HEP B2
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objtenweeks.push(vall);
+        				   immunistaion_at_tenweeks=immunistaion_at_tenweeks+"<td style='border:1px solid black;text-align:center'><b>HEP B2<b></td>";
+							}
+        				   }
+						    else if(id=="OBCz2WmQ0Wr")//OPV 3
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objfourteenweeks.push(vall);
+        				   immunistaion_at_fourteenweeks=immunistaion_at_fourteenweeks+"<td style='border:1px solid black;text-align:center'><b>OPV 3<b></td>";
+							}
+        				   }
+						    else if(id=="bLJEYJvjbtF")//DPT/Penta 3
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objfourteenweeks.push(vall);
+        				   immunistaion_at_fourteenweeks=immunistaion_at_fourteenweeks+"<td style='border:1px solid black;text-align:center'><b>DPT/Penta 3<b></td>";
+							}
+        				   }
+						    else if(id=="eC1dIDNQbib")//IPV 2
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objfourteenweeks.push(vall);
+        				   immunistaion_at_fourteenweeks=immunistaion_at_fourteenweeks+"<td style='border:1px solid black;text-align:center'><b>IPV 2<b></td>";
+							}
+        				   }
+						    else if(id=="GVx9H3VPQpb")//HEP B3
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objfourteenweeks.push(vall);
+        				   immunistaion_at_fourteenweeks=immunistaion_at_fourteenweeks+"<td style='border:1px solid black;text-align:center'><b>HEP B3<b></td>";
+							}
+        				   }
+						    else if(id=="HS2ypHNwtWy")//JE (1st dose)
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objninemonth.push(vall);
+        				   immunistaion_at_ninemonths=immunistaion_at_ninemonths+"<td style='border:1px solid black;text-align:center'><b>JE(1st dose)<b></td>";
+							}
+        				   }
+						    else if(id=="kq5XBCko5id")//Measles (1st dose)
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objninemonth.push(vall);
+        				   immunistaion_at_ninemonths=immunistaion_at_ninemonths+"<td style='border:1px solid black;text-align:center'><b>Measles(1st dose)<b></td>";
+							}
+        				   }
+						    else if(id=="LGXWjlpx73G")//Diarrhoea (Measles)
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objninemonth.push(vall);
+        				   immunistaion_at_ninemonths=immunistaion_at_ninemonths+"<td style='border:1px solid black;text-align:center'><b>Diarrhoea(Measles)<b></td>";
+							}
+        				   }
+						    else if(id=="ajpdN9HB29Q")//DPT/Penta Booster
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objsixteen24months.push(vall);
+        				   immunistaion_at_sixteen24months=immunistaion_at_sixteen24months+"<td style='border:1px solid black;text-align:center'><b>Diarrhoea(Measles)<b></td>";
+							}
+        				   }
+						    else if(id=="zSd4PVzkfp5")//Diarrhoea (DPT)
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objsixteen24months.push(vall);
+        				   immunistaion_at_sixteen24months=immunistaion_at_sixteen24months+"<td style='border:1px solid black;text-align:center'><b>Diarrhoea (DPT)<b></td>";
+							}
+        				   }
+						    else if(id=="mtHUBDF91KG")//Measles 2nd Dose
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objsixteen24months.push(vall);
+        				   immunistaion_at_sixteen24months=immunistaion_at_sixteen24months+"<td style='border:1px solid black;text-align:center'><b>Measles 2nd Dose<b></td>";
+							}
+        				   }
+						    else if(id=="h3SbGX4562o")//OPV Booster
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objsixteen24months.push(vall);
+        				   immunistaion_at_sixteen24months=immunistaion_at_sixteen24months+"<td style='border:1px solid black;text-align:center'><b>OPV Booster<b></td>";
+							}
+        				   }
+						   else if(id=="EpAqK3hd4sV")//DPT Booster 2
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objsixteen24months.push(vall);
+        				   immunistaion_at_sixteen24months=immunistaion_at_sixteen24months+"<td style='border:1px solid black;text-align:center'><b>DPT Booster 2<b></td>";
+							}
+        				   }
+						   else if(id=="ffFqPgSWpsn")//JE 2nd Dose
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objsixteen24months.push(vall);
+        				   immunistaion_at_sixteen24months=immunistaion_at_sixteen24months+"<td style='border:1px solid black;text-align:center'><b>JE 2nd Dose<b></td>";
+							}
+        				   }
+						   else if(id=="UjhLFpJ4ey9")//Vitamin A (1st dose)
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objvitamin.push(vall);
+        				   vitaminss=vitaminss+"<td style='border:1px solid black;text-align:center'><b>Vitamin A 1st dose<b></td>";
+							}
+        				   }
+						   else if(id=="N3ZcKrrj31O")//Vitamin A 2nd Dose
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objvitamin.push(vall);
+        				   vitaminss=vitaminss+"<td style='border:1px solid black;text-align:center'><b>Vitamin A 2nd Dose<b></td>";
+							}
+        				   }
+						   else if(id=="oo5ImHAJJJv")//Vitamin A 3rd Dose
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objvitamin.push(vall);
+        				   vitaminss=vitaminss+"<td style='border:1px solid black;text-align:center'><b>Vitamin A 3rd Dose<b></td>";
+							}
+        				   }
+						   else if(id=="iN7e1e5kNZa")//Vitamin A 4th Dose
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objvitamin.push(vall);
+        				   vitaminss=vitaminss+"<td style='border:1px solid black;text-align:center'><b>Vitamin A 4th Dose<b></td>";
+							}
+        				   }
+						   else if(id=="mAjCq0DOUA8")//Vitamin A 5th Dose
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objvitamin.push(vall);
+        				   vitaminss=vitaminss+"<td style='border:1px solid black;text-align:center'><b>Vitamin A 5th Dose<b></td>";
+							}
+        				   }
+						   else if(id=="jL8ONs5GQih")//Vitamin A 6th Dose
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objvitamin.push(vall);
+        				   vitaminss=vitaminss+"<td style='border:1px solid black;text-align:center'><b>Vitamin A 6th Dose<b></td>";
+							}
+        				   }
+						   else if(id=="jywcoFDCIhy")//Vitamin A 7th Dose
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objvitamin.push(vall);
+        				   vitaminss=vitaminss+"<td style='border:1px solid black;text-align:center'><b>Vitamin A 7th Dose<b></td>";
+							}
+        				   }
+						   else if(id=="sQk9YvQZ8az")//Vitamin A 8th Dose
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objvitamin.push(vall);
+        				   vitaminss=vitaminss+"<td style='border:1px solid black;text-align:center'><b>Vitamin A 8th Dose<b></td>";
+							}
+        				   }
+						    else if(id=="uv59WV60nJv")//Vitamin A 9th Dose
+        				   {
+        				    var vall=dataval[q].value;
+        				    if(vall=="true"){
+										objvitamin.push(vall);
+        				   vitaminss=vitaminss+"<td style='border:1px solid black;text-align:center'><b>Vitamin A 9th Dose<b></td>";
+							}
+        				   }
+        				   
+        				   }
+						    var visitnno ="<tr><td >Visit No: "+count+"</td><td>"+dateofvisit.substring(0, 10);+"</td></tr>";
+						  $(".reporttt").append(visitnno);
+						  if(objbirth.length>0){   //  BIRTH DOSE 
+							  var colspan=1+parseInt(objbirth.length);
+							   var immunisationatbirh="<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan="+colspan+" style='text-align:center;color:white;background-color:#5BC0DE'><b>Immunization at Birth<b></td></tr>";
+						    $(".reporttt").append(immunisationatbirh);
+							Birth_Dose=Birth_Dose+"</tr>";
+							$(".reporttt").append(Birth_Dose);
+						   }
+						    
+						    if(objfeeding.length>0){ // CHILD FEEDING
+							  var colspan=1+parseInt(objfeeding.length);
+							   var childfeed="<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan="+colspan+" style='text-align:center;color:white;background-color:orange'><b>Child Feeding<b></td></tr>";
+						    $(".reporttt").append(childfeed);
+                                ChildFeeding=ChildFeeding+"</tr>"
+						    $(".reporttt").append(ChildFeeding);						  
+						  }
+						      if(objaefi.length>0){ // AEFI
+							  var colspan=1+parseInt(objaefi.length);
+							   var aefii="<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan="+colspan+" style='text-align:center;color:white;background-color:#D9534F'><b>AEFI<b></td></tr>";
+						    $(".reporttt").append(aefii);
+                                AEFI=AEFI+"</tr>"
+						    $(".reporttt").append(AEFI);						  
+						  }      	
+                                 if(objsixweeks.length>0){ // Immunization at 6 weeks
+							  var colspan=1+parseInt(objsixweeks.length);
+							   var sixweeks="<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan="+colspan+" style='text-align:center;color:white;background-color:#32CD32'><b>Immunization at 6 weeks<b></td></tr>";
+						    $(".reporttt").append(sixweeks);
+                                immunistaion_at_sixweeks=immunistaion_at_sixweeks+"</tr>"
+						    $(".reporttt").append(immunistaion_at_sixweeks);						  
+						  }     
+                           if(objtenweeks.length>0){ // Immunization at 10 weeks
+							  var colspan=1+parseInt(objtenweeks.length);
+							   var tenweeks="<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan="+colspan+" style='text-align:center;color:white;background-color:#8B8682'><b>Immunization at 10 weeks<b></td></tr>";
+						    $(".reporttt").append(tenweeks);
+                                immunistaion_at_tenweeks=immunistaion_at_tenweeks+"</tr>"
+						    $(".reporttt").append(immunistaion_at_tenweeks);						  
+						  }     						  
+      			     	  if(objfourteenweeks.length>0){ // Immunization at 14 weeks
+							  var colspan=1+parseInt(objfourteenweeks.length);
+							   var fourteenweks="<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan="+colspan+" style='text-align:center;color:white;background-color:#5BC0DE'><b>Immunization at 14 weeks<b></td></tr>";
+						    $(".reporttt").append(fourteenweks);
+                                immunistaion_at_fourteenweeks=immunistaion_at_fourteenweeks+"</tr>"
+						    $(".reporttt").append(immunistaion_at_fourteenweeks);						  
+						  }    
+        				   if(objninemonth.length>0){ // Immunization at 9 months
+							  var colspan=1+parseInt(objninemonth.length);
+							   var nineemnth="<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan="+colspan+" style='text-align:center;color:white;background-color:orange'><b>Immunization at 14 weeks<b></td></tr>";
+						    $(".reporttt").append(nineemnth);
+                                immunistaion_at_ninemonths=immunistaion_at_ninemonths+"</tr>"
+						    $(".reporttt").append(immunistaion_at_ninemonths);						  
+						  }  
+						  if(objsixteen24months.length>0){ // Immunization at 16-24 months
+							  var colspan=1+parseInt(objsixteen24months.length);
+							   var sixteen24enth="<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan="+colspan+" style='text-align:center;color:white;background-color:#D9534F'><b>Immunization at 16-24 months<b></td></tr>";
+						    $(".reporttt").append(sixteen24enth);
+                                immunistaion_at_sixteen24months=immunistaion_at_sixteen24months+"</tr>"
+						    $(".reporttt").append(immunistaion_at_sixteen24months);						  
+						  }
+                            if(objvitamin.length>0){ // vitamins
+							  var colspan=1+parseInt(objvitamin.length);
+							   var vitaamins="<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan="+colspan+" style='text-align:center;color:white;background-color:#32CD32'><b>vitamin A<b></td></tr>";
+						    $(".reporttt").append(vitaamins);
+                                vitaminss=vitaminss+"</tr>"
+						    $(".reporttt").append(vitaminss);						  
+						  }						  
+        				   //var visitnno ="<tr><td >Visit No: "+count+"</td><td>"+dateofvisit.substring(0, 10);+"</td></tr>";
+        				    var emptyRoww ="<tr class='emptyRow'><td height='35px'></td><tr>";
+        					 var blankmarque ="<td width='50px'></td>";
+        					   
+        				     
+        				  
+        				 //  $(".reporttt").append(sugarfastning);
+        				   $(".reporttt").append(emptyRoww);
+						    screen=Birth_Dose;
+        				   screen=screen.slice(0, -5);
+        				   blood=ChildFeeding;
+        				   blood=blood.slice(0, -5);					
+						blood = blood.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+        				  AEFI=AEFI.slice(0, -5);
+						  AEFI=AEFI.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+						   immunistaion_at_sixweeks=immunistaion_at_sixweeks.slice(0, -5);
+						   immunistaion_at_sixweeks=immunistaion_at_sixweeks.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+						   immunistaion_at_tenweeks=immunistaion_at_tenweeks.slice(0, -5);
+						   immunistaion_at_tenweeks=immunistaion_at_tenweeks.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+        				   immunistaion_at_fourteenweeks=immunistaion_at_fourteenweeks.slice(0, -5);
+						   immunistaion_at_fourteenweeks=immunistaion_at_fourteenweeks.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+        				   immunistaion_at_ninemonths=immunistaion_at_ninemonths.slice(0, -5);
+						   immunistaion_at_ninemonths=immunistaion_at_ninemonths.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+        				    immunistaion_at_sixteen24months=immunistaion_at_sixteen24months.slice(0, -5);
+						   immunistaion_at_sixteen24months=immunistaion_at_sixteen24months.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+        				   vitaminss=vitaminss.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+        				   
+						   addtomarque=screen+blankmarque+blood+blankmarque+AEFI+blankmarque+immunistaion_at_sixweeks+blankmarque+immunistaion_at_tenweeks+blankmarque+immunistaion_at_fourteenweeks+blankmarque+immunistaion_at_ninemonths+blankmarque+immunistaion_at_sixteen24months+blankmarque+vitaminss;
+							objbirth=[];
+							objfeeding=[];
+							objaefi=[];
+							objsixweeks=[];
+							objtenweeks=[];
+							objfourteenweeks=[];
+							objninemonth=[];
+							objsixteen24months=[];
+							objvitamin=[];
+        				   }
+						   
+        				   }
+        				  
+        				  
+        		  
+        			 
+        			  });
+        			 // $("#myModal").modal();
+        			   $("#myModal").modal('show');
+                 $("#myModal").on('hidden.bs.modal', function () {
+                       $("#marq").append(addtomarque);
+        			   addtomarque="";
+            });
+        		
+        		 }
+				 else{
+        			 window.alert("Under Development for this program");
         		 }
             };
 
