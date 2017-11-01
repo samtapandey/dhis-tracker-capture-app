@@ -32,7 +32,7 @@
         </div>
     </div>
     <div ng-if="!prStDe.dataElement.optionSetValue" ng-switch="prStDe.dataElement.valueType">
-        <div ng-switch-when="NUMBER" ng-if="prStDe.dataElement.id != 'nqd02WZwjqn'">
+        <div ng-switch-when="NUMBER">
             <div class="hideInPrint">
                 <input type="number"
                        number-type={{prStDe.dataElement.valueType}}
@@ -50,7 +50,7 @@
             </div>
         </div>
 
-        <!-- FOR INTPART -->
+        <!-- FOR INTPART
 
         <div ng-switch-when="NUMBER" ng-if="prStDe.dataElement.id === 'nqd02WZwjqn'">
             <div class="hideInPrint">
@@ -69,7 +69,7 @@
                 <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
             </div>
         </div>
-
+-->
         <div ng-switch-when="PERCENTAGE">
             <div class="hideInPrint">
                 <input type="number"
@@ -229,7 +229,7 @@
                 <label class="radio-inline"><input type="radio" value="false" ng-model="currentEvent[prStDe.dataElement.id]">{{'no' | translate}}</label>
             </div>
         </div>
-        <div ng-switch-when="DATE" ng-if="prStDe.dataElement.id != 'BvMIQ4bznKm'">
+        <div ng-switch-when="DATE">
             <div class="hideInPrint">
                 <input type="text"
                        placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
@@ -249,7 +249,7 @@
             </div>
         </div>
 
-<!-- FOR INTPART -->
+<!-- FOR INTPART
 
             <div ng-switch-when="DATE" ng-if="prStDe.dataElement.id === 'BvMIQ4bznKm'">
                 <div class="hideInPrint">
@@ -270,6 +270,8 @@
                     <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
                 </div>
             </div>
+        -->
+
         <div ng-switch-when="TRUE_ONLY">
             <div class="hideInPrint">
                 <input type="checkbox"

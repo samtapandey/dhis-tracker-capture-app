@@ -32,7 +32,7 @@
         </div>
     </div>
     <div ng-if="!prStDes[de.dataElement.id].dataElement.optionSetValue" ng-switch="prStDes[de.dataElement.id].dataElement.valueType">
-        <div ng-switch-when="NUMBER" ng-if="prStDes[de.dataElement.id].dataElement.id != 'nqd02WZwjqn'">
+        <div ng-switch-when="NUMBER">
             <div class="hideInPrint">
                     <input type="number"
                            d2-number-validator
@@ -50,7 +50,7 @@
             </div>
         </div>
 
-        <!-- INTPART -->
+        <!-- INTPART
     <div ng-switch-when="NUMBER" ng-if="prStDes[de.dataElement.id].dataElement.id === 'nqd02WZwjqn'">
            <div class="hideInPrint">
                   <input type="number"
@@ -67,7 +67,7 @@
         <div class="not-for-screen">
             <input type="text" class="form-control" value={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}>
         </div>
-    </div>
+    </div> -->
 
         <div ng-switch-when="PERCENTAGE">
             <div class="hideInPrint">
@@ -196,7 +196,7 @@
                 <label class="radio-inline"><input type="radio" value="false" ng-checked="currentEvent[prStDes[de.dataElement.id].dataElement.id]">{{'no' | translate}}</label>
             </div>
         </div>
-        <div ng-switch-when="DATE" ng-if="prStDes[de.dataElement.id].dataElement.id != 'BvMIQ4bznKm'">
+        <div ng-switch-when="DATE">
             <div class="hideInPrint">
                 <input type="text"
                        placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
@@ -216,7 +216,7 @@
             </div>
         </div>
         <!-- For INTPART -->
-        <div ng-switch-when="DATE" ng-if="prStDes[de.dataElement.id].dataElement.id === 'BvMIQ4bznKm'">
+     <!--  <div ng-switch-when="DATE" ng-if="prStDes[de.dataElement.id].dataElement.id === 'BvMIQ4bznKm'">
             <div class="hideInPrint">
                 <input type="text"
                     ng-controller="DataEntryController"
@@ -235,7 +235,7 @@
                 <div class="not-for-screen">
                     <input type="text" class="form-control" value={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}>
             </div>
-        </div>
+        </div> -->
         <div ng-switch-when="TRUE_ONLY">
             <div class="hideInPrint">
                 <input type="checkbox"

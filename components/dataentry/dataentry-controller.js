@@ -65,17 +65,17 @@ trackerCapture.controller('DataEntryController',
     $scope.dashBoardWidgetFirstRun = true;
     $scope.showSelf = true;
     $scope.orgUnitNames = {};
-    $scope.selectedIncidentDate = '';
-    $scope.incidentDateToBeUsed = '';
-    $scope.selectedEnrollmentDate = '';
-    $scope.numberOfWeeksOfPregancy = '';
-    //$scope.ANCnumberOfWeeksOfPregancy = '';
-    $scope.programName = '';
-    $scope.maternalHealthProgramStage = 'Medical & Obstetric history';
-    $scope.ANCFirstVisit ='ANC first visit';
-    $scope.ANCVisits = 'ANC visits 2-4';
-    $scope.eddDateValue = 'BvMIQ4bznKm';
-    $scope.weeksOfPregnencyValue = 'nqd02WZwjqn';
+    // $scope.selectedIncidentDate = '';
+    // $scope.incidentDateToBeUsed = '';
+    // $scope.selectedEnrollmentDate = '';
+    // $scope.numberOfWeeksOfPregancy = '';
+    // //$scope.ANCnumberOfWeeksOfPregancy = '';
+    // $scope.programName = '';
+    // $scope.maternalHealthProgramStage = 'Medical & Obstetric history';
+    // $scope.ANCFirstVisit ='ANC first visit';
+    // $scope.ANCVisits = 'ANC visits 2-4';
+    // $scope.eddDateValue = 'BvMIQ4bznKm';
+    // $scope.weeksOfPregnencyValue = 'nqd02WZwjqn';
    // $scope.NoOfWeeksOfPregnencyUid = 'o7CzR6ACgOn';
     
     var eventLockEnabled = false;
@@ -672,33 +672,33 @@ trackerCapture.controller('DataEntryController',
 
             //For INTPART
 
-            $scope.selectedIncidentDate = selections.selectedEnrollment.incidentDate;
-            $scope.selectedEnrollmentDate = selections.selectedEnrollment.enrollmentDate;
+            // $scope.selectedIncidentDate = selections.selectedEnrollment.incidentDate;
+            // $scope.selectedEnrollmentDate = selections.selectedEnrollment.enrollmentDate;
             $scope.programName = selections.pr.name;
 
-            $scope.incidentDateToBeUsed = new Date($scope.selectedIncidentDate);
-            
-            var EDDDate = $scope.incidentDateToBeUsed;
-            var numberOfDaysToAdd = 280;
-            
-            EDDDate.setDate(EDDDate.getDate()+numberOfDaysToAdd);
-            
-            var dd = ("0" + EDDDate.getDate()).slice(-2);
-            var mm = ("0"+(EDDDate.getMonth()+1)).slice(-2);
-            var y = EDDDate.getFullYear();
-            
-            $scope.EDDDate = y + '-'+ mm + '-'+ dd;
-            
-            var date1 = $scope.selectedIncidentDate;
-            var date2 = $scope.selectedEnrollmentDate;
-                var WEEK = 1000 * 60 * 60 * 24 * 7;
-                date1 = new Date(date1);
-                date2 = new Date(date2);
-                      
-                var date1ms = date1.getTime();
-                var date2ms = date2.getTime();
-                var diff = Math.abs(date2ms - date1ms);
-                $scope.numberOfWeeksOfPregancy = Math.floor(diff / WEEK);
+            // $scope.incidentDateToBeUsed = new Date($scope.selectedIncidentDate);
+            //
+            // var EDDDate = $scope.incidentDateToBeUsed;
+            // var numberOfDaysToAdd = 280;
+            //
+            // EDDDate.setDate(EDDDate.getDate()+numberOfDaysToAdd);
+            //
+            // var dd = ("0" + EDDDate.getDate()).slice(-2);
+            // var mm = ("0"+(EDDDate.getMonth()+1)).slice(-2);
+            // var y = EDDDate.getFullYear();
+            //
+            // $scope.EDDDate = y + '-'+ mm + '-'+ dd;
+            //
+            // var date1 = $scope.selectedIncidentDate;
+            // var date2 = $scope.selectedEnrollmentDate;
+            //     var WEEK = 1000 * 60 * 60 * 24 * 7;
+            //     date1 = new Date(date1);
+            //     date2 = new Date(date2);
+            //
+            //     var date1ms = date1.getTime();
+            //     var date2ms = date2.getTime();
+            //     var diff = Math.abs(date2ms - date1ms);
+            //     $scope.numberOfWeeksOfPregancy = Math.floor(diff / WEEK);
 
             var ouNames = CurrentSelection.getOrgUnitNames();            
             ouNames[$scope.selectedOrgUnit.id] = $scope.selectedOrgUnit.displayName;
@@ -1422,54 +1422,54 @@ trackerCapture.controller('DataEntryController',
         $scope.currentStageEventsOriginal = angular.copy($scope.currentStageEvents);
         
         var period = {event: $scope.currentEvent.event, stage: $scope.currentEvent.programStage, name: $scope.currentEvent.sortingDate};
-        $scope.currentPeriod[$scope.currentEvent.programStage] = period;   
-        
-        // for getting EDD AND PRAGNANCY WEEKS
-        if ($scope.programName ="Maternal Health" && ($scope.currentEvent.name === $scope.maternalHealthProgramStage || $scope.currentEvent.name ===  $scope.ANCFirstVisit || $scope.currentEvent.name ===  $scope.ANCVisits)) {
-            
-            //var eventUsedUid = $scope.currentEvent.event
+        $scope.currentPeriod[$scope.currentEvent.programStage] = period;
 
-            //var url1=  "../api/events/"+eventUsedUid+".json?";
-            //$.get(url1, function (data1) {
-               // var date01 = data1.dueDate;
-            
-
-            //var date01 = $scope.currentEvent.dueDate;
-            //var date02 = $scope.selectedIncidentDate;
-
-            //var WEEK = 1000 * 60 * 60 * 24 * 7;
-           //var date001 = new Date(date01);
-           //var date002 = new Date(date02);
-
-           // var date01ms = date001.getTime();
-            //var date02ms = date002.getTime();
-
-            //var diff = Math.abs(date02ms - date01ms);
-            //$scope.ANCnumberOfWeeksOfPregancy = Math.floor(diff / WEEK);
-
-            var myEDDValueId ={dataElement:{
-            id: $scope.eddDateValue
-                }
-            }
-            $scope.currentEvent.BvMIQ4bznKm = $scope.EDDDate;
-            $scope.saveDataValueForEvent(myEDDValueId, null , $scope.currentEvent, false);
-
-            var numberOfWeeksOfPregancyId ={dataElement:{
-            id: $scope.weeksOfPregnencyValue
-                }
-            }
-            $scope.currentEvent.nqd02WZwjqn = $scope.numberOfWeeksOfPregancy;
-            $scope.saveDataValueForEvent(numberOfWeeksOfPregancyId, null , $scope.currentEvent, false);
-
-           // var NoOfWeeksOfPregnencyId ={
-                //dataElement:{
-               // id: $scope.NoOfWeeksOfPregnencyUid
-               //     }
-              //  }
-              //  $scope.currentEvent.o7CzR6ACgOn = $scope.ANCnumberOfWeeksOfPregancy;
-              //  $scope.saveDataValueForEvent(NoOfWeeksOfPregnencyId, null , $scope.currentEvent, false);
-        //});
-    }
+    //     // for getting EDD AND PRAGNANCY WEEKS
+    //     if ($scope.programName ="Maternal Health" && ($scope.currentEvent.name === $scope.maternalHealthProgramStage || $scope.currentEvent.name ===  $scope.ANCFirstVisit || $scope.currentEvent.name ===  $scope.ANCVisits)) {
+    //
+    //         //var eventUsedUid = $scope.currentEvent.event
+    //
+    //         //var url1=  "../api/events/"+eventUsedUid+".json?";
+    //         //$.get(url1, function (data1) {
+    //            // var date01 = data1.dueDate;
+    //
+    //
+    //         //var date01 = $scope.currentEvent.dueDate;
+    //         //var date02 = $scope.selectedIncidentDate;
+    //
+    //         //var WEEK = 1000 * 60 * 60 * 24 * 7;
+    //        //var date001 = new Date(date01);
+    //        //var date002 = new Date(date02);
+    //
+    //        // var date01ms = date001.getTime();
+    //         //var date02ms = date002.getTime();
+    //
+    //         //var diff = Math.abs(date02ms - date01ms);
+    //         //$scope.ANCnumberOfWeeksOfPregancy = Math.floor(diff / WEEK);
+    //
+    //         var myEDDValueId ={dataElement:{
+    //         id: $scope.eddDateValue
+    //             }
+    //         }
+    //         $scope.currentEvent.BvMIQ4bznKm = $scope.EDDDate;
+    //         $scope.saveDataValueForEvent(myEDDValueId, null , $scope.currentEvent, false);
+    //
+    //         var numberOfWeeksOfPregancyId ={dataElement:{
+    //         id: $scope.weeksOfPregnencyValue
+    //             }
+    //         }
+    //         $scope.currentEvent.nqd02WZwjqn = $scope.numberOfWeeksOfPregancy;
+    //         $scope.saveDataValueForEvent(numberOfWeeksOfPregancyId, null , $scope.currentEvent, false);
+    //
+    //        // var NoOfWeeksOfPregnencyId ={
+    //             //dataElement:{
+    //            // id: $scope.NoOfWeeksOfPregnencyUid
+    //            //     }
+    //           //  }
+    //           //  $scope.currentEvent.o7CzR6ACgOn = $scope.ANCnumberOfWeeksOfPregancy;
+    //           //  $scope.saveDataValueForEvent(NoOfWeeksOfPregnencyId, null , $scope.currentEvent, false);
+    //     //});
+    // }
         //Because of separatae dataentry-controllers for tabular and timeline data entry,
         //the rule effects might already be in place:
         processRuleEffect($scope.currentEvent.event);
