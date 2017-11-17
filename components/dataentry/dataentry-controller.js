@@ -205,7 +205,7 @@ trackerCapture.controller('DataEntryController',
             }
         });
 
-        $scope.print = function (divName) {
+        $scope.print = function(divName){
             $scope.printForm = true;
             $scope.printEmptyForm = true;
             var printContents = document.getElementById(divName).innerHTML;
@@ -226,28 +226,26 @@ trackerCapture.controller('DataEntryController',
             $scope.printEmptyForm = false;
         };
 
-        var processRuleEffect = function (event, callerId) {
+        var processRuleEffect = function(event, callerId){
             //Establish which event was affected:
             var affectedEvent = $scope.currentEvent;
             if (!affectedEvent || !affectedEvent.event) {
-                //The data entry widget does not have an event selected. 
-                //Therefore applying rule effects from registration instead.
-                affectedEvent = 'registration';
+                //The data entry widget does not have an event selected.
+                return;
             }
-            else if (event === 'registration' || event === 'dataEntryInit') {
-                //The data entry widget is associated with an event, 
+            else if(event === 'registration' || event === 'dataEntryInit') {
+                //The data entry widget is associated with an event,
                 //and therefore we do not want to process rule effects from the registration form
                 return;
             }
 
-            //In most cases the updated effects apply to the current event. In case the affected event is not the current event, fetch the correct event to affect:
             if (event !== affectedEvent.event) {
-                angular.forEach($scope.allEventsSorted, function (searchedEvent) {
-                    if (searchedEvent.event === event) {
-                        affectedEvent = searchedEvent;
-                    }
-                });
+                //if the current event is not the same as the affected event,
+                //the effecs should be disregarded in the current events controller instance.
+                $log.warn("Event " + event + " was not found in the current scope.");
+                return;
             }
+
 
             $scope.assignedFields[event] = [];
             $scope.hiddenSections[event] = [];
@@ -260,7 +258,7 @@ trackerCapture.controller('DataEntryController',
                 if (effect.action === "HIDEFIELD") {
                     if (effect.dataElement) {
 
-                        if (affectedEvent.status !== 'SCHEDULE' &&
+                        if(affectedEvent.status !== 'SCHEDULE' &&
                             affectedEvent.status !== 'SKIPPED' &&
                             !affectedEvent.editingNotAllowed) {
                             if (effect.ineffect && affectedEvent[effect.dataElement.id]) {
@@ -280,10 +278,10 @@ trackerCapture.controller('DataEntryController',
                             }
                         }
 
-                        if (effect.ineffect) {
+                        if(effect.ineffect) {
                             $scope.hiddenFields[event][effect.dataElement.id] = true;
                         }
-                        else if (!$scope.hiddenFields[event][effect.dataElement.id]) {
+                        else if( !$scope.hiddenFields[event][effect.dataElement.id]) {
                             $scope.hiddenFields[event][effect.dataElement.id] = false;
                         }
 
@@ -296,24 +294,25 @@ trackerCapture.controller('DataEntryController',
                     if (effect.ineffect) {
                         var message = effect.content + (effect.data ? effect.data : "");
 
-                        if (effect.dataElement && $scope.prStDes[effect.dataElement.id]) {
-                            if (effect.action === "SHOWERROR") {
+                        if(effect.dataElement && $scope.prStDes[effect.dataElement.id]) {
+                            if(effect.action === "SHOWERROR") {
                                 //only SHOWERROR messages is going to be shown in the form as the user works
                                 $scope.errorMessages[event][effect.dataElement.id] = message;
                             }
                             $scope.errorMessages[event].push($translate.instant($scope.prStDes[effect.dataElement.id].dataElement.displayName) + ": " + message);
                         }
-                        else {
+                        else
+                        {
                             $scope.errorMessages[event].push(message);
                         }
                     }
                 } else if (effect.action === "SHOWWARNING"
-                    || effect.action === "WARNINGONCOMPLETE") {
+                    || effect.action === "WARNINGONCOMPLETE") {
                     if (effect.ineffect) {
                         var message = effect.content + (effect.data ? effect.data : "");
 
-                        if (effect.dataElement && $scope.prStDes[effect.dataElement.id]) {
-                            if (effect.action === "SHOWWARNING") {
+                        if(effect.dataElement && $scope.prStDes[effect.dataElement.id]) {
+                            if(effect.action === "SHOWWARNING") {
                                 //only SHOWWARNING messages is going to show up in the form as the user works
                                 $scope.warningMessages[event][effect.dataElement.id] = message;
                             }
@@ -322,9 +321,9 @@ trackerCapture.controller('DataEntryController',
                             $scope.warningMessages[event].push(message);
                         }
                     }
-                } else if (effect.action === "HIDESECTION") {
-                    if (effect.programStageSection) {
-                        if (effect.ineffect) {
+                } else if (effect.action === "HIDESECTION"){
+                    if(effect.programStageSection){
+                        if(effect.ineffect){
                             $scope.hiddenSections[event][effect.programStageSection] = true;
                         } else if (!$scope.hiddenSections[event][effect.programStageSection]) {
                             $scope.hiddenSections[event][effect.programStageSection] = false;
@@ -334,15 +333,15 @@ trackerCapture.controller('DataEntryController',
                         $log.warn("ProgramRuleAction " + effect.id + " is of type HIDESECTION, bot does not have a section defined");
                     }
                 } else if (effect.action === "ASSIGN") {
-                    if (affectedEvent.status !== 'SCHEDULE' &&
+                    if(affectedEvent.status !== 'SCHEDULE' &&
                         affectedEvent.status !== 'SKIPPED' &&
                         !affectedEvent.editingNotAllowed) {
-                        if (effect.ineffect && effect.dataElement) {
+                        if(effect.ineffect && effect.dataElement) {
                             //For "ASSIGN" actions where we have a dataelement, we save the calculated value to the dataelement:
                             //Blank out the value:
                             var processedValue = $filter('trimquotes')(effect.data);
 
-                            if ($scope.prStDes[effect.dataElement.id].dataElement.optionSet) {
+                            if($scope.prStDes[effect.dataElement.id].dataElement.optionSet) {
                                 processedValue = OptionSetService.getName(
                                     $scope.optionSets[$scope.prStDes[effect.dataElement.id].dataElement.optionSet.id].options, processedValue);
                             }
@@ -353,7 +352,7 @@ trackerCapture.controller('DataEntryController',
                             affectedEvent[effect.dataElement.id] = processedValue;
                             $scope.assignedFields[event][effect.dataElement.id] = true;
 
-                            if (callerId === $scope.instanceId) {
+                            if(callerId === $scope.instanceId) {
                                 $scope.saveDataValueForEvent($scope.prStDes[effect.dataElement.id], null, affectedEvent, true);
                             }
                         }
@@ -361,7 +360,8 @@ trackerCapture.controller('DataEntryController',
                 }
                 else if (effect.action === "HIDEPROGRAMSTAGE") {
                     if (effect.programStage) {
-                        if ($scope.stagesNotShowingInStageTasks[effect.programStage.id] !== effect.ineffect) {
+                        if($scope.stagesNotShowingInStageTasks[effect.programStage.id] !== effect.ineffect )
+                        {
                             $scope.stagesNotShowingInStageTasks[effect.programStage.id] = effect.ineffect;
                         }
                     }
@@ -1738,17 +1738,19 @@ trackerCapture.controller('DataEntryController',
                         $scope.longitudeSaved = false;
                     }
 
+
                     $scope.currentEventOriginal = angular.copy($scope.currentEvent);
 
                     $scope.currentStageEventsOriginal = angular.copy($scope.currentStageEvents);
 
-                    //In some cases, the rules execution should be suppressed to avoid the 
-                    //possibility of infinite loops(rules updating datavalues, that triggers a new 
-                    //rule execution)
-                    if (!backgroundUpdate) {
-                        //Run rules on updated data:
-                        $scope.executeRules();
-                    }
+					//In some cases, the rules execution should be suppressed to avoid the 
+					//possibility of infinite loops(rules updating datavalues, that triggers a new 
+					//rule execution)
+					if(!backgroundUpdate) {
+						//Run rules on updated data:
+						$scope.executeRules();
+					}
+                    
 
                 });
 
