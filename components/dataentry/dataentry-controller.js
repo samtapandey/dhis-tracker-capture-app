@@ -1750,8 +1750,6 @@ trackerCapture.controller('DataEntryController',
 						//Run rules on updated data:
 						$scope.executeRules();
 					}
-                    
-
                 });
 
             }
