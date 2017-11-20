@@ -307,7 +307,7 @@ trackerCapture.controller('DataEntryController',
                         }
                     }
                 } else if (effect.action === "SHOWWARNING"
-                    || effect.action === "WARNINGONCOMPLETE") {
+                    ||effect.action === "WARNINGONCOMPLETE") {
                     if (effect.ineffect) {
                         var message = effect.content + (effect.data ? effect.data : "");
 
