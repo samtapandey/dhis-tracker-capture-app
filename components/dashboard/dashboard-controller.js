@@ -4,600 +4,1235 @@
 var trackerCapture = angular.module('trackerCapture');
 trackerCapture.controller('DashboardController',
     function ($rootScope,
-            $scope,
-            $location,
-            $modal,
-            $timeout,
-            $filter,
-            $translate,
-            $q,
-            TCStorageService,
-            orderByFilter,
-            SessionStorageService,
-            TEIService,
-            TEService,
-            MetaDataFactory,
-            EnrollmentService,
-            ProgramFactory,
-            DHIS2EventFactory,
-            DashboardLayoutService,
-            AttributesFactory,
-            CurrentSelection,
-            ModalService,
-            AuthorityService,
-            OrgUnitFactory,
-            NotificationService) {
-    
-    //selections
-    var orgUnitUrl = ($location.search()).ou;
-    
-    $scope.displayEnrollment = false;
-    $scope.dataEntryMainMenuItemSelected = false;    
-    $scope.metaDataCached = false;
-    $scope.model = {orgUnitClosed: false};
-    if ( !dhis2.tc.metaDataCached){
-        downloadMetaData().then(function () {
-            updateDashboard();
-        });
-    }
-    else {
-        updateDashboard();
-    }
+        $scope,
+        $location,
+        $modal,
+        $timeout,
+        $filter,
+        $translate,
+        $q,
+        TCStorageService,
+        orderByFilter,
+        SessionStorageService,
+        TEIService,
+        TEService,
+        MetaDataFactory,
+        EnrollmentService,
+        ProgramFactory,
+        DHIS2EventFactory,
+        DashboardLayoutService,
+        AttributesFactory,
+        CurrentSelection,
+        ModalService,
+        AuthorityService,
+        OrgUnitFactory,
+        NotificationService) {
 
-    function getOrgUnit() {
-        var def = $q.defer();
-        var selection = CurrentSelection.get();
-        if(selection.orgUnit && selection.orgUnit.id === orgUnitUrl) {
-            def.resolve(selection.orgUnit);
-        } else {
-            OrgUnitFactory.getFromStoreOrServer(orgUnitUrl).then(function(ou){
-                def.resolve(ou);
-            })
+        //selections
+        var orgUnitUrl = ($location.search()).ou;
+
+        $scope.displayEnrollment = false;
+        $scope.dataEntryMainMenuItemSelected = false;
+        $scope.metaDataCached = false;
+        $scope.model = { orgUnitClosed: false };
+        if (!dhis2.tc.metaDataCached) {
+            downloadMetaData().then(function () {
+                updateDashboard();
+            });
         }
-        return def.promise;
-    }    
+        else {
+            updateDashboard();
+        }
 
-    function updateDashboard() {
-        
-        $scope.metaDataCached = true;
-
-        getOrgUnit().then(function (orgUnit) {
-            if (!orgUnit) {
-                return;
+        function getOrgUnit() {
+            var def = $q.defer();
+            var selection = CurrentSelection.get();
+            if (selection.orgUnit && selection.orgUnit.id === orgUnitUrl) {
+                def.resolve(selection.orgUnit);
+            } else {
+                OrgUnitFactory.getFromStoreOrServer(orgUnitUrl).then(function (ou) {
+                    def.resolve(ou);
+                })
             }
+            return def.promise;
+        }
 
-            $scope.selectedTeiId = ($location.search()).tei;
-            $scope.selectedProgramId = ($location.search()).program;
-            $scope.selectedOrgUnit = orgUnit;
-            $scope.userAuthority = AuthorityService.getUserAuthorities(SessionStorageService.get('USER_PROFILE'));
-            $scope.sortedTeiIds = CurrentSelection.getSortedTeiIds();
-            $scope.useTopBar = false;
-            $scope.showSettingsButton = true;
-            $scope.topbarClass = $scope.showSettingsButton ? "dashboard-info-box-sm" : "dashboard-info-box-lg";
-            $scope.topbarRightSizeClass = $scope.showSettingsButton ? "dashboard-info-btn-right-two-buttons" : "dashboard-info-btn-right-one-button";
+        function updateDashboard() {
 
-            //Labels
-            $scope.removeLabel = $translate.instant('remove');
-            $scope.expandLabel = $translate.instant('expand');
-            $scope.collapseLabel = $translate.instant('collapse');
-            $scope.noDataReportLabel = $translate.instant('no_data_report');
-            $scope.noRelationshipLabel = $translate.instant('no_relationship');
-            $scope.settingsLabel = $translate.instant('settings');
-            $scope.showHideWidgetsLabel = $translate.instant('show_hide_widgets');
-            $scope.notEnrolledLabel = $translate.instant('not_yet_enrolled_data_entry');
-            $scope.stickLabel = $translate.instant('stick_right_widgets');
-            $scope.unstickLabel = $translate.instant('unstick_right_widgets');
+            $scope.metaDataCached = true;
 
-            $scope.model.stickyDisabled = true;
-            $scope.previousTeiExists = false;
-            $scope.nextTeiExists = false;
+            getOrgUnit().then(function (orgUnit) {
+                if (!orgUnit) {
+                    return;
+                }
 
-            $scope.temporaryHideWidgets = [];
-            $scope.temporaryShowWidgets = [];
+                $scope.selectedTeiId = ($location.search()).tei;
+                $scope.selectedProgramId = ($location.search()).program;
+                $scope.selectedOrgUnit = orgUnit;
+                $scope.userAuthority = AuthorityService.getUserAuthorities(SessionStorageService.get('USER_PROFILE'));
+                $scope.sortedTeiIds = CurrentSelection.getSortedTeiIds();
+                $scope.useTopBar = false;
+                $scope.showSettingsButton = true;
+                $scope.topbarClass = $scope.showSettingsButton ? "dashboard-info-box-sm" : "dashboard-info-box-lg";
+                $scope.topbarRightSizeClass = $scope.showSettingsButton ? "dashboard-info-btn-right-two-buttons" : "dashboard-info-btn-right-one-button";
 
-            if ($scope.sortedTeiIds && $scope.sortedTeiIds.length > 0) {
-                var current = $scope.sortedTeiIds.indexOf($scope.selectedTeiId);
+                //Labels
+                $scope.removeLabel = $translate.instant('remove');
+                $scope.expandLabel = $translate.instant('expand');
+                $scope.collapseLabel = $translate.instant('collapse');
+                $scope.noDataReportLabel = $translate.instant('no_data_report');
+                $scope.noRelationshipLabel = $translate.instant('no_relationship');
+                $scope.settingsLabel = $translate.instant('settings');
+                $scope.showHideWidgetsLabel = $translate.instant('show_hide_widgets');
+                $scope.notEnrolledLabel = $translate.instant('not_yet_enrolled_data_entry');
+                $scope.stickLabel = $translate.instant('stick_right_widgets');
+                $scope.unstickLabel = $translate.instant('unstick_right_widgets');
 
-                if (current !== -1) {
-                    if ($scope.sortedTeiIds.length - 1 > current) {
-                        $scope.nextTeiExists = true;
-                    }
+                $scope.model.stickyDisabled = true;
+                $scope.previousTeiExists = false;
+                $scope.nextTeiExists = false;
 
-                    if (current > 0) {
-                        $scope.previousTeiExists = true;
+                $scope.temporaryHideWidgets = [];
+                $scope.temporaryShowWidgets = [];
+
+                if ($scope.sortedTeiIds && $scope.sortedTeiIds.length > 0) {
+                    var current = $scope.sortedTeiIds.indexOf($scope.selectedTeiId);
+
+                    if (current !== -1) {
+                        if ($scope.sortedTeiIds.length - 1 > current) {
+                            $scope.nextTeiExists = true;
+                        }
+
+                        if (current > 0) {
+                            $scope.previousTeiExists = true;
+                        }
                     }
                 }
-            }
 
-            //get ouLevels
-            TCStorageService.currentStore.open().done(function () {
-                TCStorageService.currentStore.getAll('ouLevels').done(function (response) {
-                    var ouLevels = angular.isObject(response) ? orderByFilter(response, '-level').reverse() : [];
-                    CurrentSelection.setOuLevels(orderByFilter(ouLevels, '-level').reverse());
-                });
-            });
-
-            if ($scope.selectedTeiId) {
-
-                //get option sets
-                $scope.optionSets = [];
-
-                MetaDataFactory.getAll('optionSets').then(function (optionSets) {
-                    angular.forEach(optionSets, function (optionSet) {
-                        $scope.optionSets[optionSet.id] = optionSet;
+                //get ouLevels
+                TCStorageService.currentStore.open().done(function () {
+                    TCStorageService.currentStore.getAll('ouLevels').done(function (response) {
+                        var ouLevels = angular.isObject(response) ? orderByFilter(response, '-level').reverse() : [];
+                        CurrentSelection.setOuLevels(orderByFilter(ouLevels, '-level').reverse());
                     });
+                });
 
-                    AttributesFactory.getAll().then(function (atts) {
+                if ($scope.selectedTeiId) {
 
-                        $scope.attributesById = [];
-                        angular.forEach(atts, function (att) {
-                            $scope.attributesById[att.id] = att;
+                    //get option sets
+                    $scope.optionSets = [];
+
+                    MetaDataFactory.getAll('optionSets').then(function (optionSets) {
+                        angular.forEach(optionSets, function (optionSet) {
+                            $scope.optionSets[optionSet.id] = optionSet;
                         });
 
-                        CurrentSelection.setAttributesById($scope.attributesById);
+                        AttributesFactory.getAll().then(function (atts) {
 
-                        //Fetch the selected entity
-                        TEIService.get($scope.selectedTeiId, $scope.optionSets, $scope.attributesById).then(function (response) {
-                            if (response) {
-                                $scope.selectedTei = response;
+                            $scope.attributesById = [];
+                            angular.forEach(atts, function (att) {
+                                $scope.attributesById[att.id] = att;
+                            });
 
-                                //get the entity type
-                                TEService.get($scope.selectedTei.trackedEntity).then(function (te) {
-                                    $scope.trackedEntity = te;
+                            CurrentSelection.setAttributesById($scope.attributesById);
 
-                                    //get enrollments for the selected tei
-                                    EnrollmentService.getByEntity($scope.selectedTeiId).then(function (response) {
-                                        if(!response) {
-                                            return;
-                                        }
-                                        var enrollments = angular.isObject(response) && response.enrollments ? response.enrollments : [];
-                                        var selectedEnrollment = null, backupSelectedEnrollment = null;
-                                        if (enrollments.length === 1) {
-                                            selectedEnrollment = enrollments[0];
-                                        } else {
-                                            if ($scope.selectedProgramId) {
-                                                angular.forEach(enrollments, function (en) {
-                                                    if (en.program === $scope.selectedProgramId) {
-                                                        if (en.status === 'ACTIVE') {
-                                                            selectedEnrollment = en;
-                                                        } else {
-                                                            backupSelectedEnrollment = en;
+                            //Fetch the selected entity
+                            TEIService.get($scope.selectedTeiId, $scope.optionSets, $scope.attributesById).then(function (response) {
+                                if (response) {
+                                    $scope.selectedTei = response;
+
+                                    //get the entity type
+                                    TEService.get($scope.selectedTei.trackedEntity).then(function (te) {
+                                        $scope.trackedEntity = te;
+
+                                        //get enrollments for the selected tei
+                                        EnrollmentService.getByEntity($scope.selectedTeiId).then(function (response) {
+                                            if (!response) {
+                                                return;
+                                            }
+                                            var enrollments = angular.isObject(response) && response.enrollments ? response.enrollments : [];
+                                            var selectedEnrollment = null, backupSelectedEnrollment = null;
+                                            if (enrollments.length === 1) {
+                                                selectedEnrollment = enrollments[0];
+                                            } else {
+                                                if ($scope.selectedProgramId) {
+                                                    angular.forEach(enrollments, function (en) {
+                                                        if (en.program === $scope.selectedProgramId) {
+                                                            if (en.status === 'ACTIVE') {
+                                                                selectedEnrollment = en;
+                                                            } else {
+                                                                backupSelectedEnrollment = en;
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                            selectedEnrollment = selectedEnrollment ? selectedEnrollment : backupSelectedEnrollment;
+
+                                            ProgramFactory.getAll().then(function (programs) {
+                                                $scope.programs = [];
+                                                $scope.programNames = [];
+                                                $scope.programStageNames = [];
+
+                                                //get programs valid for the selected ou and tei
+                                                angular.forEach(programs, function (program) {
+                                                    if (program.trackedEntity && program.trackedEntity.id === $scope.selectedTei.trackedEntity) {
+                                                        $scope.programs.push(program);
+                                                        $scope.programNames[program.id] = {
+                                                            id: program.id,
+                                                            displayName: program.displayName
+                                                        };
+                                                        angular.forEach(program.programStages, function (stage) {
+                                                            $scope.programStageNames[stage.id] = {
+                                                                id: stage.id,
+                                                                displayName: stage.displayName
+                                                            };
+                                                        });
+
+                                                        if ($scope.selectedProgramId && program.id === $scope.selectedProgramId || selectedEnrollment && selectedEnrollment.program === program.id) {
+                                                            $scope.selectedProgram = program;
                                                         }
                                                     }
                                                 });
-                                            }
-                                        }
-                                        selectedEnrollment = selectedEnrollment ? selectedEnrollment : backupSelectedEnrollment;
 
-                                        ProgramFactory.getAll().then(function (programs) {
-                                            $scope.programs = [];
-                                            $scope.programNames = [];
-                                            $scope.programStageNames = [];
-
-                                            //get programs valid for the selected ou and tei
-                                            angular.forEach(programs, function (program) {
-                                                if (program.trackedEntity && program.trackedEntity.id === $scope.selectedTei.trackedEntity) {
-                                                    $scope.programs.push(program);
-                                                    $scope.programNames[program.id] = {
-                                                        id: program.id,
-                                                        displayName: program.displayName
-                                                    };
-                                                    angular.forEach(program.programStages, function (stage) {
-                                                        $scope.programStageNames[stage.id] = {
-                                                            id: stage.id,
-                                                            displayName: stage.displayName
-                                                        };
-                                                    });
-
-                                                    if ($scope.selectedProgramId && program.id === $scope.selectedProgramId || selectedEnrollment && selectedEnrollment.program === program.id) {
-                                                        $scope.selectedProgram = program;
+                                                //filter those enrollments that belong to available programs
+                                                var len = enrollments.length;
+                                                while (len--) {
+                                                    if (enrollments[len].program && !$scope.programNames[enrollments[len].program]) {
+                                                        enrollments.splice(len, 1);
                                                     }
                                                 }
-                                            });
 
-                                            //filter those enrollments that belong to available programs
-                                            var len = enrollments.length;
-                                            while (len--) {
-                                                if (enrollments[len].program && !$scope.programNames[enrollments[len].program]) {
-                                                    enrollments.splice(len, 1);
-                                                }
-                                            }
-
-                                            DHIS2EventFactory.getEventsByProgram($scope.selectedTeiId, null).then(function (events) {
-                                                //prepare selected items for broadcast
-                                                CurrentSelection.setSelectedTeiEvents(events);
-                                                CurrentSelection.set({
-                                                    tei: $scope.selectedTei,
-                                                    te: $scope.trackedEntity,
-                                                    prs: $scope.programs,
-                                                    pr: $scope.selectedProgram,
-                                                    prNames: $scope.programNames,
-                                                    prStNames: $scope.programStageNames,
-                                                    enrollments: enrollments,
-                                                    selectedEnrollment: selectedEnrollment,
-                                                    optionSets: $scope.optionSets,
-                                                    orgUnit: $scope.selectedOrgUnit
+                                                DHIS2EventFactory.getEventsByProgram($scope.selectedTeiId, null).then(function (events) {
+                                                    //prepare selected items for broadcast
+                                                    CurrentSelection.setSelectedTeiEvents(events);
+                                                    CurrentSelection.set({
+                                                        tei: $scope.selectedTei,
+                                                        te: $scope.trackedEntity,
+                                                        prs: $scope.programs,
+                                                        pr: $scope.selectedProgram,
+                                                        prNames: $scope.programNames,
+                                                        prStNames: $scope.programStageNames,
+                                                        enrollments: enrollments,
+                                                        selectedEnrollment: selectedEnrollment,
+                                                        optionSets: $scope.optionSets,
+                                                        orgUnit: $scope.selectedOrgUnit
+                                                    });
+                                                    getDashboardLayout();
                                                 });
-                                                getDashboardLayout();
                                             });
                                         });
                                     });
-                                });
-                            }
+                                }
+                            });
                         });
                     });
+                }
+            });
+        }
+
+        //dashboard items
+        var getDashboardLayout = function () {
+            $rootScope.dashboardWidgets = [];
+            $scope.widgetsChanged = [];
+            $scope.dashboardStatus = [];
+            $scope.dashboardWidgetsOrder = { biggerWidgets: [], smallerWidgets: [] };
+            $scope.orderChanged = false;
+
+            DashboardLayoutService.get().then(function (response) {
+                $scope.dashboardLayouts = response;
+                var defaultLayout = $scope.dashboardLayouts.defaultLayout['DEFAULT'];
+                var selectedLayout = null;
+                if ($scope.selectedProgram && $scope.selectedProgram.id) {
+                    selectedLayout = $scope.dashboardLayouts.customLayout && $scope.dashboardLayouts.customLayout[$scope.selectedProgram.id] ? $scope.dashboardLayouts.customLayout[$scope.selectedProgram.id] : $scope.dashboardLayouts.defaultLayout[$scope.selectedProgram.id];
+                }
+                selectedLayout = !selectedLayout ? defaultLayout : selectedLayout;
+
+                $scope.model.stickyDisabled = selectedLayout.stickRightSide ? !selectedLayout.stickRightSide : true;
+
+                angular.forEach(selectedLayout.widgets, function (widget) {
+                    if (widget.title !== "activePrograms") {
+                        $rootScope[widget.title + 'Widget'] = widget;
+                        $rootScope.dashboardWidgets.push($rootScope[widget.title + 'Widget']);
+                        $scope.dashboardStatus[widget.title] = angular.copy(widget);
+                    }
                 });
-            }            
-        });
-    }
-    
-    //dashboard items
-    var getDashboardLayout = function () {
-        $rootScope.dashboardWidgets = [];
-        $scope.widgetsChanged = [];
-        $scope.dashboardStatus = [];
-        $scope.dashboardWidgetsOrder = {biggerWidgets: [], smallerWidgets: []};
-        $scope.orderChanged = false;
 
-        DashboardLayoutService.get().then(function (response) {
-            $scope.dashboardLayouts = response;            
-            var defaultLayout = $scope.dashboardLayouts.defaultLayout['DEFAULT'];
-            var selectedLayout = null;
-            if ($scope.selectedProgram && $scope.selectedProgram.id) {
-                selectedLayout = $scope.dashboardLayouts.customLayout && $scope.dashboardLayouts.customLayout[$scope.selectedProgram.id] ? $scope.dashboardLayouts.customLayout[$scope.selectedProgram.id] : $scope.dashboardLayouts.defaultLayout[$scope.selectedProgram.id];
+                angular.forEach(defaultLayout.widgets, function (w) {
+                    if (!$scope.dashboardStatus[w.title]) {
+                        $rootScope[w.title + 'Widget'] = w;
+                        $rootScope.dashboardWidgets.push($rootScope[w.title + 'Widget']);
+                        $scope.dashboardStatus[w.title] = angular.copy(w);
+                    }
+                });
+
+                $scope.hasBigger = false;
+                angular.forEach(orderByFilter($filter('filter')($scope.dashboardWidgets, { parent: "biggerWidget" }), 'order'), function (w) {
+                    if (w.show) {
+                        $scope.hasBigger = true;
+                    }
+                    $scope.dashboardWidgetsOrder.biggerWidgets.push(w.title);
+                });
+
+                $scope.hasSmaller = false;
+                angular.forEach(orderByFilter($filter('filter')($scope.dashboardWidgets, { parent: "smallerWidget" }), 'order'), function (w) {
+                    if (w.show) {
+                        $scope.hasSmaller = true;
+                    }
+                    $scope.dashboardWidgetsOrder.smallerWidgets.push(w.title);
+                });
+
+                setWidgetsSize();
+                $scope.broadCastSelections();
+                setInactiveMessage();
+            });
+        };
+
+        var setWidgetsSize = function () {
+
+            $scope.widgetSize = { smaller: "col-sm-6 col-md-4", bigger: "col-sm-6 col-md-8" };
+
+            if (!$scope.hasSmaller) {
+                $scope.widgetSize = { smaller: "col-sm-1", bigger: "col-sm-11" };
             }
-            selectedLayout = !selectedLayout ? defaultLayout : selectedLayout;
 
-            $scope.model.stickyDisabled = selectedLayout.stickRightSide ? !selectedLayout.stickRightSide : true;
+            if (!$scope.hasBigger) {
+                $scope.widgetSize = { smaller: "col-sm-11", bigger: "col-sm-1" };
+            }
+        };
 
-            angular.forEach(selectedLayout.widgets, function (widget) {
-                if (widget.title !== "activePrograms") {
-                    $rootScope[widget.title + 'Widget'] = widget;
-                    $rootScope.dashboardWidgets.push($rootScope[widget.title + 'Widget']);
-                    $scope.dashboardStatus[widget.title] = angular.copy(widget);
+        var setInactiveMessage = function () {
+            if ($scope.selectedTei.inactive) {
+                var teName = $scope.trackedEntity && $scope.trackedEntity.displayName ? $scope.trackedEntity.displayName : $translate.instance('tracked_entity_instance');
+                setHeaderDelayMessage(teName + " " + $translate.instant('tei_inactive_only_read'));
+            }
+        };
+
+        //listen for any change to program selection
+        //it is possible that such could happen during enrollment.
+        $scope.$on('mainDashboard', function (event, args) {
+            var selections = CurrentSelection.get();
+            $scope.selectedProgram = null;
+            angular.forEach($scope.programs, function (pr) {
+                if (pr.id === selections.pr) {
+                    $scope.selectedProgram = pr;
                 }
             });
 
-            angular.forEach(defaultLayout.widgets, function (w) {
-                if (!$scope.dashboardStatus[w.title]) {
-                    $rootScope[w.title + 'Widget'] = w;
-                    $rootScope.dashboardWidgets.push($rootScope[w.title + 'Widget']);
-                    $scope.dashboardStatus[w.title] = angular.copy(w);
-                }
-            });
-
-            $scope.hasBigger = false;
-            angular.forEach(orderByFilter($filter('filter')($scope.dashboardWidgets, {parent: "biggerWidget"}), 'order'), function (w) {
-                if (w.show) {
-                    $scope.hasBigger = true;
-                }
-                $scope.dashboardWidgetsOrder.biggerWidgets.push(w.title);
-            });
-
-            $scope.hasSmaller = false;
-            angular.forEach(orderByFilter($filter('filter')($scope.dashboardWidgets, {parent: "smallerWidget"}), 'order'), function (w) {
-                if (w.show) {
-                    $scope.hasSmaller = true;
-                }
-                $scope.dashboardWidgetsOrder.smallerWidgets.push(w.title);
-            });
-
-            setWidgetsSize();
-            $scope.broadCastSelections();
-            setInactiveMessage();
+            $scope.applySelectedProgram();
         });
-    };
 
-    var setWidgetsSize = function () {
+        function getCurrentDashboardLayout() {
+            var widgets = [];
+            $scope.hasBigger = false;
+            $scope.hasSmaller = false;
+            angular.forEach($rootScope.dashboardWidgets, function (widget) {
+                var w = angular.copy(widget);
+                if ($scope.orderChanged) {
+                    if ($scope.widgetsOrder.biggerWidgets.indexOf(w.title) !== -1) {
+                        $scope.hasBigger = $scope.hasBigger || w.show;
+                        w.parent = 'biggerWidget';
+                        w.order = $scope.widgetsOrder.biggerWidgets.indexOf(w.title);
+                    }
 
-        $scope.widgetSize = {smaller: "col-sm-6 col-md-4", bigger: "col-sm-6 col-md-8"};
+                    if ($scope.widgetsOrder.smallerWidgets.indexOf(w.title) !== -1) {
+                        $scope.hasSmaller = $scope.hasSmaller || w.show;
+                        w.parent = 'smallerWidget';
+                        w.order = $scope.widgetsOrder.smallerWidgets.indexOf(w.title);
+                    }
+                }
+                widgets.push(w);
+            });
 
-        if (!$scope.hasSmaller) {
-            $scope.widgetSize = {smaller: "col-sm-1", bigger: "col-sm-11"};
+            return { widgets: widgets, program: $scope.selectedProgram && $scope.selectedProgram.id ? $scope.selectedProgram.id : 'DEFAULT' };
         }
 
-        if (!$scope.hasBigger) {
-            $scope.widgetSize = {smaller: "col-sm-11", bigger: "col-sm-1"};
-        }
-    };
+        function saveDashboardLayout() {
+            var currentLayout = $scope.dashboardLayouts.customLayout ? angular.copy($scope.dashboardLayouts.customLayout) : {};
+            var programId = $scope.selectedProgram && $scope.selectedProgram.id ? $scope.selectedProgram.id : 'DEFAULT';
+            currentLayout[programId] = getCurrentDashboardLayout();
 
-    var setInactiveMessage = function () {
-        if ($scope.selectedTei.inactive) {
-            var teName = $scope.trackedEntity && $scope.trackedEntity.displayName ? $scope.trackedEntity.displayName : $translate.instance('tracked_entity_instance');
-            setHeaderDelayMessage(teName + " " + $translate.instant('tei_inactive_only_read'));
-        }
-    };
-    
-    //listen for any change to program selection
-    //it is possible that such could happen during enrollment.
-    $scope.$on('mainDashboard', function (event, args) {
-        var selections = CurrentSelection.get();
-        $scope.selectedProgram = null;
-        angular.forEach($scope.programs, function (pr) {
-            if (pr.id === selections.pr) {
+            DashboardLayoutService.saveLayout(currentLayout, false).then(function () {
+                if (!$scope.orderChanged) {
+                    $scope.hasSmaller = $filter('filter')($scope.dashboardWidgets, {
+                        parent: "smallerWidget",
+                        show: true
+                    }).length > 0;
+                    $scope.hasBigger = $filter('filter')($scope.dashboardWidgets, {
+                        parent: "biggerWidget",
+                        show: true
+                    }).length > 0;
+                }
+                setWidgetsSize();
+            });
+        };
+
+        $scope.saveDashboarLayoutAsDefault = function () {
+            var layout = angular.copy($scope.dashboardLayouts.defaultLayout);
+            var programId = $scope.selectedProgram && $scope.selectedProgram.id ? $scope.selectedProgram.id : 'DEFAULT';
+            layout[programId] = getCurrentDashboardLayout();
+            delete layout.DEFAULT;
+            DashboardLayoutService.saveLayout(layout, true);
+        };
+
+        //persist widget sorting
+        $scope.applyWidgetsOrderChange = function (param) {
+            $scope.widgetsOrder = param;
+            $scope.orderChanged = false;
+            for (var i = 0; i < $scope.widgetsOrder.smallerWidgets.length; i++) {
+                if ($scope.widgetsOrder.smallerWidgets.length === $scope.dashboardWidgetsOrder.smallerWidgets.length && $scope.widgetsOrder.smallerWidgets[i] !== $scope.dashboardWidgetsOrder.smallerWidgets[i]) {
+                    $scope.orderChanged = true;
+                }
+
+                if ($scope.widgetsOrder.smallerWidgets.length !== $scope.dashboardWidgetsOrder.smallerWidgets.length) {
+                    $scope.orderChanged = true;
+                }
+            }
+
+            for (var i = 0; i < $scope.widgetsOrder.biggerWidgets.length; i++) {
+                if ($scope.widgetsOrder.biggerWidgets.length === $scope.dashboardWidgetsOrder.biggerWidgets.length && $scope.widgetsOrder.biggerWidgets[i] !== $scope.dashboardWidgetsOrder.biggerWidgets[i]) {
+                    $scope.orderChanged = true;
+                }
+
+                if ($scope.widgetsOrder.biggerWidgets.length !== $scope.dashboardWidgetsOrder.biggerWidgets.length) {
+                    $scope.orderChanged = true;
+                }
+            }
+
+            if ($scope.orderChanged) {
+                saveDashboardLayout();
+            }
+        };
+
+        $scope.$on('DataEntryMainMenuItemSelected', function (event) {
+            $scope.dataEntryMainMenuItemSelected = true;
+        });
+
+        $scope.$on('DataEntryMainMenuVisibilitySet', function (event, data) {
+            if (data.visible) {
+                //hide all widgets except visibleItems in data
+                angular.forEach($scope.dashboardWidgets, function (widget) {
+                    if (!data.visibleItems[widget.title]) {
+                        $scope.temporaryHideWidgets[widget.title] = true;
+                    } else {
+                        $scope.temporaryShowWidgets[widget.title] = true;
+                    }
+
+                });
+            } else if (data.closingStage) {//Palestine, show only closing stage
+
+            } else {
+                //show widgets, reset temporary settings
+                $scope.temporaryHideWidgets = [];
+                $scope.temporaryShowWidgets = [];
+
+            }
+        });
+
+        $scope.applySelectedProgram = function (pr) {
+            if (pr) {
                 $scope.selectedProgram = pr;
             }
-        });
-
-        $scope.applySelectedProgram();
-    });
-
-    function getCurrentDashboardLayout() {
-        var widgets = [];
-        $scope.hasBigger = false;
-        $scope.hasSmaller = false;
-        angular.forEach($rootScope.dashboardWidgets, function (widget) {
-            var w = angular.copy(widget);
-            if ($scope.orderChanged) {
-                if ($scope.widgetsOrder.biggerWidgets.indexOf(w.title) !== -1) {
-                    $scope.hasBigger = $scope.hasBigger || w.show;
-                    w.parent = 'biggerWidget';
-                    w.order = $scope.widgetsOrder.biggerWidgets.indexOf(w.title);
-                }
-
-                if ($scope.widgetsOrder.smallerWidgets.indexOf(w.title) !== -1) {
-                    $scope.hasSmaller = $scope.hasSmaller || w.show;
-                    w.parent = 'smallerWidget';
-                    w.order = $scope.widgetsOrder.smallerWidgets.indexOf(w.title);
-                }
-            }
-            widgets.push(w);
-        });
-
-        return {widgets: widgets, program: $scope.selectedProgram && $scope.selectedProgram.id ? $scope.selectedProgram.id : 'DEFAULT'};
-    }
-
-    function saveDashboardLayout() {
-        var currentLayout = $scope.dashboardLayouts.customLayout ? angular.copy($scope.dashboardLayouts.customLayout) : {};
-        var programId = $scope.selectedProgram && $scope.selectedProgram.id ? $scope.selectedProgram.id : 'DEFAULT';        
-        currentLayout[programId] = getCurrentDashboardLayout();
-        
-        DashboardLayoutService.saveLayout(currentLayout, false).then(function () {
-            if (!$scope.orderChanged) {
-                $scope.hasSmaller = $filter('filter')($scope.dashboardWidgets, {
-                    parent: "smallerWidget",
-                    show: true
-                }).length > 0;
-                $scope.hasBigger = $filter('filter')($scope.dashboardWidgets, {
-                    parent: "biggerWidget",
-                    show: true
-                }).length > 0;
-            }
-            setWidgetsSize();
-        });
-    };
-    
-    $scope.saveDashboarLayoutAsDefault = function () {
-        var layout = angular.copy($scope.dashboardLayouts.defaultLayout);        
-        var programId = $scope.selectedProgram && $scope.selectedProgram.id ? $scope.selectedProgram.id : 'DEFAULT';        
-        layout[programId] = getCurrentDashboardLayout();
-        delete layout.DEFAULT;
-        DashboardLayoutService.saveLayout(layout, true);
-    };
-
-    //persist widget sorting
-    $scope.applyWidgetsOrderChange = function(param){
-        $scope.widgetsOrder = param;
-        $scope.orderChanged = false;
-        for (var i = 0; i < $scope.widgetsOrder.smallerWidgets.length; i++) {
-            if ($scope.widgetsOrder.smallerWidgets.length === $scope.dashboardWidgetsOrder.smallerWidgets.length && $scope.widgetsOrder.smallerWidgets[i] !== $scope.dashboardWidgetsOrder.smallerWidgets[i]) {
-                $scope.orderChanged = true;
-            }
-
-            if ($scope.widgetsOrder.smallerWidgets.length !== $scope.dashboardWidgetsOrder.smallerWidgets.length) {
-                $scope.orderChanged = true;
-            }
-        }
-
-        for (var i = 0; i < $scope.widgetsOrder.biggerWidgets.length; i++) {
-            if ($scope.widgetsOrder.biggerWidgets.length === $scope.dashboardWidgetsOrder.biggerWidgets.length && $scope.widgetsOrder.biggerWidgets[i] !== $scope.dashboardWidgetsOrder.biggerWidgets[i]) {
-                $scope.orderChanged = true;
-            }
-
-            if ($scope.widgetsOrder.biggerWidgets.length !== $scope.dashboardWidgetsOrder.biggerWidgets.length) {
-                $scope.orderChanged = true;
-            }
-        }
-
-        if ($scope.orderChanged) {
-            saveDashboardLayout();
-        }
-    };
-
-    $scope.$on('DataEntryMainMenuItemSelected', function (event) {
-        $scope.dataEntryMainMenuItemSelected = true;
-    });
-
-    $scope.$on('DataEntryMainMenuVisibilitySet', function (event, data) {
-        if (data.visible) {
-            //hide all widgets except visibleItems in data
-            angular.forEach($scope.dashboardWidgets, function (widget) {
-                if (!data.visibleItems[widget.title]) {
-                    $scope.temporaryHideWidgets[widget.title] = true;
-                } else {
-                    $scope.temporaryShowWidgets[widget.title] = true;
-                }
-
-            });
-        } else if (data.closingStage) {//Palestine, show only closing stage
-
-        } else {
-            //show widgets, reset temporary settings
-            $scope.temporaryHideWidgets = [];
-            $scope.temporaryShowWidgets = [];
-
-        }
-    });
-    
-    $scope.applySelectedProgram = function (pr) {
-        if (pr) {
-            $scope.selectedProgram = pr;
-        }
-        getDashboardLayout();
-    };
-
-    $scope.broadCastSelections = function (tei) {
-
-        var selections = CurrentSelection.get();
-        if (tei) {
-            $scope.selectedTei = tei;
-        } else {
-            $scope.selectedTei = selections.tei;
-        }
-
-        $scope.trackedEntity = selections.te;
-        $scope.optionSets = selections.optionSets;
-        $scope.selectedEnrollment = null;
-
-        if ($scope.selectedProgram) {
-            for (var i = 0; i < selections.enrollments.length; i++) {
-                if (selections.enrollments[i].program === $scope.selectedProgram.id) {
-                    $scope.selectedEnrollment = selections.enrollments[i];
-                    break;
-                }
-            }
-        }
-
-        CurrentSelection.set({
-            tei: $scope.selectedTei,
-            te: $scope.trackedEntity,
-            prs: $scope.programs,
-            pr: $scope.selectedProgram,
-            prNames: $scope.programNames,
-            prStNames: $scope.programStageNames,
-            enrollments: selections.enrollments,
-            selectedEnrollment: $scope.selectedEnrollment,
-            optionSets: $scope.optionSets,
-            orgUnit: $scope.selectedOrgUnit
-        });
-        $timeout(function () {
-            $rootScope.$broadcast('selectedItems', {programExists: $scope.programs.length > 0});
-        }, 500);
-    };
-
-    $scope.activiateTEI = function () {
-        var st = !$scope.selectedTei.inactive || $scope.selectedTei.inactive === '' ? true : false;
-
-        var modalOptions = {
-            closeButtonText: 'no',
-            actionButtonText: 'yes',
-            headerText: st ? 'deactivate' : 'activate',
-            bodyText: 'are_you_sure_to_proceed'
+            getDashboardLayout();
         };
 
-        ModalService.showModal({}, modalOptions).then(function (result) {
+        $scope.broadCastSelections = function (tei) {
 
-            $scope.selectedTei.inactive = st;
-            TEIService.update($scope.selectedTei, $scope.optionSets, $scope.attributesById).then(function (data) {
-                setInactiveMessage();
-                $scope.broadCastSelections($scope.selectedTei);
+            var selections = CurrentSelection.get();
+            if (tei) {
+                $scope.selectedTei = tei;
+            } else {
+                $scope.selectedTei = selections.tei;
+            }
+
+            $scope.trackedEntity = selections.te;
+            $scope.optionSets = selections.optionSets;
+            $scope.selectedEnrollment = null;
+
+            if ($scope.selectedProgram) {
+                for (var i = 0; i < selections.enrollments.length; i++) {
+                    if (selections.enrollments[i].program === $scope.selectedProgram.id) {
+                        $scope.selectedEnrollment = selections.enrollments[i];
+                        break;
+                    }
+                }
+            }
+
+            CurrentSelection.set({
+                tei: $scope.selectedTei,
+                te: $scope.trackedEntity,
+                prs: $scope.programs,
+                pr: $scope.selectedProgram,
+                prNames: $scope.programNames,
+                prStNames: $scope.programStageNames,
+                enrollments: selections.enrollments,
+                selectedEnrollment: $scope.selectedEnrollment,
+                optionSets: $scope.optionSets,
+                orgUnit: $scope.selectedOrgUnit
             });
-        }, function () {
-        });
-    };
-    
-    $scope.deleteTEI = function () {
-        var modalOptions = {
-            closeButtonText: 'no',
-            actionButtonText: 'yes',
-            headerText: 'delete',
-            bodyText: $translate.instant('are_you_sure_to_proceed') + ' ' + $translate.instant('will_delete_all_data_associated') + ' ' + $scope.trackedEntity.displayName
+            $timeout(function () {
+                $rootScope.$broadcast('selectedItems', { programExists: $scope.programs.length > 0 });
+            }, 500);
         };
-        
-        ModalService.showModal({}, modalOptions).then(function (result) {
-            TEIService.delete($scope.selectedTeiId).then(function (response) {
-                if( !response ){
-                    var teis = CurrentSelection.getTrackedEntities();                
-                    if( teis && teis.rows && teis.rows.own && teis.rows.own.length > 0 ){
-                        var index = -1;
-                        for( var i=0; i<teis.rows.own.length && index === -1; i++ ){
-                            if( teis.rows.own[i].id === $scope.selectedTeiId ){
-                                index = i;
+
+        $scope.activiateTEI = function () {
+            var st = !$scope.selectedTei.inactive || $scope.selectedTei.inactive === '' ? true : false;
+
+            var modalOptions = {
+                closeButtonText: 'no',
+                actionButtonText: 'yes',
+                headerText: st ? 'deactivate' : 'activate',
+                bodyText: 'are_you_sure_to_proceed'
+            };
+
+            ModalService.showModal({}, modalOptions).then(function (result) {
+
+                $scope.selectedTei.inactive = st;
+                TEIService.update($scope.selectedTei, $scope.optionSets, $scope.attributesById).then(function (data) {
+                    setInactiveMessage();
+                    $scope.broadCastSelections($scope.selectedTei);
+                });
+            }, function () {
+            });
+        };
+
+        $scope.deleteTEI = function () {
+            var modalOptions = {
+                closeButtonText: 'no',
+                actionButtonText: 'yes',
+                headerText: 'delete',
+                bodyText: $translate.instant('are_you_sure_to_proceed') + ' ' + $translate.instant('will_delete_all_data_associated') + ' ' + $scope.trackedEntity.displayName
+            };
+
+            ModalService.showModal({}, modalOptions).then(function (result) {
+                TEIService.delete($scope.selectedTeiId).then(function (response) {
+                    if (!response) {
+                        var teis = CurrentSelection.getTrackedEntities();
+                        if (teis && teis.rows && teis.rows.own && teis.rows.own.length > 0) {
+                            var index = -1;
+                            for (var i = 0; i < teis.rows.own.length && index === -1; i++) {
+                                if (teis.rows.own[i].id === $scope.selectedTeiId) {
+                                    index = i;
+                                }
+                            }
+
+                            if (index !== -1) {
+                                teis.rows.own.splice(index, 1);
+                                CurrentSelection.setTrackedEntities(teis);
                             }
                         }
 
-                        if( index !== -1 ){
-                            teis.rows.own.splice(index, 1);
-                            CurrentSelection.setTrackedEntities(teis);
-                        }
+                        NotificationService.showNotifcationDialog($translate.instant('success'), $scope.trackedEntity.displayName + ' ' + $translate.instant('deleted'));
+                        $scope.back();
                     }
-                    
-                    NotificationService.showNotifcationDialog($translate.instant('success'), $scope.trackedEntity.displayName + ' ' + $translate.instant('deleted'));                
-                    $scope.back();
-                }
-                
+
+                });
             });
-        });
-    };
-
-    $scope.back = function () {
-        if (!$scope.dataEntryMainMenuItemSelected) {
-            //reload OU tree
-            selection.load();
-            $location.path('/').search({program: $scope.selectedProgramId});
-        } else {
-            $rootScope.$broadcast('DashboardBackClicked');
-            $scope.dataEntryMainMenuItemSelected = false;
-        }
-    };
-            
-    $scope.getBackButtonText = function () {
-        if (!$scope.dataEntryMainMenuItemSelected) {
-            return $translate.instant('back');
-        } else {
-            return $translate.instant('menu');
-        }
-    };
-
-    $scope.showEnrollment = function () {
-        $scope.displayEnrollment = true;
-    };
-
-    $scope.removeWidget = function (widget) {
-        var modalOptions = {
-            closeButtonText: 'no',
-            actionButtonText: 'yes',
-            headerText: 'remove_widget',
-            bodyText: 'remove_widget_info'
         };
 
-        ModalService.showModal({}, modalOptions).then(function (result) {
-            widget.show = false;
+        $scope.back = function () {
+            if (!$scope.dataEntryMainMenuItemSelected) {
+                //reload OU tree
+                selection.load();
+                $location.path('/').search({ program: $scope.selectedProgramId });
+            } else {
+                $rootScope.$broadcast('DashboardBackClicked');
+                $scope.dataEntryMainMenuItemSelected = false;
+            }
+        };
+
+        $scope.getBackButtonText = function () {
+            if (!$scope.dataEntryMainMenuItemSelected) {
+                return $translate.instant('back');
+            } else {
+                return $translate.instant('menu');
+            }
+        };
+
+        //For Intpart
+
+
+        $scope.eventmodel = function () {
+            var addtomarque;
+            var screen;
+            var blood;
+            var objbirth = [];
+            var objfeeding = [];
+            var objaefi = [];
+            var objsixweeks = [];
+            var objtenweeks = [];
+            var objfourteenweeks = [];
+            var objninemonth = [];
+            var objsixteen24months = [];
+            var sugar;
+            var objvitamin = [];
+            var count = 0;
+            var Table = document.getElementById("table1");
+            Table.innerHTML = "";
+            var emptymarque = document.getElementById("marq");
+            emptymarque.innerHTML = "";
+            var url = window.location.href;
+            var params = url.split('=');
+            var per = params[1];
+            var finper = per.split('&');
+            var trackid = finper[0];
+
+            var perr = params[2];
+            var finperr = perr.split('&');
+            var programidd = finperr[0];
+            //alert(programidd);
+            var npcdcsid = "jC8Gprj4pWV";
+            if (programidd == npcdcsid) {
+                $.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=jC8Gprj4pWV&trackedEntityInstance=" + trackid + "&order=eventDate:asc", function (data1) {
+                    var trackdata = data1;
+                    for (var j = 0; j < trackdata.events.length; j++) {
+
+
+                        var screenoutcome = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#5BC0DE'><b>Screening Outcome<b></td>";
+                        var bloodpressure = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:orange'><b>Blood Pressure<b></td>";
+                        var sugarfastning = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#D9534F'><b>Sugar Fastning<b></td>";
+
+                        // leng=eventdata.events.length;
+                        var dateofvisit = trackdata.events[j].eventDate;  //
+                        //  console.log(leng);
+                        var dataval = trackdata.events[j].dataValues;
+                        if (dataval.length > 1) {
+                            count++;
+                            for (var q = 0; q < dataval.length; q++) {
+                                var id = dataval[q].dataElement;
+
+                                if (id == "ObkhLek0zZf")// oral ca
+                                {
+                                    screenoutcome = screenoutcome + "<td style='border:1px solid black;text-align:center'><b>Oral Ca<b></td>";
+
+                                    // var aa="you have oral ca";
+                                    //  $(".reporttt").append(first);
+                                    // $(".report").append(name);
+
+                                }
+                                else if (id == "xFhzzBJ4Z6K")// RF
+                                {
+                                    screenoutcome = screenoutcome + "<td style='border:1px solid black;text-align:center'><b>RF<b></td>";
+
+                                    // var bb="you have RF";
+
+                                    //  alert("you have RF");
+
+                                }
+                                else if (id == "C4YdSPG3Mr0")// Brease CA
+                                {
+
+                                    screenoutcome = screenoutcome + "<td style='border:1px solid black;text-align:center'><b>Breast CA<b></td>";
+
+                                }
+                                else if (id == "gpJWjauP93y")// cervical CA
+                                {
+
+                                    screenoutcome = screenoutcome + "<td style='border:1px solid black;text-align:center'><b>Cervical CA<b></td>";
+
+                                }
+                                else if (id == "Fay65bFZIkC")// CKD
+                                {
+
+                                    screenoutcome = screenoutcome + "<td style='border:1px solid black;text-align:center'><b>CKD<b></td>";
+
+                                }
+                                else if (id == "doZmhIPTR2O")// COPD
+                                {
+
+                                    screenoutcome = screenoutcome + "<td style='border:1px solid black;text-align:center'><b>COPD<b></td>";
+
+                                }
+                                else if (id == "GREEuTukX3P")// DM
+                                {
+
+                                    screenoutcome = screenoutcome + "<td style='border:1px solid black;text-align:center'><b>DM<b></td>";
+
+                                }
+                                else if (id == "FSD6mDILc7l")// HTN
+                                {
+
+                                    screenoutcome = screenoutcome + "<td style='border:1px solid black;text-align:center'><b>HTN<b></td>";
+
+                                }
+                                else if (id == "m63ulx9T3Ri")// CVD1   
+                                {
+
+                                    screenoutcome = screenoutcome + "<td style='border:1px solid black;text-align:center'><b>CVD1<b></td>";
+
+                                }
+                                else if (id == "bv7PMXbyOZD")// CA-other   
+                                {
+
+                                    screenoutcome = screenoutcome + "<td style='border:1px solid black;text-align:center'><b>CA-Other<b></td>";
+
+                                }
+                                else if (id == "HQz8UUWfvo0")// systolic blood presure  
+                                {
+                                    var systol = dataval[q].value;
+                                    bloodpressure = bloodpressure + "<td style='border:1px solid black;text-align:center'><b>" + systol + "&nbsp&nbsp&nbspSystolic" + "<b></td>";
+                                    //  alert("hyy");
+                                }
+                                else if (id == "pTuKCcPRn9k")// diasitoli cblood presure
+                                {
+                                    var diasit = dataval[q].value;
+                                    bloodpressure = bloodpressure + "<td style='border:1px solid black;text-align:center'><b>" + diasit + "&nbsp&nbspDiasitolic" + "<b></td>";
+                                    // alert("hyy");
+                                }
+                                else if (id == "kfqBvvoWuzA")//FBS (mg/dl)
+                                {
+                                    var fbs = dataval[q].value;
+                                    sugarfastning = sugarfastning + "<td style='border:1px solid black;text-align:center'><b>" + fbs + "&nbsp&nbspFBS(mg/dl)" + "<b></td>";
+                                    // alert("hyy");
+                                }
+                                else if (id == "XtI1MSP154r")// PPBS (mg/dl)
+                                {
+                                    var ppbs = dataval[q].value;
+                                    sugarfastning = sugarfastning + "<td style='border:1px solid black;text-align:center'><b>" + ppbs + "&nbsp&nbspPPBS(mg/dl)" + "<b></td>";
+                                    // alert("hyy");
+                                }
+                                else if (id == "FHBrdgsPgDY")// RBS (mg/dl)
+                                {
+                                    var rbs = dataval[q].value;
+                                    sugarfastning = sugarfastning + "<td style='border:1px solid black;text-align:center'><b>" + rbs + "&nbsp&nbspRBS(mg/dl)" + "<b></td>";
+                                    // alert("hyy");
+                                }
+                            }
+                            screenoutcome = screenoutcome + "</tr>";
+                            bloodpressure = bloodpressure + "</tr>"
+                            sugarfastning = sugarfastning + "</tr>";
+                            var visitnno = "<tr><td >Visit No: " + count + "</td><td>" + dateofvisit.substring(0, 10); +"</td></tr>";
+                            var emptyRoww = "<tr class='emptyRow'><td height='35px'></td><tr>";
+                            var blankmarque = "<td width='50px'></td>";
+                            $(".reporttt").append(visitnno);
+                            $(".reporttt").append(screenoutcome);
+                            $(".reporttt").append(bloodpressure);
+                            $(".reporttt").append(sugarfastning);
+                            $(".reporttt").append(emptyRoww);
+                            screen = screenoutcome;
+                            screen = screen.slice(0, -5);
+                            blood = bloodpressure;
+                            blood = blood.slice(0, -5);
+                            blood = blood.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+                            sugarfastning = sugarfastning.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+                            addtomarque = screen + blankmarque + blood + blankmarque + sugarfastning;
+                        }
+
+                    }
+
+
+
+
+                });
+                // $("#myModal").modal();
+                $("#myModal").modal('show');
+                $("#myModal").on('hidden.bs.modal', function () {
+                    $("#marq").append(addtomarque);
+                    addtomarque = "";
+                });
+
+            }
+            else if (programidd == "JdZ3gv6cx54") {
+                // alert("found you");
+                $.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=JdZ3gv6cx54&trackedEntityInstance=" + trackid + "&order=eventDate:asc", function (data1) {
+                    var trackdata = data1;
+                    for (var j = 0; j < trackdata.events.length; j++) {
+
+
+                        var Birth_Dose = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#5BC0DE'>Birth Dose</td>";
+                        var ChildFeeding = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:orange'><b>Breast Feeding<b></td>";
+                        var AEFI = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#D9534F'><b>AEFI<b></td>";
+                        var immunistaion_at_sixweeks = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#32CD32'><b>6 weeks<b></td>";
+                        var immunistaion_at_tenweeks = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#8B8682'><b>10 weeks<b></td>";
+                        var immunistaion_at_fourteenweeks = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#5BC0DE'><b>14 weeks<b></td>";
+                        var immunistaion_at_ninemonths = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:orange'><b>9 months<b></td>";
+                        var immunistaion_at_sixteen24months = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#D9534F'><b>16-24 months<b></td>";
+                        var vitaminss = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td style='text-align:center;color:white;background-color:#32CD32'><b>Vitamins<b></td>";
+
+                        var dateofvisit = trackdata.events[j].eventDate;  //
+                        //  console.log(leng);
+                        var dataval = trackdata.events[j].dataValues;
+                        if (dataval.length > 1) {
+                            count++;
+                            for (var q = 0; q < dataval.length; q++) {
+                                var id = dataval[q].dataElement;
+
+                                if (id == "KO9GNZ6bsvP")// Vit K(Birth Dose)   
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objbirth.push(vall);
+                                        Birth_Dose = Birth_Dose + "<td style='border:1px solid black;text-align:center'><b>Vit K<b></td>";
+                                    }
+
+
+                                }
+                                else if (id == "X0LM2G9QrRq")// BCG(Birth Dose) 
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objbirth.push(vall);
+                                        Birth_Dose = Birth_Dose + "<td style='border:1px solid black;text-align:center'><b>BCG<b></td>";
+                                    }
+
+
+                                }
+                                else if (id == "geB0cJnqUuw")//  OPV(Birth Dose) 
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objbirth.push(vall);
+                                        Birth_Dose = Birth_Dose + "<td style='border:1px solid black;text-align:center'><b>OPV<b></td>";
+                                    }
+                                }
+                                else if (id == "LomeCfySW2p")//HEP B(Birth Dose) 
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objbirth.push(vall);
+                                        Birth_Dose = Birth_Dose + "<td style='border:1px solid black;text-align:center'><b>HEP B<b></td>";
+                                    }
+                                }
+                                else if (id == "wNBq0a4HVG2")// breastfeeding was given upto 6 months
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objfeeding.push(vall);
+                                        ChildFeeding = ChildFeeding + "<td style='border:1px solid black;text-align:center'><b> breastfeeding given upto 6 months 	<b></td>";
+                                    }
+                                }
+                                else if (id == "MmiNSPetHLN")// Complementary feeding after 6 months
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objfeeding.push(vall);
+                                        ChildFeeding = ChildFeeding + "<td style='border:1px solid black;text-align:center'><b>Complementary feeding after 6 months<b></td>";
+                                    }
+                                }
+                                else if (id == "RsXNgPyCy8O")// AEFI
+                                {
+                                    var vall = dataval[q].value;
+                                    var aefivalue = vall;
+                                    objaefi.push(aefivalue);
+                                    AEFI = AEFI + "<td style='border:1px solid black;text-align:center'><b>" + aefivalue + "<b></td>";
+
+                                }
+                                else if (id == "Y70xDmi3Y7F")// Details of Vaccine
+                                {
+                                    var vall = dataval[q].value;
+                                    var aefi_detail = vall;
+                                    objaefi.push(aefivalue);
+                                    AEFI = AEFI + "<td style='border:1px solid black;text-align:center'><b>" + aefi_detail + "<b></td>";
+
+                                }
+                                else if (id == "RiTLb8I7Ko5")// OPV 1 
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objsixweeks.push(vall);
+                                        immunistaion_at_sixweeks = immunistaion_at_sixweeks + "<td style='border:1px solid black;text-align:center'><b>OPV 1<b></td>";
+                                    }
+                                }
+                                else if (id == "pY9t6s0BPcx")// DPT/Penta 1 
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objsixweeks.push(vall);
+                                        immunistaion_at_sixweeks = immunistaion_at_sixweeks + "<td style='border:1px solid black;text-align:center'><b>DPT/Penta 1 <b></td>";
+                                    }
+                                }
+                                else if (id == "UcWvna0WpdU")// IPV 1
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objsixweeks.push(vall);
+                                        immunistaion_at_sixweeks = immunistaion_at_sixweeks + "<td style='border:1px solid black;text-align:center'><b>IPV 1<b></td>";
+                                    }
+                                }
+                                else if (id == "Hb9dY5gedpI")// HEP B1
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objsixweeks.push(vall);
+                                        immunistaion_at_sixweeks = immunistaion_at_sixweeks + "<td style='border:1px solid black;text-align:center'><b>HEP B1<b></td>";
+                                    }
+                                }
+                                else if (id == "NV6p0JaJacm")// OPV 2
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objtenweeks.push(vall);
+                                        immunistaion_at_tenweeks = immunistaion_at_tenweeks + "<td style='border:1px solid black;text-align:center'><b>OPV 2<b></td>";
+                                    }
+                                }
+                                else if (id == "pqBNLJWicCs")//DPT/Penta 2
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objtenweeks.push(vall);
+                                        immunistaion_at_tenweeks = immunistaion_at_tenweeks + "<td style='border:1px solid black;text-align:center'><b>DPT/Penta 2<b></td>";
+                                    }
+                                }
+                                else if (id == "sRN7mG6Q0ky")//HEP B2
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objtenweeks.push(vall);
+                                        immunistaion_at_tenweeks = immunistaion_at_tenweeks + "<td style='border:1px solid black;text-align:center'><b>HEP B2<b></td>";
+                                    }
+                                }
+                                else if (id == "OBCz2WmQ0Wr")//OPV 3
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objfourteenweeks.push(vall);
+                                        immunistaion_at_fourteenweeks = immunistaion_at_fourteenweeks + "<td style='border:1px solid black;text-align:center'><b>OPV 3<b></td>";
+                                    }
+                                }
+                                else if (id == "bLJEYJvjbtF")//DPT/Penta 3
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objfourteenweeks.push(vall);
+                                        immunistaion_at_fourteenweeks = immunistaion_at_fourteenweeks + "<td style='border:1px solid black;text-align:center'><b>DPT/Penta 3<b></td>";
+                                    }
+                                }
+                                else if (id == "eC1dIDNQbib")//IPV 2
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objfourteenweeks.push(vall);
+                                        immunistaion_at_fourteenweeks = immunistaion_at_fourteenweeks + "<td style='border:1px solid black;text-align:center'><b>IPV 2<b></td>";
+                                    }
+                                }
+                                else if (id == "GVx9H3VPQpb")//HEP B3
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objfourteenweeks.push(vall);
+                                        immunistaion_at_fourteenweeks = immunistaion_at_fourteenweeks + "<td style='border:1px solid black;text-align:center'><b>HEP B3<b></td>";
+                                    }
+                                }
+                                else if (id == "HS2ypHNwtWy")//JE (1st dose)
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objninemonth.push(vall);
+                                        immunistaion_at_ninemonths = immunistaion_at_ninemonths + "<td style='border:1px solid black;text-align:center'><b>JE(1st dose)<b></td>";
+                                    }
+                                }
+                                else if (id == "kq5XBCko5id")//Measles (1st dose)
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objninemonth.push(vall);
+                                        immunistaion_at_ninemonths = immunistaion_at_ninemonths + "<td style='border:1px solid black;text-align:center'><b>Measles(1st dose)<b></td>";
+                                    }
+                                }
+                                else if (id == "LGXWjlpx73G")//Diarrhoea (Measles)
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objninemonth.push(vall);
+                                        immunistaion_at_ninemonths = immunistaion_at_ninemonths + "<td style='border:1px solid black;text-align:center'><b>Diarrhoea(Measles)<b></td>";
+                                    }
+                                }
+                                else if (id == "ajpdN9HB29Q")//DPT/Penta Booster
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objsixteen24months.push(vall);
+                                        immunistaion_at_sixteen24months = immunistaion_at_sixteen24months + "<td style='border:1px solid black;text-align:center'><b>Diarrhoea(Measles)<b></td>";
+                                    }
+                                }
+                                else if (id == "zSd4PVzkfp5")//Diarrhoea (DPT)
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objsixteen24months.push(vall);
+                                        immunistaion_at_sixteen24months = immunistaion_at_sixteen24months + "<td style='border:1px solid black;text-align:center'><b>Diarrhoea (DPT)<b></td>";
+                                    }
+                                }
+                                else if (id == "mtHUBDF91KG")//Measles 2nd Dose
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objsixteen24months.push(vall);
+                                        immunistaion_at_sixteen24months = immunistaion_at_sixteen24months + "<td style='border:1px solid black;text-align:center'><b>Measles 2nd Dose<b></td>";
+                                    }
+                                }
+                                else if (id == "h3SbGX4562o")//OPV Booster
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objsixteen24months.push(vall);
+                                        immunistaion_at_sixteen24months = immunistaion_at_sixteen24months + "<td style='border:1px solid black;text-align:center'><b>OPV Booster<b></td>";
+                                    }
+                                }
+                                else if (id == "EpAqK3hd4sV")//DPT Booster 2
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objsixteen24months.push(vall);
+                                        immunistaion_at_sixteen24months = immunistaion_at_sixteen24months + "<td style='border:1px solid black;text-align:center'><b>DPT Booster 2<b></td>";
+                                    }
+                                }
+                                else if (id == "ffFqPgSWpsn")//JE 2nd Dose
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objsixteen24months.push(vall);
+                                        immunistaion_at_sixteen24months = immunistaion_at_sixteen24months + "<td style='border:1px solid black;text-align:center'><b>JE 2nd Dose<b></td>";
+                                    }
+                                }
+                                else if (id == "UjhLFpJ4ey9")//Vitamin A (1st dose)
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objvitamin.push(vall);
+                                        vitaminss = vitaminss + "<td style='border:1px solid black;text-align:center'><b>Vitamin A 1st dose<b></td>";
+                                    }
+                                }
+                                else if (id == "N3ZcKrrj31O")//Vitamin A 2nd Dose
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objvitamin.push(vall);
+                                        vitaminss = vitaminss + "<td style='border:1px solid black;text-align:center'><b>Vitamin A 2nd Dose<b></td>";
+                                    }
+                                }
+                                else if (id == "oo5ImHAJJJv")//Vitamin A 3rd Dose
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objvitamin.push(vall);
+                                        vitaminss = vitaminss + "<td style='border:1px solid black;text-align:center'><b>Vitamin A 3rd Dose<b></td>";
+                                    }
+                                }
+                                else if (id == "iN7e1e5kNZa")//Vitamin A 4th Dose
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objvitamin.push(vall);
+                                        vitaminss = vitaminss + "<td style='border:1px solid black;text-align:center'><b>Vitamin A 4th Dose<b></td>";
+                                    }
+                                }
+                                else if (id == "mAjCq0DOUA8")//Vitamin A 5th Dose
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objvitamin.push(vall);
+                                        vitaminss = vitaminss + "<td style='border:1px solid black;text-align:center'><b>Vitamin A 5th Dose<b></td>";
+                                    }
+                                }
+                                else if (id == "jL8ONs5GQih")//Vitamin A 6th Dose
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objvitamin.push(vall);
+                                        vitaminss = vitaminss + "<td style='border:1px solid black;text-align:center'><b>Vitamin A 6th Dose<b></td>";
+                                    }
+                                }
+                                else if (id == "jywcoFDCIhy")//Vitamin A 7th Dose
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objvitamin.push(vall);
+                                        vitaminss = vitaminss + "<td style='border:1px solid black;text-align:center'><b>Vitamin A 7th Dose<b></td>";
+                                    }
+                                }
+                                else if (id == "sQk9YvQZ8az")//Vitamin A 8th Dose
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objvitamin.push(vall);
+                                        vitaminss = vitaminss + "<td style='border:1px solid black;text-align:center'><b>Vitamin A 8th Dose<b></td>";
+                                    }
+                                }
+                                else if (id == "uv59WV60nJv")//Vitamin A 9th Dose
+                                {
+                                    var vall = dataval[q].value;
+                                    if (vall == "true") {
+                                        objvitamin.push(vall);
+                                        vitaminss = vitaminss + "<td style='border:1px solid black;text-align:center'><b>Vitamin A 9th Dose<b></td>";
+                                    }
+                                }
+
+                            }
+                            var visitnno = "<tr><td >Visit No: " + count + "</td><td>" + dateofvisit.substring(0, 10); +"</td></tr>";
+                            $(".reporttt").append(visitnno);
+                            if (objbirth.length > 0) {   //  BIRTH DOSE 
+                                var colspan = 1 + parseInt(objbirth.length);
+                                var immunisationatbirh = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan=" + colspan + " style='text-align:center;color:white;background-color:#5BC0DE'><b>Immunization at Birth<b></td></tr>";
+                                $(".reporttt").append(immunisationatbirh);
+                                Birth_Dose = Birth_Dose + "</tr>";
+                                $(".reporttt").append(Birth_Dose);
+                            }
+
+                            if (objfeeding.length > 0) { // CHILD FEEDING
+                                var colspan = 1 + parseInt(objfeeding.length);
+                                var childfeed = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan=" + colspan + " style='text-align:center;color:white;background-color:orange'><b>Child Feeding<b></td></tr>";
+                                $(".reporttt").append(childfeed);
+                                ChildFeeding = ChildFeeding + "</tr>"
+                                $(".reporttt").append(ChildFeeding);
+                            }
+                            if (objaefi.length > 0) { // AEFI
+                                var colspan = 1 + parseInt(objaefi.length);
+                                var aefii = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan=" + colspan + " style='text-align:center;color:white;background-color:#D9534F'><b>AEFI<b></td></tr>";
+                                $(".reporttt").append(aefii);
+                                AEFI = AEFI + "</tr>"
+                                $(".reporttt").append(AEFI);
+                            }
+                            if (objsixweeks.length > 0) { // Immunization at 6 weeks
+                                var colspan = 1 + parseInt(objsixweeks.length);
+                                var sixweeks = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan=" + colspan + " style='text-align:center;color:white;background-color:#32CD32'><b>Immunization at 6 weeks<b></td></tr>";
+                                $(".reporttt").append(sixweeks);
+                                immunistaion_at_sixweeks = immunistaion_at_sixweeks + "</tr>"
+                                $(".reporttt").append(immunistaion_at_sixweeks);
+                            }
+                            if (objtenweeks.length > 0) { // Immunization at 10 weeks
+                                var colspan = 1 + parseInt(objtenweeks.length);
+                                var tenweeks = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan=" + colspan + " style='text-align:center;color:white;background-color:#8B8682'><b>Immunization at 10 weeks<b></td></tr>";
+                                $(".reporttt").append(tenweeks);
+                                immunistaion_at_tenweeks = immunistaion_at_tenweeks + "</tr>"
+                                $(".reporttt").append(immunistaion_at_tenweeks);
+                            }
+                            if (objfourteenweeks.length > 0) { // Immunization at 14 weeks
+                                var colspan = 1 + parseInt(objfourteenweeks.length);
+                                var fourteenweks = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan=" + colspan + " style='text-align:center;color:white;background-color:#5BC0DE'><b>Immunization at 14 weeks<b></td></tr>";
+                                $(".reporttt").append(fourteenweks);
+                                immunistaion_at_fourteenweeks = immunistaion_at_fourteenweeks + "</tr>"
+                                $(".reporttt").append(immunistaion_at_fourteenweeks);
+                            }
+                            if (objninemonth.length > 0) { // Immunization at 9 months
+                                var colspan = 1 + parseInt(objninemonth.length);
+                                var nineemnth = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan=" + colspan + " style='text-align:center;color:white;background-color:orange'><b>Immunization at 9 months<b></td></tr>";
+                                $(".reporttt").append(nineemnth);
+                                immunistaion_at_ninemonths = immunistaion_at_ninemonths + "</tr>"
+                                $(".reporttt").append(immunistaion_at_ninemonths);
+                            }
+                            if (objsixteen24months.length > 0) { // Immunization at 16-24 months
+                                var colspan = 1 + parseInt(objsixteen24months.length);
+                                var sixteen24enth = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan=" + colspan + " style='text-align:center;color:white;background-color:#D9534F'><b>Immunization at 16-24 months<b></td></tr>";
+                                $(".reporttt").append(sixteen24enth);
+                                immunistaion_at_sixteen24months = immunistaion_at_sixteen24months + "</tr>"
+                                $(".reporttt").append(immunistaion_at_sixteen24months);
+                            }
+                            if (objvitamin.length > 0) { // vitamins
+                                var colspan = 1 + parseInt(objvitamin.length);
+                                var vitaamins = "<tr  style='border:1px solid black;background-color:white;height:30px'>  <td colspan=" + colspan + " style='text-align:center;color:white;background-color:#32CD32'><b>vitamin A<b></td></tr>";
+                                $(".reporttt").append(vitaamins);
+                                vitaminss = vitaminss + "</tr>"
+                                $(".reporttt").append(vitaminss);
+                            }
+                            //var visitnno ="<tr><td >Visit No: "+count+"</td><td>"+dateofvisit.substring(0, 10);+"</td></tr>";
+                            var emptyRoww = "<tr class='emptyRow'><td height='35px'></td><tr>";
+                            var blankmarque = "<td width='50px'></td>";
+
+
+
+                            //  $(".reporttt").append(sugarfastning);
+                            $(".reporttt").append(emptyRoww);
+                            screen = Birth_Dose;
+                            screen = screen.slice(0, -5);
+                            blood = ChildFeeding;
+                            blood = blood.slice(0, -5);
+                            blood = blood.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+                            AEFI = AEFI.slice(0, -5);
+                            AEFI = AEFI.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+                            immunistaion_at_sixweeks = immunistaion_at_sixweeks.slice(0, -5);
+                            immunistaion_at_sixweeks = immunistaion_at_sixweeks.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+                            immunistaion_at_tenweeks = immunistaion_at_tenweeks.slice(0, -5);
+                            immunistaion_at_tenweeks = immunistaion_at_tenweeks.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+                            immunistaion_at_fourteenweeks = immunistaion_at_fourteenweeks.slice(0, -5);
+                            immunistaion_at_fourteenweeks = immunistaion_at_fourteenweeks.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+                            immunistaion_at_ninemonths = immunistaion_at_ninemonths.slice(0, -5);
+                            immunistaion_at_ninemonths = immunistaion_at_ninemonths.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+                            immunistaion_at_sixteen24months = immunistaion_at_sixteen24months.slice(0, -5);
+                            immunistaion_at_sixteen24months = immunistaion_at_sixteen24months.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+                            vitaminss = vitaminss.replace("<tr  style='border:1px solid black;background-color:white;height:30px'>", "");
+
+                            addtomarque = screen + blankmarque + blood + blankmarque + AEFI + blankmarque + immunistaion_at_sixweeks + blankmarque + immunistaion_at_tenweeks + blankmarque + immunistaion_at_fourteenweeks + blankmarque + immunistaion_at_ninemonths + blankmarque + immunistaion_at_sixteen24months + blankmarque + vitaminss;
+                            objbirth = [];
+                            objfeeding = [];
+                            objaefi = [];
+                            objsixweeks = [];
+                            objtenweeks = [];
+                            objfourteenweeks = [];
+                            objninemonth = [];
+                            objsixteen24months = [];
+                            objvitamin = [];
+                        }
+
+                    }
+
+
+
+
+                });
+                // $("#myModal").modal();
+                $("#myModal").modal('show');
+                $("#myModal").on('hidden.bs.modal', function () {
+                    $("#marq").append(addtomarque);
+                    addtomarque = "";
+                });
+
+            }
+            else {
+                window.alert("Under Development for this program");
+            }
+        };
+
+
+        $scope.showEnrollment = function () {
+            $scope.displayEnrollment = true;
+        };
+
+        $scope.removeWidget = function (widget) {
+            var modalOptions = {
+                closeButtonText: 'no',
+                actionButtonText: 'yes',
+                headerText: 'remove_widget',
+                bodyText: 'remove_widget_info'
+            };
+
+            ModalService.showModal({}, modalOptions).then(function (result) {
+                widget.show = false;
+                saveDashboardLayout();
+
+            }, function () {
+
+            });
+        };
+
+        $scope.expandCollapse = function (widget) {
+            widget.expand = !widget.expand;
             saveDashboardLayout();
+        };
 
-        }, function () {
+        $scope.showHideWidgets = function () {
+            var modalInstance = $modal.open({
+                templateUrl: "components/dashboard/dashboard-widgets.html",
+                controller: "DashboardWidgetsController"
+            });
 
-        });
-    };
+            modalInstance.result.then(function () {
+            });
+        };
 
-    $scope.expandCollapse = function (widget) {
-        widget.expand = !widget.expand;
-        saveDashboardLayout();
-    };
+        $rootScope.closeOpenWidget = function () {
+            saveDashboardLayout();
+        };
 
-    $scope.showHideWidgets = function () {
-        var modalInstance = $modal.open({
-            templateUrl: "components/dashboard/dashboard-widgets.html",
-            controller: "DashboardWidgetsController"
-        });
-
-        modalInstance.result.then(function () {
-        });
-    };
-
-    $rootScope.closeOpenWidget = function () {
-        saveDashboardLayout();
-    };
-
-    $scope.fetchTei = function (mode) {
-        var current = $scope.sortedTeiIds.indexOf($scope.selectedTeiId);
-        var pr = ($location.search()).program;
-        var tei = null;
-        if (mode === 'NEXT') {
-            tei = $scope.sortedTeiIds[current + 1];
-        } else {
-            tei = $scope.sortedTeiIds[current - 1];
-        }
-        $location.path('/dashboard').search({tei: tei, program: pr ? pr : null, ou: orgUnitUrl ? orgUnitUrl : null});
-    };
-});
+        $scope.fetchTei = function (mode) {
+            var current = $scope.sortedTeiIds.indexOf($scope.selectedTeiId);
+            var pr = ($location.search()).program;
+            var tei = null;
+            if (mode === 'NEXT') {
+                tei = $scope.sortedTeiIds[current + 1];
+            } else {
+                tei = $scope.sortedTeiIds[current - 1];
+            }
+            $location.path('/dashboard').search({ tei: tei, program: pr ? pr : null, ou: orgUnitUrl ? orgUnitUrl : null });
+        };
+    });

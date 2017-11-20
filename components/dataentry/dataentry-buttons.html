@@ -19,6 +19,7 @@
                 ng-disabled="currentEvent.editingNotAllowed"
                 class="btn btn-danger horizontal-spacing">{{'delete'| translate}}</a>
             <a href class="btn btn-info" ng-click="print('print-div');">{{'print_form'| translate}}</a>
+            <button type="button"  id="msgbutton" class="btn btn-success"  ng-click="sendsms();">Send SMS</button>
         </div>
     </div>
 </div>
