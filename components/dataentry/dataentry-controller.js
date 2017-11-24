@@ -43,7 +43,7 @@ trackerCapture.controller('DataEntryController',
         $scope.showAttributeCategoryOptions = false;
         $scope.sumcal = 0;
         $scope.sumIFA = 0;
-         $scope.namepro = $scope.selectedProgram.id;
+        $scope.namepro = $scope.selectedProgram.id;
 
         //Data entry form
         $scope.outerDataEntryForm = { longitude: {}, latitude: {} };
@@ -328,7 +328,7 @@ trackerCapture.controller('DataEntryController',
                         }
                     }
                 } else if (effect.action === "SHOWWARNING"
-                    ||  effect.action === "WARNINGONCOMPLETE") {
+                    || effect.action === "WARNINGONCOMPLETE") {
                     if (effect.ineffect) {
                         var message = effect.content + (effect.data ? effect.data : "");
 
@@ -398,7 +398,7 @@ trackerCapture.controller('DataEntryController',
             $scope.tabularEntryStages = [];
             angular.forEach($scope.programStages, function (programStage) {
                 if (!$scope.stagesNotShowingInStageTasks[programStage.id]
-                    ||  ($scope.eventsByStage[programStage.id] &&
+                    || ($scope.eventsByStage[programStage.id] &&
                         $scope.eventsByStage[programStage.id].length > 0)) {
                     $scope.tabularEntryStages.push(programStage);
                 }
@@ -1427,12 +1427,13 @@ trackerCapture.controller('DataEntryController',
             var progid = proid.split('&')
             var pid = progid[0];
             var orgid = params[3];
-            
+
             var finper = per.split('&');
             var trackid = finper[0];
-          
-                $scope.calculateDataElementValue(orgid, pid, trackid);
-            
+            var count = 2;
+
+            $scope.calculateDataElementValue(orgid, pid, trackid);
+
             //Because of separatae dataentry-controllers for tabular and timeline data entry,
             //the rule effects might already be in place:
             processRuleEffect($scope.currentEvent.event);
@@ -1444,7 +1445,7 @@ trackerCapture.controller('DataEntryController',
 
         $scope.saveDatavalue = function (prStDe, field) {
             $scope.saveDataValueForEvent(prStDe, field, $scope.currentEvent, false);
-          //  $scope.calculateDataElementValue();
+            //  $scope.calculateDataElementValue();
         };
 
         $scope.calculateDataElementValue = function (orgid, pid, trackid) {
@@ -1453,89 +1454,72 @@ trackerCapture.controller('DataEntryController',
             var sum1 = 0;
             var sum2 = 0;
             // $scope.sumcal = 0;
-            // $scope.sumIFA = 0;
-                        $.get("../api/events.json?orgUnit=" + orgid + "&program=" + pid + "&trackedEntityInstance=" + trackid + "&skipPaging=false", function (data22) {
-            
-            
-                            for (var i = 0; i < data22.events.length; i++) {
-                                var pstage = data22.events;
-                                // console.log(pstage);
-            
-            
-                                var m = pstage[i];
-                                var stageid = m.programStage;
-                            
-                                    for (var k = 0; k < m.dataValues.length; k++) {
-                                        var dataval = m.dataValues[k];
-                                        var dataEle = dataval.dataElement;
-                                        if (dataEle == "lFGbeZ6Ybir") //calcium
-                                        {
-                                             val = dataval.value;
-            
-                                            sum1 = sum1 + parseInt(val);
-                                        }
-                                        if (dataEle == "H9lATKmEgQu") // IFA
-                                        {
-                                             val1 = dataval.value;
-            
-                                            sum2  = sum2 + parseInt(val1);
-                                        }
-            
-            
-                                    }
-                           
-                            }
-            
-                            $scope.sumcal = 0;
-                            $scope.sumIFA =0;
-                           $scope.sumcal = sum1;
-                           $scope.sumIFA =sum2;
-                           $scope.calculateDataElementValue(orgid,pid,trackid);
-                         // return $scope.sumIFA;
-                            console.log("cal =" + $scope.sumcal);
-                            console.log("IFA = " + $scope.sumIFA);
-                           console.log("program" + $scope.namepro);
-                            if( $scope.sumcal == 360 || $scope.sumcal > 360)
+            // $scope.sumIFA = 0;  
+            $.ajax({
+                async: false,
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json",
+
+                url:
+                "../api/events.json?orgUnit=" + orgid + "&program=" + pid + "&trackedEntityInstance=" + trackid + "&skipPaging=false",
+                success: function (data22) {
+                
+                
+                    for (var i = 0; i < data22.events.length; i++) {
+                        var pstage = data22.events;
+                        // console.log(pstage);
+
+
+                        var m = pstage[i];
+                        var stageid = m.programStage;
+
+                        for (var k = 0; k < m.dataValues.length; k++) {
+                            var dataval = m.dataValues[k];
+                            var dataEle = dataval.dataElement;
+                            if (dataEle == "lFGbeZ6Ybir") //calcium
                             {
-                                document.getElementById("cal").style.backgroundColor = "red";
+                                val = dataval.value;
+
+                                sum1 = sum1 + parseInt(val);
                             }
-                            if($scope.namepro == 180 || $scope.sumIFA > 180)
+                            if (dataEle == "H9lATKmEgQu") // IFA
                             {
-                                document.getElementById("ifa").style.backgroundColor = "red";
+                                val1 = dataval.value;
+
+                                sum2 = sum2 + parseInt(val1);
                             }
 
-                        
-                        });
-                      
-                        
+
+                        }
+
                     }
 
-        //     $scope.programStageName = function () {
-        //     var url = window.location.href;
-        //     var params = url.split('=');
-        //     var per = params[1];
-        //     var proid = params[2];
-        //     var progid = proid.split('&')
-        //     var pid = progid[0];
-        //     var orgid = params[3];
+                    $scope.sumcal = 0;
+                    $scope.sumIFA = 0;
+                    $scope.sumcal = sum1;
+                    $scope.sumIFA = sum2;
 
-        //     var finper = per.split('&');
-        //     var trackid = finper[0];
+                    // return $scope.sumIFA;
+                    console.log("cal =" + $scope.sumcal);
+                    console.log("IFA = " + $scope.sumIFA);
+                    console.log("program" + $scope.namepro);
 
 
-        //     $.get("../api/programs/" + pid + ".json?&skipPaging=false", function (data77) {
-
-                
-        //             $scope.stagename = data77.displayName;
-                   
-        //             console.log($scope.stagename);
-
-                
-        //     });
-
-        // }
-
-    
+                    if ($scope.sumcal == 360 || $scope.sumcal > 360) {
+                        $('.cal').css('background-color', 'red');
+                        // document.getElementsByClassName("info-container").style.background= "red";
+                    }
+                    if ($scope.namepro == 180 || $scope.sumIFA > 180) {
+                        $('.ifa').css('background-color', 'red');
+                        //                                document.getElementsByClassName("info-container").style.background= "red";
+                    }
+                },
+                error: function (response) {
+                }
+            });
+        
+        }
 
         $scope.saveDataValueForRadio = function (prStDe, event, value) {
 
@@ -1599,8 +1583,13 @@ trackerCapture.controller('DataEntryController',
             //input is valid
             var value = eventToSave[prStDe.dataElement.id];
 
+
+
+
+
+
             if (oldValue !== value) {
-                console.log( prStDe.dataElement.id);
+                console.log(prStDe.dataElement.id);
 
                 value = CommonUtils.formatDataValue(eventToSave.event, value, prStDe.dataElement, $scope.optionSets, 'API');
 
@@ -1609,45 +1598,7 @@ trackerCapture.controller('DataEntryController',
                     $scope.updateSuccess = false;
                     $scope.currentElement = { id: prStDe.dataElement.id, event: eventToSave.event, saved: false, failed: false, pending: true };
                 }
-                if (prStDe.dataElement.id == "H9lATKmEgQu") // IFA
-                {
-                    var url = window.location.href;
-                    var params = url.split('=');
-                    var per = params[1];
-                    var proid = params[2];
-                    var progid = proid.split('&')
-                    var pid = progid[0];
-                    var orgid = params[3];
-                    
-                    var finper = per.split('&');
-                    var trackid = finper[0];
-                 $scope.calculateDataElementValue(orgid,pid,trackid);
-                  // console.log("total IFA = " +$scope.totalIFA );
-            
-                  //  var val1 = dataval.value;
 
-                  //  $scope.sumIFA = $scope.sumIFA + parseInt(val1);
-                }
-
-                if(prStDe.dataElement.id == "lFGbeZ6Ybir") // calcium
-                {
-                    var url = window.location.href;
-                    var params = url.split('=');
-                    var per = params[1];
-                    var proid = params[2];
-                    var progid = proid.split('&')
-                    var pid = progid[0];
-                    var orgid = params[3];
-                    
-                    var finper = per.split('&');
-                    var trackid = finper[0];
-                   
-              $scope.calculateDataElementValue(orgid,pid,trackid);
-         
-                 
-                  
-                }
-               
 
 
 
@@ -1668,8 +1619,54 @@ trackerCapture.controller('DataEntryController',
                     ]
                 };
                 return DHIS2EventFactory.updateForSingleValue(ev).then(function (response) {
+
+                    if (response.httpStatus === "OK") {
+
+                        if (prStDe.dataElement.id == "H9lATKmEgQu") // IFA
+                        {
+                            var url = window.location.href;
+                            var params = url.split('=');
+                            var per = params[1];
+                            var proid = params[2];
+                            var progid = proid.split('&')
+                            var pid = progid[0];
+                            var orgid = params[3];
+
+                            var finper = per.split('&');
+                            var trackid = finper[0];
+                        //window.alert("IFA");
+                        $timeout(function(){
+                            $scope.calculateDataElementValue(orgid, pid, trackid);
+                        },100);
+                        }
+
+                        if (prStDe.dataElement.id == "lFGbeZ6Ybir") // calcium
+                        {
+                            var url = window.location.href;
+                            var params = url.split('=');
+                            var per = params[1];
+                            var proid = params[2];
+                            var progid = proid.split('&')
+                            var pid = progid[0];
+                            var orgid = params[3];
+
+                            var finper = per.split('&');
+                            var trackid = finper[0];
+                           // window.alert("Calcium");
+
+                           $timeout(function(){
+                            $scope.calculateDataElementValue(orgid, pid, trackid);
+                        },100);
+
+
+                        }
+                    }
+
+
                     if (!response) {
                         if (!backgroundUpdate) {
+
+
                             $scope.currentElement.saved = false;
                             $scope.currentElement.pending = false;
                             $scope.currentElement.failed = true;
@@ -1704,7 +1701,14 @@ trackerCapture.controller('DataEntryController',
 
                 });
 
+
             }
+
+
+
+
+
+
         };
 
         $scope.saveDatavalueLocation = function (prStDe) {
@@ -3613,9 +3617,9 @@ trackerCapture.controller('DataEntryController',
             }
         }
 
-      
 
- 
+
+
 
     });
 

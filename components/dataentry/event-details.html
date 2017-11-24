@@ -1,6 +1,10 @@
 <!-- event dates/scheduling begin -->
+
 <div class="row" ng-if="displayCustomForm !== 'TABLE' && displayCustomForm !== 'COMPARE'">
-        
+    <div>
+        <div class="info-container cal"   ng-if="namepro == 'SUCUF657zNe'" style ="border: solid 2px black;width: 150px;height: 100px;"><strong><p style = "font-size:15px"> Calcium Tablets </p><p style = "font-size:15px">{{sumcal}}</p></div>
+        <div class="info-container ifa"  ng-if="namepro == 'SUCUF657zNe'" style ="border: solid 2px black;width: 150px;height: 100px;"> <strong><p style = "font-size:15px">IFA tablets</p> <p style = "font-size:15px">{{sumIFA}}</p></strong></div>
+    </div>
     <div ng-class="{true: 'col-sm-12', false: 'col-sm-6'} [currentStage.hideDueDate || currentStage.periodType !== undefined]">
         {{currentStage.executionDateLabel ? currentStage.executionDateLabel : 'report_date' | translate}}
         <span class="required">*</span>
