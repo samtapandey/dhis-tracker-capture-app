@@ -128,6 +128,7 @@ trackerCapture.controller('RegistrationController',
     $scope.$watch('selectedProgram', function (newValue, oldValue) {
         if (newValue !== oldValue) {
             getProgramRules();
+            
 
             if ($scope.registrationMode === 'REGISTRATION') {
                 $scope.getAttributes($scope.registrationMode);
@@ -308,6 +309,7 @@ trackerCapture.controller('RegistrationController',
         }
         else {
             goToDashboard(destination ? destination : 'DASHBOARD', teiId);
+            
         }
     };
 
@@ -679,7 +681,9 @@ trackerCapture.controller('RegistrationController',
 
     $scope.saveDatavalue = function () {
         $scope.executeRules();
+      
     };
+
 
     $scope.verifyExpiryDate = function(eventDateStr) {
         var dateGetter, dateSetter, date;

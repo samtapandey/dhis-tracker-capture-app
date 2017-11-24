@@ -63,8 +63,17 @@
                             <div class="main-menu-item">{{mainMenuStage.displayName}} ({{getStageEventCnt(mainMenuStage)}})</div>  
                             <div class="main-menu-item-footer">{{getStageStyleLabel(mainMenuStage)}}</div>
                         </div>
-                    </div>                
+                    </div>   
+                          
                 </div>
+                
+<div>
+                <div class="info-container"  id = "cal" ng-if="namepro == 'SUCUF657zNe'" style ="border: solid 2px black;width: 150px;height: 100px;"><strong><p style = "font-size:15px"> Calcium Tablets </p><p style = "font-size:15px">{{sumcal}}</p></div>
+                <div class="info-container" id = "ifa" ng-if="namepro == 'SUCUF657zNe'" style ="border: solid 2px black;width: 150px;height: 100px;"> <strong><p style = "font-size:15px">IFA tablets</p> <p style = "font-size:15px">{{sumIFA}}</p></strong></div>
+            </div>
+            </div>
+                
+
                 <div ng-if="!useMainMenu || mainMenuStageSelected()">                    
                     <div class="hideInPrint" ng-if="selectedEnrollment && selectedEnrollment.enrollment">
                         <div ng-include="'components/dataentry/event-layout.html'"></div>

@@ -41,6 +41,9 @@ trackerCapture.controller('DataEntryController',
         $scope.eventPagingStart = 0;
         $scope.eventPagingEnd = $scope.eventPageSize;
         $scope.showAttributeCategoryOptions = false;
+        $scope.sumcal = 0;
+        $scope.sumIFA = 0;
+         $scope.namepro = $scope.selectedProgram.id;
 
         //Data entry form
         $scope.outerDataEntryForm = { longitude: {}, latitude: {} };
@@ -94,6 +97,7 @@ trackerCapture.controller('DataEntryController',
                 });
 
                 CurrentSelection.setAttributesById($scope.attributesById);
+
             });
         }
 
@@ -232,6 +236,7 @@ trackerCapture.controller('DataEntryController',
             popupWin.document.close();
             $scope.printForm = false;
             $scope.printEmptyForm = false;
+
         };
 
         $scope.toggleCompForm = function () {
@@ -1415,7 +1420,19 @@ trackerCapture.controller('DataEntryController',
 
             var period = { event: $scope.currentEvent.event, stage: $scope.currentEvent.programStage, name: $scope.currentEvent.sortingDate };
             $scope.currentPeriod[$scope.currentEvent.programStage] = period;
-
+            var url = window.location.href;
+            var params = url.split('=');
+            var per = params[1];
+            var proid = params[2];
+            var progid = proid.split('&')
+            var pid = progid[0];
+            var orgid = params[3];
+            
+            var finper = per.split('&');
+            var trackid = finper[0];
+          
+                $scope.calculateDataElementValue(orgid, pid, trackid);
+            
             //Because of separatae dataentry-controllers for tabular and timeline data entry,
             //the rule effects might already be in place:
             processRuleEffect($scope.currentEvent.event);
@@ -1427,7 +1444,98 @@ trackerCapture.controller('DataEntryController',
 
         $scope.saveDatavalue = function (prStDe, field) {
             $scope.saveDataValueForEvent(prStDe, field, $scope.currentEvent, false);
+          //  $scope.calculateDataElementValue();
         };
+
+        $scope.calculateDataElementValue = function (orgid, pid, trackid) {
+            var val = 0;
+            var val1 = 0;
+            var sum1 = 0;
+            var sum2 = 0;
+            // $scope.sumcal = 0;
+            // $scope.sumIFA = 0;
+                        $.get("../api/events.json?orgUnit=" + orgid + "&program=" + pid + "&trackedEntityInstance=" + trackid + "&skipPaging=false", function (data22) {
+            
+            
+                            for (var i = 0; i < data22.events.length; i++) {
+                                var pstage = data22.events;
+                                // console.log(pstage);
+            
+            
+                                var m = pstage[i];
+                                var stageid = m.programStage;
+                            
+                                    for (var k = 0; k < m.dataValues.length; k++) {
+                                        var dataval = m.dataValues[k];
+                                        var dataEle = dataval.dataElement;
+                                        if (dataEle == "lFGbeZ6Ybir") //calcium
+                                        {
+                                             val = dataval.value;
+            
+                                            sum1 = sum1 + parseInt(val);
+                                        }
+                                        if (dataEle == "H9lATKmEgQu") // IFA
+                                        {
+                                             val1 = dataval.value;
+            
+                                            sum2  = sum2 + parseInt(val1);
+                                        }
+            
+            
+                                    }
+                           
+                            }
+            
+                            $scope.sumcal = 0;
+                            $scope.sumIFA =0;
+                           $scope.sumcal = sum1;
+                           $scope.sumIFA =sum2;
+                           $scope.calculateDataElementValue(orgid,pid,trackid);
+                         // return $scope.sumIFA;
+                            console.log("cal =" + $scope.sumcal);
+                            console.log("IFA = " + $scope.sumIFA);
+                           console.log("program" + $scope.namepro);
+                            if( $scope.sumcal == 360 || $scope.sumcal > 360)
+                            {
+                                document.getElementById("cal").style.backgroundColor = "red";
+                            }
+                            if($scope.namepro == 180 || $scope.sumIFA > 180)
+                            {
+                                document.getElementById("ifa").style.backgroundColor = "red";
+                            }
+
+                        
+                        });
+                      
+                        
+                    }
+
+        //     $scope.programStageName = function () {
+        //     var url = window.location.href;
+        //     var params = url.split('=');
+        //     var per = params[1];
+        //     var proid = params[2];
+        //     var progid = proid.split('&')
+        //     var pid = progid[0];
+        //     var orgid = params[3];
+
+        //     var finper = per.split('&');
+        //     var trackid = finper[0];
+
+
+        //     $.get("../api/programs/" + pid + ".json?&skipPaging=false", function (data77) {
+
+                
+        //             $scope.stagename = data77.displayName;
+                   
+        //             console.log($scope.stagename);
+
+                
+        //     });
+
+        // }
+
+    
 
         $scope.saveDataValueForRadio = function (prStDe, event, value) {
 
@@ -1492,6 +1600,7 @@ trackerCapture.controller('DataEntryController',
             var value = eventToSave[prStDe.dataElement.id];
 
             if (oldValue !== value) {
+                console.log( prStDe.dataElement.id);
 
                 value = CommonUtils.formatDataValue(eventToSave.event, value, prStDe.dataElement, $scope.optionSets, 'API');
 
@@ -1500,6 +1609,48 @@ trackerCapture.controller('DataEntryController',
                     $scope.updateSuccess = false;
                     $scope.currentElement = { id: prStDe.dataElement.id, event: eventToSave.event, saved: false, failed: false, pending: true };
                 }
+                if (prStDe.dataElement.id == "H9lATKmEgQu") // IFA
+                {
+                    var url = window.location.href;
+                    var params = url.split('=');
+                    var per = params[1];
+                    var proid = params[2];
+                    var progid = proid.split('&')
+                    var pid = progid[0];
+                    var orgid = params[3];
+                    
+                    var finper = per.split('&');
+                    var trackid = finper[0];
+                 $scope.calculateDataElementValue(orgid,pid,trackid);
+                  // console.log("total IFA = " +$scope.totalIFA );
+            
+                  //  var val1 = dataval.value;
+
+                  //  $scope.sumIFA = $scope.sumIFA + parseInt(val1);
+                }
+
+                if(prStDe.dataElement.id == "lFGbeZ6Ybir") // calcium
+                {
+                    var url = window.location.href;
+                    var params = url.split('=');
+                    var per = params[1];
+                    var proid = params[2];
+                    var progid = proid.split('&')
+                    var pid = progid[0];
+                    var orgid = params[3];
+                    
+                    var finper = per.split('&');
+                    var trackid = finper[0];
+                   
+              $scope.calculateDataElementValue(orgid,pid,trackid);
+         
+                 
+                  
+                }
+               
+
+
+
 
                 var ev = {
                     event: eventToSave.event,
@@ -3461,4 +3612,12 @@ trackerCapture.controller('DataEntryController',
                 $scope.eventTableOptionsArr[$scope.eventTableOptions[key].sort] = $scope.eventTableOptions[key];
             }
         }
+
+      
+
+ 
+
     });
+
+
+

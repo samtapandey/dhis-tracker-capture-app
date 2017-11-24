@@ -28,6 +28,8 @@ trackerCapture.controller('DashboardController',
         OrgUnitFactory,
         NotificationService) {
 
+         
+
         //selections
         var orgUnitUrl = ($location.search()).ou;
 
@@ -432,6 +434,7 @@ trackerCapture.controller('DashboardController',
         $scope.applySelectedProgram = function (pr) {
             if (pr) {
                 $scope.selectedProgram = pr;
+                console.log( $scope.selectedProgram);
             }
             getDashboardLayout();
         };
