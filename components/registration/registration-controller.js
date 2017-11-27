@@ -565,7 +565,7 @@ trackerCapture.controller('RegistrationController',
         });
         modalInstance.result.then(function (res) {
             if (res && res.id) {
-                $scope.selectedTei[selectedAttribute.id] = res.id;
+                $scope.selectedTei[selectedAttribute.id] = res.ZQMF7taSAw8;
             }
         });
     };
