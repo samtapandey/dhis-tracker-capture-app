@@ -200,7 +200,9 @@ trackerCapture.controller('RegistrationController',
         AttributesFactory.getByProgram($scope.selectedProgram).then(function (atts) {
             $scope.attributes = TEIGridService.generateGridColumns(atts, null, false).columns;
 			
-			// change for msf-customizations display on load
+			// change for msf-customizations display on load not used in kenya
+
+
 			$timeout( function (){
 
 				if( !$scope.selectedTei[$scope.fileNumber] && $scope.selectedTei[$scope.fileNumber] == undefined)
@@ -212,10 +214,7 @@ trackerCapture.controller('RegistrationController',
 					$scope.selectedTei[$scope.phoneNumber] = '00961'; //put default value on load form
 				}
 
-			},0);			
-			
-			
-			
+			},0);
             fetchGeneratedAttributes();
             if ($scope.selectedProgram && $scope.selectedProgram.id) {
                 if ($scope.selectedProgram.dataEntryForm && $scope.selectedProgram.dataEntryForm.htmlCode) {
