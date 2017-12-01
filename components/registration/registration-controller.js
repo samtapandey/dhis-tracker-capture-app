@@ -26,7 +26,9 @@ trackerCapture.controller('RegistrationController',
                 TrackerRulesFactory,
                 TrackerRulesExecutionService,
                 TCStorageService,
-                ModalService) {
+                ModalService,
+				// for plan custom ID Generation
+                CustomIDGenerationService) {
     $scope.today = DateUtils.getToday();
     $scope.trackedEntityForm = null;
     $scope.customRegistrationForm = null;    
@@ -306,7 +308,7 @@ trackerCapture.controller('RegistrationController',
         if ($scope.registrationMode === 'ENROLLMENT') {
             broadcastTeiEnrolled();
         }
-        else {
+      else {
             goToDashboard(destination ? destination : 'DASHBOARD', teiId);
         }
     };
@@ -359,6 +361,8 @@ trackerCapture.controller('RegistrationController',
                                     $scope.selectedEnrollment = enrollment;
                                     var avilableEvent = $scope.currentEvent && $scope.currentEvent.event ? $scope.currentEvent : null;
                                     var dhis2Events = EventUtils.autoGenerateEvents($scope.tei.trackedEntityInstance, $scope.selectedProgram, $scope.selectedOrgUnit, enrollment, avilableEvent);
+									// custom id start
+										CustomIDGenerationService.validateAndCreateCustomId($scope.tei,$scope.selectedProgram.id,$scope.attributes,destination,$scope.optionSets,$scope.attributesById,$scope.selectedEnrollment.enrollmentDate).then(function(){
                                     if (dhis2Events.events.length > 0) {
                                         DHIS2EventFactory.create(dhis2Events).then(function () {
                                             notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
@@ -366,6 +370,9 @@ trackerCapture.controller('RegistrationController',
                                     } else {
                                         notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
                                     }
+									
+									// custom id close
+                                    });
                                 }
                                 else {
                                     //enrollment has failed

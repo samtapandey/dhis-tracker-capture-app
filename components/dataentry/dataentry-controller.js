@@ -32,6 +32,12 @@ trackerCapture.controller('DataEntryController',
                 EventCreationService) {
     
     //Unique instance id for the controller:
+
+     // for PLAN
+     $scope.invitationProgramStage = 's9b0ZMF7QZU';
+     $scope.attenDendProgramStage = 'qdHKjsLKQ6C';
+
+     
     $scope.instanceId = Math.floor(Math.random() * 1000000000);
     $scope.printForm = false;
     $scope.printEmptyForm = false;
@@ -1181,6 +1187,12 @@ trackerCapture.controller('DataEntryController',
                 $scope.currentStage.programStageDataElements.length > 5) {
                 //clicked on the same stage, do toggling
                 $scope.deSelectCurrentEvent(resetStage);
+
+                 // for association widget For PLAN
+                 $timeout(function () {
+                    $rootScope.$broadcast('association-widget', {event : null, show :false});
+                }, 200);
+            
             }
             else {
                 $scope.currentElement = {};                
@@ -1210,10 +1222,15 @@ trackerCapture.controller('DataEntryController',
                     }
                 }
                 
-                $scope.getDataEntryForm();
-            }
+               // for association widget for PLAN
+               $timeout(function () {
+                $rootScope.$broadcast('association-widget', {event : $scope.currentEvent , show :true});
+            }, 200);
+
+            $scope.getDataEntryForm();
         }
-    };
+    }
+};
     
     $scope.deSelectCurrentEvent = function(resetStage){
         if( resetStage ){
@@ -1353,8 +1370,27 @@ trackerCapture.controller('DataEntryController',
         $scope.showAttributeCategoryOptions = false;
         $scope.currentFileNames = $scope.fileNames ? ($scope.fileNames[$scope.currentEvent.event] ? $scope.fileNames[$scope.currentEvent.event] : []) : [];
         $scope.currentStage = $scope.stagesById[$scope.currentEvent.programStage];
-        $scope.currentStageEvents = $scope.eventsByStage[$scope.currentEvent.programStage];       
+        $scope.currentStageEvents = $scope.eventsByStage[$scope.currentEvent.programStage];  
+        
+        // for plan-customizations
+        // for invitation
+        if ($scope.currentStage.id == $scope.invitationProgramStage )
+        {
+            //alert("invitation");
+            $timeout(function () {
+                $rootScope.$broadcast('invitation-div', {event : $scope.currentEvent , show :true});
+            }, 200);
+        }
+        // for attend
+        else if ($scope.currentStage.id == $scope.attenDendProgramStage )
+        {
+            $timeout(function () {
+                $rootScope.$broadcast('attendance-div', {event : $scope.currentEvent , show :true});
 
+            }, 200);
+        }
+
+        else{
         angular.forEach($scope.currentStage.programStageSections, function (section) {
             section.open = true;
         });
@@ -1396,6 +1432,7 @@ trackerCapture.controller('DataEntryController',
         //Execute rules for the first time, to make the initial page appear correctly.
         //Subsequent calls will be made from the "saveDataValue" function.        
         $scope.executeRules();
+    }
     };
 
     $scope.saveDatavalue = function (prStDe, field) {
