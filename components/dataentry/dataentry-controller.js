@@ -1552,6 +1552,18 @@ trackerCapture.controller('DataEntryController',
                 if(!backgroundUpdate) {
                     //Run rules on updated data:
                     $scope.executeRules();
+                    //changes for icmr labour graph starts 
+                    var dataElementsToRefresh = ['FmVJzYVDVcz','pVowz22vGbF','AXFTeswZfLi','WBgaNvjJYrE','HNpSco5aovr','ThVQ8cJuMw5','AMS7Bj0pVX9','c6F35sCSFV3','J2MElelRH9p','Aqr0MvXJ0Zz'];
+                    if(dataElementsToRefresh.includes($scope.currentElement.id)){
+                        var element = document.getElementById('graphcontainer');
+                        if(element!=null && !$scope.removed){
+                           element.remove();//.removeChild(element.childNodes[0]); 
+                           $scope.removed = true;
+                        }
+                        $rootScope.refreshGraph($scope.currentEvent);
+                    }
+                    //changes for icmr labour details graph ends
+                    
                 }
 
             });
@@ -1958,7 +1970,7 @@ trackerCapture.controller('DataEntryController',
             }
             
             //Warnings might be put into both dialogs with errors and dialogs without errors.
-            //preparing a warnings section in case it is needed by one of the other dialogs.
+            //preparing a warnings sec
             var warningSection = false;
             if(angular.isDefined($scope.warningMessages[$scope.currentEvent.event]) && $scope.warningMessages[$scope.currentEvent.event].length > 0) {
                 warningSection = {

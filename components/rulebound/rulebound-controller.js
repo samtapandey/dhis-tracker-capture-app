@@ -75,6 +75,7 @@ trackerCapture.controller('RuleBoundController',
         });
         
         $scope.showKeyDataSection = keyDataInEffect;
-        $scope.showTextSection = textInEffect;        
+        $scope.showTextSection = textInEffect;  
+             
     });     
 });

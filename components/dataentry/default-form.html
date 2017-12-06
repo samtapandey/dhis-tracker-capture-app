@@ -1,5 +1,13 @@
 <form name="outerDataEntryForm" novalidate class="remove-default-padding">
+    
+
     <table class="dhis2-list-table-striped default-form-table" ng-if='currentEvent && !currentStage.programStageSections.length'>
+        <div id="swapper" >
+            <div id="graphcontainer" ng-if="currentStage.id=='kl1qQxjtlyx'" ng-controller="graphController" > 
+                    <!-- ng-if="currentStage.id=='kl1qQxjtlyx'" -->
+                </div>
+        </div>
+           
         <tr ng-repeat="prStDe in currentStage.programStageDataElements" ng-if="!isHidden(prStDe.dataElement.id, currentEvent)">
             <td>
                 <span d2-pop-over

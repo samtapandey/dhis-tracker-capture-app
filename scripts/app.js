@@ -22,6 +22,7 @@ import '../components/dashboard/dashboard-controller.js';
 import '../components/dashboard/dashboard-widgets-controller.js';
 import '../components/registration/registration-controller.js';
 import '../components/enrollment/enrollment-controller.js';
+import '../components/dataentry/graph-controller.js'
 import '../components/dataentry/dataentry-controller.js';
 import '../components/dataentry/referral-controller.js';
 import '../components/dataentry/modal-default-form-controller.js';
@@ -103,4 +104,6 @@ angular.module('trackerCapture')
 
     $rootScope.maxGridColumnSize = 1;
     $rootScope.maxOptionSize = 30;
+
+    
 });

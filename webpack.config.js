@@ -16,7 +16,7 @@ try {
     console.warn('\nWARNING! Failed to load DHIS config:', e.message);
     console.info('Using default config');
     dhisConfig = {
-        baseUrl: 'http://localhost:9090/dhis',
+        baseUrl: 'http://localhost:8080/dhis',
         authorization: 'Basic YWRtaW46ZGlzdHJpY3Q=' // admin:district
     };
 }
@@ -29,7 +29,7 @@ function bypass(req, res, opt) {
 function makeLinkTags(stylesheets) {
     return function (hash) {
         return stylesheets
-            .map(([url, attributes]) => {
+            .map((url, attributes) => {
                 const attributeMap = Object.assign({ media: 'screen' }, attributes);
 
                 const attributesString = Object
@@ -77,11 +77,17 @@ module.exports = {
             template: './index.ejs',
             stylesheets: makeLinkTags([
                 ['styles/style.css'],
+                ['styles/graph.css'],
                 ['styles/print.css', { media: 'print' }],
             ]),
             scripts: makeScriptTags([
                 'core/tracker-capture.js',
-                '../main.js',
+                'highcharts/highcharts.js',
+                'highcharts/highcharts-more.js',
+                'highcharts/series-label.js',
+                'highcharts/exporting.js',
+                '../main.js'
+                
             ]),
         }),
     ],
