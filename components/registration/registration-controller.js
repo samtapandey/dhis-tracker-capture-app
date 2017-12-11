@@ -31,6 +31,7 @@ trackerCapture.controller('RegistrationController',
     $scope.trackedEntityForm = null;
     $scope.customRegistrationForm = null;    
     $scope.selectedTei = {};
+	 $scope.ageInYears = 'iIf1gJ4FVdR'; 
     $scope.tei = {};    
     $scope.warningMessages = [];
     $scope.hiddenFields = [];    
@@ -485,9 +486,61 @@ trackerCapture.controller('RegistrationController',
 
         return $scope.selectedTei[id] ? false : $scope.hiddenFields[id];
     };
+      $scope.dobToAge = function (inputDob) {
+        if(inputDob != undefined && inputDob!= ''){
+        
+            var selectedDOBObject = new Date(inputDob);
+
+            var currentDateObject = new Date();
+
+            var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+            
+            var diffDays = Math.round(Math.abs((currentDateObject.getTime() - selectedDOBObject.getTime()) / (oneDay)));
+
+            var diffYear = diffDays/365;
+            
+            $scope.selectedTei[$scope.ageInYears] = ( Math.round(diffYear*100))/100;//put calculated value in month text box
+        }
+        else{
+            $scope.selectedTei[$scope.ageInYears] = '';
+        }
+    };
 
     $scope.teiValueUpdated = function (tei, field) {
+		
+		
         $scope.executeRules();
+    };
+	
+	
+	  $scope.validate = function (tei, field) {
+		console.log(tei);
+		$scope.mtcsid0fchild=tei.gZAFVJdEgIQ;
+		$scope.mtcsid0fmother=tei.AiPFBqutPYy
+		if(field=="gZAFVJdEgIQ"){
+		if($scope.mtcsid0fchild.length>18 ||$scope.mtcsid0fchild.length <18 ){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("gZAFVJdEgIQ").style.backgroundColor = "#FF6760";
+		}
+		else if($scope.mtcsid0fchild.length==18){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("gZAFVJdEgIQ").style.backgroundColor = "white";
+		}
+		}else if(field=="AiPFBqutPYy"){
+		 if($scope.mtcsid0fmother.length>18 ||$scope.mtcsid0fmother.length <18 ){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("AiPFBqutPYy").style.backgroundColor = "#FF6760";
+		}
+		else if($scope.mtcsid0fmother.length==18){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("AiPFBqutPYy").style.backgroundColor = "white";
+		}
+		}
+       
     };
 
 

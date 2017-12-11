@@ -51,7 +51,7 @@
                 </span>
 
                 <span ng-if="!attribute.optionSetValue" ng-switch="attribute.valueType">
-                    <span ng-switch-when="DATE">
+                    <span ng-switch-when="DATE" && ng-if="attribute.id != 'kelN057pfhq'">
                         <input type="text"
                                placeholder="{{dhis2CalendarFormat.keyDateFormat}}" 
                                name="foo" 
@@ -68,6 +68,25 @@
                                ng-disabled="selectedOrgUnit.closedStatus || isDisabled(attribute)"
                                blur-or-change="teiValueUpdated(selectedTei, attribute.id)"
                                ng-required="attribute.mandatory"/>
+                    </span>
+					 <span ng-switch-when="DATE" && ng-if="attribute.id === 'kelN057pfhq'">
+                        <input type="text"
+                               placeholder="{{dhis2CalendarFormat.keyDateFormat}}" 
+                               name="foo" 
+                               class="form-control"
+                               d2-date
+                               d2-date-validator 
+                               max-date="attribute.allowFutureDate ? '' : 0"
+                               ng-model="selectedTei[attribute.id]"                               
+                               ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
+                               d2-attribute-validator 
+                               attribute-data={{attribute}}
+                               selected-program-id={{selectedProgram.id}}  
+                               selected-tei-id={{selectedTei.trackedEntityInstance}}  
+                               ng-disabled="selectedOrgUnit.closedStatus || isDisabled(attribute)"
+                               blur-or-change="teiValueUpdated(selectedTei, attribute.id)"
+                               ng-required="attribute.mandatory" 
+                              ng-change="dobToAge(selectedTei[attribute.id])"/>
                     </span>
                     <span ng-switch-when="DATETIME">
                         <d2-date-time datetime-model="selectedTei"
@@ -333,18 +352,30 @@
                         </d2-org-unit-tree>
                     </span>
                     <span ng-switch-when="TEXT">
-                        <input type="text"
+                       <input type="text"
                                name="foo" 
                                class="form-control"
+							   id={{attribute.id}}
                                ng-model="selectedTei[attribute.id]" 
+							   
                                ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
                                d2-attribute-validator
                                attribute-data={{attribute}}
                                selected-program-id={{selectedProgram.id}}  
                                selected-tei-id={{selectedTei.trackedEntityInstance}}  
+							              
+							      tei-value={{selectedTei.gZAFVJdEgIQ.length}}
                                ng-disabled="selectedOrgUnit.closedStatus || isDisabled(attribute)"
                                ng-blur="teiValueUpdated(selectedTei, attribute.id)"
-                               ng-required="attribute.mandatory"/>
+                               ng-required="attribute.mandatory"
+							   ng-change="validate(selectedTei, attribute.id)"/> 
+					  <p ng-show="attribute.id=='gZAFVJdEgIQ'  && selectedTei.gZAFVJdEgIQ.length > 18"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  class="help-block" >MTCS ID is too Long</p>
+					   <p ng-show="attribute.id=='gZAFVJdEgIQ' && selectedTei.gZAFVJdEgIQ.length < 18"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  >MTCS ID is too Short</p>
+                      <p ng-show="attribute.id=='AiPFBqutPYy'  && selectedTei.AiPFBqutPYy.length > 18"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  class="help-block" >MTCS ID is too Long</p>
+					   <p ng-show="attribute.id=='AiPFBqutPYy' && selectedTei.AiPFBqutPYy.length < 18"  style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  >MTCS ID is too Short</p>
+					  <p ng-show="attribute.id=='uHv60gjn2gp'"  class="help-block" style="color:green;">Hint :Facility/Houseno/Type of house/Head of family</p>
+						<p ng-show="attribute.id=='Dnm1mq6iq2d'"  class="help-block" style="color:green;">Hint :Facility/Houseno/Type of house/Name/Series</p>
+						
                     </span>
                     <span ng-switch-when="PHONE_NUMBER">
                         <input type="text"
