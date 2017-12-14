@@ -5,12 +5,98 @@ var graphplotter = angular.module('trackerCapture');
 
 graphplotter.controller('graphController',
     function($rootScope,$scope){
+        // console.log("Output;");  
+        // console.log(location.hostname);
+        // console.log(document.domain);
+        // alert(window.location.hostname)
         
+        // console.log("document.URL : "+document.URL);
+        // console.log("document.location.href : "+document.location.href);
+        // console.log("document.location.origin : "+document.location.origin);
+        // console.log("document.location.hostname : "+document.location.hostname);
+        // console.log("document.location.host : "+document.location.host);
+        // console.log("document.location.pathname : "+document.location.pathname);
 
-         $rootScope.refreshGraph = function(currentEvent){
+        $scope.accessDataStore = function(teiid){
+            var urlToSend = "../api/dataStore/partograph/"+teiid;
+            
+            $.ajax({
+                type:'GET',
+                encoding:"UTF-8",
+                async:false,
+                dataType:"json",
+                url:urlToSend,
+                statusCode:{
+                    404: function(){
+                        $scope.storeDataStore(teiid);
+                    }
+                },
+                success : function(data,status,jqXHR){
+                    $scope.smsState = data;
+                }
+            });
+            
+        }
+
+        $scope.storeDataStore = function(teiid){
+            
+            var defaultVal = {}
+            defaultVal[teiid] = false;
+            
+            defaultVal = JSON.stringify(defaultVal);
+            
+            var urlToSend = "../api/dataStore/partograph/"+teiid;
+            
+            $.ajax({
+                type:'POST',
+                encoding:"UTF-8",
+                data : defaultVal,
+                async:false,
+                contentType : "application/json",
+                url:urlToSend,
+                success : function(data,status,jqXHR){
+                    $scope.smsState = defaultVal;
+                },
+                error :function(jqXhr,status,errorThrown){
+                    alert("Error Storing sms state");
+
+                }
+            });
+        }
+
+        $scope.updateStore = function(teiid,value){
+            
+            var defaultVal = {}
+            defaultVal[teiid] = value;
+            defaultVal = JSON.stringify(defaultVal);
+            
+            var urlToSend = "../api/dataStore/partograph/"+teiid;
+            
+            $.ajax({
+                type:'PUT',
+                encoding:"UTF-8",
+                data : defaultVal,
+                async:false,
+                contentType : "application/json",
+                url:urlToSend,
+                success : function(data,status,jqXHR){
+                    $scope.smsState = JSON.parse(defaultVal);
+                    alert("SMS SENT")
+                },
+                error :function(jqXhr,status,errorThrown){
+                    alert("Error Updating sms state");
+
+                }
+            });
+        }
+
+        $rootScope.refreshGraph = function(currentEvent,initial){
             
             $rootScope.chart = new Highcharts.chart('graphcontainer', {
-                
+                            chart:{
+                                plotBackgroundColor:'#ECD003', //yellow for alert area which is plot area background
+                                
+                            },
                 
                             title: {
                             text: 'Labour Details'
@@ -52,19 +138,29 @@ graphplotter.controller('graphController',
                             series: [
                             {
                                 name: 'Data',
-                                data: []
+                                data: [],
+                                color: '#000000', //black for data line 
+                                zIndex : 5
                             },
                             {
                                 type: 'arearange',
-                                name: 'Alert Line',
-                                data: [[0,10,4],[4,10,10]],
-                                
+                                name: 'Safe Area',
+                                data: [[0,10,4],[6,10,10]],
+                                fillOpacity : 70,
+                                color   : '#31FF69' // green for safe zone 
+                            },
+                            {//this series is dummy series just to show the color in legend the color should be same as ploat area background color
+                                type: 'area',
+                                name: 'Alert Area',
+                                data: [],
+                                color: '#ECD003'//color of alert area
                             },
                              
                             {
                                 type: 'area',
-                                name: 'Action Line',
-                                data: [[4,4],[10,10]]
+                                name: 'Action Area',
+                                data: [[4,4],[10,10]],
+                                color: '#E87249 '//red for action line 
                             }
                             ],
                 
@@ -102,6 +198,7 @@ graphplotter.controller('graphController',
             ];
             $rootScope.dataforGraph = []; 
             $scope.startingvalue = 0;
+            $scope.critical = false;
             for(var elementIdKey in dataElementsInOrder){
                 var mappedobject = dataElementsInOrder[elementIdKey];
                 if(currentEvent[mappedobject[0]] && currentEvent[mappedobject[1]]){
@@ -117,6 +214,9 @@ graphplotter.controller('graphController',
                     } 
                     obj.push(f-$scope.startingvalue);
                     obj.push(parseInt(currentEvent[mappedobject[1]]));
+                    if(obj[0]>=4 && obj[1]<obj[0]){
+                        $scope.critical = true;
+                    }
                     $rootScope.dataforGraph.push(obj)
                 }
 
@@ -138,6 +238,41 @@ graphplotter.controller('graphController',
             }                        
                                  
             $rootScope.chart.series[0].setData($rootScope.dataforGraph,true);
+
+            
+            
+            
+            if(initial===false){
+                //check whether the data line croses the critical line
+                //critical line follows the graph as y=x 
+                //so any value y>x where x>4 is on safe or alert zone
+                //any value y<x where x>4 is on critical zone
+                if($scope.smsState == null){
+                    $scope.accessDataStore(currentEvent.trackedEntityInstance);
+                }else if( $scope.smsState[currentEvent.trackedEntityInstance]==null){
+                    $scope.accessDataStore(currentEvent.trackedEntityInstance);
+                }
+
+                if($scope.critical && $scope.smsState[currentEvent.trackedEntityInstance]==false){
+                    var contentToSend = $scope.getUrl()+"ou="+currentEvent.orgUnit+"&tei="+currentEvent.trackedEntityInstance;
+                    var shorterUrl = $scope.shortUrl(contentToSend);
+                    if(shorterUrl!=null) contentToSend = shorterUrl; 
+                    if(currentEvent.patientName!=null){
+                        contentToSend = "Patient : "+currentEvent.patientName+" "+contentToSend;
+                    }
+                    $scope.getmobile(currentEvent.orgUnit);
+                    if($scope.mobile!=null){
+                        $scope.sendsms(contentToSend,$scope.mobile);
+                        $scope.smsState[currentEvent.trackedEntityInstance] = true;
+                        $scope.updateStore(currentEvent.trackedEntityInstance,true);
+                    }else{
+                        alert("Mobile number for the facility not found");
+                    }
+                    
+                }
+
+                
+            }
            
         }
 
@@ -146,4 +281,81 @@ graphplotter.controller('graphController',
         }
         
         $rootScope.refreshGraph($scope.currentEvent);
+
+        $scope.sendsms = function (smscontent, mobile) {
+            //alert("its working");
+            //smscontent = "test";
+            var finalcontent = encodeURIComponent(smscontent);
+            var smsurl = "http://bulksms.mysmsmantra.com:8080/WebSMS/SMSAPI.jsp?username=hispindia&password=hisp1234&sendername=HSSPIN&mobileno="+mobile+"&message="+finalcontent;
+            //var smsurl = "http://msdgweb.mgov.gov.in/esms/sendsmsrequest?username=PHD25PGIMER&password=sph@25&smsservicetype=unicodemsg&content=" + finalcontent + "&mobileno=" + mobile + "&senderid=PGIMER";
+            
+
+            $.ajax({
+                type:'POST',
+                encoding:"UTF-8",
+                url:smsurl,
+                headers:{
+                    "Access-Control-Allow-Origin" : "*"
+
+                },
+                async:false,
+                success : function(data,status,jqXHR){
+                    //not working because of some issue
+                    //$scope.storeDataStore(currentEvent.trackedEntityInstance,$scope.smsState);
+                    alert("Success sending to "+mobile);
+                }
+            });
+        }
+
+        $scope.getmobile = function(ouid){
+            var urlToSend = "../api/organisationUnits/"+ouid;
+            $.ajax({
+                type:'GET',
+                encoding:"UTF-8",
+                async:false,
+                dataType:"json",
+                url:urlToSend,
+                success : function(data,status,jqXHR){
+                    $scope.mobile = data["phoneNumber"];
+                }
+            });
+        }
+
+        $scope.getUrl= function(){
+            var host = document.location.origin;
+            var path = document.location.pathname.replace("dhis-web-tracker-capture/index.html",
+            "dhis-web-reporting/generateHtmlReport.action?uid=zirn49Gg1vs&");
+
+            return host+path;
+
+        }
+
+        $scope.shortUrl = function(Urltoshort){
+            var googleApiUrl = "https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyCZlTv6vjf7FH9xqXp1vXgNCis4yiKIj6s";
+            var objData = {
+                longUrl : Urltoshort
+            }
+            var objToReturn= null;
+            var jsonObjData = JSON.stringify(objData);
+            var x ;
+            $.ajax({
+                type:'POST',
+                encoding:"UTF-8",
+                async:false,
+                data: jsonObjData,
+                contentType : "application/json",
+                dataType:"json",
+                url:googleApiUrl,
+                success : function(data,status,jqXHR){
+                    objToReturn = data["id"];
+                },
+                error:function(a,b,c){
+                    alert("Couldn't get shorter url");
+                }
+            });
+
+            return objToReturn;
+        }
+
+        
 });

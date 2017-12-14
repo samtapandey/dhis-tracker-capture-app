@@ -1560,7 +1560,16 @@ trackerCapture.controller('DataEntryController',
                            element.remove();//.removeChild(element.childNodes[0]); 
                            $scope.removed = true;
                         }
-                        $rootScope.refreshGraph($scope.currentEvent);
+                        $scope.currentEvent.patientName = null;
+                        var attributes = $scope.selectedEntity['attributes'];
+                        for(var key in attributes){
+                            if(attributes[key]['attribute'] == "briL4htZesc"){
+                                $scope.currentEvent.patientName = attributes[key]['value'];
+                                break;
+                            }
+                        }
+                        
+                        $rootScope.refreshGraph($scope.currentEvent,false);
                     }
                     //changes for icmr labour details graph ends
                     

@@ -8,6 +8,12 @@ import 'd2-tracker/lib/dhis2.angular.filters.js';
 import 'd2-tracker/lib/dhis2.angular.controllers.js';
 import 'd2-tracker/lib/dhis2.angular.templates.js';
 
+//graph library
+//import '../highcharts/highcharts.js';
+//import '../highcharts/highcharts-more.js';
+//import '../highcharts/series-label.js';
+//import '../highcharts/exporting.js';
+
 // App files
 import '../scripts/services.js';
 import '../scripts/filters.js';
