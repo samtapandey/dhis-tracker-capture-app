@@ -534,7 +534,11 @@ trackerCapture.controller('DashboardController',
         if (!$scope.dataEntryMainMenuItemSelected) {
             //reload OU tree
             selection.load();
-            $location.path('/').search({program: $scope.selectedProgramId});
+            var absUrl = $location.absUrl();
+            var url =absUrl.split("html");
+            var Rurl = url[0] + "html";
+            window.location.replace(Rurl);
+            //$location.path('/').search({program: $scope.selectedProgramId});
         } else {
             $rootScope.$broadcast('DashboardBackClicked');
             $scope.dataEntryMainMenuItemSelected = false;

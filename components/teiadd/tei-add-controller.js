@@ -38,7 +38,8 @@ trackerCapture.controller('TEIAddController',
             
             CurrentSelection.setAttributesById($scope.attributesById);
         });
-    }    
+    }  
+     
     
     $scope.optionSets = CurrentSelection.getOptionSets();        
     if(!$scope.optionSets){

@@ -546,7 +546,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             return promise;
         },
         getByEntity: function( entity ){
-            var promise = $http.get(  DHIS2URL + '/enrollments.json?ouMode=ACCESSIBLE&trackedEntityInstance=' + entity + '&fields=:all&paging=false').then(function(response){
+            var promise = $http.get(  DHIS2URL + '/enrollments.json?ouMode=ALL&trackedEntityInstance=' + entity + '&fields=:all&paging=false').then(function(response){
                 return convertFromApiToUser(response.data);
             },function(response){
                 var errorBody = $translate.instant('failed_to_fetch_enrollment');
@@ -556,7 +556,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             return promise;
         },
         getByEntityAndProgram: function( entity, program ){
-            var promise = $http.get(  DHIS2URL + '/enrollments.json?ouMode=ACCESSIBLE&trackedEntityInstance=' + entity + '&program=' + program + '&fields=:all&paging=false').then(function(response){
+            var promise = $http.get(  DHIS2URL + '/enrollments.json?ouMode=ALL&trackedEntityInstance=' + entity + '&program=' + program + '&fields=:all&paging=false').then(function(response){
                 return convertFromApiToUser(response.data);
             }, function(response){
                 var errorBody = $translate.instant('failed_to_fetch_enrollment');
