@@ -16,7 +16,6 @@ trackerCapture.controller('MessagingController',
         $scope.selectedEnrollment = null;
         $scope.selections = CurrentSelection.get();
         $scope.selectedTei = $scope.selections.tei;
-        $scope.selectedOrgUnit = $scope.selections.orgUnit;
         if ($scope.selectedTei) {
             //check if the selected TEI has any of the contact attributes
             //that can be used for messaging

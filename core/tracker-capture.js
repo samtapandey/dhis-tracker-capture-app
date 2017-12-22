@@ -10,7 +10,7 @@ var i18n_offline_notification = 'You are offline';
 var i18n_online_notification = 'You are online';
 var i18n_ajax_login_failed = 'Login failed, check your username and password and try again';
 
-var DHIS2URL = '../api/28';
+var DHIS2URL = '../api';
 var optionSetIds = [];
 var trackedEntityAttributeIds = [];
 var batchSize = 50;
@@ -29,7 +29,7 @@ if( dhis2.tc.memoryOnly ) {
 dhis2.tc.store = new dhis2.storage.Store({
     name: 'dhis2tc',
     adapters: [dhis2.storage.IndexedDBAdapter, dhis2.storage.DomSessionStorageAdapter, dhis2.storage.InMemoryAdapter],
-    objectStores: ['programs', 'trackedEntityTypes', 'attributes', 'relationshipTypes', 'optionSets', 'programIndicators', 'ouLevels', 'programRuleVariables', 'programRules','constants']
+    objectStores: ['programs', 'trackedEntities', 'attributes', 'relationshipTypes', 'optionSets', 'programIndicators', 'ouLevels', 'programRuleVariables', 'programRules','constants']
 });
 
 (function($) {
@@ -131,13 +131,12 @@ function downloadMetaData()
     var promise = def.promise();
 
     promise = promise.then( dhis2.tc.store.open );
+    promise = promise.then( getUserRoles );
     promise = promise.then( getSystemSetting );
-    promise = promise.then( getUserSetting );
-    promise = promise.then( getUserProfile );
     promise = promise.then( getConstants );
     promise = promise.then( getOrgUnitLevels );
     promise = promise.then( getRelationships );       
-    promise = promise.then( getTrackedEntityTypes );    
+    promise = promise.then( getTrackedEntities );    
     promise = promise.then( getMetaPrograms );
     promise = promise.then( filterMissingPrograms );
     promise = promise.then( getPrograms );
@@ -147,7 +146,7 @@ function downloadMetaData()
     promise = promise.then( getOptionSetsForAttributes );
     promise = promise.then( getOptionSetsForDataElements );
     promise = promise.then( getOptionSets );   
-    promise.done(function() {
+    promise.done(function() {        
         //Enable ou selection after meta-data has downloaded
         $( "#orgUnitTree" ).removeClass( "disable-clicks" );
         dhis2.tc.metaDataCached = true;
@@ -160,33 +159,23 @@ function downloadMetaData()
     return def2.promise();
 }
 
+function getUserRoles()
+{
+    var SessionStorageService = angular.element('body').injector().get('SessionStorageService');    
+    if( SessionStorageService.get('USER_ROLES') ){
+       return; 
+    }
+    
+    return dhis2.tracker.getTrackerObject(null, 'USER_ROLES', DHIS2URL + '/me.json', 'fields=id,displayName,userCredentials[userRoles[id,programs,authorities]]', 'sessionStorage', dhis2.tc.store);
+}
+
 function getSystemSetting()
 {   
     if(localStorage['SYSTEM_SETTING']){
        return; 
     }
     
-    return dhis2.tracker.getTrackerObject(null, 'SYSTEM_SETTING', DHIS2URL + '/systemSettings', 'key=keyGoogleMapsApiKey&key=keyMapzenSearchApiKey&key=keyCalendar&key=keyDateFormat', 'localStorage', dhis2.tc.store);
-}
-
-function getUserSetting()
-{   
-    var SessionStorageService = angular.element('body').injector().get('SessionStorageService');    
-    if( SessionStorageService.get('USER_SETTING') ){
-       return; 
-    }
-    
-    return dhis2.tracker.getTrackerObject(null, 'USER_SETTING', DHIS2URL + '/userSettings.json', 'key=keyDbLocale&key=keyUiLocale&key=keyCurrentStyle&key=keyStyle', 'sessionStorage', dhis2.tc.store);
-}
-
-function getUserProfile()
-{
-    var SessionStorageService = angular.element('body').injector().get('SessionStorageService');    
-    if( SessionStorageService.get('USER_PROFILE') ){
-       return; 
-    }
-    
-    return dhis2.tracker.getTrackerObject(null, 'USER_PROFILE', DHIS2URL + '/me.json', 'fields=id,displayName,userCredentials[username,userRoles[id,programs,authorities]],organisationUnits[id,displayName,level,code,path,children[id,displayName,level,children[id]]],dataViewOrganisationUnits[id,displayName,level,path,code,children[id,displayName,level,children[id]]],teiSearchOrganisationUnits[id,displayName,level,path,code,children[id,displayName,level,children[id]]]', 'sessionStorage', dhis2.tc.store);
+    return dhis2.tracker.getTrackerObject(null, 'SYSTEM_SETTING', DHIS2URL + '/systemSettings', 'key=keyGoogleMapsApiKey&key=keyCalendar&key=keyDateFormat', 'localStorage', dhis2.tc.store);
 }
 
 function getConstants()
@@ -219,19 +208,18 @@ function getRelationships()
     });    
 }
 
-function getTrackedEntityTypes()
+function getTrackedEntities()
 {
-    dhis2.tc.store.getKeys('trackedEntityTypes').done(function(res){
+    dhis2.tc.store.getKeys('trackedEntities').done(function(res){
         if(res.length > 0){
             return;
         }        
-        return dhis2.tracker.getTrackerObjects('trackedEntityTypes', 'trackedEntityTypes', DHIS2URL + '/trackedEntityTypes.json', 'paging=false&fields=id,displayName', 'idb', dhis2.tc.store);
+        return dhis2.tracker.getTrackerObjects('trackedEntities', 'trackedEntities', DHIS2URL + '/trackedEntities.json', 'paging=false&fields=id,displayName', 'idb', dhis2.tc.store);
     });    
 }
 
 function getMetaPrograms()
-{   
-    console.log('in programs..'); 
+{    
     return dhis2.tracker.getTrackerObjects('programs', 'programs', DHIS2URL + '/programs.json', 'filter=programType:eq:WITH_REGISTRATION&paging=false&fields=id,version,programTrackedEntityAttributes[trackedEntityAttribute[id,optionSet[id,version]]],programStages[id,programStageDataElements[dataElement[id,optionSet[id,version]]]]', 'temp', dhis2.tc.store);
 }
 
@@ -330,36 +318,16 @@ function getBatchPrograms( programs, batch )
     $.ajax( {
         url: DHIS2URL + '/programs.json',
         type: 'GET',
-        data: 'fields=*,dataEntryForm[*],relatedProgram[id,displayName],relationshipType[id,displayName],trackedEntityType[id,displayName],categoryCombo[id,displayName,isDefault,categories[id,displayName,categoryOptions[id,displayName,organisationUnits[id]]]],organisationUnits[id,displayName],userRoles[id,displayName],programStages[*,dataEntryForm[*],programStageSections[id,displayName,description,sortOrder,dataElements[id]],programStageDataElements[*,dataElement[*,optionSet[id]]]],programTrackedEntityAttributes[*,trackedEntityAttribute[id,unique]]&paging=false&filter=id:in:' + ids
+        data: 'fields=*,dataEntryForm[*],relatedProgram[id,displayName],relationshipType[id,displayName],trackedEntity[id,displayName],categoryCombo[id,displayName,isDefault,categories[id,displayName,categoryOptions[id,displayName]]],organisationUnits[id,displayName],userRoles[id,displayName],programStages[*,dataEntryForm[*],programStageSections[id,displayName,programStageDataElements[dataElement[id]]],programStageDataElements[*,dataElement[*,optionSet[id]]]],programTrackedEntityAttributes[*,trackedEntityAttribute[id,unique]]&paging=false&filter=id:in:' + ids
     }).done( function( response ){
 
         if(response.programs){
             _.each(_.values( response.programs), function(program){
-                if( program.organisationUnits ){
-                    var ou = {};
-                    _.each(_.values( program.organisationUnits), function(o){
-                        ou[o.id] = o.displayName;
-                    });
-                    program.organisationUnits = ou;
-                }
-                
-                if( program.programStages ){
-                    program.programStages = _.sortBy( program.programStages, 'sortOrder' );
-                }
-
-                if( program.categoryCombo && program.categoryCombo.categories ){
-                    _.each( _.values( program.categoryCombo.categories ), function ( ca ) {                            
-                        if( ca.categoryOptions ){
-                            _.each( _.values( ca.categoryOptions ), function ( co ) {
-                                var mappedOrganisationUnits = [];
-                                if( co.organisationUnits && co.organisationUnits.length > 0 ){                                        
-                                    mappedOrganisationUnits = $.map(co.organisationUnits, function(ou){return ou.id;});
-                                }                                
-                                co.organisationUnits = mappedOrganisationUnits;
-                            });
-                        }
-                    });
-                }
+                var ou = {};
+                _.each(_.values( program.organisationUnits), function(o){
+                    ou[o.id] = o.displayName;
+                });
+                program.organisationUnits = ou;
 
                 dhis2.tc.store.set( 'programs', program );
             });
@@ -451,7 +419,7 @@ function filterMissingTrackedEntityAttributes( programs, trackedEntityAttributes
 
 function getTrackedEntityAttributes( programs, trackedEntityAttributes)
 {
-    return dhis2.tracker.getBatches( trackedEntityAttributeIds, batchSize, {programs: programs, trackedEntityAttributes: trackedEntityAttributes}, 'attributes', 'trackedEntityAttributes', DHIS2URL + '/trackedEntityAttributes.json', 'paging=false&fields=:all,optionSet[id,version],trackedEntityType[id,displayName]', 'idb', dhis2.tc.store );
+    return dhis2.tracker.getBatches( trackedEntityAttributeIds, batchSize, {programs: programs, trackedEntityAttributes: trackedEntityAttributes}, 'attributes', 'trackedEntityAttributes', DHIS2URL + '/trackedEntityAttributes.json', 'paging=false&fields=id,generated,displayName,code,description,valueType,optionSetValue,confidential,inherit,sortOrderInVisitSchedule,sortOrderInListNoProgram,displayOnVisitSchedule,displayInListNoProgram,unique,programScope,orgunitScope,confidential,optionSet[id,version],trackedEntity[id,displayName]', 'idb', dhis2.tc.store );
 }
 
 function getOptionSetsForAttributes( data )

@@ -9,7 +9,7 @@
                 <span ng-show="dataentryTabularWidget.expand"><i class="fa fa-chevron-up vertical-center" title="{{collapseLabel}}"></i></span>
                 <span ng-show="!dataentryTabularWidget.expand"><i class="fa fa-chevron-down vertical-center" title="{{expandLabel}}"></i></span>
             </a>
-            <a ng-show="userAuthority.canAdministerDashboard || !lockedList[selectedProgram.id]" class="small-horizontal-spacing" href ng-click="removeWidget(dataentryTabularWidget)" title="{{removeLabel}}"><i class="fa fa-times-circle"></i></a>
+            <a class="small-horizontal-spacing" href ng-click="removeWidget(dataentryTabularWidget)" title="{{removeLabel}}"><i class="fa fa-times-circle"></i></a>
         </span>
     </div>
 
@@ -19,7 +19,7 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="list-group" style="width: 10%; float: left;">
-                            <a ng-repeat="stage in tabularEntryStages" class="list-group-item cursor-pointer" ng-class="{true: 'active'} [stage.id === currentStage.id]" ng-click="setCurrentStage(stage, true)">
+                            <a ng-repeat="stage in programStages| orderBy:'sortOrder':reverse" class="list-group-item cursor-pointer" ng-class="{true: 'active'} [stage.id === currentStage.id]" ng-click="setCurrentStage(stage, true)">
                                 {{stage.displayName}}
                             </a>
                         </div>
@@ -38,27 +38,20 @@
                                 <img src="../images/ajax-loader-bar.gif" alt="{{'loading'| translate}}"/>
                             </div>
                         </div>
-                        <div style="width: 3%; float: left;" ng-hide="stagesNotShowingInStageTasks[currentStage.id] || !currentStage">
-                            <button type="button"
+                        <div style="width: 3%; float: left;">
+                            <button type="button" 
                                     title="{{'add_new_event'|translate}}"
                                     class="btn btn-primary" 
                                     ng-click="showCreateEvent(currentStage, eventCreationActions.add, currentStage)"
-                                    ng-disabled="selectedEntity.inactive || selectedEnrollment.status !== 'ACTIVE' || selectedOrgUnit.closedStatus">
+                                    ng-disabled="selectedEntity.inactive || selectedEnrollment.status !== 'ACTIVE'">
                                 <i class="fa fa-plus"></i>
                             </button>
                             <button type="button" 
                                     title="{{'schedule_new_event'|translate}}"
                                     class="btn btn-info long-vertical-spacing" 
                                     ng-click="showCreateEvent(stage, eventCreationActions.schedule, currentStage)"
-                                    ng-disabled="selectedEntity.inactive || selectedEnrollment.status !== 'ACTIVE' || selectedOrgUnit.closedStatus || currentStage.hideDueDate || currentStage.periodType">
+                                    ng-disabled="selectedEntity.inactive || selectedEnrollment.status !== 'ACTIVE'">
                                 <i class="fa fa-calendar"></i>
-                            </button>
-                            <button type="button" 
-                                    title="{{'make_referral'| translate}}"
-                                    class="btn btn-warning long-vertical-spacing" 
-                                    ng-click="useMainMenu ? showCreateEventIfStageNeedsEvent(selectedMainMenuStage, eventCreationActions.referral, false, true) : showCreateEvent(null, eventCreationActions.referral)"
-                                    ng-disabled="selectedEntity.inactive || selectedEnrollment.status !== 'ACTIVE' || selectedOrgUnit.closedStatus || currentStage.hideDueDate || currentStage.periodType">
-                                <i class="fa fa-share"></i>
                             </button>
                         </div>                            
                     </div>                        

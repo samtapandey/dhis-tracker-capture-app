@@ -27,7 +27,6 @@ trackerCapture.controller('TEIAddController',
             existingAssociateUid,
             addingRelationship,
             selectedTei){
-    var selection = CurrentSelection.get();
     $scope.attributesById = CurrentSelection.getAttributesById();
     if(!$scope.attributesById){
         $scope.attributesById = [];
@@ -73,15 +72,14 @@ trackerCapture.controller('TEIAddController',
         angular.forEach($scope.mainTei.relationships, function(rel){
             invalidTeis.push(rel.trackedEntityInstanceB);
         });
-    }
-
-
-        $scope.selectedOrgUnit = selection.orgUnit;
+    }    
+    
+    OrgUnitFactory.getOrgUnit(($location.search()).ou).then(function(orgUnit) {
+        $scope.selectedOrgUnit = orgUnit;
         $scope.selectedEnrollment = {
             enrollmentDate: $scope.today,
             incidentDate: $scope.today,
-            orgUnitName: $scope.selectedOrgUnit.displayName,
-            orgUnit: $scope.selectedOrgUnit.id
+            orgUnitName: $scope.selectedOrgUnit.displayName
         };
 
         //Selections
@@ -117,10 +115,10 @@ trackerCapture.controller('TEIAddController',
             $scope.addingTeiAssociate = true;
             ProgramFactory.getProgramsByOu($scope.selectedOrgUnit, $scope.selectedProgram).then(function (response) {
                 $scope.programs = response.programs;
-                if ($scope.selectedAttribute && $scope.selectedAttribute.trackedEntityType && $scope.selectedAttribute.trackedEntityType.id) {
+                if ($scope.selectedAttribute && $scope.selectedAttribute.trackedEntity && $scope.selectedAttribute.trackedEntity.id) {
                     $scope.programs = [];
                     angular.forEach(response.programs, function (pr) {
-                        if (pr.trackedEntityType && pr.trackedEntityType.id === $scope.selectedAttribute.trackedEntityType.id) {
+                        if (pr.trackedEntity && pr.trackedEntity.id === $scope.selectedAttribute.trackedEntity.id) {
                             $scope.programs.push(pr);
                         }
                     });
@@ -139,8 +137,8 @@ trackerCapture.controller('TEIAddController',
 
             CurrentSelection.setRelationshipOwner({});
 
-            if ($scope.selectedAttribute && $scope.selectedAttribute.trackedEntityType && $scope.selectedAttribute.trackedEntityType.id) {
-                $scope.selectedTrackedEntity = $scope.selectedAttribute.trackedEntityType;
+            if ($scope.selectedAttribute && $scope.selectedAttribute.trackedEntity && $scope.selectedAttribute.trackedEntity.id) {
+                $scope.selectedTrackedEntity = $scope.selectedAttribute.trackedEntity;
             }
         }
 
@@ -273,7 +271,7 @@ trackerCapture.controller('TEIAddController',
                     return;
                 }
 
-                //$scope.programUrl = 'trackedEntityType=' + $scope.selectedTrackedEntity.id;
+                //$scope.programUrl = 'trackedEntity=' + $scope.selectedTrackedEntity.id;
             }
 
             $scope.fetchTei();
@@ -305,21 +303,23 @@ trackerCapture.controller('TEIAddController',
                 }
 
                 //process tei grid
+                
+                 TEIGridService.format($scope.selectedOrgUnit.id, data, false, $scope.optionSets, invalidTeis).then(function (response) {
+                    $scope.trackedEntityList = response;
+                    $scope.showTrackedEntityDiv = true;
+                    $scope.teiFetched = true;
 
-                $scope.trackedEntityList = TEIGridService.format($scope.selectedOrgUnit.id, data, false, $scope.optionSets, invalidTeis);
-                $scope.showTrackedEntityDiv = true;
-                $scope.teiFetched = true;
-
-                if (!$scope.sortColumn.id) {
-                    $scope.sortGrid({
-                        id: 'created',
-                        name: $translate.instant('registration_date'),
-                        valueType: 'date',
-                        displayInListNoProgram: false,
-                        showFilter: false,
-                        show: false
-                    });
-                }
+                    if (!$scope.sortColumn.id) {
+                        $scope.sortGrid({
+                            id: 'created',
+                            name: $translate.instant('registration_date'),
+                            valueType: 'date',
+                            displayInListNoProgram: false,
+                            showFilter: false,
+                            show: false
+                        });
+                    }
+                });
             });
         };
 
@@ -507,6 +507,7 @@ trackerCapture.controller('TEIAddController',
         $scope.setSelectedSearchingOrgUnit = function (orgUnit) {
             $scope.selectedSearchingOrgUnit = orgUnit;
         };
+    });
 })
 
 .controller('TEIRegistrationController', 
@@ -543,8 +544,7 @@ trackerCapture.controller('TEIAddController',
     
     var selections = CurrentSelection.get();
     $scope.programs = selections.prs;
-    $scope.selectedOrgUnit = selections.orgUnit;
-
+    
     $scope.attributesById = CurrentSelection.getAttributesById();
     if(!$scope.attributesById){
         $scope.attributesById = [];
@@ -627,10 +627,10 @@ trackerCapture.controller('TEIAddController',
         
     }); 
             
-    $scope.trackedEntityTypes = {available: []};
+    $scope.trackedEntities = {available: []};
     TEService.getAll().then(function(entities){
-        $scope.trackedEntityTypes.available = entities;   
-        $scope.trackedEntityTypes.selected = $scope.trackedEntityTypes.available[0];
+        $scope.trackedEntities.available = entities;   
+        $scope.trackedEntities.selected = $scope.trackedEntities.available[0];
     });
     
     $scope.registerEntity = function(){
@@ -643,15 +643,15 @@ trackerCapture.controller('TEIAddController',
         
         //form is valid, continue the registration
         //get selected entity
-        var selectedTrackedEntity = $scope.trackedEntityTypes.selected.id; 
+        var selectedTrackedEntity = $scope.trackedEntities.selected.id; 
         if($scope.selectedProgramForRelative){
-            selectedTrackedEntity = $scope.selectedProgramForRelative.trackedEntityType.id;
+            selectedTrackedEntity = $scope.selectedProgramForRelative.trackedEntity.id;
         }
         
         //get tei attributes and their values
         //but there could be a case where attributes are non-mandatory and
         //registration form comes empty, in this case enforce at least one value
-        $scope.selectedTei.trackedEntityType = $scope.tei.trackedEntityType = selectedTrackedEntity; 
+        $scope.selectedTei.trackedEntity = $scope.tei.trackedEntity = selectedTrackedEntity; 
         $scope.selectedTei.orgUnit = $scope.tei.orgUnit = $scope.selectedOrgUnit.id;
         $scope.selectedTei.attributes = $scope.tei.attributes = [];
         
@@ -665,8 +665,8 @@ trackerCapture.controller('TEIAddController',
         
         RegistrationService.registerOrUpdate($scope.tei, $scope.optionSets, $scope.attributesById).then(function(registrationResponse){
             var reg = registrationResponse.response ? registrationResponse.response : {};
-            if (reg.importSummaries[0].reference && reg.status === 'SUCCESS'){                
-                $scope.tei.trackedEntityInstance = $scope.tei.id = reg.importSummaries[0].reference; 
+            if(reg.reference && reg.status === 'SUCCESS'){                
+                $scope.tei.trackedEntityInstance = $scope.tei.id = reg.reference; 
                 
                 //registration is successful and check for enrollment
                 if($scope.selectedProgramForRelative){    
@@ -750,7 +750,7 @@ trackerCapture.controller('TEIAddController',
         });
         
         if($scope.selectedProgram && $scope.selectedProgram.id){
-            TrackerRulesExecutionService.executeRules($scope.allProgramRules, 'registration', null, null, null, $scope.selectedTei, $scope.selectedEnrollment, null, flag);
+            TrackerRulesExecutionService.executeRules($scope.allProgramRules, 'registration', null, null, $scope.selectedTei, $scope.selectedEnrollment, flag);
         }        
     };
     

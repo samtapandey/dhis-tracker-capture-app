@@ -7,14 +7,14 @@
                 <span ng-show="enrollmentWidget.expand"><i class="fa fa-chevron-up" title="{{collapseLabel}}"></i></span>
                 <span ng-show="!enrollmentWidget.expand"><i class="fa fa-chevron-down" title="{{expandLabel}}"></i></span>
             </a>
-            <a ng-show="userAuthority.canAdministerDashboard || !lockedList[selectedProgram.id]" class="small-horizontal-spacing" href ng-click="removeWidget(enrollmentWidget)" title="{{removeLabel}}"><i class="fa fa-times-circle"></i></a>            
+            <a class="small-horizontal-spacing" href ng-click="removeWidget(enrollmentWidget)" title="{{removeLabel}}"><i class="fa fa-times-circle"></i></a>            
         </span>
     </div>
     <div ng-show="enrollmentWidget.expand" class="panel-body dashboard-widget-container">
         
         <div>
             <!-- operations on selected enrollment begins -->
-            <div class="row equal-height-columns" ng-class="{'disable-clicks':selectedOrgUnit.closedStatus}">
+            <div class="row equal-height-columns">
                 <div class="col-sm-6">             
                     <div class="title small-vertical-spacing">
                         <span ng-if="hasOtherPrograms">
@@ -47,7 +47,7 @@
                                             {{selectedProgram.enrollmentDateLabel}}
                                         </td>
                                         <td class="absorbing-column">
-                                            <input type="text" placeholder="{{dhis2CalendarFormat.keyDateFormat}}" class="form-control" d2-date ng-model="selectedEnrollment.enrollmentDate" ng-change="verifyExpiryDate('selectedEnrollment.enrollmentDate')" ng-disabled="true"/>
+                                            <input type="text" placeholder="{{dhis2CalendarFormat.keyDateFormat}}" class="form-control" d2-date ng-model="selectedEnrollment.enrollmentDate" ng-disabled="true"/>
                                         </td>
                                     </tr>
                                     <tr ng-if="selectedProgram.displayIncidentDate">                    
@@ -55,7 +55,7 @@
                                             {{selectedProgram.incidentDateLabel}}
                                         </td>
                                         <td class="absorbing-column">
-                                            <input type="text" placeholder="{{dhis2CalendarFormat.keyDateFormat}}" class="form-control" d2-date ng-model="selectedEnrollment.incidentDate" ng-change="verifyExpiryDate('selectedEnrollment.incidentDate')" ng-disabled="true"/>
+                                            <input type="text" placeholder="{{dhis2CalendarFormat.keyDateFormat}}" class="form-control" d2-date ng-model="selectedEnrollment.incidentDate" ng-disabled="true"/>
                                         </td>
                                     </tr>
                                     <tr ng-if="selectedProgram.captureCoordinates">
@@ -66,7 +66,7 @@
                                             <d2-map d2-lat-saved="enrollmentLatSaved"
                                                     d2-lng-saved="enrollmentLngSaved"
                                                     d2-object="selectedEnrollment" 
-                                                    d2-disabled="selectedEnrollment.status !== 'ACTIVE' || selectedOrgUnit.closedStatus"
+                                                    d2-disabled="selectedEnrollment.status !== 'ACTIVE'"
                                                     d2-function="saveCoordinate(arg1)" 
                                                     d2-coordinate-format="'COORDINATE'"
                                                     d2-function-param-coordinate="LATLNG">
@@ -79,14 +79,14 @@
                                     <button type="button" 
                                             class="btn btn-primary"
                                             ng-if="selectedEnrollment.status !== 'CANCELLED'"
-                                            ng-disabled="!canUseEnrollment() || selectedOrgUnit.closedStatus"
+                                            ng-disabled="!canUseEnrollment()"
                                             ng-click="completeReopenEnrollment()">
                                         {{selectedEnrollment.status === 'ACTIVE' ? 'complete' : 'reopen' | translate}}
                                     </button>
                                     <button type="button" 
                                             class="btn btn-warning"
                                             ng-if="selectedEnrollment.status !== 'COMPLETED'"
-                                            ng-disabled="!canUseEnrollment() || selectedOrgUnit.closedStatus"
+                                            ng-disabled="!canUseEnrollment()"
                                             ng-click="activateDeactivateEnrollment()">
                                         {{selectedEnrollment.status === 'CANCELLED' ? 'activate' : 'deactivate' | translate}}
                                     </button>                                                                    
@@ -95,13 +95,12 @@
                                             ng-if="selectedEnrollment.status === 'ACTIVE'"
                                             title="{{selectedEnrollment.followup ? 'unmark_for_followup' : 'mark_for_followup' | translate}}"
                                             ng-class="{true: 'btn-danger', false: 'btn-default'} [selectedEnrollment.followup]" 
-                                            ng-disabled="selectedEnrollment.status !== 'ACTIVE' || selectedTei.inactive || selectedOrgUnit.closedStatus"
+                                            ng-disabled="selectedEnrollment.status !== 'ACTIVE' || selectedTei.inactive"
                                             ng-click="markForFollowup()">
                                         <i class="fa fa-exclamation-triangle"></i>
                                     </button>                                    
                                     <button type="button" 
                                             class="btn btn-danger pull-right"
-                                            ng-disabled="selectedOrgUnit.closedStatus"
                                             ng-click="deleteEnrollment()">
                                         {{'delete' | translate}}
                                     </button>

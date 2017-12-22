@@ -7,14 +7,11 @@ trackerCapture.controller('EventCreationController',
                 $modalInstance,
                 $timeout,
                 $translate,
-                $filter,
-                removeFuturePeriodFilter,
                 DateUtils,
                 DHIS2EventFactory,
                 OrgUnitFactory,
                 NotificationService,
                 EventCreationService,
-                RegistrationService,
                 eventsByStage,
                 stage,
                 stages,
@@ -28,13 +25,7 @@ trackerCapture.controller('EventCreationController',
                 EventUtils,
                 events,
                 suggestedStage,
-                selectedCategories,
-                PeriodService,
-                ModalService,
-                CurrentSelection,
-                $rootScope) {
-    $scope.selectedOrgUnit = orgUnit;
-    $scope.selectedEnrollment = enrollment;      
+                selectedCategories) {
     $scope.stages = stages;
     $scope.allStages = allStages;
     $scope.events = events;
@@ -43,31 +34,18 @@ trackerCapture.controller('EventCreationController',
     $scope.isNewEvent = (eventCreationAction === $scope.eventCreationActions.add);
     $scope.isScheduleEvent = (eventCreationAction === $scope.eventCreationActions.schedule || eventCreationAction === $scope.eventCreationActions.referral);
     $scope.isReferralEvent = (eventCreationAction === $scope.eventCreationActions.referral);
-    $scope.model = {selectedStage: stage, dueDateInvalid: false, eventDateInvalid: false};
+    $scope.model = {selectedStage: stage, dueDateInvalid: false, eventDateInvalid: false, currentSelectedIndex: 0};
     $scope.stageSpecifiedOnModalOpen = angular.isObject(stage) ? true : false;
     $scope.suggestedStage = suggestedStage;
     $scope.selectedProgram = program;
     $scope.selectedCategories = selectedCategories;
     $scope.pleaseSelectLabel = $translate.instant('please_select');
-    $scope.periodOffset = 0;
-    $scope.referenceOffset = 0;
-    $scope.periods = [];
-    $scope.hasFuturePeriod = false;
-    $scope.today = DateUtils.getToday();
-    
-    if( $scope.isScheduleEvent ){        
-        $scope.stages = $filter('filter')(stages, {hideDueDate: false});
-    }
-    
-    if( $scope.isScheduleEvent ){        
-        $scope.stages = $filter('filter')(stages, {periodType: 'undefined'});
-    }
 
     var dummyEvent = {};
     
     function prepareEvent(){
         
-        dummyEvent = EventUtils.createDummyEvent(eventsByStage[stage.id], tei, program, stage, orgUnit, $scope.selectedEnrollment);
+        dummyEvent = EventUtils.createDummyEvent(eventsByStage[stage.id], tei, program, stage, orgUnit, enrollment);
         
         $scope.newEvent = {programStage: stage};
         $scope.dhis2Event = {eventDate: $scope.isScheduleEvent ? '' : DateUtils.getToday(), dueDate: dummyEvent.dueDate, executionDateLabel : dummyEvent.executionDateLabel, name: dummyEvent.name, invalid: true};        
@@ -75,12 +53,9 @@ trackerCapture.controller('EventCreationController',
         if ($scope.model.selectedStage.periodType) {
             $scope.dhis2Event.eventDate = dummyEvent.dueDate;
             $scope.dhis2Event.periodName = dummyEvent.periodName;
-            $scope.periods = dummyEvent.periods;
-            $scope.periodOffset = angular.copy( dummyEvent.periodOffset );
-            $scope.referenceOffset = angular.copy( dummyEvent.periodOffset );
-            $scope.hasFuturePeriod = angular.copy( dummyEvent.hasFuturePeriod );
+            $scope.dhis2Event.periods = dummyEvent.periods;
             $scope.dhis2Event.selectedPeriod = dummyEvent.periods[0];
-            $scope.periods = PeriodService.managePeriods($scope.periods, $scope.isNewEvent);
+            $scope.model.currentSelectedIndex = 0;
         }
     };
     
@@ -107,7 +82,7 @@ trackerCapture.controller('EventCreationController',
             var lastStageForEvents;
             
             if(angular.isUndefined($scope.suggestedStage)){
-                for(var i = 0; i < events.length; i++){
+                for(i = 0; i < events.length; i++){
                     var event = events[i];
                     var eventStage = stagesById[event.programStage];
                         if(i > 0){
@@ -132,10 +107,10 @@ trackerCapture.controller('EventCreationController',
             }
 
             
-            for(var j = 0; j < availableStagesOrdered.length; j++){
+            for(j = 0; j < availableStagesOrdered.length; j++){
                 var availableStage = availableStagesOrdered[j];
                 
-                if( !availableStage || !availableStage.id ){
+                if( !availableStage || !availableStage.id || lastStageForEvents || lastStageForEvents.id ){
                     break;
                 }
                 
@@ -156,7 +131,7 @@ trackerCapture.controller('EventCreationController',
             }
             
             if(angular.isUndefined(suggestedStage)){
-                suggestedStage = availableStagesOrdered[0];
+                suggestedStage = availableStagesOrdered[availableStagesOrdered.length - 1];
             }
         }
         
@@ -201,6 +176,7 @@ trackerCapture.controller('EventCreationController',
             return false;
         }
         
+        
         if($scope.isReferralEvent && !$scope.selectedSearchingOrgUnit){
             $scope.orgUnitError = true;
             return false;
@@ -208,6 +184,13 @@ trackerCapture.controller('EventCreationController',
         
         $scope.orgUnitError =  false;
         
+        if ($scope.model.selectedStage.periodType) {
+            $scope.dhis2Event.eventDate = $scope.dhis2Event.selectedPeriod.endDate;
+            $scope.dhis2Event.dueDate = $scope.dhis2Event.selectedPeriod.endDate;
+        }
+        
+        var eventDate = DateUtils.formatFromUserToApi($scope.dhis2Event.eventDate);
+        var dueDate = DateUtils.formatFromUserToApi($scope.dhis2Event.dueDate);
         var newEvents = {events: []};
         var newEvent = {
             trackedEntityInstance: dummyEvent.trackedEntityInstance,
@@ -215,31 +198,16 @@ trackerCapture.controller('EventCreationController',
             programStage: dummyEvent.programStage,
             enrollment: dummyEvent.enrollment,
             orgUnit: dummyEvent.orgUnit,
+            dueDate: dueDate,
+            eventDate: eventDate,
             notes: [],
             dataValues: [],
             status: 'ACTIVE'
         };
-        
-        if ($scope.model.selectedStage.periodType) {
-            if( $scope.isNewEvent ){
-                newEvent.eventDate = DateUtils.formatFromUserToApi( $scope.dhis2Event.selectedPeriod.endDate );
-            }
-            else{
-                newEvent.dueDate = DateUtils.formatFromUserToApi( $scope.dhis2Event.selectedPeriod.endDate );
-            }
-        }
-        else{
-            if( $scope.isNewEvent ){
-                newEvent.eventDate = DateUtils.formatFromUserToApi($scope.dhis2Event.eventDate);
-            }
-            else{
-                newEvent.dueDate = DateUtils.formatFromUserToApi($scope.dhis2Event.dueDate);
-            }
-        }
 
         newEvent.status = newEvent.eventDate ? 'ACTIVE' : 'SCHEDULE';
-        
-        //for saving category combo
+
+        /*for saving category combo*/
         if ($scope.selectedProgram.categoryCombo && !$scope.selectedProgram.categoryCombo.isDefault) {
             if ($scope.selectedOptions.length !== $scope.selectedCategories.length) {
                 NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("fill_all_category_options"));
@@ -247,6 +215,7 @@ trackerCapture.controller('EventCreationController',
             }
             newEvent.attributeCategoryOptions = $scope.selectedOptions.join(';');
         }
+        /*for saving category combo*/
 
         newEvents.events.push(newEvent);
         DHIS2EventFactory.create(newEvents).then(function (response) {
@@ -263,7 +232,7 @@ trackerCapture.controller('EventCreationController',
     $scope.setSelectedSearchingOrgUnit = function(orgUnit){
         $scope.selectedSearchingOrgUnit = orgUnit;
         dummyEvent.orgUnit = orgUnit.id;
-        dummyEvent.orgUnitName = orgUnit.displayName;
+        dummyEvent.orgUnitName = orgUnit.name;
     };
     
     
@@ -271,7 +240,8 @@ trackerCapture.controller('EventCreationController',
         $scope.orgUnitsLoading = true;
         $timeout(function(){
             OrgUnitFactory.get(orgUnit.id).then(function(data){
-                    orgUnit = data;
+                if(data && data.organisationUnits && data.organisationUnits.length >0){
+                    orgUnit = data.organisationUnits[0];
                     var url = generateFieldsUrl();
                     OrgUnitFactory.getOrgUnits(orgUnit.id,url).then(function(data){
                         if(data && data.organisationUnits && data.organisationUnits.length >0){
@@ -302,14 +272,17 @@ trackerCapture.controller('EventCreationController',
                         }
                         $scope.orgUnitsLoading = false;
                     });
+                }
+
+                
             });
             
         },350);
     }
     
     function generateFieldsUrl(){
-        var fieldUrl = "fields=id,displayName,organisationUnitGroups[shortName],programs[id]";
-        var parentStartDefault = ",parent[id,displayName,programs[id],children[id,displayName,programs[id],organisationUnitGroups[shortName],children[id,displayName,programs[id],organisationUnitGroups[shortName]]]";
+        var fieldUrl = "fields=id,displayName,organisationUnitGroups[shortName]";
+        var parentStartDefault = ",parent[id,displayName,children[id,displayName,organisationUnitGroups[shortName],children[id,displayName,organisationUnitGroups[shortName]]]";
         var parentEndDefault = "]";
         if(orgUnit.level && orgUnit.level > 1){
             var parentStart = parentStartDefault;
@@ -327,17 +300,11 @@ trackerCapture.controller('EventCreationController',
     $scope.expandCollapse = function(orgUnit) {
         orgUnit.show = !orgUnit.show;
         if(!orgUnit.childrenLoaded){
-            OrgUnitFactory.getOrgUnits(orgUnit.id, "fields=id,path,programs[id],children[id,displayName,programs[id],level,children[id]]&paging=false").then(function(data){
-
+            OrgUnitFactory.get(orgUnit.id).then(function(data){
                 orgUnit.children = data.organisationUnits[0].children;
                 orgUnit.childrenLoaded = true;
-            });
-
-            /*OrgUnitFactory.getChildren(orgUnit.id).then(function(data){
-                orgUnit.children = data.children;
-                orgUnit.childrenLoaded = true;
                 
-            });*/
+            });
         }
     };
     //end referral logic
@@ -353,69 +320,23 @@ trackerCapture.controller('EventCreationController',
         return status;        
     };
 
-    $scope.fetchPeriod = function (period) {
-        if( !period ){
-            return;
-        }
-        
-        $scope.periodOffset = period === 'NEXT' ? $scope.periodOffset + 1 : $scope.periodOffset - 1;
-        $scope.dhis2Event.selectedPeriod = null;
-        
-        var prds = PeriodService.getPeriods(eventsByStage[stage.id], $scope.model.selectedStage, $scope.selectedEnrollment, $scope.periodOffset);
-        $scope.periods = prds && prds.availablePeriods ? prds.availablePeriods : [];
-        $scope.dhis2Event.selectedPeriod = $scope.periods[0];
-        $scope.hasFuturePeriod = prds.hasFuturePeriod;
-        
-        $scope.periods = PeriodService.managePeriods($scope.periods, $scope.isNewEvent);
-    };
 
-    $scope.onetimeReferral = function(){
-        $scope.save();
-    };
-    
-    $scope.movePermanently = function(){
-        var modalOptions = {
-            headerText: 'move_permanently',
-            bodyText: 'are_you_sure_you_want_to_move_permanently'
-        };             
-        ModalService.showModal({},modalOptions).then(function(){
-            $rootScope.$broadcast('changeOrgUnit', {orgUnit: dummyEvent.orgUnit});
-           
-            $scope.attributesById = CurrentSelection.getAttributesById();
-            $scope.optionSets = CurrentSelection.getOptionSets();
-            $scope.tei = CurrentSelection.get().tei;
-
-            $scope.tei.orgUnit = dummyEvent.orgUnit;
-
-            RegistrationService.registerOrUpdate($scope.tei, $scope.optionSets, $scope.attributesById).then(function (regResponse) {
-                //Ensures that when you go back to "TEI Search" screen that a new search is executed.
-                //Is necessary for updating the registring OrgUnit, because otherwise the system uses old cached data.
-                var advancedSearchOptions = CurrentSelection.getAdvancedSearchOptions() !== null ? 
-                    CurrentSelection.getAdvancedSearchOptions() : {};
-                advancedSearchOptions.refresh = true;
-                CurrentSelection.setAdvancedSearchOptions(advancedSearchOptions);
-                
-                $scope.save();
-            });
-        });
-    };
-
-    //Function for checking if a OrgUnit in the OrgUnit tree has the selected program, in that case a referral can be made.
-    $scope.hasSelectedProgram = function(orgUnit) {
-        if(orgUnit.hasSelectedProgram){
-            return true;
-        }else if(angular.isDefined(orgUnit.hasSelectedProgram)){
-        	return false;
-        }
-        if(orgUnit.programs) {
-            for(var i = 0; i < orgUnit.programs.length; i++) {
-                if (orgUnit.programs[i].id === $scope.selectedProgram.id) {
-                    orgUnit.hasSelectedProgram = true;
-                    return true;
-                }
+    $scope.updateSelection = function() {
+        for (var index = 0; index < $scope.dhis2Event.periods.length; index++) {
+            if ($scope.dhis2Event.periods[index].id === $scope.dhis2Event.selectedPeriod.id) {
+                $scope.model.currentSelectedIndex = index;
+                break;
             }
         }
-        orgUnit.hasSelectedProgram = false;
-        return false;
-     };
+    };
+
+    $scope.fetchPeriod = function (period) {
+        if (period === "PREV") {
+            $scope.dhis2Event.selectedPeriod = $scope.dhis2Event.periods[$scope.model.currentSelectedIndex-1];
+        } else if (period === "NEXT") {
+            $scope.dhis2Event.selectedPeriod = $scope.dhis2Event.periods[$scope.model.currentSelectedIndex+1];
+        }
+        $scope.updateSelection();
+    };
+
 });

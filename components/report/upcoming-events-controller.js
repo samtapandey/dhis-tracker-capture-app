@@ -6,6 +6,7 @@ trackerCapture.controller('UpcomingEventsController',
                 $modal,
                 $location,
                 $translate,
+                $location,
                 DateUtils,
                 Paginator,
                 EventReportService,
@@ -251,9 +252,8 @@ trackerCapture.controller('UpcomingEventsController',
     };
     
     $scope.showDashboard = function(tei){
-        $location.path('/dashboard').search({tei: tei,
-            program: $scope.model.selectedProgram ? $scope.model.selectedProgram.id: null,
-            ou:$scope.selectedOrgUnit.id});
+        $location.path('/dashboard').search({tei: tei,                                            
+                                            program: $scope.model.selectedProgram ? $scope.model.selectedProgram.id: null});
     };
     
     $scope.generateReportData = function(){

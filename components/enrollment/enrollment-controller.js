@@ -8,21 +8,21 @@ trackerCapture.controller('EnrollmentController',
                 $location,
                 $timeout,
                 $translate,
-                $parse,
                 DateUtils,
                 SessionStorageService,
                 CurrentSelection,
                 EnrollmentService,
                 ModalService,
-                NotificationService) {
+                NotificationService,
+                OrgUnitFactory) {
     
-        var selections;
+    OrgUnitFactory.getOrgUnit(($location.search()).ou).then(function(orgUnit) {
+        $scope.today = DateUtils.getToday();
+        $scope.selectedOrgUnit = SessionStorageService.get('SELECTED_OU');
 
         //listen for the selected items
+        var selections = {};
         $scope.$on('selectedItems', function (event, args) {
-            selections = CurrentSelection.get();
-            $scope.today = DateUtils.getToday();
-            $scope.selectedOrgUnit = selections.orgUnit;
             $scope.attributes = [];
             $scope.historicalEnrollments = [];
             $scope.showEnrollmentDiv = false;
@@ -32,6 +32,7 @@ trackerCapture.controller('EnrollmentController',
             $scope.currentEnrollment = null;
             $scope.newEnrollment = {};
 
+            selections = CurrentSelection.get();
             processSelectedTei();
 
             $scope.selectedEntity = selections.te;
@@ -89,18 +90,6 @@ trackerCapture.controller('EnrollmentController',
             $route.reload();
 
         });
-        $scope.verifyExpiryDate = function(eventDateStr) {
-            var dateGetter = $parse(eventDateStr);
-            var dateSetter = dateGetter.assign;
-            var date = dateGetter($scope);
-            if(!date) {
-                return;
-            }
-
-            if (!DateUtils.verifyExpiryDate(date, $scope.selectedProgram.expiryPeriodType, $scope.selectedProgram.expiryDays)) {
-                dateSetter($scope, null);
-            }
-        };
         $scope.loadEnrollmentDetails = function (enrollment) {
             $scope.showEnrollmentHistoryDiv = false;
             $scope.selectedEnrollment = enrollment;
@@ -111,22 +100,7 @@ trackerCapture.controller('EnrollmentController',
         };
 
         $scope.showNewEnrollment = function () {
-            if($scope.selectedProgram.onlyEnrollOnce && $scope.hasEnrollmentHistory) {
-                var modalOptions = {
-                    headerText: 'warning',
-                    bodyText: 'can_not_add_new_enrollment'
-                };
-    
-                ModalService.showModal({}, modalOptions);
-
-                return;
-            }
-            
             $scope.showEnrollmentDiv = !$scope.showEnrollmentDiv;
-
-            if(!$scope.showEnrollmentDiv) {
-                return;
-            }
 
             if ($scope.showEnrollmentDiv) {
 
@@ -166,6 +140,7 @@ trackerCapture.controller('EnrollmentController',
         };
 
         $scope.broadCastSelections = function (listeners) {
+            var selections = CurrentSelection.get();
             var tei = selections.tei;
             CurrentSelection.set({
                 tei: tei,
@@ -176,8 +151,7 @@ trackerCapture.controller('EnrollmentController',
                 prStNames: $scope.programStageNames,
                 enrollments: $scope.enrollments,
                 selectedEnrollment: $scope.selectedEnrollment,
-                optionSets: $scope.optionSets,
-                orgUnit: selections.orgUnit
+                optionSets: $scope.optionSets
             });
             $timeout(function () {
                 $rootScope.$broadcast(listeners, {});
@@ -272,12 +246,7 @@ trackerCapture.controller('EnrollmentController',
             ModalService.showModal({}, modalOptions).then(function (result) {                
                 EnrollmentService.delete( $scope.selectedEnrollment.enrollment ).then(function (data) {
                     $scope.selectedEnrollment = null;
-                    var advancedSearchOptions = CurrentSelection.getAdvancedSearchOptions();
-                    advancedSearchOptions.refresh = true;
-                    CurrentSelection.setAdvancedSearchOptions(advancedSearchOptions);
-
-                    NotificationService.showNotifcationDialog($translate.instant('success'), $translate.instant('enrollment') + ' ' + $translate.instant('deleted'));                
-                    $scope.back();
+                    $scope.broadCastSelections('mainDashboard');
                 });
             });
         };
@@ -299,7 +268,7 @@ trackerCapture.controller('EnrollmentController',
                 $route.reload();
             }
             else {
-                $location.path('/dashboard').search({tei: $scope.selectedTeiId, program: program, ou: $scope.selectedOrgUnit.id});
+                $location.path('/dashboard').search({tei: $scope.selectedTeiId, program: program});
             }
         };
 
@@ -326,4 +295,5 @@ trackerCapture.controller('EnrollmentController',
                 $scope.enrollmentLngSaved = true;
             });
         };
+    });
 });

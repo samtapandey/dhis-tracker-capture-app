@@ -10,8 +10,6 @@ trackerCapture.controller('DashboardController',
             $timeout,
             $filter,
             $translate,
-            $q,
-            $templateCache,
             TCStorageService,
             orderByFilter,
             SessionStorageService,
@@ -31,11 +29,11 @@ trackerCapture.controller('DashboardController',
     
     //selections
     var orgUnitUrl = ($location.search()).ou;
-    $scope.topBarConfig = {};
+    
     $scope.displayEnrollment = false;
     $scope.dataEntryMainMenuItemSelected = false;    
     $scope.metaDataCached = false;
-    $scope.model = {orgUnitClosed: false};
+    
     if ( !dhis2.tc.metaDataCached){
         downloadMetaData().then(function () {
             updateDashboard();
@@ -45,33 +43,21 @@ trackerCapture.controller('DashboardController',
         updateDashboard();
     }
 
-    function getOrgUnit() {
-        var def = $q.defer();
-        var selection = CurrentSelection.get();
-        if(selection.orgUnit && selection.orgUnit.id === orgUnitUrl) {
-            def.resolve(selection.orgUnit);
-        } else {
-            OrgUnitFactory.getFromStoreOrServer(orgUnitUrl).then(function(ou){
-                def.resolve(ou);
-            })
-        }
-        return def.promise;
-    }    
-
     function updateDashboard() {
         
         $scope.metaDataCached = true;
-
-        getOrgUnit().then(function (orgUnit) {
+        
+        OrgUnitFactory.getOrgUnit(orgUnitUrl).then(function (orgUnit) {
             if (!orgUnit) {
                 return;
             }
-
+        
             $scope.selectedTeiId = ($location.search()).tei;
             $scope.selectedProgramId = ($location.search()).program;
-            $scope.selectedOrgUnit = orgUnit;
-            $scope.userAuthority = AuthorityService.getUserAuthorities(SessionStorageService.get('USER_PROFILE'));
+            $scope.selectedOrgUnit = SessionStorageService.get('SELECTED_OU');
+            $scope.userAuthority = AuthorityService.getUserAuthorities(SessionStorageService.get('USER_ROLES'));
             $scope.sortedTeiIds = CurrentSelection.getSortedTeiIds();
+            $scope.useTopBar = false;
             $scope.showSettingsButton = true;
             $scope.topbarClass = $scope.showSettingsButton ? "dashboard-info-box-sm" : "dashboard-info-box-lg";
             $scope.topbarRightSizeClass = $scope.showSettingsButton ? "dashboard-info-btn-right-two-buttons" : "dashboard-info-btn-right-one-button";
@@ -88,6 +74,7 @@ trackerCapture.controller('DashboardController',
             $scope.stickLabel = $translate.instant('stick_right_widgets');
             $scope.unstickLabel = $translate.instant('unstick_right_widgets');
 
+            $scope.model = {};
             $scope.model.stickyDisabled = true;
             $scope.previousTeiExists = false;
             $scope.nextTeiExists = false;
@@ -142,8 +129,8 @@ trackerCapture.controller('DashboardController',
                                 $scope.selectedTei = response;
 
                                 //get the entity type
-                                TEService.get($scope.selectedTei.trackedEntityType).then(function (te) {
-                                    $scope.trackedEntityType = te;
+                                TEService.get($scope.selectedTei.trackedEntity).then(function (te) {
+                                    $scope.trackedEntity = te;
 
                                     //get enrollments for the selected tei
                                     EnrollmentService.getByEntity($scope.selectedTeiId).then(function (response) {
@@ -176,7 +163,7 @@ trackerCapture.controller('DashboardController',
 
                                             //get programs valid for the selected ou and tei
                                             angular.forEach(programs, function (program) {
-                                                if (program.trackedEntityType && program.trackedEntityType.id === $scope.selectedTei.trackedEntityType) {
+                                                if (program.trackedEntity.id === $scope.selectedTei.trackedEntity) {
                                                     $scope.programs.push(program);
                                                     $scope.programNames[program.id] = {
                                                         id: program.id,
@@ -208,15 +195,14 @@ trackerCapture.controller('DashboardController',
                                                 CurrentSelection.setSelectedTeiEvents(events);
                                                 CurrentSelection.set({
                                                     tei: $scope.selectedTei,
-                                                    te: $scope.trackedEntityType,
+                                                    te: $scope.trackedEntity,
                                                     prs: $scope.programs,
                                                     pr: $scope.selectedProgram,
                                                     prNames: $scope.programNames,
                                                     prStNames: $scope.programStageNames,
                                                     enrollments: enrollments,
                                                     selectedEnrollment: selectedEnrollment,
-                                                    optionSets: $scope.optionSets,
-                                                    orgUnit: $scope.selectedOrgUnit
+                                                    optionSets: $scope.optionSets
                                                 });
                                                 getDashboardLayout();
                                             });
@@ -233,24 +219,14 @@ trackerCapture.controller('DashboardController',
     
     //dashboard items
     var getDashboardLayout = function () {
-        $scope.topBarConfig.settings = {};
-        $rootScope.defaultDashboardWidgetsByTitle = {};
         $rootScope.dashboardWidgets = [];
         $scope.widgetsChanged = [];
         $scope.dashboardStatus = [];
         $scope.dashboardWidgetsOrder = {biggerWidgets: [], smallerWidgets: []};
         $scope.orderChanged = false;
-        
-        DashboardLayoutService.getLockedList().then(function(r){
-            if(!r || r === '') {
-                $scope.lockedList = {};
-            } else {
-                $scope.lockedList = r;                
-            }
-        });
 
         DashboardLayoutService.get().then(function (response) {
-            $scope.dashboardLayouts = response;
+            $scope.dashboardLayouts = response;            
             var defaultLayout = $scope.dashboardLayouts.defaultLayout['DEFAULT'];
             var selectedLayout = null;
             if ($scope.selectedProgram && $scope.selectedProgram.id) {
@@ -258,12 +234,8 @@ trackerCapture.controller('DashboardController',
             }
             selectedLayout = !selectedLayout ? defaultLayout : selectedLayout;
 
-            if($scope.lockedList[$scope.selectedProgram.id]) {
-                selectedLayout = $scope.dashboardLayouts.defaultLayout[$scope.selectedProgram.id] ? $scope.dashboardLayouts.defaultLayout[$scope.selectedProgram.id] : defaultLayout;
-            }
-            
             $scope.model.stickyDisabled = selectedLayout.stickRightSide ? !selectedLayout.stickRightSide : true;
-            
+
             angular.forEach(selectedLayout.widgets, function (widget) {
                 if (widget.title !== "activePrograms") {
                     $rootScope[widget.title + 'Widget'] = widget;
@@ -278,14 +250,7 @@ trackerCapture.controller('DashboardController',
                     $rootScope.dashboardWidgets.push($rootScope[w.title + 'Widget']);
                     $scope.dashboardStatus[w.title] = angular.copy(w);
                 }
-                $rootScope.defaultDashboardWidgetsByTitle[w.title] = w;
             });
-
-            if(selectedLayout.topBarSettings){
-                $scope.topBarConfig.settings = selectedLayout.topBarSettings;
-            }else{
-                selectedLayout.topBarSettings = $scope.topBarConfig.settings;
-            }
 
             $scope.hasBigger = false;
             angular.forEach(orderByFilter($filter('filter')($scope.dashboardWidgets, {parent: "biggerWidget"}), 'order'), function (w) {
@@ -309,15 +274,6 @@ trackerCapture.controller('DashboardController',
         });
     };
 
-    $rootScope.getWidget = function(widgetTitle){
-        var result = $.grep($rootScope.dashboardWidgets, function(widget)
-        { 
-            return widget.title === widgetTitle;
-        });
-        if(result.length > 0) return result[0];
-        return null;
-    }
-
     var setWidgetsSize = function () {
 
         $scope.widgetSize = {smaller: "col-sm-6 col-md-4", bigger: "col-sm-6 col-md-8"};
@@ -333,7 +289,7 @@ trackerCapture.controller('DashboardController',
 
     var setInactiveMessage = function () {
         if ($scope.selectedTei.inactive) {
-            var teName = $scope.trackedEntityType && $scope.trackedEntityType.displayName ? $scope.trackedEntityType.displayName : $translate.instance('tracked_entity_instance');
+            var teName = $scope.trackedEntity && $scope.trackedEntity.displayName ? $scope.trackedEntity.displayName : $translate.instance('tracked_entity_instance');
             setHeaderDelayMessage(teName + " " + $translate.instant('tei_inactive_only_read'));
         }
     };
@@ -374,7 +330,7 @@ trackerCapture.controller('DashboardController',
             widgets.push(w);
         });
 
-        return {widgets: widgets, topBarSettings: $scope.topBarConfig.settings, program: $scope.selectedProgram && $scope.selectedProgram.id ? $scope.selectedProgram.id : 'DEFAULT'};
+        return {widgets: widgets, program: $scope.selectedProgram && $scope.selectedProgram.id ? $scope.selectedProgram.id : 'DEFAULT'};
     }
 
     function saveDashboardLayout() {
@@ -403,17 +359,6 @@ trackerCapture.controller('DashboardController',
         layout[programId] = getCurrentDashboardLayout();
         delete layout.DEFAULT;
         DashboardLayoutService.saveLayout(layout, true);
-    };
-
-    $scope.toggleLockDashboard = function () {
-        $scope.lockedList[$scope.selectedProgram.id] = !$scope.lockedList[$scope.selectedProgram.id];
-
-        if($scope.selectedProgram && $scope.selectedProgram.id) {
-            DashboardLayoutService.saveLockedList($scope.lockedList);
-        } else {
-            alert("No program selected.");
-        }
-
     };
 
     //persist widget sorting
@@ -469,11 +414,13 @@ trackerCapture.controller('DashboardController',
 
         }
     });
+
+    $scope.$on('$locationChangeSuccess', function () {
+        selection.load();
+    });
     
     $scope.applySelectedProgram = function (pr) {
-        if (pr) {
-            $scope.selectedProgram = pr;
-        }
+        $scope.selectedProgram = pr;
         getDashboardLayout();
     };
 
@@ -486,7 +433,7 @@ trackerCapture.controller('DashboardController',
             $scope.selectedTei = selections.tei;
         }
 
-        $scope.trackedEntityType = selections.te;
+        $scope.trackedEntity = selections.te;
         $scope.optionSets = selections.optionSets;
         $scope.selectedEnrollment = null;
 
@@ -501,15 +448,14 @@ trackerCapture.controller('DashboardController',
 
         CurrentSelection.set({
             tei: $scope.selectedTei,
-            te: $scope.trackedEntityType,
+            te: $scope.trackedEntity,
             prs: $scope.programs,
             pr: $scope.selectedProgram,
             prNames: $scope.programNames,
             prStNames: $scope.programStageNames,
             enrollments: selections.enrollments,
             selectedEnrollment: $scope.selectedEnrollment,
-            optionSets: $scope.optionSets,
-            orgUnit: $scope.selectedOrgUnit
+            optionSets: $scope.optionSets
         });
         $timeout(function () {
             $rootScope.$broadcast('selectedItems', {programExists: $scope.programs.length > 0});
@@ -542,13 +488,13 @@ trackerCapture.controller('DashboardController',
             closeButtonText: 'no',
             actionButtonText: 'yes',
             headerText: 'delete',
-            bodyText: $translate.instant('are_you_sure_to_proceed') + ' ' + $translate.instant('will_delete_all_data_associated') + ' ' + $scope.trackedEntityType.displayName
+            bodyText: $translate.instant('are_you_sure_to_proceed') + ' ' + $translate.instant('will_delete_all_data_associated') + ' ' + $scope.trackedEntity.displayName
         };
         
         ModalService.showModal({}, modalOptions).then(function (result) {
             TEIService.delete($scope.selectedTeiId).then(function (response) {
                 if( !response ){
-                    var teis = CurrentSelection.getTrackedEntityTypes();                
+                    var teis = CurrentSelection.getTrackedEntities();                
                     if( teis && teis.rows && teis.rows.own && teis.rows.own.length > 0 ){
                         var index = -1;
                         for( var i=0; i<teis.rows.own.length && index === -1; i++ ){
@@ -559,11 +505,11 @@ trackerCapture.controller('DashboardController',
 
                         if( index !== -1 ){
                             teis.rows.own.splice(index, 1);
-                            CurrentSelection.setTrackedEntityTypes(teis);
+                            CurrentSelection.setTrackedEntities(teis);
                         }
                     }
                     
-                    NotificationService.showNotifcationDialog($translate.instant('success'), $scope.trackedEntityType.displayName + ' ' + $translate.instant('deleted'));                
+                    NotificationService.showNotifcationDialog($translate.instant('success'), $scope.trackedEntity.displayName + ' ' + $translate.instant('deleted'));                
                     $scope.back();
                 }
                 
@@ -595,20 +541,8 @@ trackerCapture.controller('DashboardController',
     };
 
     $scope.removeWidget = function (widget) {
-        var modalOptions = {
-            closeButtonText: 'no',
-            actionButtonText: 'yes',
-            headerText: 'remove_widget',
-            bodyText: 'remove_widget_info'
-        };
-
-        ModalService.showModal({}, modalOptions).then(function (result) {
-            widget.show = false;
-            saveDashboardLayout();
-
-        }, function () {
-
-        });
+        widget.show = false;
+        saveDashboardLayout();
     };
 
     $scope.expandCollapse = function (widget) {
@@ -630,21 +564,6 @@ trackerCapture.controller('DashboardController',
         saveDashboardLayout();
     };
 
-    $rootScope.getCurrentWidget = function(scope){
-        var widgetLoaderScope = scope.$parent.$parent;
-        if(widgetLoaderScope.biggerWidget) return widgetLoaderScope.biggerWidget;
-        if(widgetLoaderScope.smallerWidget) return widgetLoaderScope.smallerWidget;
-        return null;
-    }
-
-    $scope.openTopBarSettings = function(){
-        $scope.topBarConfig.openSettings().then(function(topBarSettings){
-            $scope.topBarConfig.settings = topBarSettings;
-
-            saveDashboardLayout();
-        });
-    }
-
     $scope.fetchTei = function (mode) {
         var current = $scope.sortedTeiIds.indexOf($scope.selectedTeiId);
         var pr = ($location.search()).program;
@@ -654,6 +573,6 @@ trackerCapture.controller('DashboardController',
         } else {
             tei = $scope.sortedTeiIds[current - 1];
         }
-        $location.path('/dashboard').search({tei: tei, program: pr ? pr : null, ou: orgUnitUrl ? orgUnitUrl : null});
+        $location.path('/dashboard').search({tei: tei, program: pr ? pr : null});
     };
 });

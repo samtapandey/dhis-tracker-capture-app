@@ -34,13 +34,13 @@ function($rootScope,
         showFilter: false,
         show: false
     };
-    $scope.maxOptionSize = 100;
+    $scope.maxOptionSize = 30;
     $scope.eventsTodayFilters = [{name: $translate.instant('events_today_all'), value: 'all'},{name: $translate.instant('events_today_completeoractive'),value: 'completedOrActive', status:['COMPLETED', 'ACTIVE']},{name: $translate.instant('events_today_skipped') , value: 'skipped', status:['SKIPPED']},{name: $translate.instant('events_today_scheduled'), value: 'scheduled', status:['SCHEDULE']}];
     $scope.selectedEventsTodayFilter = $scope.eventsTodayFilters[0];
     $scope.availablePrograms = {};
-    $scope.fileNames = {};
-    $scope.orgUnitNames = {};
-    $scope.reverse = false;
+
+
+
 
     //Selection
     $scope.ouModes = [{name: 'SELECTED'}, {name: 'CHILDREN'}, {name: 'DESCENDANTS'}, {name: 'ACCESSIBLE'}];
@@ -90,13 +90,12 @@ function($rootScope,
     //watch for selection of org unit from tree
     $scope.$watch('selectedOrgUnit', function() {
         if( angular.isObject($scope.selectedOrgUnit)){
-            var selections = CurrentSelection.get();
-            var currentOrgUnit =  selections.orgUnit;//SessionStorageService.get('SELECTED_OU');
+            var currentOrgUnit =  SessionStorageService.get('SELECTED_OU');
             var newOrgUnitSelected = false;
             if(currentOrgUnit) {
                 if(currentOrgUnit.id !== $scope.selectedOrgUnit.id){
                     newOrgUnitSelected = true;
-                    updateOrgUnitInCurrentSelection();
+                    SessionStorageService.set('SELECTED_OU', $scope.selectedOrgUnit);
                     CurrentSelection.setAdvancedSearchOptions(null);
                     if ($scope.attributes) {
                         for (var index = 0; index < $scope.attributes.length; index++) {
@@ -107,19 +106,9 @@ function($rootScope,
                     }
                 }
             } else {
-                updateOrgUnitInCurrentSelection();
-            }
+                SessionStorageService.set('SELECTED_OU', $scope.selectedOrgUnit);
 
-            function updateOrgUnitInCurrentSelection() {
-                OrgUnitFactory.getFromStoreOrServer($scope.selectedOrgUnit.id).then(function (orgUnitFromStore) {
-                    if(orgUnitFromStore) {
-                        selections.orgUnit = orgUnitFromStore;
-                        CurrentSelection.set(selections);
-                        $scope.selectedOrgUnit.closedStatus = orgUnitFromStore.closedStatus;
-                    }
-                });
             }
-
             $scope.doSearch = true;
             $scope.searchingOrgUnit = $scope.selectedOrgUnit;
             $scope.trackedEntityList = null;
@@ -151,7 +140,7 @@ function($rootScope,
             if (newOrgUnitSelected) {
                 $scope.savedTeis = null;
             } else {
-                $scope.savedTeis = CurrentSelection.getTrackedEntityTypes();
+                $scope.savedTeis = CurrentSelection.getTrackedEntities();
             }
 
             if(!$scope.attributesById){
@@ -186,7 +175,7 @@ function($rootScope,
                     });
                 }
 
-                //Labels
+            //Labels
                 $scope.trackerCaptureLabel = $translate.instant('tracker_capture');
                 $scope.orgUnitLabel = $translate.instant('org_unit');
                 $scope.listAllLabel = $translate.instant('list_all');
@@ -300,15 +289,7 @@ function($rootScope,
 
             $scope.setEnrollmentStatus();
             if ($scope.savedTeis) {
-                if(savedAdvancedSeachOptions.refresh){
-                    if (savedAdvancedSeachOptions.searchText) {
-                        $scope.model.searchText = savedAdvancedSeachOptions.searchText;
-                        $scope.selectedSearchMode = savedAdvancedSeachOptions.searchMode;
-                    }
-                    $scope.search($scope.selectedSearchMode);
-                } else {
-                    restoreSavedTeis();
-                }
+                restoreSavedTeis();
             } else {
                 if ($scope.doSearch && $scope.selectedProgram && ($scope.selectedProgram.displayFrontPageList)) {
                     $scope.search($scope.searchMode);
@@ -356,11 +337,18 @@ function($rootScope,
     $scope.sortGrid = function(gridHeader){
         if ($scope.sortColumn && $scope.sortColumn.id === gridHeader.id){
             $scope.reverse = !$scope.reverse;
+            CurrentSelection.setColumnReverse( $scope.reverse);
+            return;
         }
-        $scope.sortColumn = {id: gridHeader.id, direction: $scope.reverse ? 'desc' : 'asc'};
+        $scope.sortColumn = gridHeader;
+        if($scope.sortColumn.valueType === 'date'){
+            $scope.reverse = true;
+        }
+        else{
+            $scope.reverse = false;
+        }
         CurrentSelection.setSortColumn( $scope.sortColumn);
         CurrentSelection.setColumnReverse( $scope.reverse);
-        $scope.search($scope.selectedSearchMode, true);
     };
 
     $scope.d2Sort = function(tei){
@@ -375,11 +363,14 @@ function($rootScope,
     $scope.search = function(mode,goToPage){
         //resetParams(goToPage);
         var grid;
-        grid = TEIGridService.generateGridColumnsForSearch($scope.gridColumns , $scope.attributes, $scope.selectedOuMode.name, true);
-        $scope.gridColumns = grid.columns;
+        if (!$scope.gridColumns) {
+            grid = TEIGridService.generateGridColumns($scope.attributes, $scope.selectedOuMode.name, true);
+            $scope.gridColumns = grid.columns;
+        }
 
         $scope.selectedSearchMode = mode;
         $scope.savedTeis = null;
+
 
         //check search mode
         if( $scope.selectedSearchMode === $scope.searchMode.freeText ){
@@ -486,15 +477,6 @@ function($rootScope,
     };
 
     $scope.fetchTeis = function(){
-        if( $scope.queryUrl === null || $scope.queryUrl === "" ){
-            $scope.queryUrl = "";
-        }
-        var order = '';
-        if( $scope.sortColumn && $scope.sortColumn.id !== undefined ){
-            order = '&order=' + $scope.sortColumn.id + ':';
-            order = order.concat($scope.reverse ? 'desc' : 'asc');
-        }
-        $scope.queryUrl = $scope.queryUrl.concat( order );
         $scope.teiFetched = false;
         $scope.trackedEntityList = null;
         $scope.showTrackedEntityDiv = true;
@@ -521,36 +503,39 @@ function($rootScope,
                 }
 
                 //process tei grid
+                TEIGridService.format($scope.selectedOrgUnit.id, data, false, $scope.optionSets, null).then(function (response) {
+                    $scope.trackedEntityList = response;
+                    $scope.showSearchDiv = false;
+                    $scope.teiFetched = true;
+                    $scope.doSearch = true;
 
-                $scope.trackedEntityList = TEIGridService.format($scope.selectedOrgUnit.id, data, false, $scope.optionSets, null);
-                $scope.showSearchDiv = false;
-                $scope.teiFetched = true;
-                $scope.doSearch = true;
-
-                CurrentSelection.setAdvancedSearchOptions({
-                    searchingOrgUnit: angular.copy($scope.searchingOrgUnit),
-                    searchMode: $scope.selectedSearchMode,
-                    gridColumns: angular.copy($scope.gridColumns),
-                    attributes: angular.copy($scope.attributes),
-                    selectedOuMode: angular.copy($scope.selectedOuMode),
-                    programEnrollmentStartDate: $scope.enrollment.programEnrollmentStartDate,
-                    programEnrollmentEndDate: $scope.enrollment.programEnrollmentEndDate,
-                    programIncidentStartDate: $scope.enrollment.programIncidentStartDate,
-                    programIncidentEndDate: $scope.enrollment.programIncidentEndDate,
-                    searchText: $scope.model.searchText,
-                    sortColumn: angular.copy($scope.sortColumn),
-                    pager: angular.copy($scope.pager),
-                    showSearchDiv: $scope.showSearchDiv,
-                    teiFetched: $scope.teiFetched,
-                    doSearch: $scope.doSearch,
-                    frontPageListEnabled: $scope.frontPageListEnabled,
-                    showTrackedEntityDiv: $scope.showTrackedEntityDiv,
-                    reverse: $scope.reverse
+                    if (!$scope.sortColumn.id) {
+                        $scope.sortGrid(defaultColumn);
+                    }
+                    CurrentSelection.setAdvancedSearchOptions({
+                        searchingOrgUnit: angular.copy($scope.searchingOrgUnit),
+                        searchMode: $scope.selectedSearchMode,
+                        gridColumns: angular.copy($scope.gridColumns),
+                        attributes: angular.copy($scope.attributes),
+                        selectedOuMode: angular.copy($scope.selectedOuMode),
+                        programEnrollmentStartDate: $scope.enrollment.programEnrollmentStartDate,
+                        programEnrollmentEndDate: $scope.enrollment.programEnrollmentEndDate,
+                        programIncidentStartDate: $scope.enrollment.programIncidentStartDate,
+                        programIncidentEndDate: $scope.enrollment.programIncidentEndDate,
+                        searchText: $scope.model.searchText,
+                        sortColumn: angular.copy($scope.sortColumn),
+                        pager: angular.copy($scope.pager),
+                        showSearchDiv: $scope.showSearchDiv,
+                        teiFetched: $scope.teiFetched,
+                        doSearch: $scope.doSearch,
+                        frontPageListEnabled: $scope.frontPageListEnabled,
+                        showTrackedEntityDiv: $scope.showTrackedEntityDiv,
+                        reverse: $scope.reverse
+                    });
+                    CurrentSelection.setTrackedEntities($scope.trackedEntityList);
                 });
-                CurrentSelection.setTrackedEntityTypes($scope.trackedEntityList);
-                $scope.fileNames = CurrentSelection.getFileNames();
-                $scope.orgUnitNames = CurrentSelection.getOrgUnitNames();
             });
+
         }
     };
 
@@ -603,40 +588,15 @@ function($rootScope,
     };
 
     $scope.showHideColumns = function(){
-        $scope.gridColumnsInUserStore = $scope.gridColumnsInUserStore ? $scope.gridColumnsInUserStore : {};
-        if($scope.selectedProgram) {
-            var programCols = $scope.gridColumnsInUserStore[$scope.selectedProgram.id];
 
-            if ( programCols )
-            {
-                var userStoreCols = angular.copy( programCols );
+        $scope.hiddenGridColumns = 0;
+        var currentColumns = angular.copy($scope.gridColumns);
 
-                for ( var i = 0; i <  Object.keys( $scope.gridColumns ).length; i ++ )
-                {
-                    var existed = false;
-
-                    for ( var j = 0; j < Object.keys( programCols ).length; j++ )
-                    {
-                        if ( $scope.gridColumns[i].id == programCols[j].id )
-                        {
-                            existed = true;
-                            break;
-                        }
-                    }
-
-                    if ( !existed )
-                    {
-                        userStoreCols.push( $scope.gridColumns[i] );
-                    }
-                }
-
-                $scope.gridColumnsInUserStore[$scope.selectedProgram.id] = angular.copy( programCols );
+        angular.forEach($scope.gridColumns, function(gridColumn){
+            if(!gridColumn.show){
+                $scope.hiddenGridColumns++;
             }
-            else
-            {
-                $scope.gridColumnsInUserStore[$scope.selectedProgram.id] = angular.copy( $scope.gridColumns );
-            }
-        }
+        });
 
         var modalInstance = $modal.open({
             templateUrl: 'views/column-modal.html',
@@ -646,19 +606,32 @@ function($rootScope,
                     return $scope.gridColumns;
                 },
                 hiddenGridColumns: function(){
-                    return ($filter('filter')($scope.gridColumns, {show: false})).length;
+                    return $scope.hiddenGridColumns;
                 },
-                gridColumnDomainKey: function(){
-                    return "trackerCaptureGridColumns";
-                },
-                gridColumnKey: function(){
-                    if(!$scope.selectedProgram) {
-                        return null;
+                saveGridColumns: function () {
+                    return function (gridColumns) {
+                        var gridColumnsChanged = false;
+
+                        for (var i = 0; i < gridColumns.length; i++) {
+                            if (currentColumns[i].show !== $scope.gridColumns[i].show) {
+                                gridColumnsChanged = true;
+                                break;
+                            }
+                        }
+                        if (!gridColumnsChanged) {
+                            return;
+                        }
+                        $scope.gridColumns = gridColumns;
+                        CurrentSelection.setGridColumns(angular.copy($scope.gridColumns));
+
+                        if (!$scope.gridColumnsInUserStore || ($scope.gridColumnsInUserStore && $scope.gridColumnsInUserStore.length === 0)) {
+                            $scope.gridColumnsInUserStore = {};
+                        }
+                        if($scope.selectedProgram) {
+                            $scope.gridColumnsInUserStore[$scope.selectedProgram.id] = $scope.gridColumns;
+                        }
+                        GridColumnService.set($scope.gridColumnsInUserStore, "trackerCaptureGridColumns");
                     }
-                    return $scope.selectedProgram.id;
-                },
-                gridColumnsInUserStore: function(){
-                    return $scope.gridColumnsInUserStore;
                 }
             }
         });
@@ -669,18 +642,11 @@ function($rootScope,
     };
 
     $scope.showDashboard = function(currentEntity){
-        var sortedTei = [];
-        var sortedTeiIds = [];
-        if($scope.trackedEntityList.rows && $scope.trackedEntityList.rows.own) {
-            sortedTei = sortedTei.concat($scope.trackedEntityList.rows.own);
-        }
-        if($scope.trackedEntityList.rows && $scope.trackedEntityList.rows.other) {
-            sortedTei = sortedTei.concat($scope.trackedEntityList.rows.other);
-        }
-        sortedTei = $filter('orderBy')(sortedTei, function(tei) {
+        var sortedTei = $filter('orderBy')($scope.trackedEntityList.rows, function(tei) {
             return $scope.d2Sort(tei);
         }, $scope.reverse);
 
+        var sortedTeiIds = [];
         angular.forEach(sortedTei, function(tei){
             sortedTeiIds.push(tei.id);
         });
@@ -706,8 +672,8 @@ function($rootScope,
         });
         $scope.selectedSearchingOrgUnit = $scope.orgUnits[0] ? $scope.orgUnits[0] : null;
     });
-
-
+    
+    
     //expand/collapse of search orgunit tree
     $scope.expandCollapse = function(orgUnit) {
         if( orgUnit.hasChildren ){

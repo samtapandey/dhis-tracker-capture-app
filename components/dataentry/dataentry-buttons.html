@@ -7,7 +7,7 @@
             ng-if="currentEvent.eventDate && (currentEvent.status === 'SCHEDULE' || currentEvent.status === 'ACTIVE' || currentEvent.status === 'VISITED')">{{'complete'| translate}}</a>
         <a href ng-click="completeIncompleteEvent(null, outerDataEntryForm)" 
             class="btn btn-warning"
-            ng-disabled="currentEvent.editingNotAllowed"
+            ng-disabled="currentEvent.editingNotAllowed && currentEvent.status !== 'COMPLETED'"
             ng-if="currentEvent.eventDate && currentEvent.status === 'COMPLETED'">{{'incomplete'| translate}}</a>    
         <a href ng-click="skipUnskipEvent()" 
             class="btn btn-warning" 
@@ -22,4 +22,4 @@
         </div>
     </div>
 </div>
- <!-- data entry/event buttons end -->     
+ <!-- data entry/event buttons end -->      

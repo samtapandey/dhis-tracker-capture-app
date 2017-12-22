@@ -1,6 +1,5 @@
 <div ng-class="getTopLineColumnStyle(2)">
-    <div ng-class="{'disable-clicks icon-disabled': selectedOrgUnit.closedStatus}">
-        <div ng-if="showStageTasks && eventsLoaded" class="panel panel-default-custom">
+    <div ng-if="showStageTasks && eventsLoaded" class="panel panel-default-custom">
         <div class="panel-heading">{{'new_event'| translate}}
             <span class="pull-right">
                 <a class="small-horizontal-spacing" href ng-click="toggleShowStageTasks()">
@@ -18,15 +17,13 @@
                                 {{'add'|translate}}
                             </a>
 
-                            <span ng-if="!stage.hideDueDate || stage.periodType">
+                            <span ng-if="!stage.hideDueDate">
                                 |
                                 <a href title="{{'schedule_new_event'| translate}}" ng-click="showCreateEvent(stage, eventCreationActions.schedule)" style="vertical-align:middle">
                                     {{'schedule'|translate}}
                                 </a>
                             </span>
-                            <!-- TODO: Edit so that referral shows-->
-                            <!-- <span ng-if="useReferral && showReferral && !stage.hideDueDate"> -->
-                            <span>
+                            <span ng-if="useReferral && showReferral && !stage.hideDueDate">
                                 |
                                 <a href title="{{'make_referral'| translate}}" ng-click="showCreateEvent(stage, eventCreationActions.referral)" style="vertical-align: middle">
                                     {{'referral'|translate}}
@@ -39,7 +36,7 @@
             <div ng-if="!creatableStagesExist(creatableStages)" class="alert alert-warning">{{'no_stages_available'| translate}}</div> 
         </div>
     </div>       
-        <div ng-if="!showStageTasks && selectedEnrollment.status === 'ACTIVE'" class="pull-right">
+    <div ng-if="!showStageTasks && selectedEnrollment.status === 'ACTIVE'" class="pull-right">
         <div ng-if="!useMainMenu">
             <a href ng-click="toggleShowStageTasks()" title="{{'show_new_event_menu'| translate}}">
                 <span class="stage-tasks-badge stage-tasks-badge-back">                                     
@@ -61,10 +58,8 @@
                         <span><i class="fa fa-calendar vertical-center"></i></span>                
                     </span>
                 </a>                
-            </div>
-            <!-- TODO: Edit so that referral shows-->
-            <!--  <div ng-if="useReferral && showReferral"> -->           
-            <div>
+            </div>            
+            <div ng-if="useReferral && showReferral">
                 <a href class="disable-link-effects" ng-click="useMainMenu ? showCreateEventIfStageNeedsEvent(selectedMainMenuStage, eventCreationActions.referral, false, true) : showCreateEvent(null, eventCreationActions.referral)" title="{{'make_referral'| translate}}">
                     <span class="stage-tasks-badge" ng-class="useMainMenu ? {'stage-tasks-badge-disabled': !stageNeedsEventOfType(selectedMainMenuStage, eventCreationActions.referral)} : ''">                                     
                         <span><i class="fa fa-share vertical-center"></i></span>                
@@ -73,5 +68,4 @@
             </div>
         </div>
     </div>
-    </div>
-</div>
+</div>  
