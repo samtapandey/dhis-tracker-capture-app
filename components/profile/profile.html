@@ -1,7 +1,7 @@
 <div class="panel panel-default-custom" ng-controller="ProfileController">
     <div class="panel-heading handle bold">
         {{profileWidget.title| translate}}
-        <span class="nav-pills" ng-if="!enrollmentEditing && !selectedTei.inactive">
+        <span class="nav-pills" ng-if="!enrollmentEditing && !selectedTei.inactive && editProfile()">
             | <a href ng-click="enableEdit()" title="{{'edit_profile'| translate}}"><span ng-class="{true: 'widget-link-active', false: 'widget-link'} [!editingDisabled]">{{'edit'| translate}}</span></a>
         </span>
 

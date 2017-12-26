@@ -3,7 +3,7 @@
 </div>
 <table class="dhis2-list-table-striped default-form-table">
     <tr ng-repeat="attribute in attributes | filter: {attribute: 'true'} " ng-if="!hiddenFields[attribute.id] && ((editingDisabled  && attribute.show) || !editingDisabled)">
-        <td>
+        <td  ng-show="attribute.code != 'user_name'">
             <span d2-pop-over
                 details="{{'details'| translate}}"
                 content="attribute"
@@ -18,7 +18,23 @@
             </span>
             <span ng-if="attribute.mandatory" class="required">*</span>
         </td>
-        <td class="absorbing-column">
+        <td ng-hide="attribute.code === 'user_name'">
+            <span d2-pop-over
+            ng-hide="true"
+                details="{{'details'| translate}}"
+                content="attribute"
+                class="popover-label hideInPrint small-horizontal-spacing"
+                template="attribute-details.html"
+                trigger="click"
+                placement="right">
+                <a href title="{{'details'| translate}}" class="wrap-text" tabindex="-1">{{attribute.displayName}}</a>
+            </span>
+            <span class="not-for-screen" ng-hide="true">
+                {{attribute.displayName}}
+            </span>
+            <span ng-if="attribute.mandatory" class="required"  ng-hide="true">*</span>
+        </td>
+        <td class="absorbing-column" ng-hide="attribute.code === 'user_name'">
             <ng-form name="innerForm">
                 <span ng-if="attribute.optionSetValue" class="hideInPrint">
                     <ui-select  ng-model="selectedTei[attribute.id]"
@@ -254,7 +270,7 @@
                                 d2-function="teiValueUpdated(selectedTei, attribute.id)">
                         </d2-org-unit-tree>
                     </span>
-                    <span ng-switch-when="TEXT">
+                    <span ng-switch-when="TEXT" && ng-if="attribute.code != 'user_name'">
                         <input type="text"
                                name="foo" 
                                class="form-control"
@@ -267,6 +283,22 @@
                                ng-disabled="isDisabled(attribute)"
                                ng-blur="teiValueUpdated(selectedTei, attribute.id)"
                                ng-required="attribute.mandatory"/>
+                    </span>
+                    <span ng-switch-when="TEXT" && ng-if="attribute.code === 'user_name'" && ng-hide="true">
+                        <input type="text"
+                               name="foo" 
+                               class="form-control"
+                               ng-model="selectedTei[attribute.id]" 
+                               ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
+                               d2-attribute-validator
+                               attribute-data={{attribute}}
+                               selected-program-id={{selectedProgram.id}}  
+                               selected-tei-id={{selectedTei.trackedEntityInstance}}  
+                               ng-disabled="selectedOrgUnit.closedStatus || isDisabled(attribute)"
+                               ng-blur="teiValueUpdated(selectedTei, attribute.id)"
+                               ng-required="attribute.mandatory"
+                               ng-hide="true"
+                               />
                     </span>
                     <span ng-switch-when="PHONE_NUMBER">
                         <input type="text"

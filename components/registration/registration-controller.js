@@ -51,6 +51,10 @@ trackerCapture.controller('RegistrationController',
     var flag = {debug: true, verbose: false};
     $rootScope.ruleeffects = {};
 
+    $scope.usernameAttributeId ='MGJ15D0aa5p';   
+    $scope.username = '';
+    $scope.matchUsername = '';
+
     $scope.attributesById = CurrentSelection.getAttributesById();
     if(!$scope.attributesById){
         $scope.attributesById = [];
@@ -87,7 +91,13 @@ trackerCapture.controller('RegistrationController',
     
     
     $scope.isDisabled = function(attribute) {
+        if(attribute.code === 'user_name' )
+      {
+        return true;
+      }
+      else{
         return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
+      }
     }
     
     //OrgUnitFactory.getOrgUnit(($location.search()).ou).then(function(orgUnit) {
@@ -170,6 +180,18 @@ trackerCapture.controller('RegistrationController',
             
             AttributesFactory.getByProgram($scope.selectedProgram).then(function (atts) {
                 $scope.attributes = TEIGridService.generateGridColumns(atts, null, false).columns;
+                $timeout( function (){
+                    var url1= "../api/me.json?";
+                    $.get(url1, function (data1) { 
+                        
+                        if( !$scope.selectedTei[$scope.usernameAttributeId] && $scope.selectedTei[$scope.usernameAttributeId] == undefined)
+                        {
+                            //alert( $scope.parentDisplayName );
+                            $scope.selectedTei[$scope.usernameAttributeId] = data1.userCredentials.username;//put default value on load for
+                        }
+                    });
+    
+                },0);
                 fetchGeneratedAttributes();
                 if ($scope.selectedProgram && $scope.selectedProgram.id) {
                     if ($scope.selectedProgram.dataEntryForm && $scope.selectedProgram.dataEntryForm.htmlCode) {
