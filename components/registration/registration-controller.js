@@ -32,6 +32,7 @@ trackerCapture.controller('RegistrationController',
     $scope.customRegistrationForm = null;    
     $scope.selectedTei = {};
 	 $scope.ageInYears = 'iIf1gJ4FVdR'; 
+	  $scope.dateofbirth = 'kelN057pfhq'; 
     $scope.tei = {};    
     $scope.warningMessages = [];
     $scope.hiddenFields = [];    
@@ -402,6 +403,8 @@ trackerCapture.controller('RegistrationController',
     }
 
     $scope.registerEntity = function (destination) {
+		
+		
         //check for form validity
         $scope.outerForm.submitted = true;
         if ($scope.outerForm.$invalid) {
@@ -505,21 +508,57 @@ trackerCapture.controller('RegistrationController',
             $scope.selectedTei[$scope.ageInYears] = '';
         }
     };
+ $scope.ageToDob = function (inputAge) {
+        if(inputAge != undefined && inputAge!= ''){
 
+        var coustomDate = new Date();
+        var coustomYear = coustomDate.getFullYear();
+
+        var yearOfDob = parseInt( coustomYear ) - parseInt( inputAge )
+        
+        $scope.selectedTei[$scope.dateofbirth] = yearOfDob + '-07-01';//put calculated value in month text box
+        }
+        else{
+            $scope.selectedTei[$scope.dateofbirth] = '';
+        }
+    };
+	
+	
     $scope.teiValueUpdated = function (tei, field) {
 		
 		
         $scope.executeRules();
     };
 	
+	$scope.color;
+/*$scope.recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
+
+ $scope.speechrecognise= function(speechid){
+ $scope.attribute_id=speechid;
+//var recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
+$scope.recognition.lang = 'en-US';
+$scope.recognition.interimResults = false;
+$scope.recognition.maxAlternatives = 5;
+$scope.recognition.start({ autoRestart: false });
+}
+
+
+
+$scope.recognition.onresult = function() {
+
+   $scope.color = event.results[0][0].transcript;
+    console.log("your color is"+$scope.color);
+	$scope.selectedTei[$scope.attribute_id] = $scope.color;
+	 $scope.executeRules();
 	
+}*/
 	  $scope.validate = function (tei, field) {
 		console.log(tei);
 		$scope.mtcsid0fchild=tei.gZAFVJdEgIQ;
 		$scope.mtcsid0fmother=tei.AiPFBqutPYy
 		if(field=="gZAFVJdEgIQ"){
 		if($scope.mtcsid0fchild.length>18 ||$scope.mtcsid0fchild.length <18 ){
-			// block the save button
+			
 			//alert("please check value");
 			document.getElementById("gZAFVJdEgIQ").style.backgroundColor = "#FF6760";
 		}
