@@ -46,6 +46,12 @@ trackerCapture.controller('RegistrationController',
     var flag = {debug: true, verbose: false};
     $rootScope.ruleeffects = {};
 
+    //For Indonesia
+    $scope.calculatedDOB ='ohKY8pIB05w';
+    $scope.ageInYears = 'wOCWBkVjSqH';
+    $scope.selectedDOB = '';
+    $scope.selectedDOBToBeUsed = '';
+
     $scope.attributesById = CurrentSelection.getAttributesById();
 
     if(!$scope.attributesById){
@@ -565,6 +571,47 @@ trackerCapture.controller('RegistrationController',
             }
         });
     };
+
+// custom methods
+
+    $scope.ageToDob = function (inputAge) {
+        if(inputAge != undefined && inputAge!= ''){
+
+        var coustomDate = new Date();
+        var coustomYear = coustomDate.getFullYear();
+
+        var yearOfDob = parseInt( coustomYear ) - parseInt( inputAge )
+        
+        $scope.selectedTei[$scope.calculatedDOB] = yearOfDob + '-01-01';//put calculated value in month text box
+        }
+        else{
+            $scope.selectedTei[$scope.calculatedDOB] = '';
+        }
+    };
+
+    $scope.dobToAge = function (inputDob) {
+        if(inputDob != undefined && inputDob!= ''){
+        
+            var selectedDOBObject = new Date(inputDob);
+
+            var currentDateObject = new Date();
+
+            var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+            
+            var diffDays = Math.round(Math.abs((currentDateObject.getTime() - selectedDOBObject.getTime()) / (oneDay)));
+
+            var diffYear = diffDays/365;
+            
+            //$scope.selectedTei[$scope.ageInYears] = ( Math.round(diffYear*100))/100;//put calculated value in month text box
+            $scope.selectedTei[$scope.ageInYears] = parseInt(diffYear);
+        }
+        else{
+            $scope.selectedTei[$scope.ageInYears] = '';
+        }
+    };
+
+    
+
 
     $scope.cancelRegistrationWarning = function (cancelFunction) {
         var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById);
