@@ -1510,7 +1510,7 @@ trackerCapture.controller('DataEntryController',
                         $('.cal').css('background-color', 'red');
                         // document.getElementsByClassName("info-container").style.background= "red";
                     }
-                    if ($scope.namepro == 180 || $scope.sumIFA > 180) {
+                    if ($scope.sumIFA == 180 || $scope.sumIFA > 180) {
                         $('.ifa').css('background-color', 'red');
                         //                                document.getElementsByClassName("info-container").style.background= "red";
                     }
