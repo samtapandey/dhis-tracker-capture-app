@@ -66,6 +66,7 @@ trackerCapture.controller('DataEntryController',
     $scope.showSelf = true;
     $scope.orgUnitNames = {};
     //For TIBET
+    /*
     $scope.selectedDateOfBirth = '';
     $scope.selectedDateOfBirthToBeUsed = '';
     $scope.immunizationProgramStage = 'Immunization';
@@ -106,7 +107,7 @@ trackerCapture.controller('DataEntryController',
 	$scope.IPVVaccineDateUid = 'AUEEhbYuylr';
 	
 	$scope.OthersVaccineUid = 'TNWCkS6aOEV';
-    
+    */
     var eventLockEnabled = false;
     var eventLockHours = 8; //Number of hours before event is locked after completing.
 
@@ -1723,6 +1724,7 @@ trackerCapture.controller('DataEntryController',
     $scope.saveEventDate = function (reOrder) {        
         $scope.saveEventDateForEvent($scope.currentEvent, reOrder);      
          //For TIBET
+         /*
     if($scope.currentEvent.eventDate)
         {
             if($scope.currentEvent.name === $scope.immunizationProgramStage)
@@ -1972,7 +1974,8 @@ trackerCapture.controller('DataEntryController',
                     $scope.currentEvent.AUEEhbYuylr = $scope.twoMonthsIncrementDate;
                     $scope.saveDataValueForEvent(IPVVaccineDate, null , $scope.currentEvent, false);
                 }
-            }  
+            }
+            */
     };
 
     $scope.saveEventDateForEvent = function (eventToSave, reOrder) {
