@@ -4,7 +4,7 @@
 var graphplotter = angular.module('trackerCapture');
 
 graphplotter.controller('graphController',
-    function($rootScope,$scope){
+    function($rootScope,$scope,CurrentSelection){
         // console.log("Output;");  
         // console.log(location.hostname);
         // console.log(document.domain);
@@ -16,7 +16,14 @@ graphplotter.controller('graphController',
         // console.log("document.location.hostname : "+document.location.hostname);
         // console.log("document.location.host : "+document.location.host);
         // console.log("document.location.pathname : "+document.location.pathname);
+        var selections = CurrentSelection.get();
+        $scope.selectedTei = angular.copy(selections.tei);
+        var attributes = {};
+        angular.forEach($scope.selectedTei.attributes, function(att){
+            attributes[att.attribute] = att.value;
+        });
 
+        //var attributes = CurrentSelection.getAttributesById();
         $scope.accessDataStore = function(teiid){
             var urlToSend = "../api/dataStore/partograph/"+teiid;
             
@@ -91,16 +98,30 @@ graphplotter.controller('graphController',
         }
 
         $rootScope.refreshGraph = function(currentEvent,initial){
-            
+            var subtitleval = ""
+            if(attributes['briL4htZesc'])
+                subtitleval += "Patient "+attributes['briL4htZesc'] + ",";
+
+            if(attributes['H3IA27KNXHb'])
+                subtitleval += attributes['H3IA27KNXHb']+' years of age ,';
+
+            subtitleval+= ' At '+selections.orgUnit['displayName'];
             $rootScope.chart = new Highcharts.chart('graphcontainer', {
                             chart:{
-                                plotBackgroundColor:'#ECD003', //yellow for alert area which is plot area background
+                                plotBackgroundColor:'#ffff1d'//'#ECD003', //yellow for alert area which is plot area background
                                 
+                            },
+                            exporting:{
+                                enabled:true
                             },
                 
                             title: {
-                            text: 'Labour Details'
+                                text: 'Labour Details'
                             },
+                            subtitle:{
+                                text: subtitleval
+                            },
+                            
                             tooltip:{
                                 formatter: function() {
                                     return 'The value is <b>' + this.y + '</b>, in series '+ this.series.name;
@@ -147,7 +168,7 @@ graphplotter.controller('graphController',
                                 name: 'Safe Area',
                                 data: [[0,10,4],[6,10,10]],
                                 fillOpacity : 70,
-                                color   : '#31FF69' // green for safe zone 
+                                color   : '#92d050'//'#31FF69' // green for safe zone 
                             },
                             {//this series is dummy series just to show the color in legend the color should be same as ploat area background color
                                 type: 'area',
@@ -160,7 +181,7 @@ graphplotter.controller('graphController',
                                 type: 'area',
                                 name: 'Action Area',
                                 data: [[4,4],[10,10]],
-                                color: '#E87249 '//red for action line 
+                                color: '#f33333'//'#E87249 '//red for action line 
                             }
                             ],
                 
@@ -179,6 +200,8 @@ graphplotter.controller('graphController',
                             }]
                             }
                         });
+
+                        //$rootScope.chart['subtitle'] = subtitle + 'At '+currentEvent.orgUnit;
             
             // var dataElementsInOrder = ['FmVJzYVDVcz','pVowz22vGbF','AXFTeswZfLi','WBgaNvjJYrE'
             // ,'J2MElelRH9p','HNpSco5aovr','ThVQ8cJuMw5','AMS7Bj0pVX9'
@@ -214,7 +237,7 @@ graphplotter.controller('graphController',
                     } 
                     obj.push(f-$scope.startingvalue);
                     obj.push(parseInt(currentEvent[mappedobject[1]]));
-                    if(obj[0]>=4 && obj[1]<obj[0]){
+                    if(obj[0]>=4 && obj[1]<=obj[0]){
                         $scope.critical = true;
                     }
                     $rootScope.dataforGraph.push(obj)
@@ -324,10 +347,39 @@ graphplotter.controller('graphController',
         $scope.getUrl= function(){
             var host = document.location.origin;
             var path = document.location.pathname.replace("dhis-web-tracker-capture/index.html",
-            "dhis-web-reporting/generateHtmlReport.action?uid=zirn49Gg1vs&");
+            "dhis-web-reporting/generateHtmlReport.action?uid=");//zirn49Gg1vs&");
+            var reportId = $scope.getReportUID();
+            if(reportId!=null)
+                return host+path+reportId+"&";
+            else
+                return null;
+        }
 
-            return host+path;
+        $scope.getReportUID = function(){
+            var urlToSend = "../api/reports?filter=displayName:eq:partograph"
+            var reports;
+            $.ajax({
+                type:'GET',
+                encoding:"UTF-8",
+                async:false,
+                dataType:"json",
+                url:urlToSend,
+                success:function(data,status,jqXHR){
+                    reports = data['reports'];
+                }
+            }
 
+            );
+
+            if(reports){
+                for(var key in reports){
+                    if(reports[key]['displayName']=='partograph'){
+                        return reports[key]['id'];
+                    }
+                }
+            }else{
+                return null;
+            }
         }
 
         $scope.shortUrl = function(Urltoshort){
