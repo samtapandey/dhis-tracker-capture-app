@@ -51,7 +51,7 @@
                 </span>
 
                 <span ng-if="!attribute.optionSetValue" ng-switch="attribute.valueType">
-                    <span ng-switch-when="DATE">
+                    <span ng-switch-when="DATE" && ng-if="attribute.code != 'dob'">
                         <input type="text"
                                placeholder="{{dhis2CalendarFormat.keyDateFormat}}" 
                                name="foo" 
@@ -69,6 +69,28 @@
                                blur-or-change="teiValueUpdated(selectedTei, attribute.id)"
                                ng-required="attribute.mandatory"/>
                     </span>
+                  <!-- custome change for tibet -->
+                   <span ng-switch-when="DATE" && ng-if="attribute.code === 'dob'">
+                        <input type="text"
+                               placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
+                               name="foo"
+                               class="form-control"
+                               d2-date
+                               d2-date-validator
+                               max-date="attribute.allowFutureDate ? '' : 0"
+                               ng-model="selectedTei[attribute.id]"
+                               ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
+                               d2-attribute-validator
+                               attribute-data={{attribute}}
+                               selected-program-id={{selectedProgram.id}}
+                               selected-tei-id={{selectedTei.trackedEntityInstance}}
+                               ng-disabled="selectedOrgUnit.closedStatus || isDisabled(attribute)"
+                               blur-or-change="teiValueUpdated(selectedTei, attribute.id)"
+                               ng-required="attribute.mandatory"
+                               ng-change="dobToAge(selectedTei[attribute.id])"/>
+                    </span>
+                    <!-- custome change for tibet end -->
+
                     <span ng-switch-when="TRUE_ONLY">
                         <input type="checkbox" 
                                name="foo" 
@@ -308,7 +330,7 @@
                                 d2-orgunit-names="orgUnitNames">
                         </d2-org-unit-tree>
                     </span>
-                    <span ng-switch-when="TEXT">
+                    <span ng-switch-when="TEXT" && ng-if="attribute.code != 'age_in_years'">
                         <input type="text"
                                name="foo" 
                                class="form-control"
@@ -322,6 +344,24 @@
                                ng-blur="teiValueUpdated(selectedTei, attribute.id)"
                                ng-required="attribute.mandatory"/>
                     </span>
+                    <!-- custom for tibet -->
+                    <span ng-switch-when="TEXT" && ng-if="attribute.code === 'age_in_years'">
+                        <input type="text"
+                               name="foo"
+                               class="form-control"
+                               ng-model="selectedTei[attribute.id]"
+                               ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
+                               d2-attribute-validator
+                               attribute-data={{attribute}}
+                               selected-program-id={{selectedProgram.id}}
+                               selected-tei-id={{selectedTei.trackedEntityInstance}}
+                               ng-disabled="selectedOrgUnit.closedStatus || isDisabled(attribute)"
+                               ng-blur="teiValueUpdated(selectedTei, attribute.id)"
+                               ng-required="attribute.mandatory"
+                               ng-change="ageToDob(selectedTei[attribute.id])"/>
+                    </span>
+
+
                     <span ng-switch-when="PHONE_NUMBER">
                         <input type="text"
                                name="foo" 

@@ -46,6 +46,23 @@ trackerCapture.controller('RegistrationController',
     var flag = {debug: true, verbose: false};
     $rootScope.ruleeffects = {};
 
+
+    // for tibet-customizations display on load
+    $scope.customeId = 'yeI6AOQjrqg';
+    $scope.parentName = 'iRJYMHN0Rel';
+    $scope.orgUnitCode = '';
+    $scope.parentDisplayName = '';
+
+    $scope.eddDate = 'vvqXiTuKL9V';
+    $scope.updatedEDDDate = '';
+    $scope.generatedCustomId = '';
+
+    $scope.calculatedDOB ='anFTfRZyC1Q';
+    $scope.ageInYears = 'GjdO5wHfmru';
+    $scope.selectedDOB = '';
+    $scope.selectedDOBToBeUsed = '';
+
+
     $scope.attributesById = CurrentSelection.getAttributesById();
 
     if(!$scope.attributesById){
@@ -80,10 +97,16 @@ trackerCapture.controller('RegistrationController',
             CurrentSelection.setOptionSets($scope.optionSets);
         });
     }
-    
-    
+
+    // update for Tibet  for disable attribute patient_identifier
     $scope.isDisabled = function(attribute) {
-        return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
+        if( attribute.code === 'doh_id_no')
+        {
+            return true;
+        }
+        else{
+            return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
+        }
     };
 
     var selectedOrgUnit = CurrentSelection.get()["orgUnit"];
@@ -186,6 +209,31 @@ trackerCapture.controller('RegistrationController',
 
         AttributesFactory.getByProgram($scope.selectedProgram).then(function (atts) {
             $scope.attributes = TEIGridService.generateGridColumns(atts, null, false).columns;
+
+            // change for tibet-customizations display on load
+            $timeout( function (){
+
+                var date = new Date();
+                var year = date.getFullYear();
+
+                var org_id = $scope.selectedOrgUnit.id;
+
+                $.getJSON("../api/organisationUnits/"+ org_id +".json?fields=id,displayName,code,parent[id,displayName]", function (data) {
+
+                    $scope.orgUnitCode = data.code;
+                    $scope.parentDisplayName = data.parent.displayName;
+
+                    if( !$scope.selectedTei[$scope.parentName] && $scope.selectedTei[$scope.parentName] == undefined)
+                    {
+                        $scope.selectedTei[$scope.parentName] = $scope.selectedOrgUnit.displayName;//put default value on load for
+                    }
+
+                    $scope.calculateEDDDate();
+
+                });
+
+            },0);
+
             fetchGeneratedAttributes();
             if ($scope.selectedProgram && $scope.selectedProgram.id) {
                 if ($scope.selectedProgram.dataEntryForm && $scope.selectedProgram.dataEntryForm.htmlCode) {
@@ -423,10 +471,52 @@ trackerCapture.controller('RegistrationController',
             $scope.selectedTei.attributes = $scope.tei.attributes = [];
         }
 
+        // custom ID generation for tibet format -- org_code - year -  4 digit tei count
+        if ($scope.registrationMode === 'REGISTRATION')
+        {
+            var date = new Date();
+            var year = date.getFullYear();
+
+            var org_id = $scope.selectedOrgUnit.id;
+
+            $.ajax({
+                async:false,
+                type: "GET",
+                url: '../api/trackedEntityInstances.json?ou=' + org_id + "&skipPaging=true",
+                success: function(responseTei){
+
+                    var totalTei = responseTei.trackedEntityInstances.length;
+
+                    var prefix = "";
+
+                    // for Reset after count 9999
+                    //totalTei = 10000;
+                    totalTei = totalTei%10000;
+
+                    if( totalTei === 0 ) totalTei = 1;
+
+                    if( totalTei <10) prefix="0000";
+                    else if (totalTei >9 && totalTei<100) prefix="000";
+                    else if(totalTei>99 && totalTei<1000) prefix="00";
+                    else if(totalTei>999 && totalTei<10000) prefix="0";
+                    // change in requirement - adding random number
+                    //prefix=Math.floor(Math.random()*(9999-1000) + 1000);
+                    //def.resolve(constant + prefix + totalTei );
+
+                    $scope.generatedCustomId = $scope.orgUnitCode +"-" + year + "-"+ prefix + totalTei;
+
+                },
+                error: function(responseTei){
+                }
+
+            });
+        }
+// end
+
         //get tei attributes and their values
         //but there could be a case where attributes are non-mandatory and
         //registration form comes empty, in this case enforce at least one value
-        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById);
+        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById, $scope.generatedCustomId);
         $scope.formEmpty = result.formEmpty;
         $scope.tei = result.tei;
 
@@ -566,6 +656,53 @@ trackerCapture.controller('RegistrationController',
         });
     };
 
+    // custom methods for tibet
+    $scope.ageToDob = function (inputAge) {
+        if(inputAge != undefined && inputAge!= ''){
+
+            var coustomDate = new Date();
+            var coustomYear = coustomDate.getFullYear();
+
+            var yearOfDob = parseInt( coustomYear ) - parseInt( inputAge )
+
+            $scope.selectedTei[$scope.calculatedDOB] = yearOfDob + '-07-01';//put calculated value in month text box
+        }
+        else{
+            $scope.selectedTei[$scope.calculatedDOB] = '';
+        }
+    };
+
+    $scope.dobToAge = function (inputDob) {
+        if(inputDob != undefined && inputDob!= ''){
+
+            var selectedDOBObject = new Date(inputDob);
+
+            var currentDateObject = new Date();
+
+            var differenceInMonths = (currentDateObject.getFullYear()*12 + currentDateObject.getMonth()) - (selectedDOBObject.getFullYear()*12 + selectedDOBObject.getMonth());
+            var diffYear = differenceInMonths/12;
+
+            var yearInDecimal = ( Math.round(diffYear*100))/100;
+
+            var year = yearInDecimal.toString().split(".")[0];
+            var ageInMonth = ( yearInDecimal.toString().split(".")[1]*12)/100;
+
+            ageInMonth = Math.round(ageInMonth);
+
+            if( isNaN(ageInMonth)){
+                $scope.selectedTei[$scope.ageInYears] = year + ".0";
+            }
+
+            else{
+                $scope.selectedTei[$scope.ageInYears] = year + "." + ageInMonth.toString().split(".")[0];//put calculated value in month text box
+            }
+
+        }
+        else{
+            $scope.selectedTei[$scope.ageInYears] = '';
+        }
+    };
+    // custom methods for tibet  end
     $scope.cancelRegistrationWarning = function (cancelFunction) {
         var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById);
         var prStDe;
@@ -679,6 +816,7 @@ trackerCapture.controller('RegistrationController',
     };
 
     $scope.verifyExpiryDate = function(eventDateStr) {
+        calculateEDDDate();
         var dateGetter, dateSetter, date;
         dateGetter = $parse(eventDateStr);
         dateSetter = dateGetter.assign;
@@ -702,4 +840,21 @@ trackerCapture.controller('RegistrationController',
             $scope.currentEvent.eventDate = date;
         }
     };
+
+    //Custom change for tibet
+    $scope.calculateEDDDate = function() {
+
+        if( $scope.selectedEnrollment.incidentDate != undefined )
+        {
+            var EDDDate = new Date($scope.selectedEnrollment.incidentDate);
+            var numberOfDaysToAdd = 280;
+
+            EDDDate.setDate(EDDDate.getDate()+numberOfDaysToAdd);
+
+            $scope.updatedEDDDate = EDDDate.getFullYear() + "-" +  ("0"+(EDDDate.getMonth()+1)).slice(-2) + "-" + ("0" + EDDDate.getDate()).slice(-2);
+
+            $scope.selectedTei[$scope.eddDate] = $scope.updatedEDDDate; //put calculated value in EDD text box
+        }
+    };
+
 });
