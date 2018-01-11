@@ -1348,6 +1348,8 @@ if(CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR |
             //Execute rules for the first time, to make the initial page appear correctly.
             //Subsequent calls will be made from the "saveDataValue" function.        
             $scope.executeRules();
+            
+            $scope.buttonDisable();
         };
 
         $scope.saveDatavalue = function (prStDe, field) {
@@ -3095,6 +3097,18 @@ if(CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR |
             }
         };
 
+        
+        $scope.buttonDisable = function() {
+            if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR) {
+                $scope.statusValue = $scope.currentEvent.dataValues;
+                for (var a = 0; a < $scope.statusValue.length; a++) {
+                    if ($scope.statusValue[a].value === "Approved" || $scope.statusValue[a].value === "Auto-Approved") {
+                        $scope.currentStatusValue = 'show';
+                        break;
+                    } 
+                }
+            }
+        }
         //$scope.getInputNotifcationClass = function(id, custom, event){
         $scope.getOptionSaveNotifcationClass = function (id) {
             if ($scope.changedCat && $scope.changedCat.id && $scope.changedCat.id === id) {
