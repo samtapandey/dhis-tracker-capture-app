@@ -24,7 +24,9 @@ function($rootScope,
          TEIService,
          EventReportService,
          TCStorageService,
-         GridColumnService) {
+         GridColumnService,
+         //for Tibet
+         CustomIdService) {
     var savedAdvancedSeachOptions = null;
     var defaultColumn = {
         id: 'created',
@@ -255,6 +257,14 @@ function($rootScope,
                 $scope.restoreGridColumnsFromUserStore();
             });
         }
+
+        // for Tibet hide registration Button at facility level
+        CustomIdService.getOrgUnitLevel( $scope.selectedOrgUnit.id ).then(function( responseOrgUnit ){
+            $scope.selectedOrgUnitLevel = responseOrgUnit.level;
+
+        });
+
+
     };
 
     $scope.getProgramAttributes = function(program){
