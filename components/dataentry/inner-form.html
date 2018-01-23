@@ -164,7 +164,7 @@
                 <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
             </div>
         </div>
-        <div ng-switch-when="LONG_TEXT">
+        <div ng-switch-when="LONG_TEXT" ng-if="prStDe.dataElement.code !='reason_for_rejection'">
             <div class="hideInPrint">
                 <textarea rows="3"
                           ng-class="getInputNotifcationClass(prStDe.dataElement.id,false, currentEvent)"
@@ -172,6 +172,23 @@
                           ng-model="currentEvent[prStDe.dataElement.id]"
                           ng-required={{prStDe.compulsory}}
                           ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][prStDe.dataElement.id]"
+                          ng-blur="saveDatavalue(prStDe, innerForm.foo)"
+                          name="foo">
+                </textarea>
+            </div>
+            <div class="not-for-screen">
+                <textarea rows="3" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}></textarea>
+            </div>
+        </div>
+        
+        <div ng-switch-when="LONG_TEXT" ng-if="prStDe.dataElement.code ==='reason_for_rejection'">
+            <div class="hideInPrint">
+                <textarea rows="3"
+                          ng-class="getInputNotifcationClass(prStDe.dataElement.id,false, currentEvent)"
+                          class="form-control"
+                          ng-model="currentEvent[prStDe.dataElement.id]"
+                          ng-required={{prStDe.compulsory}}
+                          ng-disabled="true"
                           ng-blur="saveDatavalue(prStDe, innerForm.foo)"
                           name="foo">
                 </textarea>

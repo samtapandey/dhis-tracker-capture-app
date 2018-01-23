@@ -1040,6 +1040,17 @@ if(CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR |
             }
         };
 
+// Custom Changes
+
+        $scope.hideButton = function ()
+        {
+            $scope.createdDate1 = $scope.currentEvent.created;
+            $scope.createdDate = $scope.createdDate1.split("T")[0];
+            //$scope.createDate = new Date($scope.createdDate);
+            $scope.todayDate = new Date();
+            
+        }
+
         $scope.showCreateEvent = function (stage, eventCreationAction, suggestedStage) {
 
             var availableStages = [];
