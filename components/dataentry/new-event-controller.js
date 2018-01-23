@@ -172,45 +172,50 @@ trackerCapture.controller('EventCreationController',
 
             //Custom Changes
 
-            $scope.todayDate1 = new Date();
-            $scope.customYear = $scope.todayDate1.getFullYear();
-            $scope.customMonth1 = $scope.todayDate1.getMonth() + 1;
-            if ($scope.customMonth1 < 10) {
-                $scope.customMonth = "0" + $scope.customMonth1;
-            }
-            else {
-                $scope.customMonth = $scope.customMonth1;
-            }
-
-            $scope.customDay1 = $scope.todayDate1.getDate();
-            if ($scope.customDay1 < 10) {
-                $scope.customDay = "0" + $scope.customDay1;
-            }
-            else {
-                $scope.customDay = $scope.customDay1;
-            }
-
-            $scope.todayDate = $scope.customYear + "-" + $scope.customMonth + "-" + $scope.customDay;
-
             var url = window.location.href;
             var params = url.split('=');
             var getTei = params[1];
+            var getprg = params[2];
             var trackedEntityInstanceId = getTei.split('&')[0];
-            $.ajax({
-                async: false,
-                type: "GET",
-                url: "../api/events.json?fields=*&trackedEntityInstance=" + trackedEntityInstanceId + "&order=eventDate:DESC&skipPaging=true",
-                success: function (response) {
-                    if (response.events.length > 0) {
-                        $scope.allCreatedDates = [];
-                        for (var p = 0; p < response.events.length; p++) {
-                            if (response.events[p].created) {
-                                $scope.createdDate = response.events[p].created.split("T")[0];
-                                $scope.allCreatedDates.push($scope.createdDate);
+            $scope.prgId = getprg.split('&')[0];
+
+            if ($scope.prgId == 'gQNcOkBRn8n' || $scope.prgId == 'CEAUS4S9J7z' || $scope.prgId == 'JOxjgE06Akh') {
+
+                $scope.todayDate1 = new Date();
+                $scope.customYear = $scope.todayDate1.getFullYear();
+                $scope.customMonth1 = $scope.todayDate1.getMonth() + 1;
+                if ($scope.customMonth1 < 10) {
+                    $scope.customMonth = "0" + $scope.customMonth1;
+                }
+                else {
+                    $scope.customMonth = $scope.customMonth1;
+                }
+
+                $scope.customDay1 = $scope.todayDate1.getDate();
+                if ($scope.customDay1 < 10) {
+                    $scope.customDay = "0" + $scope.customDay1;
+                }
+                else {
+                    $scope.customDay = $scope.customDay1;
+                }
+
+                $scope.todayDate = $scope.customYear + "-" + $scope.customMonth + "-" + $scope.customDay;
+
+                $.ajax({
+                    async: false,
+                    type: "GET",
+                    url: "../api/events.json?fields=*&trackedEntityInstance=" + trackedEntityInstanceId + "&order=eventDate:DESC&skipPaging=true",
+                    success: function (response) {
+                        if (response.events.length > 0) {
+                            $scope.allCreatedDates = [];
+                            for (var p = 0; p < response.events.length; p++) {
+                                if (response.events[p].created) {
+                                    $scope.createdDate = response.events[p].created.split("T")[0];
+                                    $scope.allCreatedDates.push($scope.createdDate);
+                                }
                             }
                         }
-                    }
-                        
+
                         if ($scope.allCreatedDates != undefined && $scope.allCreatedDates.indexOf($scope.todayDate) > -1) {
                             alert("Event of today's date already exist!")
                         }
@@ -274,10 +279,70 @@ trackerCapture.controller('EventCreationController',
                                 }
                             });
                         }
-                    
-                }
-            });
 
+                    }
+                });
+            }
+            else {
+                $scope.getCategoryOptions();
+
+                //check for form validity
+                $scope.eventCreationForm.submitted = true;
+                if ($scope.eventCreationForm.$invalid) {
+                    return false;
+                }
+
+
+                if ($scope.isReferralEvent && !$scope.selectedSearchingOrgUnit) {
+                    $scope.orgUnitError = true;
+                    return false;
+                }
+
+                $scope.orgUnitError = false;
+
+                if ($scope.model.selectedStage.periodType) {
+                    $scope.dhis2Event.eventDate = $scope.dhis2Event.selectedPeriod.endDate;
+                    $scope.dhis2Event.dueDate = $scope.dhis2Event.selectedPeriod.endDate;
+                }
+
+                var eventDate = DateUtils.formatFromUserToApi($scope.dhis2Event.eventDate);
+                var dueDate = DateUtils.formatFromUserToApi($scope.dhis2Event.dueDate);
+                var newEvents = { events: [] };
+                var newEvent = {
+                    trackedEntityInstance: dummyEvent.trackedEntityInstance,
+                    program: dummyEvent.program,
+                    programStage: dummyEvent.programStage,
+                    enrollment: dummyEvent.enrollment,
+                    orgUnit: dummyEvent.orgUnit,
+                    dueDate: dueDate,
+                    eventDate: eventDate,
+                    notes: [],
+                    dataValues: [],
+                    status: 'ACTIVE'
+                };
+
+                newEvent.status = newEvent.eventDate ? 'ACTIVE' : 'SCHEDULE';
+
+                /*for saving category combo*/
+                if ($scope.selectedProgram.categoryCombo && !$scope.selectedProgram.categoryCombo.isDefault) {
+                    if ($scope.selectedOptions.length !== $scope.selectedCategories.length) {
+                        NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("fill_all_category_options"));
+                        return;
+                    }
+                    newEvent.attributeCategoryOptions = $scope.selectedOptions.join(';');
+                }
+                /*for saving category combo*/
+
+                newEvents.events.push(newEvent);
+                DHIS2EventFactory.create(newEvents).then(function (response) {
+                    if (response && response.response && response.response.importSummaries[0].status === 'SUCCESS') {
+                        newEvent.event = response.response.importSummaries[0].reference;
+                        $modalInstance.close({ dummyEvent: dummyEvent, ev: newEvent });
+                    } else {
+                        $scope.eventCreationForm.submitted = false;
+                    }
+                });
+            }
 
         };
 
