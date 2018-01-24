@@ -12,7 +12,7 @@ trackerCapture.controller('ProgramStatisticsController',
     $scope.ouModes = [{name: 'SELECTED'}, {name: 'CHILDREN'}, {name: 'DESCENDANTS'}, {name: 'ACCESSIBLE'}];         
     $scope.selectedOuMode = $scope.ouModes[0];
     $scope.report = {};
-    $scope.maxOptionSize = 100;
+    $scope.maxOptionSize = 30;
     $scope.model = {};
     
     $scope.displayMode = {};
@@ -38,7 +38,7 @@ trackerCapture.controller('ProgramStatisticsController',
     $scope.loadPrograms = function(orgUnit) {        
         $scope.selectedOrgUnit = orgUnit;        
         if (angular.isObject($scope.selectedOrgUnit)){
-            ProgramFactory.getProgramsByOu($scope.selectedOrgUnit, true, $scope.model.selectedProgram).then(function(response){
+            ProgramFactory.getProgramsByOu($scope.selectedOrgUnit, $scope.model.selectedProgram).then(function(response){
                 $scope.programs = response.programs;
                 $scope.model.selectedProgram = response.selectedProgram;
             });

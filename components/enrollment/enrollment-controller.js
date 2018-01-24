@@ -14,12 +14,10 @@ trackerCapture.controller('EnrollmentController',
                 CurrentSelection,
                 EnrollmentService,
                 ModalService,
-                NotificationService,
-                AuthorityService) {
+                NotificationService) {
     
         var selections;
-        $scope.userAuthority = AuthorityService.getUserAuthorities(SessionStorageService.get('USER_PROFILE'));
-            
+
         //listen for the selected items
         $scope.$on('selectedItems', function (event, args) {
             selections = CurrentSelection.get();
@@ -33,7 +31,6 @@ trackerCapture.controller('EnrollmentController',
             $scope.selectedEnrollment = null;
             $scope.currentEnrollment = null;
             $scope.newEnrollment = {};
-            $scope.allEventsSorted = [];
 
             processSelectedTei();
 
@@ -88,16 +85,11 @@ trackerCapture.controller('EnrollmentController',
                 $scope.broadCastSelections('dashboardWidgets');
             }
         });
-
-        $scope.$on('dataEntryControllerData',function(event, args){
-            $scope.allEventsSorted = args.allEventsSorted;
-        });
         $scope.$on('teienrolled', function (event, args) {
             $route.reload();
 
         });
         $scope.verifyExpiryDate = function(eventDateStr) {
-            if($scope.userAuthority.canEditExpiredStuff) return true;
             var dateGetter = $parse(eventDateStr);
             var dateSetter = dateGetter.assign;
             var date = dateGetter($scope);
@@ -106,9 +98,7 @@ trackerCapture.controller('EnrollmentController',
             }
 
             if (!DateUtils.verifyExpiryDate(date, $scope.selectedProgram.expiryPeriodType, $scope.selectedProgram.expiryDays)) {
-                NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("event_date_out_of_range"));
                 dateSetter($scope, null);
-                
             }
         };
         $scope.loadEnrollmentDetails = function (enrollment) {
@@ -121,19 +111,7 @@ trackerCapture.controller('EnrollmentController',
         };
 
         $scope.showNewEnrollment = function () {
-            if($scope.selectedProgram.onlyEnrollOnce && $scope.hasEnrollmentHistory) {
-                var modalOptions = {
-                    headerText: 'warning',
-                    bodyText: 'can_not_add_new_enrollment'
-                };
-    
-                ModalService.showModal({}, modalOptions);
-
-                return;
-            }
-            
             $scope.showEnrollmentDiv = !$scope.showEnrollmentDiv;
-
             if(!$scope.showEnrollmentDiv) {
                 return;
             }
@@ -269,34 +247,9 @@ trackerCapture.controller('EnrollmentController',
                 });
             });
         };
-
-        $scope.canDeleteEnrollment = function(){
-            return $scope.selectedProgram && $scope.selectedProgram.access.data.write && $scope.userAuthority.canDeleteEnrollment;
-        }
-
-        var verifyCanDeleteEnrollment = function(){
-            if($scope.canDeleteEnrollment()){
-                if(!$scope.userAuthority.canDeleteExpired && $scope.selectedEnrollment.expired) return false;
-                if($scope.allEventsSorted && $scope.allEventsSorted.length > 0){
-                    if(!$scope.userAuthority.canDeleteEnrollmentIncludingAllEvents || !$scope.userAuthority.canDeleteEvent) return false;
-                    if(!$scope.userAuthority.canDeleteExpired){
-                        angular.forEach($scope.allEventsSorted, function(ev){
-                            if(ev.expired) return false;
-                        });
-                    }
-                }
-                return true;
-            }else{
-                return false;
-            }
-        }
         
         $scope.deleteEnrollment = function () {
-            if(!verifyCanDeleteEnrollment()){
-                var bodyText = $translate.instant('you_do_not_have_the_necessary_authorities_to_delete') +' '+ $translate.instant('this') +' '+$translate.instant('enrollment').toLowerCase();
-                var headerText = $translate.instant('delete_failed');
-                return NotificationService.showNotifcationDialog(headerText, bodyText);
-            }
+
             var modalOptions = {
                 closeButtonText: 'no',
                 actionButtonText: 'yes',

@@ -29,16 +29,14 @@ trackerCapture.controller('DataEntryController',
                 OptionSetService,
                 AttributesFactory,
                 TrackerRulesFactory,
-                EventCreationService,
-                AuthorityService,
-                AccessUtils) {
+                EventCreationService) {
     
     //Unique instance id for the controller:
     $scope.instanceId = Math.floor(Math.random() * 1000000000);
     $scope.printForm = false;
     $scope.printEmptyForm = false;
     $scope.eventPageSize = 4;
-    $scope.maxOptionSize = 100;
+    $scope.maxOptionSize = 30;
     $scope.eventPagingStart = 0;
     $scope.eventPagingEnd = $scope.eventPageSize;
     $scope.showAttributeCategoryOptions = false;
@@ -67,7 +65,6 @@ trackerCapture.controller('DataEntryController',
     $scope.dashBoardWidgetFirstRun = true;
     $scope.showSelf = true;
     $scope.orgUnitNames = {};
-    $scope.originalDate = '';
     
     var eventLockEnabled = false;
     var eventLockHours = 8; //Number of hours before event is locked after completing.
@@ -78,14 +75,12 @@ trackerCapture.controller('DataEntryController',
     
     //hideTopLineEventsForFormTypes is only used with main menu
     $scope.hideTopLineEventsForFormTypes = {TABLE: true, COMPARE: true};
-    $scope.timelineDataEntryModes = { DATAENTRYFORM: 1, COMPAREPREVIOUSDATAENTRYFORM: 2,COMPAREALLDATAENTRYFORM: 3, TABLEDATAENTRYFORM: 4};
-    $scope.compareDataEntryFormModes = { PREVIOUS: 1, ALL: 2};
+    
     $scope.visibleWidgetsInMainMenu = {enrollment: true, dataentry: true, close_file: true};    
     $rootScope.$broadcast('DataEntryMainMenuVisibilitySet', {visible: $scope.useMainMenu, visibleItems: $scope.visibleWidgetsInMainMenu});
     
     $scope.attributesById = CurrentSelection.getAttributesById();
 
-    $scope.userAuthority = AuthorityService.getUserAuthorities(SessionStorageService.get('USER_PROFILE'));
     if(!$scope.attributesById){
         $scope.attributesById = [];
         AttributesFactory.getAll().then(function(atts){
@@ -152,26 +147,16 @@ trackerCapture.controller('DataEntryController',
         return $scope.getDescriptionTextForDescription(description, $scope.descriptionTypes.full, useInStage);
     };
 
-
-    $scope.verifyEventExpiryDate = function(field) {
-        if(!$scope.userAuthority.canEditExpiredStuff){
-            var date = $scope.currentEvent[field];
-    
-            
-            if(!date) {
-                var modalOptions = {
-                    headerText: 'warning',
-                    bodyText: 'no_blank_date'
-                };
-                $scope.currentEvent[field] = $scope.currentEventOriginal[field];
-                ModalService.showModal({}, modalOptions);
-                return;
-            }
-    
-            if($scope.selectedProgram.expiryPeriodType && $scope.selectedProgram.expiryDays) {
-                if (!DateUtils.verifyExpiryDate(date, $scope.selectedProgram.expiryPeriodType, $scope.selectedProgram.expiryDays, true)) {
-                    $scope.currentEvent[field] = $scope.currentEventOriginal[field];
-                }
+    $scope.verifyExpiryDate = function(eventDateStr) {
+        var dateGetter = $parse(eventDateStr);
+        var dateSetter = dateGetter.assign;
+        var date = dateGetter($scope);
+        if(!date) {
+            return;
+        }
+        if($scope.selectedProgram.expiryPeriodType && $scope.selectedProgram.expiryDays) {
+            if (!DateUtils.verifyExpiryDate(date, $scope.selectedProgram.expiryPeriodType, $scope.selectedProgram.expiryDays)) {
+                dateSetter($scope, null);
             }
         }
     };
@@ -198,8 +183,17 @@ trackerCapture.controller('DataEntryController',
     $scope.useReferral = false;
     $scope.showReferral = false;
     //Check if user is allowed to make referrals
-    if($scope.useReferral){        
-        $scope.showReferral = $scope.userAuthority.canSearchTeiAcrossAll;        
+    if($scope.useReferral){
+        var roles = SessionStorageService.get('USER_PROFILE');
+        if( roles && roles.userCredentials && roles.userCredentials.userRoles){
+            var userRoles = roles.userCredentials.userRoles;
+            for(var i=0; i<userRoles.length; i++){
+                if(userRoles[i].authorities.indexOf('ALL') !== -1 || userRoles[i].authorities.indexOf('F_TRACKED_ENTITY_INSTANCE_SEARCH_IN_ALL_ORGUNITS') !== -1 ){
+                  $scope.showReferral = true;
+                  i=userRoles.length;
+                }
+            } 
+        }
     }
     
     $scope.$watch("model.eventSearchText", function(newValue, oldValue){        
@@ -227,15 +221,6 @@ trackerCapture.controller('DataEntryController',
         popupWin.document.close();
         $scope.printForm = false;
         $scope.printEmptyForm = false;
-    };
-
-    $scope.toggleCompForm = function() {
-        if($scope.currentStage.timelineDataEntryMode !== $scope.timelineDataEntryModes.COMPAREALLDATAENTRYFORM) {
-            $scope.currentStage.timelineDataEntryMode = $scope.timelineDataEntryModes.COMPAREALLDATAENTRYFORM;
-        } else {
-            $scope.currentStage.timelineDataEntryMode = $scope.timelineDataEntryModes.DATAENTRYFORM;
-        }
-        $scope.getDataEntryForm();
     };
 
     var processRuleEffect = function(event, callerId){
@@ -789,7 +774,7 @@ trackerCapture.controller('DataEntryController',
     };
     
     function broadcastDataEntryControllerData(){
-        $rootScope.$broadcast('dataEntryControllerData', {programStages: $scope.programStages,allEventsSorted: $scope.allEventsSorted, eventsByStage: $scope.eventsByStage, addNewEvent: $scope.addNewEvent, openEvent: $scope.openEventExternal, deleteScheduleOverDueEvents: $scope.deleteScheduleAndOverdueEvents, executeRules: $scope.executeRules });
+        $rootScope.$broadcast('dataEntryControllerData', {programStages: $scope.programStages, eventsByStage: $scope.eventsByStage, addNewEvent: $scope.addNewEvent, openEvent: $scope.openEventExternal, deleteScheduleOverDueEvents: $scope.deleteScheduleAndOverdueEvents, executeRules: $scope.executeRules });
     }
     
     $scope.getEvents = function () {
@@ -800,7 +785,6 @@ trackerCapture.controller('DataEntryController',
         if (angular.isObject(events) && events.length > 0) {
             angular.forEach(events, function (dhis2Event) {
                 if ($scope.selectedEnrollment && $scope.selectedEnrollment.enrollment === dhis2Event.enrollment && dhis2Event.orgUnit) {
-                    dhis2Event.expired = EventUtils.isExpired($scope.selectedProgram, dhis2Event);
                     if (dhis2Event.notes) {
                         dhis2Event.notes = orderByFilter(dhis2Event.notes, '-storedDate');
                         angular.forEach(dhis2Event.notes, function (note) {
@@ -1100,16 +1084,9 @@ trackerCapture.controller('DataEntryController',
     };
     
     $scope.showCreateEvent = function (stage, eventCreationAction, suggestedStage) {        
+        
         var availableStages = [];
-        if(stage){
-            if(!stage.access.data.write){
-                var headerText = $translate.instant("stage_write_required");
-                var bodyText = $translate.instant("stage_write_required");
-                NotificationService.showNotifcationDialog(headerText, bodyText);
-                return;
-            }
-        }else
-        {
+        if(!stage){
             
             //get applicable events
             var allApplicableEvents = [];
@@ -1138,25 +1115,16 @@ trackerCapture.controller('DataEntryController',
                         availableStages.push(stage);
                     }
                 });
-            }          
+            }           
             if(availableStages.length === 0) {
                 var headerText = $translate.instant("error");
                 var bodyText = $translate.instant("no_stages_available");
                 NotificationService.showNotifcationDialog(headerText, bodyText);
                 return;
             }
-            var writableStages = AccessUtils.toWritable(availableStages); 
-            if(writableStages.length === 0) {
-                var headerText = $translate.instant("no_accessible_program_stages");
-                var bodyText = $translate.instant("no_accessible_program_stages");
-                NotificationService.showNotifcationDialog(headerText, bodyText);
-                return;
-            }
         }
-        
-
         var autoCreate = stage && stage.displayEventsInTable ? stage.displayEventsInTable : false;
-        EventCreationService.showModal($scope.eventsByStage, stage,availableStages, writableStages, $scope.programStages, $scope.selectedEntity, $scope.selectedProgram, $scope.selectedOrgUnit, $scope.selectedEnrollment, autoCreate, eventCreationAction, allApplicableEvents, $scope.selectedCategories)
+        EventCreationService.showModal($scope.eventsByStage, stage, availableStages, $scope.programStages, $scope.selectedEntity, $scope.selectedProgram, $scope.selectedOrgUnit, $scope.selectedEnrollment, autoCreate, eventCreationAction, allApplicableEvents,suggestedStage, $scope.selectedCategories)
                 .then(function (eventContainer) {
                     if(angular.isDefined(eventContainer)){                
                         var ev = eventContainer.ev;
@@ -1394,35 +1362,24 @@ trackerCapture.controller('DataEntryController',
         });
         
         $scope.setDisplayTypeForStage($scope.currentStage);
+        
         $scope.customDataEntryForm = CustomFormService.getForProgramStage($scope.currentStage, $scope.prStDes);        
+        
         if ($scope.customDataEntryForm) {
             $scope.displayCustomForm = "CUSTOM";
-        }else{
-            switch($scope.currentStage.timelineDataEntryMode){
-                case $scope.timelineDataEntryModes.COMPAREPREVIOUSDATAENTRYFORM:
-                    $scope.compareMode = $scope.compareDataEntryFormModes.PREVIOUS;
-                    $scope.displayCustomForm = "COMPARE";
-                    $scope.readyCompareDisplayForm();
-                    break;
-                case $scope.timelineDataEntryModes.COMPAREALLDATAENTRYFORM:
-                    $scope.compareMode = $scope.compareDataEntryFormModes.ALL;
-                    $scope.displayCustomForm = "COMPARE";
-                    $scope.readyCompareDisplayForm();
-                    break;
-                case $scope.timelineDataEntryModes.TABLEDATAENTRYFORM:
-                    if($scope.reSortStageEvents === true){
-                        sortStageEvents($scope.currentStage);            
-                        if($scope.eventsByStage.hasOwnProperty($scope.currentStage.id)){
-                            $scope.currentStageEvents = $scope.eventsByStage[$scope.currentStage.id];
-                        }            
-                    }
-                    $scope.displayCustomForm = "TABLE";
-                    break;
-                
-                default:
-                    $scope.displayCustomForm = "DEFAULT";
-                    break;
+        }
+        else if ($scope.currentStage.displayEventsInTable) {
+            if($scope.reSortStageEvents === true){
+                sortStageEvents($scope.currentStage);            
+                if($scope.eventsByStage.hasOwnProperty($scope.currentStage.id)){
+                    $scope.currentStageEvents = $scope.eventsByStage[$scope.currentStage.id];
+                }            
             }
+            $scope.displayCustomForm = "TABLE";
+            
+        }
+        else {
+            $scope.displayCustomForm = "DEFAULT";
         }
 
         $scope.currentEvent.editingNotAllowed = EventUtils.getEditingStatus($scope.currentEvent, $scope.currentStage, $scope.selectedOrgUnit, $scope.selectedTei, $scope.selectedEnrollment);
@@ -1476,6 +1433,457 @@ trackerCapture.controller('DataEntryController',
         
         return def.promise;
     };
+    
+	
+	 $scope.printLicense = function() {
+        $scope.printForm = true;
+        $scope.printEmptyForm = true;
+        var selections = CurrentSelection.get();
+        $scope.selectedEntityinstance = selections.tei;
+        $scope.TEI_ID=$scope.selectedEntityinstance.trackedEntityInstance
+        //  var promise = $http.get('../api/trackedEntityInstances/w8kYzsMDQHa.json?program=ieLe1vT4Vad&ouMode=ALL&skipPaging=true').then(function (response) {
+        
+         $scope.orgname=selections.orgUnit.displayName;
+         var orgid=selections.orgUnit.id;
+         var orgid_District=selections.orgUnit.id;
+       
+        $.ajax({
+            async:false,
+            type: "GET",
+            url: '../api/organisationUnits/'+orgid_District+'.json?fields=name,parent[id,name,parent[id,name]]&skipPaging=true',
+            success: function(res){
+                $scope.orgid_District_new=res.parent.parent.name;
+            }
+        });            
+
+            $.ajax({
+                async:false,
+                type: "GET",
+                url: '../api/trackedEntityInstances/'+$scope.TEI_ID+ '.json?&skipPaging=true',
+                success: function(response){
+
+                    $scope.asstrackedEntityInstances = [];
+
+                    for(var j=0;j<response.attributes.length;j++)
+                    {
+                        $scope.asstrackedEntityInstances[response.attributes[j].attribute]=response.attributes[j].value;
+                    }
+
+                    
+                },
+                error: function(response){
+                }
+
+            });
+            $scope.asstrackedEntityInstances_Final=[];
+            $scope.demoTEI_arr=['WOACLVH2VAh','ucChpKrA87g','qrqPNb4Vwcg','RxZw2ak8DBb','YmzbWrANPWQ','UG03n3pVk7J','TRLvB9AaMPO',
+            'vf9DxLOjyBl','yfl4DB9vl5e','weinW2nVMlu','nIfVuSoEDl1','PnwCIL7wNCY','OYUJqnlwXfr'];
+
+            if($scope.asstrackedEntityInstances.length==0)
+            {
+                for(var t=0;t<$scope.demoTEI_arr.length;t++){
+                        $scope.asstrackedEntityInstances_Final[$scope.demoTEI_arr[t]]="";
+                       }
+                    }
+            for(var s in $scope.asstrackedEntityInstances)
+            {
+                for(var t=0;t<$scope.demoTEI_arr.length;t++){
+                    if(s==$scope.demoTEI_arr[t])
+                    {
+                        $scope.asstrackedEntityInstances_Final[$scope.demoTEI_arr[t]]=$scope.asstrackedEntityInstances[s];
+                        $scope.demoTEI_arr.splice(t,1);
+                    }
+                    else $scope.asstrackedEntityInstances_Final[$scope.demoTEI_arr[t]]="";
+                }
+            }
+
+            for (var i in $scope.asstrackedEntityInstances_Final) {
+                if (i === "PnwCIL7wNCY") {//Provisional Diagnosis with major ailments if any
+                    $scope.Provisional_Diagnosis = $scope.asstrackedEntityInstances_Final[i];
+              }
+              if (i === "OYUJqnlwXfr") {//Final Diagnosis
+                $scope.Final_Diagnosis = $scope.asstrackedEntityInstances_Final[i];
+          }
+                if (i === "WOACLVH2VAh") {//Name - Pregnant woman
+                  $scope.selectedcontactperson = $scope.asstrackedEntityInstances_Final[i];
+            }
+                if (i === "ucChpKrA87g") {//W/O or D/O
+                $scope.WO_or_DO= $scope.asstrackedEntityInstances_Final[i];
+            }
+                if (i === "qrqPNb4Vwcg") {//Address
+                $scope.Address = $scope.asstrackedEntityInstances_Final[i];
+            }
+
+            if (i === "RxZw2ak8DBb") {//Registration number 
+                $scope.Registration_number = $scope.asstrackedEntityInstances_Final[i];
+            }
+            if (i === "YmzbWrANPWQ") {//Name - ASHA
+                $scope.Name_ASHA = $scope.asstrackedEntityInstances_Final[i];
+            }
+            if (i === "UG03n3pVk7J") {//MCTS / RCH No. 
+                $scope.MCTS_RCH_No = $scope.asstrackedEntityInstances_Final[i];
+            }
+            if (i === "TRLvB9AaMPO") {//BPL (TEI – registration ) 
+                $scope.BPL = $scope.asstrackedEntityInstances_Final[i];
+                if($scope.BPL=="true")
+                $scope.BPL="yes";
+                if($scope.BPL=="false")
+                $scope.BPL="no";
+                
+            }
+            if (i === "vf9DxLOjyBl") {//Contact number (facility)    
+                $scope.Contact_number  = $scope.asstrackedEntityInstances_Final[i];
+            }
+            if (i === "yfl4DB9vl5e") {//Mob no of ASHA 
+                $scope.Mob_no_of_ASHA  = $scope.asstrackedEntityInstances_Final[i];
+            }
+
+            if (i === "weinW2nVMlu") {//AGE
+                $scope.age  = $scope.asstrackedEntityInstances_Final[i];
+            }
+           
+            if (i === "nIfVuSoEDl1") {//Block  (TEI – registration ) 
+                $scope.orgid = $scope.asstrackedEntityInstances_Final[i];
+                $.ajax({
+                    async:false,
+                    type: "GET",
+                    url: '../api/organisationUnits/'+$scope.orgid+'.json?fields=name&skipPaging=true',
+                    success: function(res){
+                        $scope.orgName=res.name;
+                    }
+                });            
+
+            }
+         }
+
+            $scope.dataElement=[];
+            $.ajax({
+                async:false,
+                type: "GET",
+                url: '../api/events.json?orgUnit='+orgid+'&program=f1ctOk0ZOZw&trackedEntityInstance='+$scope.TEI_ID+'&skipPaging=true',
+                success: function(response){
+
+                    for(var i=0;i<response.events.length;i++)
+                    {
+                        for(var j=0;j<response.events[i].dataValues.length;j++)
+                        {
+                            $scope.dataElement[response.events[i].dataValues[j].dataElement]=response.events[i].dataValues[j].value;
+                        }
+                    }
+                },
+                error: function(response){
+                }
+
+            });
+
+            $scope.final_dataElement=[];
+            $scope.checkarray=['svCs0pUtvUS','tOVruUeCPtb','BLJFQdwKach','hrZJGngoEhrzQ','Uze0JLIKNR6','XBD1C8zRBpY','ReIRf8HTZbY','Q8yAamcgfuX','oH4BSBx2Xx0',
+            'SMweB4Y1wLt','f3GBHXJufrq','UJllY3Myq7D','HHbsty9dR06','pJXvSjh47wC','rM9QSdu1c1J',
+            'VuMpqzxZ3MT','oH4BSBx2Xx0','RyC53aXVGht','UHcg0y0YkEW','xKtxBWKjntx','Wt9lwK57fp1','SfG4Dhqa1Ak','SEW6XTOz2jS'];
+            
+            
+            if($scope.dataElement.length===0){
+                for(var y=0;y<$scope.checkarray.length;y++)
+                {
+                    
+                        $scope.final_dataElement[$scope.checkarray[y]]="";
+                }
+
+            }
+            for(var x in $scope.dataElement)
+            {
+              for(var y=0;y<$scope.checkarray.length;y++)
+                {
+                    if(x===$scope.checkarray[y])
+                    {
+                        $scope.final_dataElement[$scope.checkarray[y]]=$scope.dataElement[x];
+                        $scope.checkarray.splice(y,1);
+                    }
+                    
+                    else $scope.final_dataElement[$scope.checkarray[y]]="";
+                    
+                }
+
+                
+            }
+
+            for(var key in $scope.final_dataElement){
+
+                if(key==="Wt9lwK57fp1"){//Injection vitamin K -
+                    $scope.Injection_vitamin_K=$scope.final_dataElement[key];
+                }
+                if(key==="SfG4Dhqa1Ak"){//Other Complications (specify)
+                    $scope.Other_Complications=$scope.final_dataElement[key];
+                }
+                if(key==="SEW6XTOz2jS"){//Indication for assisted VD / LSCS / Others -  
+                    $scope.Indication_for_assisted=$scope.final_dataElement[key];
+                }
+                
+                if(key==="svCs0pUtvUS"){//Blood group/Rh  (DE - Post Obs/Lab invest)-
+                    $scope.Blood_group_Rh=$scope.final_dataElement[key];
+                }
+                if(key==="tOVruUeCPtb"){//Discharge date (DE- Discharge details)
+                    $scope.Discharge_date=$scope.final_dataElement[key];
+                }
+                if(key==="BLJFQdwKach"){//Time (DE- Discharge details)-------time format -
+                    $scope.Discharge_time_format=$scope.final_dataElement[key];
+                }
+                if(key==="hrZJGngoEhrzQ"){//Time (DE- Discharge details)-------time -
+                    $scope.Discharge_time=$scope.final_dataElement[key];
+                }
+                if(key==="Uze0JLIKNR6"){//Time (DE- Discharge details)-------time min -
+                    $scope.Discharge_time_min=$scope.final_dataElement[key];
+                }
+                if(key==="SMweB4Y1wLt"){//Delivery date  (DE- Check 2/deliver notes)
+                    $scope.Delivery_date=$scope.final_dataElement[key];
+                }
+                if(key=="f3GBHXJufrq"){//Mode of delivery /Procedure:  (DE- Check 2/deliver notes)
+                    $scope.Mode_of_delivery_Procedure=$scope.final_dataElement[key];
+                 }
+                 if( key==="xKtxBWKjntx"){//Single - ……      Twin /Multiple---Delivery Outcome: 
+                    $scope.Live_birth_val=$scope.final_dataElement[key];
+                    
+                }
+                if(key==="UJllY3Myq7D" ){//Delivery Outcome: Live (DE- Check 2/deliver notes)
+                    $scope.Delivery_Outcome_Live=$scope.final_dataElement[key];
+                    
+                }
+                if(key==="HHbsty9dR06"){//Sex of baby (DE- Check 2/baby notes)
+
+                    $scope.Sex_of_baby=$scope.final_dataElement[key];
+                    if($scope.Sex_of_baby==="2")
+                    {
+                        $scope.Sex_of_baby_val="Female";
+                        
+                    }
+                    if($scope.Sex_of_baby==="1")
+                    {
+                        $scope.Sex_of_baby_val="Male";
+                        
+                    }
+                    if($scope.Sex_of_baby==="")
+                    {
+                        $scope.Sex_of_baby_val="......";
+                        
+                    }
+                    
+                }
+                if(key==="pJXvSjh47wC"){//Birth weight – (in gram) (DE- Check 2/baby notes)
+                    $scope.Birth_weight=$scope.final_dataElement[key];
+                }
+                if(key==="rM9QSdu1c1J"){//BCG (DE- Check 2/baby notes) : 
+                    $scope.BCG_val=$scope.final_dataElement[key];
+                        if($scope.BCG_val=="true")
+                            $scope.BCG="yes";
+                        if($scope.BCG_val=="false")
+                            $scope.BCG="no";
+                        if($scope.BCG_val=="")
+                        $scope.BCG="";
+                }
+                if(key==="VuMpqzxZ3MT"){//OPV- (DE- Check 2/baby notes) 
+                    $scope.OPV_val=$scope.final_dataElement[key];
+                        if($scope.OPV_val=="true")
+                            $scope.OPV="yes";
+                        if($scope.OPV_val=="false")
+                            $scope.OPV="no";
+                        if($scope.OPV_val=="")
+                        $scope.OPV="";
+                }
+
+                if(key==="oH4BSBx2Xx0"){//H/O Birth Asphyxia 
+                    $scope.HO_Birth_Asphyxia =$scope.final_dataElement[key];
+                }
+                if(key==="RyC53aXVGht"){//Apgar score at 5 min after birth  (DE- Check 2/baby notes)
+                    $scope.Apgar_score_at_5min=$scope.final_dataElement[key];
+                }
+
+                if(key==="UHcg0y0YkEW"){//HepB- (DE- Check 2/baby notes) 
+                    $scope.HepB_val=$scope.final_dataElement[key];
+                        if($scope.HepB_val=="true")
+                            $scope.HepB="yes";
+                        if($scope.HepB_val=="false")
+                            $scope.HepB="no";
+                        if($scope.HepB_val=="")
+                        $scope.HepB="";    
+                }
+
+                if(key==="XBD1C8zRBpY"){//Time (DE- Check 2/deliver notes) format----time in hour
+                    $scope.deliver_notes_hour=$scope.final_dataElement[key];
+                }
+                if(key==="ReIRf8HTZbY"){//Time (DE- Check 2/deliver notes) format----time in min
+                    $scope.deliver_notes_min=$scope.final_dataElement[key];
+                }
+                if(key==="oH4BSBx2Xx0"){//Apgar score at birth (DE- Check 2/baby notes) 
+                    $scope.Apgar_score_at_birth=$scope.final_dataElement[key];
+                }
+                if(key==="Q8yAamcgfuX"){//Final Outcome--Discharge /Referral /Death /LAMA-
+                    $scope.Final_Outcome=$scope.final_dataElement[key];
+                }
+            }
+
+            if($scope.Delivery_Outcome_Live==="Still birth")
+            $scope.Live_birth_val_new=$scope.Live_birth_val;
+            else
+            $scope.Live_birth_val_new="";
+
+        
+
+        var address = $scope.selectedAddress1 + ", " + $scope.selectedAddress2 + ", " + $scope.selectedAddress3 + ", " + $scope.selectedAddress4;
+        address = address.replace(/undefined,/g, '');
+        address = address.replace(/(^[,\s]+)|([,\s]+$)/g, '');
+
+        var currentTime = new Date();
+        var year = currentTime.getFullYear();
+        var date = 12 + "/" + 31 + "/" + year;
+
+
+        //  var printContents = document.getElementById(divName).innerHTML;
+        var heading = "<p style='font-family: 'Times New Roman', Times' align=" + "'center'" + ">Discharge Slip</p>" + "<p style='font-family: 'Times New Roman', Times, serif' align=" + "'center'" + ">(To be handed over to patient /attendant)</p>";
+
+       var content="<table class='tg'>"+
+        "<tr>"+
+        "<th class='tg-031e' style='font-weight:bold'>MCTS/RCH No.</th>"+
+        "<th class='tg-yw4l' colspan='3'>"+$scope.MCTS_RCH_No+"</th>"+
+        "<th class='tg-yw4l' style='font-weight:bold'>Name of facility</th>"+
+        "<th class='tg-yw4l' colspan='2'>"+$scope.orgname+"</th>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>IPD Registration No.</td>"+
+        "<td class='tg-yw4l' colspan='3'>"+$scope.Registration_number+"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Block</td>"+
+        "<td class='tg-yw4l' colspan='2'>"+$scope.orgName+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>BPL</td>"+
+        "<td class='tg-yw4l' colspan='3'>"+$scope.BPL+"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>District</td>"+
+        "<td class='tg-yw4l' colspan='2'>"+$scope.orgid_District_new+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Name of ASHA</td>"+
+        "<td class='tg-yw4l' colspan='3'>"+$scope.Name_ASHA +"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Contact number (facility)</td>"+
+        "<td class='tg-yw4l' colspan='2'>"+$scope.Contact_number+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Mob no of ASHA</td>"+
+        "<td class='tg-yw4l' colspan='3'>"+$scope.Mob_no_of_ASHA+"</td>"+
+        "<td class='tg-yw4l'></td>"+
+        "<td class='tg-yw4l' colspan='2'></td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' colspan='7'></td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Name</td>"+
+        "<td class='tg-yw4l' colspan='3'>"+$scope.selectedcontactperson+"</td>"+
+        "<td class='tg-yw4l' ><b>Age:</b>"+$scope.age+"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>W/o or D/o :</td>"+
+        "<td class='tg-yw4l'>"+$scope.WO_or_DO+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Full Address</td>"+
+        "<td class='tg-yw4l' colspan='6'>"+$scope.Address+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Admission date</td>"+
+        "<td class='tg-yw4l' colspan='3'></td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Blood group/Rh</td>"+
+        " <td class='tg-yw4l' colspan='2'>"+$scope.Blood_group_Rh+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Discharge date</td>"+
+        "<td class='tg-yw4l' colspan='3'>"+$scope.Discharge_date+"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Discharge Time<br></td>"+
+        "<td class='tg-yw4l' colspan='2'><b>Time Format-</b>"+$scope.Discharge_time_format+"<br><b>Time in hour-</b>"+$scope.Discharge_time+"<br><b>Time in min-</b>"+$scope.Discharge_time_min+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Provisional Diagnosis with major ailments if any</td>"+
+        "<td class='tg-yw4l' colspan='3'>"+$scope.Provisional_Diagnosis+"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Final Diagnosis</td>"+
+        "<td class='tg-yw4l' colspan='2'>"+$scope.Final_Diagnosis+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Delivery date</td>"+
+        "<td class='tg-yw4l' colspan='3'>"+$scope.Delivery_date+"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Delivery Time</td>"+
+        "<td class='tg-yw4l' colspan='2'><b>Time Format-</b>"+$scope.Discharge_time_format+"<br><b>Time in hour-</b>"+$scope.deliver_notes_hour+"<br><b>Time in min-</b>"+$scope.deliver_notes_min+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Mode of delivery /Procedure:</td>"+
+        "<td class='tg-yw4l' colspan='3'>"+$scope.Mode_of_delivery_Procedure+"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Other Complications (specify)</td>"+
+        "<td class='tg-yw4l' colspan='2'>"+$scope.Other_Complications+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Indication for assisted/ LSCS/ Others</td>"+
+        "<td class='tg-yw4l' colspan='6'>"+$scope.Indication_for_assisted+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold' rowspan='2'>Delivery Outcome: Live </td>"+
+        "<td class='tg-yw4l' colspan='3'><br>"+$scope.Delivery_Outcome_Live+"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Sex of baby </td>"+
+        "<td class='tg-yw4l' colspan='2'>"+$scope.Sex_of_baby_val+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        " <td class='tg-yw4l' colspan='3'><b>Live Birth:</b>"+$scope.Live_birth_val_new+"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Birth weight – (in gram)</td>"+
+        "<td class='tg-yw4l' colspan='2'>"+$scope.Birth_weight+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Final Outcome</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold' colspan='2'>"+$scope.Final_Outcome+"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Immunization</td>"+
+        "<td class='tg-yw4l'><b>BCG :</b>"+$scope.BCG+"</td>"+
+        "<td class='tg-yw4l'><b>OPV :</b>"+$scope.OPV+"</td>"+
+        "<td class='tg-yw4l'><b>HepB :</b>"+$scope.HepB+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>H/O Birth Asphyxia</td>"+
+        "<td class='tg-yw4l' colspan='3'>"+$scope.HO_Birth_Asphyxia +"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Apgar score at birth</td>"+
+        "<td class='tg-yw4l' colspan='2'>"+$scope.Apgar_score_at_birth+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Injection Vitamin K</td>"+
+        "<td class='tg-yw4l' colspan='3'>"+ $scope.Injection_vitamin_K+"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Apgar score at 5 min after birth</td>"+
+        "<td class='tg-yw4l' colspan='2'>"+$scope.Apgar_score_at_5min+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Advice for Mother</td>"+
+        "<td class='tg-yw4l' colspan='3'></td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Advice for Baby</td>"+
+        "<td class='tg-yw4l' colspan='2'></td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold' colspan='3'>Name,and signature of Service provider</td>"+
+        "<td class='tg-yw4l' colspan='4'></td>"+
+        "</tr>"+
+        "</table>";
+
+
+        var printContents = heading + content  /*+ footer2 + footer3*/
+
+        var popupWin = window.open('', '_blank', 'fullscreen=1');
+                popupWin.document.open();
+                popupWin.document.write('<html>\n\
+                                        <head>\n\
+                                                <link rel="stylesheet" type="text/css" href="../dhis-web-commons/bootstrap/css/bootstrap.min.css" />\n\
+                                                <link type="text/css" rel="stylesheet" href="../dhis-web-commons/javascripts/angular/plugins/select.css">\n\
+                                                <link type="text/css" rel="stylesheet" href="../dhis-web-commons/javascripts/angular/plugins/select2.css">\n\
+                                                <link rel="stylesheet" type="text/css" href="styles/style.css" />\n\
+                                                <link rel="stylesheet" type="text/css" href="styles/print.css" />\n\
+                                        </head>\n\
+                                        <body onload="window.print()"><table><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td>' + printContents +
+                    '</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></table></html>');
+                popupWin.document.close();
+                $scope.printForm = false;
+                $scope.printEmptyForm = false;
+
+    };
+
+
     
     $scope.saveDataValueForEvent = function (prStDe, field, eventToSave, backgroundUpdate) {
         
@@ -1601,7 +2009,7 @@ trackerCapture.controller('DataEntryController',
         }
     };
 
-    $scope.saveEventDate = function (reOrder) {       
+    $scope.saveEventDate = function (reOrder) {        
         $scope.saveEventDateForEvent($scope.currentEvent, reOrder);        
     };
 
@@ -1643,8 +2051,6 @@ trackerCapture.controller('DataEntryController',
             sortEventsByStage('UPDATE');
             
             $scope.currentElement = {id: "eventDate", event: eventToSave.event, saved: true};
-            $scope.currentEventOriginal = angular.copy($scope.currentEvent);
-            $scope.currentStageEventsOriginal = angular.copy($scope.currentStageEvents);
             $scope.executeRules();
         });
     };
@@ -2075,11 +2481,7 @@ trackerCapture.controller('DataEntryController',
                 selection.load();
                 $location.path('/').search({program: $scope.selectedProgramId}); 
             }else{
-                if ($scope.currentEvent.status === 'COMPLETED') {//activiate event
-                    if( !$scope.userAuthority.canUnCompleteEvent ){
-                        NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("not_authorized_to_uncomplete_event"));
-                        return;
-                    }
+                if ($scope.currentEvent.status === 'COMPLETED') {//activiate event                    
                     $scope.currentEvent.status = 'ACTIVE';
                 }
                 else {//complete event                    
@@ -2184,40 +2586,8 @@ trackerCapture.controller('DataEntryController',
         }
     };
 
-    $scope.dataElementEditable = function(prStDe){
-        if($scope.eventEditable()){
-            if($scope.assignedFields[$scope.currentEvent.event][prStDe.dataElement.id]) return false;
-            return true;
-        }
-        return false;
-    }
-
-    $scope.eventEditable = function(){
-        if($scope.selectedOrgUnit.closedStatus || $scope.selectedEnrollment.status !== 'ACTIVE' || $scope.currentEvent.editingNotAllowed) return false;
-        if($scope.currentEvent.expired && !$scope.userAuthority.canEditExpiredStuff) return false;
-        return true;
-    }
-
-    $scope.canDeleteEvent = function(){
-        return $scope.currentStage && $scope.currentStage.access.data.write && $scope.userAuthority.canDeleteEvent;
-    }
-
-    var verifyCanDeleteEvent = function(){
-        if($scope.canDeleteEvent()){
-            if(!$scope.userAuthority.canDeleteExpired){
-                if($scope.currentEvent.expired || $scope.selectedEnrollment.expired) return false;
-            }
-            return true;
-        }
-        return false;
-    }
-
     $scope.deleteEvent = function () {
-        if(!verifyCanDeleteEvent()){
-            var bodyText = $translate.instant('you_do_not_have_the_necessary_authorities_to_delete') +' '+ $translate.instant('this') +' '+$translate.instant('event').toLowerCase();
-            var headerText = $translate.instant('delete_failed');
-            return NotificationService.showNotifcationDialog(headerText, bodyText);
-        }
+        
         var modalOptions = {
             closeButtonText: 'cancel',
             actionButtonText: 'delete',
@@ -2293,9 +2663,6 @@ trackerCapture.controller('DataEntryController',
         if ($scope.currentEvent && $scope.currentEvent.event === ev.event && (angular.isUndefined(skipCurrentEventStyle) || skipCurrentEventStyle === false)) {
             style = style + '-darker' + ' ' + ' current-event';
         }        
-        if(ev.expired && !$scope.userAuthority.canEditExpiredStuff){
-            return "custom-tracker-complete";
-        }
         
         return style;
     };
@@ -2461,7 +2828,7 @@ trackerCapture.controller('DataEntryController',
         if(angular.isDefined(event) && angular.isObject(event) && angular.isDefined($scope.topLineEvents)){
             
             var index = -1;
-            for(var i = 0; i < $scope.topLineEvents.length; i++){
+            for(i = 0; i < $scope.topLineEvents.length; i++){
                 if(event.event === $scope.topLineEvents[i].event){
                     index = i;
                     break;
@@ -2505,11 +2872,8 @@ trackerCapture.controller('DataEntryController',
         NotificationService.showNotifcationWithOptions({}, dialogOptions);
     };
     
-    var getColSize = function(colSize){
-        return 'col-xs-'+Math.floor(colSize);
-    }
     //for compare-mode
-    $scope.compareModeColDefs = {header: 1, otherEvent: 2, currentEvent: 3, otherEvents: 4, providedElsewhere: 5, nextEvent: 6, nextEvents: 7};
+    $scope.compareModeColDefs = {header: 1, otherEvent: 2, currentEvent: 3, otherEvents: 4, providedElsewhere: 5};
     $scope.getCompareModeColSize = function(colId){                
         
         var otherEventsCnt = $scope.otherStageEvents.length;                
@@ -2539,8 +2903,11 @@ trackerCapture.controller('DataEntryController',
                 }
                 break;
             case $scope.compareModeColDefs.otherEvent: 
-                if(otherEventsCnt > 3){
+                if(otherEventsCnt > 4){
                     return '';
+                }
+                else if(otherEventsCnt === 4){
+                    return 'col-xs-3';
                 }
                 else if(otherEventsCnt === 3){
                     return 'col-xs-4';
@@ -2556,11 +2923,11 @@ trackerCapture.controller('DataEntryController',
                 }                
                 break;
             case $scope.compareModeColDefs.currentEvent:
-                if(otherEventsCnt > 3){
-                    return 'col-xs-3';
+                if(otherEventsCnt > 4){
+                    return 'col-xs-2';
                 }
-                else if(otherEventsCnt === 3){
-                    return 'col-xs-3';
+                else if(otherEventsCnt === 4){
+                    return 'col-xs-2';
                 }
                 else if(otherEventsCnt >= 2){
                     if($scope.allowProvidedElsewhereExists[$scope.currentStage.id]){
@@ -2572,7 +2939,7 @@ trackerCapture.controller('DataEntryController',
                     if($scope.allowProvidedElsewhereExists[$scope.currentStage.id]){
                         return 'col-xs-3';
                     }
-                    return 'col-xs-5';
+                    return 'col-xs-4';
                 }
                 else{
                     if($scope.allowProvidedElsewhereExists[$scope.currentStage.id]){
@@ -2581,13 +2948,18 @@ trackerCapture.controller('DataEntryController',
                     return 'col-xs-7';
                 }
                 break;
-            //Wrapper that contains all other events
             case $scope.compareModeColDefs.otherEvents:
-                if(otherEventsCnt >= 2){
+                if(otherEventsCnt > 4){
+                    return 'col-xs-8';
+                }
+                else if(otherEventsCnt === 4){
+                    return 'col-xs-8';
+                }
+                else if(otherEventsCnt >= 2){
                     return 'col-xs-6';
                 }
                 else if(otherEventsCnt === 1){
-                    return 'col-xs-3';
+                    return 'col-xs-4';
                 }
                 else {
                     return '';
@@ -2599,15 +2971,12 @@ trackerCapture.controller('DataEntryController',
         }
     };
     
-    $scope.maxCompareItemsInCompareView = 3;
+    $scope.maxCompareItemsInCompareView = 4;
     $scope.setOtherStageEvents = function(){
         
-        $scope.otherStageEvents = [];
         $scope.otherStageEventIndexes = [];
+        $scope.otherStageEvents = [];
         $scope.stageEventsExcludedSkipped = [];
-
-        $scope.nextStageEvents = [];
-        $scope.nextStageEventIndexes = [];
         
         if(angular.isUndefined($scope.currentStageEvents) || $scope.currentStageEvents.length <= 1){
             return;
@@ -2621,17 +2990,17 @@ trackerCapture.controller('DataEntryController',
             });
             
             
-            $scope.indexOfCurrentEvent = -1;
-            for(var i = 0; i < $scope.stageEventsExcludedSkipped.length; i++){
+            var indexOfCurrent = -1;
+            for(i = 0; i < $scope.stageEventsExcludedSkipped.length; i++){
                 var stageEvent = $scope.stageEventsExcludedSkipped[i];
                 if(stageEvent.event === $scope.currentEvent.event){
-                    $scope.indexOfCurrentEvent = i;
+                    indexOfCurrent = i;
                     break;
                 }                    
-            }
+            }            
 
-            for(var j = 0; j < $scope.maxCompareItemsInCompareView; j++){
-                var position = $scope.indexOfCurrentEvent - 1 - j;
+            for(j = 0; j < $scope.maxCompareItemsInCompareView; j++){
+                var position = indexOfCurrent - 1 - j;
                 if(position < 0){
                     break;
                 }
@@ -2639,26 +3008,10 @@ trackerCapture.controller('DataEntryController',
                 var relative = - j - 1;
                 $scope.otherStageEventIndexes.unshift({relative: relative, position: position});
             }
-            if($scope.compareMode === $scope.compareDataEntryFormModes.ALL){
-                var subsequentEventsCount = $scope.maxCompareItemsInCompareView - $scope.otherStageEventIndexes.length;
-                if(subsequentEventsCount > 0){
-                    for(var k = 0; k < subsequentEventsCount; k++){
-                        var position = $scope.indexOfCurrentEvent + 1 + k;
-                        if(position === $scope.stageEventsExcludedSkipped.length){
-                            break;
-                        }
-                        
-                        var relative = k + 1;
-                        $scope.otherStageEventIndexes.push({relative: relative, position: position});
-                    }
-                }
-            }
 
-
-
-            angular.forEach($scope.otherStageEventIndexes, function(indexContainer,i,j){
+            angular.forEach($scope.otherStageEventIndexes, function(indexContainer){
                 $scope.otherStageEvents.push($scope.stageEventsExcludedSkipped[indexContainer.position]);
-            });               
+            });                        
         }
     };
     
@@ -2670,7 +3023,7 @@ trackerCapture.controller('DataEntryController',
                 change = -1;
                 if(indexContainer.relative - 1 === 0){
                     change = -2;
-                }               
+                }                
             }
             else{
                 change = 1;
@@ -2689,7 +3042,8 @@ trackerCapture.controller('DataEntryController',
         });
     };
     
-    $scope.readyCompareDisplayForm = function(){
+    $scope.readyCompareDisplayForm = function(){    
+        
         $scope.setOtherStageEvents();
 
         if($scope.displayCustomForm !== "COMPARE"){
@@ -2705,16 +3059,10 @@ trackerCapture.controller('DataEntryController',
     
     $scope.buttonType = {back: 1, forward: 2};
     $scope.showOtherEventsNavigationButtonInCompareForm = function(type){        
-        if(type === $scope.buttonType.back) {
-            if($scope.otherStageEventIndexes.length > 0) {
-                var indexContainer = $scope.otherStageEventIndexes[0];
-                if(indexContainer.position > 0 && indexContainer.relative < 0) {
-                    return true;
-                } else if($scope.compareMode === $scope.compareDataEntryFormModes.ALL && indexContainer.position > 0 && indexContainer.relative > 0) {
-                    var temp = indexContainer.position - 1;
-                    if(temp === $scope.indexOfCurrentEvent && temp === 0) {
-                        return false;
-                    }
+        if(type === $scope.buttonType.back){
+            if($scope.otherStageEventIndexes.length > 0){
+                var firstEventPosition = $scope.otherStageEventIndexes[0].position;
+                if(firstEventPosition > 0){
                     return true;
                 }
             }
@@ -2722,13 +3070,9 @@ trackerCapture.controller('DataEntryController',
         }
         else{
             if($scope.otherStageEventIndexes.length > 0){
-                var lastEvent = $scope.otherStageEventIndexes[$scope.otherStageEventIndexes.length - 1];
-                if(lastEvent.relative < -1){
+                var lastEventRelativePosition = $scope.otherStageEventIndexes[$scope.otherStageEventIndexes.length - 1].relative;
+                if(lastEventRelativePosition < -1){
                     return true;
-                }else if($scope.compareMode === $scope.compareDataEntryFormModes.ALL){
-                    var totalEvents = $scope.stageEventsExcludedSkipped.length;
-                    var hasNextEvents = ((totalEvents - 1) - $scope.indexOfCurrentEvent) > 0 && lastEvent.position < (totalEvents -1);
-                    if(hasNextEvents) return true;
                 }
             }
             return false;
@@ -2736,7 +3080,7 @@ trackerCapture.controller('DataEntryController',
     };
     
     $scope.currentStageEventNumber = function(){
-        for(var i = 0; i < $scope.stageEventsExcludedSkipped.length; i++){
+        for(i = 0; i < $scope.stageEventsExcludedSkipped.length; i++){
             if($scope.currentEvent.event === $scope.stageEventsExcludedSkipped[i].event){
                 return i+1;
             }
@@ -2825,12 +3169,7 @@ trackerCapture.controller('DataEntryController',
     
     $scope.getEventStyleLabel = function(event){
         if($scope.eventStyleLabels[event.event]){
-            var label = "(" + $scope.eventStyleLabels[event.event];
-            if(event.expired){
-                label += ", expired";
-            }
-            label += ")";
-            return label;
+            return "(" + $scope.eventStyleLabels[event.event] + ")";
         }
         return '';
     };

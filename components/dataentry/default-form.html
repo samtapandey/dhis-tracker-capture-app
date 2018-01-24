@@ -29,7 +29,7 @@
                         <input type="checkbox"
                            class="form-control-checkbox"
                            ng-model="currentEvent.providedElsewhere[prStDe.dataElement.id]"
-                           ng-disabled="!eventEditable()"
+                           ng-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed"
                            ng-change="saveDatavalueLocation(prStDe)"/>
                     </span>
                 </div>
@@ -43,9 +43,7 @@
                 <accordion-heading>
                     {{section.displayName}}
                 </accordion-heading>
-                <div class="alert alert-info" ng-if="section.description">
-					{{section.description}}
-				</div>
+                
                 <div class="vertical-spacing" ng-if="!section.dataElements || section.dataElements.length === 0">
                     <div class="alert alert-warning">{{'section'| translate}} {{section.displayName}} {{'has_no_dataelements'| translate}}</div>
                 </div>
@@ -82,7 +80,7 @@
                                     <input type="checkbox"
                                            class="form-control-checkbox"
                                            ng-model="currentEvent.providedElsewhere[prStDes[de.id].dataElement.id]"
-                                           ng-disabled="!eventEditable()"
+                                           ng-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed"
                                            ng-change="saveDatavalueLocation(prStDes[de.id])"/>
                                 </div>
                             </td>

@@ -2,20 +2,19 @@
     <div ng-if="prStDes[de.id].dataElement.optionSetValue">
         <div class="hideInPrint">
             <div ng-if="!prStDes[de.id].renderOptionsAsRadio || optionSets[prStDes[de.id].dataElement.optionSet.id].options.length >= 7">
-                <d2-option-list  d2-model="currentEvent"
-                                 d2-model-id="de.id"
-                                 d2-required="prStDes[de.id].compulsory"
-                                 d2-disabled="!dataElementEditable(prStDes[de.id])"
-                                 d2-save-methode="saveDatavalue"
-                                 d2-save-methode-parameter1="prStDes[de.id]"
-                                 d2-save-methode-parameter2="innerForm.foo"
-                                 d2-max-option-size="maxOptionSize"
-                                 d2-all-options="optionSets[prStDes[de.id].dataElement.optionSet.id].options"
-                                 d2-use-notification="true"
-                                 d2-element="currentElement">
-                </d2-option-list>
+                <ui-select  ng-model="currentEvent[de.id]"
+                            theme="select2"
+                            ng-required={{prStDes[de.id].compulsory}}
+                            ng-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.id]"
+                            name="foo"
+                            on-select="saveDatavalue(prStDes[de.id], innerForm.foo)"
+                            style="width: 100%">
+                    <ui-select-match allow-clear="true" ng-class="getInputNotifcationClass(de.id, true)"  class="form-control-ui-select"  placeholder="{{'select_or_search' | translate}}">{{$select.selected.displayName  || $select.selected}}</ui-select-match>
+                    <ui-select-choices  repeat="option.displayName as option in optionSets[prStDes[de.id].dataElement.optionSet.id].options | filter: $select.search | limitTo:maxOptionSize">
+                      <span ng-bind-html="option.displayName | highlight: $select.search"></span>
+                    </ui-select-choices>
+                </ui-select>
             </div>
-
             <div ng-if="prStDes[de.id].renderOptionsAsRadio && optionSets[prStDes[de.id].dataElement.optionSet.id].options.length < 7">
                 <d2-radio id="de.id" 
                     d2-name="foo" 
@@ -23,7 +22,7 @@
                     d2-object="currentEvent" 
                     d2-options="optionSets[prStDes[de.id].dataElement.optionSet.id].options"
                     d2-required="prStDes[de.id].compulsory"
-                    d2-disabled="!dataElementEditable(prStDes[de.id])"
+                    d2-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.id]"
                     d2-function="saveDataValueForRadio(prStDes[de.id], currentEvent, value)">
                 </d2-radio>                
             </div>
@@ -42,7 +41,7 @@
                            ng-class="getInputNotifcationClass(de.id,false, currentEvent)"
                            ng-model="currentEvent[de.id]"
                            ng-required="prStDes[de.id].compulsory"
-                           ng-disabled="!dataElementEditable(prStDes[de.id])"
+                           ng-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.id]"
                            ng-blur="saveDatavalue(prStDes[de.id], innerForm.foo)"
                            name="foo"/>
             </div>
@@ -59,7 +58,7 @@
                        ng-class="getInputNotifcationClass(de.id,false, currentEvent)"
                        ng-model="currentEvent[de.id]"
                        ng-required="prStDes[de.id].compulsory"
-                       ng-disabled="!dataElementEditable(prStDes[de.id])"
+                       ng-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.id]"
                        ng-blur="saveDatavalue(prStDes[de.id], innerForm.foo)"
                        name="foo"/>
             </div>
@@ -76,7 +75,7 @@
                        ng-class="getInputNotifcationClass(de.id,false, currentEvent)"
                        ng-model="currentEvent[de.id]"
                        ng-required="prStDes[de.id].compulsory"
-                       ng-disabled="!dataElementEditable(prStDes[de.id])"
+                       ng-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.id]"
                        ng-blur="saveDatavalue(prStDes[de.id], innerForm.foo)"
                        name="foo" />
             </div>
@@ -93,7 +92,7 @@
                        ng-class="getInputNotifcationClass(de.id,false, currentEvent)"
                        ng-model="currentEvent[de.id]"
                        ng-required="prStDes[de.id].compulsory"
-                       ng-disabled="!dataElementEditable(prStDes[de.id])"
+                       ng-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.id]"
                        ng-blur="saveDatavalue(prStDes[de.id], innerForm.foo)"
                        name="foo"/>
             </div>
@@ -110,7 +109,7 @@
                        ng-class="getInputNotifcationClass(de.id,false, currentEvent)"
                        ng-model="currentEvent[de.id]"
                        ng-required="prStDes[de.id].compulsory"
-                       ng-disabled="!dataElementEditable(prStDes[de.id])"
+                       ng-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.id]"
                        ng-blur="saveDatavalue(prStDes[de.id], innerForm.foo)"
                        name="foo"/>
             </div>
@@ -127,7 +126,7 @@
                        ng-class="getInputNotifcationClass(de.id,false, currentEvent)"
                        ng-model="currentEvent[de.id]"
                        ng-required="prStDes[de.id].compulsory"
-                       ng-disabled="!dataElementEditable(prStDes[de.id])"
+                       ng-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.id]"
                        ng-blur="saveDatavalue(prStDes[de.id], innerForm.foo)"
                        name="foo"/>
             </div>
@@ -140,7 +139,7 @@
                     d2-age-saved="currentElement.saved && currentElement.id === prStDe.dataElement.id"
                     d2-object="currentEvent"
                     d2-required="prStDes[de.id].compulsory"
-                    d2-disabled="!dataElementEditable(prStDes[de.id])"
+                    d2-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.id]"
                     d2-function="saveDatavalue(prStDes[de.id], innerForm.foo)">
             </d2-age>
         </div>
@@ -151,7 +150,7 @@
                        ng-class="getInputNotifcationClass(de.id,false, currentEvent)"
                        ng-model="currentEvent[de.id]"
                        ng-required="prStDes[de.id].compulsory"
-                       ng-disabled="!dataElementEditable(prStDes[de.id])"
+                       ng-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.id]"
                        ng-blur="saveDatavalue(prStDes[de.id], innerForm.foo)"
                        name="foo"/>
             </div>
@@ -163,7 +162,7 @@
             <div class="hideInPrint form-control">
                 <d2-radio-button
                     dh-required="prStDes[de.id].compulsory"
-                    dh-disabled="!dataElementEditable(prStDes[de.id])"
+                    dh-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.id] === true"
                     dh-value="currentEvent[de.id]"
                     dh-name="foo"
                     dh-current-element="currentElement"
@@ -188,7 +187,7 @@
                        ng-class="getInputNotifcationClass(de.id,false, currentEvent)"
                        ng-model="currentEvent[de.id]"
                        ng-required="prStDes[de.id].compulsory"
-                       ng-disabled="!dataElementEditable(prStDes[de.id])"
+                       ng-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.id]"
                        blur-or-change="saveDatavalue(prStDes[de.id])"
                        name="foo"/>
             </div>
@@ -196,41 +195,13 @@
                 <input type="text" class="form-control" value={{currentEvent[de.id]}}>
             </div>
         </div>
-        <div ng-switch-when="TIME">
-            <d2-time time-model="currentEvent"
-                     time-model-id="de.id"
-                     time-required="prStDes[de.id].compulsory"
-                     time-save-methode="saveDatavalue"
-                     time-save-methode-parameter1="prStDes[de.id]"
-                     time-save-methode-parameter2="innerForm.foo"
-                     time-use-notification="true"
-                     time-element="currentElement"
-                     time-disabled="!dataElementEditable(prStDes[de.id])">
-            </d2-time>
-        </div>
-        <div ng-switch-when="DATETIME">
-            <d2-date-time datetime-model="currentEvent"
-                          datetime-model-id="de.id"
-                          datetime-date-placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
-                          datetime-max-date="prStDes[de.id].allowFutureDate ? '' : 0"
-                          datetime-required="prStDes[de.id].compulsory"
-                          datetime-save-methode="saveDatavalue"
-                          datetime-save-methode-parameter1="prStDes[de.id]"
-                          datetime-field="innerForm"
-                          datetime-use-notification="true"
-                          datetime-element="currentElement"
-                          datetime-disable-popup="true"
-                          datetime-disabled="!dataElementEditable(prStDes[de.id])"
-                          datetime-outerform="outerDataEntryForm">
-            </d2-date-time>
-        </div>
         <div ng-switch-when="TRUE_ONLY">
             <div class="hideInPrint">
                 <input type="checkbox"
                        class="form-control-checkbox"
                        ng-model="currentEvent[de.id]"
                        ng-required="prStDes[de.id].compulsory"
-                       ng-disabled="!dataElementEditable(prStDes[de.id])"
+                       ng-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.id]"
                        ng-change="saveDatavalue(prStDes[de.id], innerForm.foo)"
                        name="foo"/>
             </div>
@@ -246,7 +217,7 @@
                               ng-class="getInputNotifcationClass(de.id,false, currentEvent)"
                               ng-model="currentEvent[de.id]"
                               ng-required="prStDes[de.id].compulsory"
-                              ng-disabled="!dataElementEditable(prStDes[de.id])"
+                              ng-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.id]"
                               ng-blur="saveDatavalue(prStDes[de.id], innerForm.foo)"
                               name="foo"></textarea>
             </div>
@@ -261,7 +232,7 @@
                        ng-class="getInputNotifcationClass(de.id,false, currentEvent)"
                        ng-model="currentEvent[de.id]"
                        ng-required="prStDes[de.id].compulsory"
-                       ng-disabled="!dataElementEditable(prStDes[de.id])"
+                       ng-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.id]"
                        ng-blur="saveDatavalue(prStDes[de.id], innerForm.foo)"
                        name="foo"/>
             </div>
@@ -289,7 +260,7 @@
                                     <i class="fa fa-upload"></i>
                                     <input type="file"
                                            ng-required="prStDes[de.id].compulsory"
-                                           ng-disabled="!dataElementEditable(prStDes[de.id])]"
+                                           ng-disabled="selectedOrgUnit.closedStatus || assignedFields[de.id]"
                                            name="foo"
                                            input-field-id={{de.id}}
                                            d2-file-input-ps="currentStage"
@@ -311,7 +282,7 @@
                     d2-lng-saved="currentElement.saved && currentElement.id === de.id"
                     d2-object="currentEvent" 
                     d2-required="prStDes[de.id].compulsory"
-                    d2-disabled="!dataElementEditable(prStDes[de.id])"
+                    d2-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.id]"
                     d2-function="saveDatavalue(arg1)" 
                     d2-coordinate-format="'TEXT'"
                     d2-function-param-text="prStDes[de.id]"
@@ -324,7 +295,7 @@
                     id="{{de.id}}"
                     d2-value="currentEvent[de.id]"
                     d2-required="prStDes[de.id].compulsory"
-                    d2-disabled="!dataElementEditable(prStDes[de.id])"
+                    d2-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.id]"
                     d2-object="currentEvent"
                     d2-function="saveDatavalue(prStDes[de.id], innerForm.foo)"
                     d2-orgunit-names="orgUnitNames">
@@ -339,7 +310,7 @@
                    d2-attribute-validator
                    selected-program-id={{selectedProgram.id}}
                    selected-tei-id={{selectedTei.trackedEntityInstance}}
-                   ng-disabled="!dataElementEditable(prStDes[de.id])"
+                   ng-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][prStDe.dataElement.id]"
                    ng-blur="saveDatavalue(prStDes[de.id], innerForm.foo)"
                    ng-required="prStDes[de.id].compulsory"/>
         </div>
@@ -352,8 +323,8 @@
                        ng-pattern="/^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6}(:[0-9]{1,5})?(\/.*)?$/"
                        ng-class="getInputNotifcationClass(de.id,false, currentEvent)"
                        ng-model="currentEvent[de.id]"
-                       ng-required="prStDes[de.id].compulsory"
-                       ng-disabled="!dataElementEditable(prStDes[de.id])"
+                       ng-required={{isCompulsory(de)}}
+                       ng-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.id]"
                        ng-blur="saveDatavalue(prStDes[de.id], innerForm.foo)"
                        name="foo"/>
             </div>
@@ -363,10 +334,9 @@
                 {{'unsupported_value_type' | translate}}:  {{prStDes[de.id].dataElement.valueType}}
             </div>
         </div>
-        <div ng-messages="innerForm.foo.$error" ng-if="interacted(innerForm.foo, outerDataEntryForm)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">          
+        <div ng-messages="innerForm.foo.$error" ng-if="interacted(innerForm.foo, outerDataEntryForm)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">
             <!-- URL error message is temporarily placed here. Should be placed with the other error messages in the core. -->
             <span ng-message="urlValidator">{{'url_error' | translate}}</span>
-            <span ng-message="timeValidator">{{'time_error' | translate}}</span>
         </div>
         <div class="alert alert-warning alert-dismissible" role="alert" ng-if="warningMessages[currentEvent.event][de.id]">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
