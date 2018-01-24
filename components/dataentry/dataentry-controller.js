@@ -248,151 +248,155 @@ trackerCapture.controller('DataEntryController',
             $scope.getDataEntryForm();
         };
 
-        var processRuleEffect = function (event, callerId) {
-            //Establish which event was affected:
-            var affectedEvent = $scope.currentEvent;
-            if (!affectedEvent || !affectedEvent.event) {
-                //The data entry widget does not have an event selected.
-                return;
-            }
-            else if (event === 'registration' || event === 'dataEntryInit') {
-                //The data entry widget is associated with an event, 
-                //and therefore we do not want to process rule effects from the registration form
-                return;
-            }
+		var processRuleEffect = function(event, callerId){
+        //Establish which event was affected:
+        var affectedEvent = $scope.currentEvent;
+        if (!affectedEvent || !affectedEvent.event) {
+            //The data entry widget does not have an event selected.
+            return;
+        }
+        else if(event === 'registration' || event === 'dataEntryInit') {
+           //The data entry widget is associated with an event, 
+           //and therefore we do not want to process rule effects from the registration form
+           return;
+        }
 
-            if (event !== affectedEvent.event) {
-                //if the current event is not the same as the affected event, 
-                //the effecs should be disregarded in the current events controller instance.
-                $log.warn("Event " + event + " was not found in the current scope.");
-                return;
-            }
+        if (event !== affectedEvent.event) {
+            //if the current event is not the same as the affected event, 
+            //the effecs should be disregarded in the current events controller instance.
+            $log.warn("Event " + event + " was not found in the current scope.");
+            return;
+        }
 
 
-            $scope.assignedFields[event] = [];
-            $scope.hiddenSections[event] = [];
-            $scope.warningMessages[event] = [];
-            $scope.errorMessages[event] = [];
-            $scope.hiddenFields[event] = [];
+        $scope.assignedFields[event] = [];
+        $scope.hiddenSections[event] = [];
+        $scope.warningMessages[event] = [];
+        $scope.errorMessages[event] = [];
+        $scope.hiddenFields[event] = [];
+        
+        angular.forEach($rootScope.ruleeffects[event], function (effect) {
+            //in the data entry controller we only care about the "hidefield", showerror and showwarning actions
+            if (effect.action === "HIDEFIELD") {                    
+                if (effect.dataElement) {
 
-            angular.forEach($rootScope.ruleeffects[event], function (effect) {
-                //in the data entry controller we only care about the "hidefield", showerror and showwarning actions
-                if (effect.action === "HIDEFIELD") {
-                    if (effect.dataElement) {
-
-                        if (affectedEvent.status !== 'SCHEDULE' &&
-                            affectedEvent.status !== 'SKIPPED' &&
-                            !affectedEvent.editingNotAllowed) {
-                            if (effect.ineffect && affectedEvent[effect.dataElement.id]) {
-                                //If a field is going to be hidden, but contains a value, we need to take action;
-                                if (effect.content) {
-                                    //TODO: Alerts is going to be replaced with a proper display mecanism.
-                                    alert(effect.content);
-                                }
-                                else {
-                                    //TODO: Alerts is going to be replaced with a proper display mecanism.
-                                    alert($scope.prStDes[effect.dataElement.id].dataElement.displayFormName + " was blanked out and hidden by your last action");
-                                }
-
-                                //Blank out the value:
-                                affectedEvent[effect.dataElement.id] = "";
-                                $scope.saveDataValueForEvent($scope.prStDes[effect.dataElement.id], null, affectedEvent, true);
-                            }
-                        }
-
-                        if (effect.ineffect) {
-                            $scope.hiddenFields[event][effect.dataElement.id] = true;
-                        }
-                        else if (!$scope.hiddenFields[event][effect.dataElement.id]) {
-                            $scope.hiddenFields[event][effect.dataElement.id] = false;
-                        }
-
-                    }
-                    else {
-                        $log.warn("ProgramRuleAction " + effect.id + " is of type HIDEFIELD, bot does not have a dataelement defined");
-                    }
-                } else if (effect.action === "SHOWERROR"
-                    || effect.action === "ERRORONCOMPLETE") {
-                    if (effect.ineffect) {
-                        var message = effect.content + (effect.data ? effect.data : "");
-
-                        if (effect.dataElement && $scope.prStDes[effect.dataElement.id]) {
-                            if (effect.action === "SHOWERROR") {
-                                //only SHOWERROR messages is going to be shown in the form as the user works
-                                $scope.errorMessages[event][effect.dataElement.id] = message;
-                            }
-                            $scope.errorMessages[event].push($translate.instant($scope.prStDes[effect.dataElement.id].dataElement.displayName) + ": " + message);
-                        }
-                        else {
-                            $scope.errorMessages[event].push(message);
-                        }
-                    }
-                } else if (effect.action === "SHOWWARNING"
-                    || effect.action === "WARNINGONCOMPLETE") {
-                    if (effect.ineffect) {
-                        var message = effect.content + (effect.data ? effect.data : "");
-
-                        if (effect.dataElement && $scope.prStDes[effect.dataElement.id]) {
-                            if (effect.action === "SHOWWARNING") {
-                                //only SHOWWARNING messages is going to show up in the form as the user works
-                                $scope.warningMessages[event][effect.dataElement.id] = message;
-                            }
-                            $scope.warningMessages[event].push($translate.instant($scope.prStDes[effect.dataElement.id].dataElement.displayName) + ": " + message);
-                        } else {
-                            $scope.warningMessages[event].push(message);
-                        }
-                    }
-                } else if (effect.action === "HIDESECTION") {
-                    if (effect.programStageSection) {
-                        if (effect.ineffect) {
-                            $scope.hiddenSections[event][effect.programStageSection] = true;
-                        } else if (!$scope.hiddenSections[event][effect.programStageSection]) {
-                            $scope.hiddenSections[event][effect.programStageSection] = false;
-                        }
-                    }
-                    else {
-                        $log.warn("ProgramRuleAction " + effect.id + " is of type HIDESECTION, bot does not have a section defined");
-                    }
-                } else if (effect.action === "ASSIGN") {
-                    if (affectedEvent.status !== 'SCHEDULE' &&
+                    if(affectedEvent.status !== 'SCHEDULE' &&
                         affectedEvent.status !== 'SKIPPED' &&
                         !affectedEvent.editingNotAllowed) {
-                        if (effect.ineffect && effect.dataElement) {
-                            //For "ASSIGN" actions where we have a dataelement, we save the calculated value to the dataelement:
+                        if (effect.ineffect && affectedEvent[effect.dataElement.id]) {
+                            //If a field is going to be hidden, but contains a value, we need to take action;
+                            if (effect.content) {
+                                //TODO: Alerts is going to be replaced with a proper display mecanism.
+                                alert(effect.content);
+                            }
+                            else {
+                                //TODO: Alerts is going to be replaced with a proper display mecanism.
+                                alert($scope.prStDes[effect.dataElement.id].dataElement.displayFormName + " was blanked out and hidden by your last action");
+                            }
+
                             //Blank out the value:
-                            var processedValue = $filter('trimquotes')(effect.data);
+                            affectedEvent[effect.dataElement.id] = "";
+                            $scope.saveDataValueForEvent($scope.prStDes[effect.dataElement.id], null, affectedEvent, true);
+                        }
+                    }
 
-                            if ($scope.prStDes[effect.dataElement.id].dataElement.optionSet) {
-                                processedValue = OptionSetService.getName(
+                    if(effect.ineffect) {
+                        $scope.hiddenFields[event][effect.dataElement.id] = true;
+                    } 
+                    else if( !$scope.hiddenFields[event][effect.dataElement.id]) {
+                        $scope.hiddenFields[event][effect.dataElement.id] = false;
+                    }
+                    
+                }
+                else {
+                    if(!effect.trackedEntityAttribute) {
+                        $log.warn("ProgramRuleAction " + effect.id + " is of type HIDEFIELD, bot does not have a field defined");                        
+                    }
+                }
+            } else if (effect.action === "SHOWERROR" 
+                    || effect.action === "ERRORONCOMPLETE") {
+                if (effect.ineffect) {
+                    var message = effect.content + (effect.data ? effect.data : "");
+                        
+                    if(effect.dataElement && $scope.prStDes[effect.dataElement.id]) {
+                        if(effect.action === "SHOWERROR") {
+                            //only SHOWERROR messages is going to be shown in the form as the user works
+                            $scope.errorMessages[event][effect.dataElement.id] = message;
+                        }
+                        $scope.errorMessages[event].push($translate.instant($scope.prStDes[effect.dataElement.id].dataElement.displayName) + ": " + message);
+                    }
+                    else
+                    {
+                        $scope.errorMessages[event].push(message);
+                    }
+                }
+            } else if (effect.action === "SHOWWARNING" 
+                    || effect.action === "WARNINGONCOMPLETE") {
+                if (effect.ineffect) {
+                    var message = effect.content + (effect.data ? effect.data : "");
+                        
+                    if(effect.dataElement && $scope.prStDes[effect.dataElement.id]) {
+                        if(effect.action === "SHOWWARNING") {
+                            //only SHOWWARNING messages is going to show up in the form as the user works
+                            $scope.warningMessages[event][effect.dataElement.id] = message;
+                        }
+                        $scope.warningMessages[event].push($translate.instant($scope.prStDes[effect.dataElement.id].dataElement.displayName) + ": " + message);
+                    } else {
+                        $scope.warningMessages[event].push(message);
+                    }
+                }
+            } else if (effect.action === "HIDESECTION"){                    
+                if(effect.programStageSection){
+                    if(effect.ineffect){
+                        $scope.hiddenSections[event][effect.programStageSection] = true;
+                    } else if (!$scope.hiddenSections[event][effect.programStageSection]) {
+                        $scope.hiddenSections[event][effect.programStageSection] = false;
+                    }
+                }
+                else {
+                    $log.warn("ProgramRuleAction " + effect.id + " is of type HIDESECTION, bot does not have a section defined");
+                }
+            } else if (effect.action === "ASSIGN") {
+                if(affectedEvent.status !== 'SCHEDULE' &&
+                        affectedEvent.status !== 'SKIPPED' &&
+                        !affectedEvent.editingNotAllowed) {
+                    if(effect.ineffect && effect.dataElement) {
+                        //For "ASSIGN" actions where we have a dataelement, we save the calculated value to the dataelement:
+                        //Blank out the value:
+                        var processedValue = $filter('trimquotes')(effect.data);
+
+                        if($scope.prStDes[effect.dataElement.id].dataElement.optionSet) {
+                            processedValue = OptionSetService.getName(
                                     $scope.optionSets[$scope.prStDes[effect.dataElement.id].dataElement.optionSet.id].options, processedValue);
-                            }
+                        }
 
-                            processedValue = processedValue === "true" ? true : processedValue;
-                            processedValue = processedValue === "false" ? false : processedValue;
+                        processedValue = processedValue === "true" ? true : processedValue;
+                        processedValue = processedValue === "false" ? false : processedValue;
 
-                            affectedEvent[effect.dataElement.id] = processedValue;
-                            $scope.assignedFields[event][effect.dataElement.id] = true;
-
-                            if (callerId === $scope.instanceId) {
-                                $scope.saveDataValueForEvent($scope.prStDes[effect.dataElement.id], null, affectedEvent, true);
-                            }
+                        affectedEvent[effect.dataElement.id] = processedValue;
+                        $scope.assignedFields[event][effect.dataElement.id] = true;
+                        
+                        if(callerId === $scope.instanceId) {
+                            $scope.saveDataValueForEvent($scope.prStDes[effect.dataElement.id], null, affectedEvent, true);
                         }
                     }
                 }
-                else if (effect.action === "HIDEPROGRAMSTAGE") {
-                    if (effect.programStage) {
-                        if ($scope.stagesNotShowingInStageTasks[effect.programStage.id] !== effect.ineffect) {
-                            $scope.stagesNotShowingInStageTasks[effect.programStage.id] = effect.ineffect;
-                        }
-                    }
-                    else {
-                        $log.warn("ProgramRuleAction " + effect.id + " is of type HIDEPROGRAMSTAGE, bot does not have a stage defined");
+            }
+            else if (effect.action === "HIDEPROGRAMSTAGE") {
+                if (effect.programStage) {
+                    if($scope.stagesNotShowingInStageTasks[effect.programStage.id] !== effect.ineffect )
+                    {
+                        $scope.stagesNotShowingInStageTasks[effect.programStage.id] = effect.ineffect;
                     }
                 }
-            });
-
-            updateTabularEntryStages();
-        };
+                else {
+                    $log.warn("ProgramRuleAction " + effect.id + " is of type HIDEPROGRAMSTAGE, bot does not have a stage defined");
+                }
+            }
+        });
+        
+        updateTabularEntryStages();
+    };
 
         function updateTabularEntryStages() {
             $scope.tabularEntryStages = [];
@@ -703,6 +707,8 @@ trackerCapture.controller('DataEntryController',
                 if ($scope.selectedOrgUnit.reportDateRange) {
                     if ($scope.selectedOrgUnit.reportDateRange.minDate) {
                         $scope.model.minDate = $scope.selectedOrgUnit.reportDateRange.minDate;
+                        //minDate is in Georgian format, but maxDate is not. This Service converts the date.
+                        $scope.model.minDate = DateUtils.formatFromApiToUserCalendar($scope.model.minDate);
                     }
                     if ($scope.selectedOrgUnit.reportDateRange.maxDate) {
                         $scope.model.maxDate = $scope.selectedOrgUnit.reportDateRange.maxDate;
