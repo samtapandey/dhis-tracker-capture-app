@@ -45,7 +45,7 @@
             </a>
         </div> 
         <div ng-if="!useMainMenu || (useMainMenu && topLineEvents.length > 0 && !hideTopLineEventsForFormTypes[displayCustomForm])">
-            <div ng-if="hideButton()">
+            <div>
                 <a href class="disable-link-effects" ng-click="useMainMenu ? showCreateEventIfStageNeedsEvent(selectedMainMenuStage, eventCreationActions.add, false, true) : showCreateEvent(null, eventCreationActions.add)" title="{{'add_new'| translate}}">
                     <span class="stage-tasks-badge" ng-class="useMainMenu ? {'stage-tasks-badge-disabled': !stageNeedsEventOfType(selectedMainMenuStage, eventCreationActions.add)} : ''">                                     
                         <span><i class="fa fa-plus vertical-center"></i></span>                

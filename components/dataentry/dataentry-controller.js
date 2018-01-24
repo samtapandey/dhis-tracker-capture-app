@@ -96,16 +96,16 @@ trackerCapture.controller('DataEntryController',
             }
         }
 
-if(CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR){
-        $scope.editProfile = function () {
-            if ($scope.matchUsername === $scope.selectedUserName) {
-                return true
-            }
-            else {
-                return false
+        if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR) {
+            $scope.editProfile = function () {
+                if ($scope.matchUsername === $scope.selectedUserName) {
+                    return true
+                }
+                else {
+                    return false
+                }
             }
         }
-    }
         var modalCompleteIncompleteActions = { complete: 'complete', completeAndExit: 'completeandexit', completeEnrollment: 'completeenrollment', edit: 'edit' };
 
         //Labels
@@ -305,7 +305,7 @@ if(CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR |
                         }
                     }
                 } else if (effect.action === "SHOWWARNING"
-                    ||  effect.action === "WARNINGONCOMPLETE") {
+                    || effect.action === "WARNINGONCOMPLETE") {
                     if (effect.ineffect) {
                         var message = effect.content + (effect.data ? effect.data : "");
 
@@ -1040,16 +1040,7 @@ if(CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR |
             }
         };
 
-// Custom Changes
 
-        $scope.hideButton = function ()
-        {
-            $scope.createdDate1 = $scope.currentEvent.created;
-            $scope.createdDate = $scope.createdDate1.split("T")[0];
-            //$scope.createDate = new Date($scope.createdDate);
-            $scope.todayDate = new Date();
-            
-        }
 
         $scope.showCreateEvent = function (stage, eventCreationAction, suggestedStage) {
 
@@ -1316,6 +1307,8 @@ if(CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR |
         };
 
         $scope.getDataEntryForm = function () {
+
+
             $scope.showAttributeCategoryOptions = false;
             $scope.currentFileNames = $scope.fileNames ? ($scope.fileNames[$scope.currentEvent.event] ? $scope.fileNames[$scope.currentEvent.event] : []) : [];
 
@@ -1359,7 +1352,7 @@ if(CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR |
             //Execute rules for the first time, to make the initial page appear correctly.
             //Subsequent calls will be made from the "saveDataValue" function.        
             $scope.executeRules();
-            
+
             $scope.buttonDisable();
         };
 
@@ -1865,8 +1858,9 @@ if(CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR |
             return dhis2EventToUpdate;
         };
 
-        $scope.completeIncompleteEvent = function (inTableView, outerDataEntryForm) {
 
+
+        $scope.completeIncompleteEvent = function (inTableView, outerDataEntryForm) {
             if ($scope.currentEvent.status !== 'COMPLETED') {
                 $scope.outerDataEntryForm.submitted = true;
                 if ($scope.outerDataEntryForm.$invalid) {
@@ -3108,18 +3102,18 @@ if(CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR |
             }
         };
 
-        
-        $scope.buttonDisable = function() {
+        $scope.buttonDisable = function () {
             if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR) {
                 $scope.statusValue = $scope.currentEvent.dataValues;
                 for (var a = 0; a < $scope.statusValue.length; a++) {
                     if ($scope.statusValue[a].value === "Approved" || $scope.statusValue[a].value === "Auto-Approved") {
                         $scope.currentStatusValue = 'show';
                         break;
-                    } 
+                    }
                 }
             }
         }
+
         //$scope.getInputNotifcationClass = function(id, custom, event){
         $scope.getOptionSaveNotifcationClass = function (id) {
             if ($scope.changedCat && $scope.changedCat.id && $scope.changedCat.id === id) {
@@ -3249,4 +3243,57 @@ if(CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR |
                 $scope.eventTableOptionsArr[$scope.eventTableOptions[key].sort] = $scope.eventTableOptions[key];
             }
         }
+
+
+        // // Custom Changes
+
+        // $scope.hideButton = function () {
+
+        //     $scope.todayDate1 = new Date();
+        //     $scope.customYear = $scope.todayDate1.getFullYear();
+        //     $scope.customMonth1 = $scope.todayDate1.getMonth() + 1;
+        //     if ($scope.customMonth1 < 10) {
+        //         $scope.customMonth = "0" + $scope.customMonth1;
+        //     }
+        //     else {
+        //         $scope.customMonth = $scope.customMonth1;
+        //     }
+
+        //     $scope.customDay1 = $scope.todayDate1.getDate();
+        //     if ($scope.customDay1 < 10) {
+        //         $scope.customDay = "0" + $scope.customDay1;
+        //     }
+        //     else {
+        //         $scope.customDay = $scope.customDay1;
+        //     }
+
+        //     $scope.todayDate = $scope.customYear + "-" + $scope.customMonth + "-" + $scope.customDay;
+
+        //     var url = window.location.href;
+        //     var params = url.split('=');
+        //     var getTei = params[1];
+        //     var trackedEntityInstanceId = getTei.split('&')[0];
+        //     $.ajax({
+        //         async: false,
+        //         type: "GET",
+        //         url: "../api/events.json?fields=*&trackedEntityInstance=" + trackedEntityInstanceId + "&order=eventDate:DESC&skipPaging=true",
+        //         success: function (response) {
+        //             if (response.events.length > 0) {
+        //                 $scope.allCreatedDates = [];
+        //                 for (var p = 0; p <= response.events.length; p++) {
+        //                     $scope.createdDate = response.events[p].created.split("T")[0];
+        //                     $scope.allCreatedDates.push($scope.createdDate);
+        //                 }
+        //             }
+
+        //         }
+        //     });
+        //     if ($scope.allCreatedDates.indexOf($scope.todayDate) > -1) {
+        //         return false;
+        //     }
+        //     else {
+        //         return true;
+        //     }
+        // }
+
     });
