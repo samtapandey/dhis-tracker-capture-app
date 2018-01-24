@@ -2,35 +2,27 @@
     <table class="dhis2-list-table-striped default-form-table" ng-if='currentEvent && !currentStage.programStageSections.length'>
         <tr ng-repeat="prStDe in currentStage.programStageDataElements" ng-if="!isHidden(prStDe.dataElement.id, currentEvent)">
             <td>
-                <span d2-pop-over
-                    class="popover-label hideInPrint small-horizontal-spacing"
-                    details="{{'details'| translate}}"
-                    content="prStDe.dataElement"
-                    template="dataelement-details.html"
-                    trigger="click"
-                    placement="right">
+                <span d2-pop-over class="popover-label hideInPrint small-horizontal-spacing" details="{{'details'| translate}}" content="prStDe.dataElement"
+                    template="dataelement-details.html" trigger="click" placement="right">
                     <a href title="{{'details'| translate}}" class="wrap-text" tabindex="-1">{{prStDe.dataElement.displayFormName}}</a>
                 </span>
                 <span class="not-for-screen">
                     {{prStDe.dataElement.displayFormName}}
                 </span>
                 <span ng-if="prStDe.compulsory" class="required">*</span>
-                <span class="hideInPrint">                    
+                <span class="hideInPrint">
                     <span ng-if="otherValuesLists[prStDe.dataElement.id]" ng-repeat="altValue in otherValuesLists[prStDe.dataElement.id] track by $index">
                         <span class="label label-default">{{altValue | translate}}</span>
-                   </span>
+                    </span>
                 </span>
-            </td>            
-            <td class="absorbing-column" dhis2-compiled-include="components/dataentry/inner-form.html">                
+            </td>
+            <td class="absorbing-column" dhis2-compiled-include="components/dataentry/inner-form.html">
             </td>
             <td ng-if="allowProvidedElsewhereExists[currentStage.id]">
                 <div class="align-center" ng-show="prStDe.allowProvidedElsewhere">
                     <span>
-                        <input type="checkbox"
-                           class="form-control-checkbox"
-                           ng-model="currentEvent.providedElsewhere[prStDe.dataElement.id]"
-                           ng-disabled="!eventEditable()"
-                           ng-change="saveDatavalueLocation(prStDe)"/>
+                        <input type="checkbox" class="form-control-checkbox" ng-model="currentEvent.providedElsewhere[prStDe.dataElement.id]" ng-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed"
+                            ng-change="saveDatavalueLocation(prStDe)" />
                     </span>
                 </div>
             </td>
@@ -39,59 +31,584 @@
     <div ng-if='currentEvent && currentStage.programStageSections.length'>
         <accordion close-others='false'>
             <!-- The inline style was needed to override overflow:hidden in the css. Can possibly be replaced with a CSS update. -->
-            <accordion-group is-open="section.open" ng-repeat="section in currentStage.programStageSections | orderBy: 'sortOrder'" ng-if="!hiddenSections[currentEvent.event][section.id]" style="overflow:visible">
+            <accordion-group is-open="section.open" ng-repeat="section in currentStage.programStageSections | orderBy: 'sortOrder'" ng-if="!hiddenSections[currentEvent.event][section.id]"
+                style="overflow:visible">
                 <accordion-heading>
                     {{section.displayName}}
                 </accordion-heading>
                 <div class="alert alert-info" ng-if="section.description">
-					{{section.description}}
-				</div>
+                    {{section.description}}
+                </div>
                 <div class="vertical-spacing" ng-if="!section.dataElements || section.dataElements.length === 0">
                     <div class="alert alert-warning">{{'section'| translate}} {{section.displayName}} {{'has_no_dataelements'| translate}}</div>
                 </div>
 
                 <div class="row">
-                   <table class="dhis2-list-table-striped default-form-table" ng-if="section.dataElements && section.dataElements.length > 0">                        
-                        <tr ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id)">
+                    <!-- *********************************************************************************************************************************************** -->
+                    <!-- Start of left plam Desgin  Format -->
+                    <table ng-if="currentStage.id == 'gAkjKEitHrU' && section.id == 'j1u6ase0X3G'" style="text-align:center">
+                        <tr>
+                            <td ng-if="section.id == 'j1u6ase0X3G'" ng-init="pointerLocation()">
+                                <div class="lefthandContainer">
+                                    <div class="lhthing" ng-click='thing("lhthing","j1u6ase0X3G1")' ng-dblclick='_thing("lhthing","j1u6ase0X3G1")'>
+                                        1</div>
+                                    <div class="lhthing1" ng-click='thing("lhthing1","j1u6ase0X3G2")' ng-dblclick='_thing("lhthing1","j1u6ase0X3G2")'>
+                                        2</div>
+                                    <div class="lhthing2" ng-click='thing("lhthing2","j1u6ase0X3G3")' ng-dblclick='_thing("lhthing2","j1u6ase0X3G3")'>
+                                        3</div>
+                                    <div class="lhthing3" ng-click='thing("lhthing3","j1u6ase0X3G4")' ng-dblclick='_thing("lhthing3","j1u6ase0X3G4")'>
+                                        4</div>
+                                    <div class="lhthing4" ng-click='thing("lhthing4","j1u6ase0X3G5")' ng-dblclick='_thing("lhthing4","j1u6ase0X3G5")'>
+                                        5</div>
+                                </div>
+                            </td>
+
                             <td>
-                                <span d2-pop-over
-                                    class="popover-label hideInPrint small-horizontal-spacing"
-                                    details="{{'details'| translate}}"
-                                    content="prStDes[de.id].dataElement"
-                                    template="dataelement-details.html"
-                                    trigger="click"
-                                    placement="right">
-                                    <a href title="{{'details'| translate}}" class="wrap-text" tabindex="-1">{{prStDes[de.id].dataElement.displayFormName}}</a>
-                                </span>
-                                <span class="not-for-screen">
-                                    {{prStDes[de.id].dataElement.displayFormName}}
-                                </span>
-                                <span ng-if="prStDes[de.id].compulsory" class="required">*</span>
-                                <span class="hideInPrint">
-                                    <d2-info ng-if="prStDes[de.id].dataElement.description" data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDes[de.id].dataElement.description}}"}]'>
-                                    </d2-info>
-                                    <span ng-if="otherValuesLists[de.id] && showOtherValuesLists" ng-repeat="altValue in otherValuesLists[de.id]">
-                                        <span class="label label-default">{{altValue | translate}}</span>
-                                    </span>
-                                </span>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <Strong>Symptoms of Leprosy</Strong>
+                                        </td>
+                                    </tr>
+                                    <tr ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 8">
+                                        <td>
+                                            <span d2-pop-over class="popover-label hideInPrint small-horizontal-spacing" details="{{'details'| translate}}" content="prStDes[de.id].dataElement"
+                                                template="dataelement-details.html" trigger="click" placement="right">
+                                                <a href title="{{'details'| translate}}" class="wrap-text" tabindex="-1">
+                                                    <strong>{{prStDes[de.id].dataElement.displayFormName}}</strong>
+                                                </a>
+                                            </span>
+                                            <span class="not-for-screen">
+                                                {{prStDes[de.id].dataElement.displayFormName}}
+                                            </span>
+                                            <span ng-if="prStDes[de.id].compulsory" class="required">*</span>
+                                            <span class="hideInPrint">
+                                                <d2-info ng-if="prStDes[de.id].dataElement.description" data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDes[de.id].dataElement.description}}"}]'>
+                                                </d2-info>
+                                                <span ng-if="otherValuesLists[de.id] && showOtherValuesLists" ng-repeat="altValue in otherValuesLists[de.id]">
+                                                    <span class="label label-default">{{altValue | translate}}</span>
+                                                </span>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
                             </td>
-                            <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+
+
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <strong>1</strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 8">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                </table>
                             </td>
-                            <td ng-if="allowProvidedElsewhereExists[currentStage.id]">
-                                <div class="align-center" ng-show="prStDes[de.id].allowProvidedElsewhere">
-                                    <input type="checkbox"
-                                           class="form-control-checkbox"
-                                           ng-model="currentEvent.providedElsewhere[prStDes[de.id].dataElement.id]"
-                                           ng-disabled="!eventEditable()"
-                                           ng-change="saveDatavalueLocation(prStDes[de.id])"/>
+
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <strong>2</strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 2}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 16 && $index >= 8">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html"></td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <strong>3</strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 3}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 24 && $index >= 16">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <strong>4</strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 4}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 32 && $index >= 24">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <strong>5</strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 5}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 40 && $index >= 32">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                        </tr>
+                    </table>
+
+                    <!-- End of Left Plam Desgin Format -->
+
+                    <!-- ************************************************************************************************************************************************* -->
+
+                    <!-- Right Plam Design format -->
+                    <!-- QSl2krdBWLO -->
+                    <table ng-if="currentStage.id == 'gAkjKEitHrU' && section.id == 'QSl2krdBWLO'" style="text-align:center">
+                        <tr>
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <Strong>Symptoms of Leprosy</Strong>
+                                        </td>
+                                    </tr>
+                                    <tr ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 8">
+                                        <td>
+                                            <span d2-pop-over class="popover-label hideInPrint small-horizontal-spacing" details="{{'details'| translate}}" content="prStDes[de.id].dataElement"
+                                                template="dataelement-details.html" trigger="click" placement="right">
+                                                <a href title="{{'details'| translate}}" class="wrap-text" tabindex="-1">
+                                                    <strong>{{prStDes[de.id].dataElement.displayFormName}}</strong>
+                                                </a>
+                                            </span>
+                                            <span class="not-for-screen">
+                                                {{prStDes[de.id].dataElement.displayFormName}}
+                                            </span>
+                                            <span ng-if="prStDes[de.id].compulsory" class="required">*</span>
+                                            <span class="hideInPrint">
+                                                <d2-info ng-if="prStDes[de.id].dataElement.description" data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDes[de.id].dataElement.description}}"}]'>
+                                                </d2-info>
+                                                <span ng-if="otherValuesLists[de.id] && showOtherValuesLists" ng-repeat="altValue in otherValuesLists[de.id]">
+                                                    <span class="label label-default">{{altValue | translate}}</span>
+                                                </span>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <strong>1</strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 8">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <strong>2</strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 2}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 16 && $index >= 8">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html"></td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <strong>3</strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 3}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 24 && $index >= 16">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <strong>4</strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 4}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 32 && $index >= 24">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <strong>5</strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 5}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 40 && $index >= 32">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+
+                            <td ng-if="section.id == 'QSl2krdBWLO'" ng-init="pointerLocation()">
+                                <div class="righthandContainer">
+                                    <div class="rhthing" ng-click='thing("rhthing","QSl2krdBWLO1")' ng-dblclick='_thing("rhthing","QSl2krdBWLO1")'>
+                                        1</div>
+                                    <div class="rhthing1" ng-click='thing("rhthing1","QSl2krdBWLO2")' ng-dblclick='_thing("rhthing1","QSl2krdBWLO2")'>
+                                        2</div>
+                                    <div class="rhthing2" ng-click='thing("rhthing2","QSl2krdBWLO3")' ng-dblclick=' _thing("rhthing2","QSl2krdBWLO3")'>
+                                        3</div>
+                                    <div class="rhthing3" ng-click='thing("rhthing3","QSl2krdBWLO4")' ng-dblclick='_thing("rhthing3","QSl2krdBWLO4")'>
+                                        4</div>
+                                    <div class="rhthing4" ng-click='thing("rhthing4","QSl2krdBWLO5")' ng-dblclick='_thing("rhthing4","QSl2krdBWLO5")'>
+                                        5</div>
+                                </div>
+                            </td>
+
+                        </tr>
+                    </table>
+                    <!-- End of right Plam desgin Format -->
+
+                    <!-- ************************************************************************************************************************************************* -->
+
+                    <!-- Design Format for left sole  -->
+                    <!-- "JRDmB5WCYbJ" -->
+                    <table ng-if="currentStage.id == 'gAkjKEitHrU' && section.id == 'JRDmB5WCYbJ'" style="text-align:center">
+                        <tr>
+
+                            <td ng-if="section.id == 'JRDmB5WCYbJ'" ng-init="pointerLocation()">
+                                <div class="leftsoleContainer">
+                                    <div class="lsthing" ng-click='thing("lsthing","JRDmB5WCYbJ1")' ng-dblclick='_thing("lsthing","JRDmB5WCYbJ1")'>
+                                        1</div>
+                                    <div class="lsthing1" ng-click='thing("lsthing1","JRDmB5WCYbJ2")' ng-dblclick='_thing("lsthing1","JRDmB5WCYbJ2")'>
+                                        2</div>
+                                    <div class="lsthing2" ng-click='thing("lsthing2","JRDmB5WCYbJ3")' ng-dblclick='_thing("lsthing2","JRDmB5WCYbJ3")'>
+                                        3</div>
+                                    <div class="lsthing3" ng-click='thing("lsthing3","JRDmB5WCYbJ4")' ng-dblclick='_thing("lsthing3","JRDmB5WCYbJ4")'>
+                                        4</div>
+                                    <div class="lsthing4" ng-click='thing("lsthing4","JRDmB5WCYbJ5")' ng-dblclick='_thing("lsthing4","JRDmB5WCYbJ5")'>
+                                        5</div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <Strong>Symptoms of Leprosy</Strong>
+                                        </td>
+                                    </tr>
+                                    <tr ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 8">
+                                        <td>
+                                            <span d2-pop-over class="popover-label hideInPrint small-horizontal-spacing" details="{{'details '| translate}}" content="prStDes[de.id].dataElement"
+                                                template="dataelement-details.html" trigger="click" placement="right">
+                                                <a href title="{{'details '| translate}}" class="wrap-text" tabindex="-1">
+                                                    <strong>{{prStDes[de.id].dataElement.displayFormName}}</strong>
+                                                </a>
+                                            </span>
+                                            <span class="not-for-screen">
+                                                {{prStDes[de.id].dataElement.displayFormName}}
+                                            </span>
+                                            <span ng-if="prStDes[de.id].compulsory" class="required">*</span>
+                                            <span class="hideInPrint">
+                                                <d2-info ng-if="prStDes[de.id].dataElement.description" data-content='[{
+                                        "name": "{{"description " | translate}}", "data":
+                                        "{{prStDes[de.id].dataElement.description}}"}] '>
+                                                </d2-info>
+                                                <span ng-if="otherValuesLists[de.id] && showOtherValuesLists" ng-repeat="altValue in otherValuesLists[de.id]">
+                                                    <span class="label label-default">{{altValue | translate}}</span>
+                                                </span>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <strong>1</strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 8">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <strong>2</strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 2}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 16 && $index >= 8">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html"></td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <strong>3</strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 3}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 24 && $index >= 16">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <strong>4</strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 4}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 32 && $index >= 24">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <strong>5</strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 5}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 40 && $index >= 32">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+
+
+
+                        </tr>
+                    </table>
+                    <!-- End of design format for left sole -->
+
+
+                    <!-- Degin format for right sole -->
+                    <!-- c2QJ8q8xPDI -->
+                    <table ng-if="currentStage.id == 'gAkjKEitHrU' && section.id == 'c2QJ8q8xPDI'" style="text-align:center">
+                        <tr>
+
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <Strong>Symptoms of Leprosy</Strong>
+                                        </td>
+                                    </tr>
+                                    <tr ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 8">
+                                        <td>
+                                            <span d2-pop-over class="popover-label hideInPrint small-horizontal-spacing" details="{{'details '| translate}}" content="prStDes[de.id].dataElement"
+                                                template="dataelement-details.html" trigger="click" placement="right">
+                                                <a href title="{{'details '| translate}}" class="wrap-text" tabindex="-1">
+                                                    <strong>{{prStDes[de.id].dataElement.displayFormName}}</strong>
+                                                </a>
+                                            </span>
+                                            <span class="not-for-screen">
+                                                {{prStDes[de.id].dataElement.displayFormName}}
+                                            </span>
+                                            <span ng-if="prStDes[de.id].compulsory" class="required">*</span>
+                                            <span class="hideInPrint">
+                                                <d2-info ng-if="prStDes[de.id].dataElement.description" data-content='[{
+                                        "name": "{{"description " | translate}}", "data":
+                                        "{{prStDes[de.id].dataElement.description}}"}] '>
+                                                </d2-info>
+                                                <span ng-if="otherValuesLists[de.id] && showOtherValuesLists" ng-repeat="altValue in otherValuesLists[de.id]">
+                                                    <span class="label label-default">{{altValue | translate}}</span>
+                                                </span>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <strong>1</strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 1}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 8">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                            <p ng-init></p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <strong>2</strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 2}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 16 && $index >= 8">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html"></td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <strong>3</strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 3}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 24 && $index >= 16">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <strong>4</strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 4}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 32 && $index >= 24">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+
+                            <td>
+                                <table class="dhis2-list-table-striped default-form-table" style="text-align:center" ng-if="section.dataElements && section.dataElements.length > 0">
+                                    <tr>
+                                        <td style="background:#276696; color:white">
+                                            <strong>5</strong>
+                                        </td>
+                                    </tr>
+                                    <tr class="{{section.id + 5}}" ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id) && $index < 40 && $index >= 32">
+                                        <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                            <td ng-if="section.id == 'c2QJ8q8xPDI'" ng-init="pointerLocation()">
+                                <div class="rightsoleContainer">
+                                    <div class="rsthing" ng-click='thing("rsthing","c2QJ8q8xPDI1")' ng-dblclick='_thing("rsthing","c2QJ8q8xPDI1") '>
+                                        1</div>
+                                    <div class="rsthing1" ng-click='thing("rsthing1","c2QJ8q8xPDI2")' ng-dblclick='_thing("rsthing1","c2QJ8q8xPDI2") '>
+                                        2</div>
+                                    <div class="rsthing2" ng-click='thing("rsthing2","c2QJ8q8xPDI3")' ng-dblclick='_thing("rsthing2","c2QJ8q8xPDI3") '>
+                                        3</div>
+                                    <div class="rsthing3" ng-click='thing("rsthing3","c2QJ8q8xPDI4")' ng-dblclick='_thing("rsthing3","c2QJ8q8xPDI4") '>
+                                        4</div>
+                                    <div class="rsthing4" ng-click='thing("rsthing4","c2QJ8q8xPDI5")' ng-dblclick='_thing("rsthing4","c2QJ8q8xPDI5") '>
+                                        5</div>
                                 </div>
                             </td>
                         </tr>
                     </table>
+
+                    <!-- End of Design format for right sole -->
+
+
+
+
+
+                    <!-- For Default form -->
+                    <div ng-if="section.id != 'j1u6ase0X3G' && section.id != 'QSl2krdBWLO' && section.id != 'JRDmB5WCYbJ' && section.id  != 'c2QJ8q8xPDI'">
+                        <table class="dhis2-list-table-striped default-form-table" ng-if="section.dataElements && section.dataElements.length > 0">
+                            <tr ng-repeat="de in section.dataElements" ng-if="!isHidden(de.id)">
+                                <td>
+                                    <span d2-pop-over class="popover-label hideInPrint small-horizontal-spacing" details="{{'details '| translate}}" content="prStDes[de.id].dataElement"
+                                        template="dataelement-details.html" trigger="click" placement="right">
+                                        <a href title="{{'details '| translate}}" class="wrap-text" tabindex="-1">{{prStDes[de.id].dataElement.displayFormName}}</a>
+                                    </span>
+                                    <span class="not-for-screen">
+                                        {{prStDes[de.id].dataElement.displayFormName}}
+                                    </span>
+                                    <span ng-if="prStDes[de.id].compulsory" class="required">*</span>
+                                    <span class="hideInPrint">
+                                        <d2-info ng-if="prStDes[de.id].dataElement.description" data-content='[{ "name":
+                                        "{{"description " | translate}}", "data": "{{prStDes[de.id].dataElement.description}}"}]
+                                        '>
+                                        </d2-info>
+                                        <span ng-if="otherValuesLists[de.id] && showOtherValuesLists" ng-repeat="altValue in otherValuesLists[de.id]">
+                                            <span class="label label-default">{{altValue | translate}}</span>
+                                        </span>
+                                    </span>
+                                </td>
+                                <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                                </td>
+                                <td ng-if="allowProvidedElsewhereExists[currentStage.id]">
+                                    <div class="align-center" ng-show="prStDes[de.id].allowProvidedElsewhere">
+                                        <input type="checkbox" class="form-control-checkbox" ng-model="currentEvent.providedElsewhere[prStDes[de.id].dataElement.id]"
+                                            ng-disabled="selectedOrgUnit.closedStatus || selectedEnrollment.status !== 'ACTIVE ' || currentEvent.editingNotAllowed"
+                                            ng-change="saveDatavalueLocation(prStDes[de.id])" />
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+
                 </div>
-                
-            </accordion-group> 
+
+            </accordion-group>
         </accordion>
     </div>
-    
+
 </form>

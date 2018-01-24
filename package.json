@@ -1,12 +1,12 @@
 {
   "name": "tracker-capture-app",
-  "version": "29.0.1",
+  "version": "28.0.20",
   "description": "DHIS2 tracker capture app",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prebuild": "(rm -r build && mkdir build) || mkdir build",
-    "build": "webpack && cp -r i18n build/i18n && cp -r core build/core && cp -r views build/views && cp -r styles build/styles && find ./components -iname \"*.html\" -exec rsync -R '{}' ./build/ \\;",
+    "build": "webpack && cp -r i18n build/i18n && cp -r core build/core && cp -r views build/views && cp -r styles build/styles &&  find components -iname '*.html' -exec rsync --perms --chmod D+x -R {} ./build/ ';'",
     "start": "webpack-dev-server"
   },
   "repository": {
@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/dhis2/tracker-capture-app#readme",
   "dependencies": {
-    "d2-tracker": "29.0.10",
+    "d2-tracker": "28.0.24",
     "leaflet": "^0.7.7",
     "leaflet-contextmenu": "^1.1.0",
     "leaflet-geocoder-mapzen": "1.4.1"
@@ -37,7 +37,7 @@
     "html-webpack-plugin": "^2.24.1",
     "ng-annotate-loader": "^0.2.0",
     "style-loader": "^0.13.1",
-    "webpack": "^1.13.0",
+    "webpack": "^1.15.0",
     "webpack-dev-server": "^1.14.1"
   }
 }
