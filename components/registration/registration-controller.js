@@ -71,6 +71,11 @@ trackerCapture.controller('RegistrationController',
         $scope.selectedBlockTalukName = null;
         $scope.selectedVillageName = null;
 
+        $scope.selectedState = null;
+        $scope.selectedDistrict = null;
+        $scope.selectedBlockTaluk = null;
+        $scope.selectedVillage = null;
+
 
         var flag = { debug: true, verbose: false };
         $rootScope.ruleeffects = {};
@@ -120,8 +125,25 @@ trackerCapture.controller('RegistrationController',
                 return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
             }
         }
-
-
+        if (CurrentSelection.currentSelection.tei) {
+            var selectedCascading = CurrentSelection.currentSelection.tei.attributes;
+            if (selectedCascading.length > 0) {
+                for (var a = 0; a < selectedCascading.length; a++) {
+                    if (selectedCascading[a].code == 'state') {
+                        $scope.selectedState = selectedCascading[a].value;
+                    }
+                    else if (selectedCascading[a].code == 'district') {
+                        $scope.selectedDistrict = selectedCascading[a].value;
+                    }
+                    else if (selectedCascading[a].code == 'block_taluk') {
+                        $scope.selectedBlockTaluk = selectedCascading[a].value;
+                    }
+                    else if (selectedCascading[a].code == 'village') {
+                        $scope.selectedVillage = selectedCascading[a].value;
+                    }
+                }
+            }
+        }
 
         var selectedOrgUnit = CurrentSelection.get()["orgUnit"];
 
