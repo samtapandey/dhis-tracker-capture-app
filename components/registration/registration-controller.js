@@ -202,7 +202,7 @@ trackerCapture.controller('RegistrationController',
 			
 			// change for msf-customizations display on load not used in kenya
 
-
+    /*
 			$timeout( function (){
 
 				if( !$scope.selectedTei[$scope.fileNumber] && $scope.selectedTei[$scope.fileNumber] == undefined)
@@ -215,6 +215,7 @@ trackerCapture.controller('RegistrationController',
 				}
 
 			},0);
+			*/
             fetchGeneratedAttributes();
             if ($scope.selectedProgram && $scope.selectedProgram.id) {
                 if ($scope.selectedProgram.dataEntryForm && $scope.selectedProgram.dataEntryForm.htmlCode) {
