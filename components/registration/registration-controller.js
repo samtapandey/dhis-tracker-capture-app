@@ -615,6 +615,7 @@ trackerCapture.controller('RegistrationController',
             $scope.hiddenSections = effectResult.hiddenSections;
             $scope.assignedFields = effectResult.assignedFields;
             $scope.warningMessages = effectResult.warningMessages;
+            $scope.mandatoryFields = effectResult.mandatoryFields;
         }
     });
 
