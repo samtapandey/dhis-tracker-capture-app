@@ -59,6 +59,7 @@ trackerCapture.controller('DataEntryController',
     $scope.stagesCanBeShownAsTable = false;
     $scope.hiddenFields = [];
     $scope.assignedFields = [];
+    $scope.mandatoryFields = [];
     $scope.errorMessages = {};
     $scope.warningMessages = {};
     $scope.hiddenSections = {};
@@ -255,6 +256,7 @@ trackerCapture.controller('DataEntryController',
         $scope.warningMessages[event] = [];
         $scope.errorMessages[event] = [];
         $scope.hiddenFields[event] = [];
+        $scope.mandatoryFields[event] = [];
         
         angular.forEach($rootScope.ruleeffects[event], function (effect) {
             //in the data entry controller we only care about the "hidefield", showerror and showwarning actions
@@ -362,8 +364,9 @@ trackerCapture.controller('DataEntryController',
                         }
                     }
                 }
-            }
-            else if (effect.action === "HIDEPROGRAMSTAGE") {
+            }else if (effect.action === "SETMANDATORYFIELD"){                    
+                $scope.mandatoryFields[event][effect.dataElement.id] = effect.ineffect;
+            }else if (effect.action === "HIDEPROGRAMSTAGE") {
                 if (effect.programStage) {
                     if($scope.stagesNotShowingInStageTasks[effect.programStage.id] !== effect.ineffect )
                     {
@@ -688,6 +691,9 @@ trackerCapture.controller('DataEntryController',
                 if ($scope.selectedOrgUnit.reportDateRange) {
                     if ($scope.selectedOrgUnit.reportDateRange.minDate) {
                         $scope.model.minDate = $scope.selectedOrgUnit.reportDateRange.minDate;
+                        //minDate is in Georgian format, but maxDate is not. This Service converts the date.
+                        $scope.model.minDate = DateUtils.formatFromApiToUserCalendar($scope.model.minDate);
+                        $scope.model.minDate = DateUtils.formatFromApiToUser($scope.model.minDate);
                     }
                     if ($scope.selectedOrgUnit.reportDateRange.maxDate) {
                         $scope.model.maxDate = $scope.selectedOrgUnit.reportDateRange.maxDate;

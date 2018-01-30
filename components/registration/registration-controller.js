@@ -139,7 +139,7 @@ trackerCapture.controller('RegistrationController',
         $scope.model.maxEnrollmentDate =  ($scope.selectedProgram && $scope.selectedProgram.selectEnrollmentDatesInFuture) ? '' : "0";
         if ($scope.selectedOrgUnit.reportDateRange) {
             if ($scope.selectedOrgUnit.reportDateRange.minDate) {
-                $scope.model.minEnrollmentDate = $scope.selectedOrgUnit.reportDateRange.minDate;
+                $scope.model.minEnrollmentDate = DateUtils.formatFromApiToUserCalendar($scope.selectedOrgUnit.reportDateRange.minDate);
             }
             if ($scope.selectedOrgUnit.reportDateRange.maxDate) {
                 $scope.model.maxEnrollmentDate = $scope.selectedOrgUnit.reportDateRange.maxDate;
@@ -441,7 +441,16 @@ trackerCapture.controller('RegistrationController',
             NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("form_is_empty_fill_at_least_one"));
             return;
         }
-        performRegistration(destination);
+
+        if(!destination) {
+            TEIService.getRelationships($scope.tei.trackedEntityInstance).then(function(result) {
+                $scope.tei.relationships = result;
+                performRegistration(destination);
+            });
+        } else {
+            performRegistration(destination);
+        }
+        
     };
 
     $scope.executeRules = function () {
@@ -523,6 +532,7 @@ trackerCapture.controller('RegistrationController',
             $scope.hiddenSections = effectResult.hiddenSections;
             $scope.assignedFields = effectResult.assignedFields;
             $scope.warningMessages = effectResult.warningMessages;
+            $scope.mandatoryFields = effectResult.mandatoryFields;
         }
     });
 

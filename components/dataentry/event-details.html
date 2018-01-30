@@ -1,7 +1,7 @@
 <!-- event dates/scheduling begin -->
 <div class="row" ng-if="displayCustomForm !== 'TABLE' && displayCustomForm !== 'COMPARE'">
         
-    <div ng-class="{true: 'col-sm-12', false: 'col-sm-6'} [currentStage.hideDueDate || currentStage.periodType !== undefined]">
+    <div ng-class="{true: 'col-md-12', false: 'col-md-6'} [currentStage.hideDueDate || currentStage.periodType !== undefined]">
         {{currentStage.executionDateLabel ? currentStage.executionDateLabel : 'report_date' | translate}}
         <span class="required">*</span>
         <input type="text"
@@ -40,8 +40,7 @@
                d2-date-validator
                d2-date
                name="dueDate"
-               max-date="model.maxDate?model.maxDate : ''"
-               min-date="model.minDate?model.minDate : ''"
+               min-date="model.minDate?model.maxDate : ''"
                ng-model="currentEvent.dueDate"
                ng-change="verifyExpiryDate('currentEvent.dueDate')"
                blur-or-change="saveDueDate()"
