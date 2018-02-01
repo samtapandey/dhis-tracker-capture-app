@@ -44,34 +44,35 @@ angular.module('trackerCaptureServices')
                 });
                 return def.promise();
             },
-            createCustomId :  function(regDate,level3OrgUnitCode,grandParentOrgUnitCode){
+            createCustomId :  function(regDate,level3OrgUnitCode,grandParentOrgUnitCode,totalTeiCount){
 
                 var thisDef = $.Deferred();
 
-                //var constantPreFix = "PLAN";
-                //var prefix = "";
+                //var constantPreFix = "MSF";
+                var prefix = "";
                 //console.log( "total Count -- " + response.data.height);
                 //var totalTei = response.data.height + 1;
 
-                //var totalTei = totalTeiCount;
-                // for Reset after count 9999
-                //totalTei = 10000;
+                var totalTei = totalTeiCount;
+                // for Reset after count 99999
+                //totalTei = 100000;
 
                 /*
                 totalTei = totalTei%10000;
                 if( totalTei == 0 ) totalTei = 1;
+                 */
 
                 if( totalTei <10) prefix="0000";
                 else if (totalTei >9 && totalTei<100) prefix="000";
                 else if(totalTei>99 && totalTei<1000) prefix="00";
                 else if(totalTei>999 && totalTei<10000) prefix="0";
-                */
+
                 // change in requirement - adding random number
-                var prefix = Math.floor(Math.random()*(9999-1000) + 1000);
+                //var prefix = Math.floor(Math.random()*(9999-1000) + 1000);
 
                 //def.resolve(constant + prefix + totalTei );
-                //var finalCustomId = constantPreFix + orgUnitCode + regDate+ prefix + totalTei;
-                var finalCustomId = level3OrgUnitCode + "-" +  grandParentOrgUnitCode + "-" + regDate + "-" + prefix;
+                var finalCustomId = level3OrgUnitCode + "-" + grandParentOrgUnitCode + "-" + regDate + "-" + prefix + totalTei;
+                //var finalCustomId = level3OrgUnitCode + "-" +  grandParentOrgUnitCode + "-" + regDate + "-" + prefix;
                 thisDef.resolve(finalCustomId);
 
                 /*
@@ -105,10 +106,10 @@ angular.module('trackerCaptureServices')
                 return thisDef;
 
             },
-            createCustomIdAndSave: function(tei,customIDAttribute,optionSets,attributesById,regDate,level3OrgUnitCode,grandParentOrgUnitCode){
+            createCustomIdAndSave: function(tei,customIDAttribute,optionSets,attributesById,regDate,level3OrgUnitCode,grandParentOrgUnitCode,totalTei){
                 var def = $.Deferred();
                 console.log( regDate +"--"+ level3OrgUnitCode + "--" + grandParentOrgUnitCode);
-                this.createCustomId(regDate,level3OrgUnitCode,grandParentOrgUnitCode).then(function(customId){
+                this.createCustomId(regDate,level3OrgUnitCode,grandParentOrgUnitCode,totalTei).then(function(customId){
                     var attributeExists = false;
                     angular.forEach(tei.attributes,function(attribute){
                         if (attribute.attribute == customIDAttribute.id){
@@ -194,19 +195,19 @@ angular.module('trackerCaptureServices')
                             //var customRegDate = regDate.split("-")[1]+regDate.split("-")[0].slice(-2);
                             var customRegDate = regDate.split("-")[0].slice(-2);
 
-                            //CustomIdService.getLevel3OrganisationUnit().then(function(responseOrgUnit){
-                                //var level3OrgUnitCode = responseOrgUnit.organisationUnits[0].code;
+                            CustomIdService.getTotalTeiByProgram(programUid).then(function(teiResponse){
+                                var totalTei = teiResponse.trackedEntityInstances.length;
                                 CustomIdService.getGrandParentOrgunitCode(tei.orgUnit).then(function(grandParentOrgUnitCodeResponse){
                                 var grandParentOrgUnitCode = grandParentOrgUnitCodeResponse.parent.parent.code;
 								                var level3OrgUnitCode = grandParentOrgUnitCodeResponse.parent.parent.parent.code;
 								
-                                    thiz.createCustomIdAndSave(tei,customIDAttribute,optionSets,attributesById,customRegDate,level3OrgUnitCode,grandParentOrgUnitCode).then(function(response){
+                                    thiz.createCustomIdAndSave(tei,customIDAttribute,optionSets,attributesById,customRegDate,level3OrgUnitCode,grandParentOrgUnitCode,totalTei).then(function(response){
                                         def.resolve(response);
                                     });
 
                                 });
 
-                            //});
+                            });
                         }
                         else
                         {

@@ -28,7 +28,8 @@ trackerCapture.controller('RegistrationController',
                 TCStorageService,
                 ModalService,
                  // add for Generate CustomId for msf-customizations
-                 CustomIDGenerationService) {
+                 CustomIDGenerationService,
+                 CustomIdService) {
     $scope.today = DateUtils.getToday();
     $scope.trackedEntityForm = null;
     $scope.customRegistrationForm = null;    
@@ -48,9 +49,10 @@ trackerCapture.controller('RegistrationController',
     var flag = {debug: true, verbose: false};
     $rootScope.ruleeffects = {};
 
-		// for msf-customizations display on load
-	$scope.fileNumber = 'lYrG0wc9kI3';
-	$scope.phoneNumber = 'FzXnQEnYFa5';
+		    // for msf-customizations display on load
+      $scope.fileNumber = 'lYrG0wc9kI3';
+      $scope.phoneNumber = 'FzXnQEnYFa5';
+      $scope.generatedCustomId = '';
 	
     $scope.attributesById = CurrentSelection.getAttributesById();
 
@@ -412,9 +414,11 @@ trackerCapture.controller('RegistrationController',
                 }
 
                 // create custom id for MSF
+                /*
                 CustomIDGenerationService.validateAndCreateCustomId($scope.tei,$scope.selectedProgram.id,$scope.attributes,destination,$scope.optionSets,$scope.attributesById,$scope.selectedEnrollment.enrollmentDate).then(function(){
 
                 });
+                */
 
             }
             else {//update/registration has failed
@@ -459,10 +463,108 @@ trackerCapture.controller('RegistrationController',
             $scope.selectedTei.attributes = $scope.tei.attributes = [];
         }
 
+        // custom ID generation for MSF
+        if ($scope.registrationMode === 'REGISTRATION' && $scope.selectedProgram.id === 'VCuHIFtJJSv')
+        {
+            /*
+            var isValidProgram = false;
+
+            CustomIdService.getProgramAttributeAndValue($scope.selectedProgram.id).then(function(data){
+                if( data.attributeValues != undefined )
+                {
+                    for (var i=0;i<data.attributeValues.length;i++)
+                    {
+                        if (data.attributeValues[i].attribute.code == 'allowRegistration' && data.attributeValues[i].value == "true")
+                        {
+                            isValidProgram = true; break;
+                        }
+                    }
+                }
+                if ( isValidProgram )
+                {
+                    CustomIdService.getTotalTeiByProgram($scope.selectedProgram.id).then(function(teiResponse){
+                        var totalTei = teiResponse.trackedEntityInstances.length;
+                        CustomIdService.getGrandParentOrgunitCode($scope.selectedOrgUnit.id).then(function(grandParentOrgUnitCodeResponse){
+                            var grandParentOrgUnitCode = grandParentOrgUnitCodeResponse.parent.parent.code;
+                            var level3OrgUnitCode = grandParentOrgUnitCodeResponse.parent.parent.parent.code;
+                            var prefix = "";
+                            var regDate = $scope.selectedEnrollment.enrollmentDate;
+                            var customRegDate = regDate.split("-")[0].slice(-2);
+                            var totalTeiCount = parseInt( totalTei )  + 1 ;
+
+
+                            if( totalTeiCount <10) prefix="0000";
+                            else if (totalTeiCount >9 && totalTeiCount<100) prefix="000";
+                            else if(totalTeiCount>99 && totalTeiCount<1000) prefix="00";
+                            else if(totalTeiCount>999 && totalTeiCount<10000) prefix="0";
+
+                            $scope.generatedCustomId  = level3OrgUnitCode + "-" + grandParentOrgUnitCode + "-" + customRegDate + "-" + prefix + totalTei;
+
+                        });
+                    });
+                }
+                else
+                {
+                    $scope.generatedCustomId = '';
+                }
+            });
+            */
+
+            $.ajax({
+                async:false,
+                type: "GET",
+                url: '../api/trackedEntityInstances.json?program=' + $scope.selectedProgram.id + "&ouMode=ALL&skipPaging=true",
+                success: function(responseTei){
+
+                    $.ajax({
+                        async:false,
+                        type: "GET",
+                        url: '../api/organisationUnits/' + $scope.selectedOrgUnit.id + ".json?fields=id,name,code,parent[id,name,code,parent[id,name,code,parent[id,name,code]]],attributeValues[attribute[id,name,code],value]&paging=false",
+                        success: function(grandParentOrgUnitCodeResponse){
+
+                            var totalTei = responseTei.trackedEntityInstances.length;
+
+                            var grandParentOrgUnitCode = grandParentOrgUnitCodeResponse.parent.parent.code;
+                            var level3OrgUnitCode = grandParentOrgUnitCodeResponse.parent.parent.parent.code;
+                            var prefix = "";
+                            var regDate = $scope.selectedEnrollment.enrollmentDate;
+                            var customRegDate = regDate.split("-")[0].slice(-2);
+                            var totalTeiCount = parseInt( totalTei )  + 1 ;
+
+                            /*
+                             totalTei = totalTei%10000;
+                             if( totalTei == 0 ) totalTei = 1;
+                             */
+
+                            if( totalTeiCount <10) prefix="0000";
+                            else if (totalTeiCount >9 && totalTeiCount<100) prefix="000";
+                            else if(totalTeiCount>99 && totalTeiCount<1000) prefix="00";
+                            else if(totalTeiCount>999 && totalTeiCount<10000) prefix="0";
+
+                            // change in requirement - adding random number
+                            //var prefix = Math.floor(Math.random()*(9999-1000) + 1000);
+
+                            //def.resolve(constant + prefix + totalTei );
+                            $scope.generatedCustomId  = level3OrgUnitCode + "-" + grandParentOrgUnitCode + "-" + customRegDate + "-" + prefix + totalTei;
+                            //var finalCustomId = level3OrgUnitCode + "-" +  grandParentOrgUnitCode + "-" + regDate + "-" + prefix;
+
+                        },
+                        error: function(grandParentOrgUnitCodeResponse){
+                        }
+
+                    });
+                },
+                error: function(responseTei){
+                }
+
+            });
+        }
+        //end custom ID generation for MSF
+
         //get tei attributes and their values
         //but there could be a case where attributes are non-mandatory and
         //registration form comes empty, in this case enforce at least one value
-        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById);
+        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById, $scope.generatedCustomId);
         $scope.formEmpty = result.formEmpty;
         $scope.tei = result.tei;
 
