@@ -48,6 +48,7 @@ trackerCapture.controller('RegistrationController',
     var flag = {debug: true, verbose: false};
     $rootScope.ruleeffects = {};
 
+    $scope.generatedCustomId = '';
     $scope.attributesById = CurrentSelection.getAttributesById();
 
     if(!$scope.attributesById){
@@ -82,10 +83,19 @@ trackerCapture.controller('RegistrationController',
             CurrentSelection.setOptionSets($scope.optionSets);
         });
     }
-    
-    
+
+    // update for PLAN for disable attribute patient_identifier
     $scope.isDisabled = function(attribute) {
-        return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
+
+        if( attribute.code === 'patient_identifier')
+        {
+            return true;
+        }
+        else
+        {
+            return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
+        }
+
     };
 
     var selectedOrgUnit = CurrentSelection.get()["orgUnit"];
@@ -362,7 +372,7 @@ trackerCapture.controller('RegistrationController',
                                     var avilableEvent = $scope.currentEvent && $scope.currentEvent.event ? $scope.currentEvent : null;
                                     var dhis2Events = EventUtils.autoGenerateEvents($scope.tei.trackedEntityInstance, $scope.selectedProgram, $scope.selectedOrgUnit, enrollment, avilableEvent);
 									// custom id start
-										CustomIDGenerationService.validateAndCreateCustomId($scope.tei,$scope.selectedProgram.id,$scope.attributes,destination,$scope.optionSets,$scope.attributesById,$scope.selectedEnrollment.enrollmentDate).then(function(){
+										//CustomIDGenerationService.validateAndCreateCustomId($scope.tei,$scope.selectedProgram.id,$scope.attributes,destination,$scope.optionSets,$scope.attributesById,$scope.selectedEnrollment.enrollmentDate).then(function(){
                                     if (dhis2Events.events.length > 0) {
                                         DHIS2EventFactory.create(dhis2Events).then(function () {
                                             notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
@@ -372,7 +382,7 @@ trackerCapture.controller('RegistrationController',
                                     }
 									
 									// custom id close
-                                    });
+                                    //});
                                 }
                                 else {
                                     //enrollment has failed
@@ -430,10 +440,57 @@ trackerCapture.controller('RegistrationController',
             $scope.selectedTei.attributes = $scope.tei.attributes = [];
         }
 
+
+        // custom ID generation for PLAN
+        if ($scope.registrationMode === 'REGISTRATION' && $scope.selectedProgram.id === 'y6lXVg8TdOj')
+        {
+            $.ajax({
+                async:false,
+                type: "GET",
+                url: '../api/trackedEntityInstances.json?program=' + $scope.selectedProgram.id + "&ouMode=ALL&skipPaging=true",
+                success: function(responseTei){
+                    var totalTei = responseTei.trackedEntityInstances.length;
+
+                    var projectDonor = "";
+                    if ($scope.selectedTei.KLSVjftH2xS != undefined)
+                    {
+                        projectDonor = $scope.selectedTei.KLSVjftH2xS;
+                    }
+
+                    var prefix = "PLAN";
+                    var countPrefix = "";
+                    var regDate = $scope.selectedEnrollment.enrollmentDate;
+                    var customRegDate = regDate.split("-")[0].slice(-2);
+                    var totalTeiCount = parseInt( totalTei )  + 1 ;
+
+                    totalTei = totalTei%10000;
+                    if( totalTei == 0 ) totalTei = 1;
+
+                    if( totalTeiCount <10) countPrefix="0000";
+                    else if (totalTeiCount >9 && totalTeiCount<100) countPrefix="000";
+                    else if(totalTeiCount>99 && totalTeiCount<1000) countPrefix="00";
+                    else if(totalTeiCount>999 && totalTeiCount<10000) countPrefix="0";
+
+                    // change in requirement - adding random number
+                    //var prefix = Math.floor(Math.random()*(9999-1000) + 1000);
+
+                    //def.resolve(constant + prefix + totalTei );
+                    $scope.generatedCustomId  = prefix + "-" + projectDonor + "-" + customRegDate + "-" + countPrefix + totalTei;
+                    //var finalCustomId = level3OrgUnitCode + "-" +  grandParentOrgUnitCode + "-" + regDate + "-" + prefix;
+
+
+                },
+                error: function(responseTei){
+                }
+
+            });
+        }
+        //end custom ID generation for PLAN
+
         //get tei attributes and their values
         //but there could be a case where attributes are non-mandatory and
         //registration form comes empty, in this case enforce at least one value
-        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById);
+        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById, $scope.generatedCustomId);
         $scope.formEmpty = result.formEmpty;
         $scope.tei = result.tei;
 
