@@ -179,27 +179,9 @@ trackerCapture.controller('EventCreationController',
             var trackedEntityInstanceId = getTei.split('&')[0];
             $scope.prgId = getprg.split('&')[0];
 
-            if ($scope.prgId == 'gQNcOkBRn8n' || $scope.prgId == 'CEAUS4S9J7z' || $scope.prgId == 'JOxjgE06Akh') {
+            if ($scope.prgId == 'HTCqTWEF1XS' || $scope.prgId == 'K3XysZ53B4r' || $scope.prgId == 'CsEmq8UNA6z') {
 
-                $scope.todayDate1 = new Date();
-                $scope.customYear = $scope.todayDate1.getFullYear();
-                $scope.customMonth1 = $scope.todayDate1.getMonth() + 1;
-                if ($scope.customMonth1 < 10) {
-                    $scope.customMonth = "0" + $scope.customMonth1;
-                }
-                else {
-                    $scope.customMonth = $scope.customMonth1;
-                }
-
-                $scope.customDay1 = $scope.todayDate1.getDate();
-                if ($scope.customDay1 < 10) {
-                    $scope.customDay = "0" + $scope.customDay1;
-                }
-                else {
-                    $scope.customDay = $scope.customDay1;
-                }
-
-                $scope.todayDate = $scope.customYear + "-" + $scope.customMonth + "-" + $scope.customDay;
+              
 
                 $.ajax({
                     async: false,
@@ -209,15 +191,17 @@ trackerCapture.controller('EventCreationController',
                         if (response.events.length > 0) {
                             $scope.allCreatedDates = [];
                             for (var p = 0; p < response.events.length; p++) {
-                                if (response.events[p].created) {
-                                    $scope.createdDate = response.events[p].created.split("T")[0];
+                                if (response.events[p].eventDate) {
+                                    $scope.createdDate = response.events[p].eventDate.split("T")[0];
                                     $scope.allCreatedDates.push($scope.createdDate);
                                 }
                             }
                         }
+                        $scope.matchingDate1 = $scope.dhis2Event.eventDate;
+                        $scope.matchingDate = $scope.matchingDate1.split("-").reverse().join("-");
 
-                        if ($scope.allCreatedDates != undefined && $scope.allCreatedDates.indexOf($scope.todayDate) > -1) {
-                            alert("Event of today's date already exist!")
+                        if ($scope.allCreatedDates != undefined && $scope.allCreatedDates.indexOf($scope.matchingDate) > -1) {
+                            alert("Event of selected date already exist!")
                         }
                         else {
                             $scope.getCategoryOptions();

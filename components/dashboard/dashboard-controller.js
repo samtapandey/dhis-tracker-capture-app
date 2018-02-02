@@ -223,10 +223,10 @@ trackerCapture.controller('DashboardController',
                                         $scope.matchUsername = response.userCredentials.username;
                                     }
                                 });
-                                
+
                                 var url1 = window.location.href;
                                 var params = url1.split('=');
-            
+
                                 var gotProgramId = params[2];
                                 var paramsprogram = gotProgramId.split('&');
                                 var gotProgramIdUsed = paramsprogram[0];
@@ -236,7 +236,7 @@ trackerCapture.controller('DashboardController',
                                     dataType: "json",
                                     async: false,
                                     contentType: "application/json",
-                                    url: "../api/programs/"+gotProgramIdUsed+".json",
+                                    url: "../api/programs/" + gotProgramIdUsed + ".json",
                                     success: function (responseName) {
                                         $scope.gotProgramIdUsedName = responseName.name;
                                     }
@@ -248,18 +248,22 @@ trackerCapture.controller('DashboardController',
                                         $scope.selectedUserName = $scope.selectedEntityinstance[i].value;
                                     }
                                 }
-                
-                                if($scope.gotProgramIdUsedName == $scope.gynaecologistPBR || $scope.gotProgramIdUsedName == $scope.anaesthetistPBR || $scope.gotProgramIdUsedName == $scope.paediatricPBR){
-                                    $scope.editProfile = function () {
-                                        if ($scope.matchUsername === $scope.selectedUserName) {
-                                            return true
+
+                                $scope.editProfile = function () {
+                                    if (CurrentSelection.currentSelection.pr) {
+                                        if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR) {
+                                            if ($scope.matchUsername === $scope.selectedUserName) {
+                                                return true
+                                            }
+                                            else {
+                                                return false
+                                            }
                                         }
                                         else {
-                                            return false
+                                            return true
                                         }
                                     }
                                 }
-
                             });
                         });
                     });

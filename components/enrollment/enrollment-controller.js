@@ -76,14 +76,17 @@ trackerCapture.controller('EnrollmentController',
                 }
 
 
-                if(CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR){
-                    $scope.editProfile = function () {
+                $scope.editProfile = function () {
+                    if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR) {
                         if ($scope.matchUsername === $scope.selectedUserName) {
                             return true
                         }
                         else {
                             return false
                         }
+                    }
+                    else {
+                        return true
                     }
                 }
 

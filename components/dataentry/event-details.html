@@ -1,7 +1,7 @@
 <!-- event dates/scheduling begin -->
 <div class="row" ng-if="displayCustomForm !== 'TABLE' && displayCustomForm !== 'COMPARE' && !currentStage.periodType">
 
-    <div ng-class="{true: 'col-sm-12', false: 'col-sm-6'} [currentStage.hideDueDate]">
+    <div ng-class="{true: 'col-sm-12', false: 'col-sm-6'} [currentStage.hideDueDate]" ng-if="!editProfile()">
         {{currentEvent.executionDateLabel ? currentEvent.executionDateLabel : 'report_date' | translate}}
         <input type="text"
                placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
@@ -14,6 +14,30 @@
                name="eventDate"
                ng-model="currentEvent.eventDate"
                ng-disabled="currentEvent.status === 'SKIPPED' || selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed"    
+               ng-required="true"
+               blur-or-change="saveEventDate()"/>
+        <input type="text"
+               class="form-control not-for-screen" 
+               ng-class="{'input-success': eventDateSaved}"               
+               value={{currentEvent.eventDate}}>
+        <div ng-messages="outerDataEntryForm.eventDate.$error" ng-if="interacted(outerDataEntryForm.eventDate)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">                        
+        </div>        
+    </div>
+<!-- Custom Changes -->
+
+    <div ng-class="{true: 'col-sm-12', false: 'col-sm-6'} [currentStage.hideDueDate]" ng-if ="editProfile()" >
+        {{currentEvent.executionDateLabel ? currentEvent.executionDateLabel : 'report_date' | translate}}
+        <input type="text"
+               placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
+               class="form-control hideInPrint" 
+               ng-class="{'input-success': eventDateSaved}"
+               d2-date-validator 
+               d2-date 
+               max-date="0"
+               min-date="-3"
+               name="eventDate"
+               ng-model="currentEvent.eventDate"
+               ng-disabled="true"    
                ng-required="true"
                blur-or-change="saveEventDate()"/>
         <input type="text"

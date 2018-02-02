@@ -79,6 +79,16 @@ trackerCapture.controller('DataEntryController',
         $scope.visibleWidgetsInMainMenu = { enrollment: true, dataentry: true, close_file: true };
         $rootScope.$broadcast('DataEntryMainMenuVisibilitySet', { visible: $scope.useMainMenu, visibleItems: $scope.visibleWidgetsInMainMenu });
 
+
+        $scope.myValidation = function () {
+            if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
         $.ajax({
             type: "GET",
             dataType: "json",
@@ -96,14 +106,18 @@ trackerCapture.controller('DataEntryController',
             }
         }
 
-        if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR) {
-            $scope.editProfile = function () {
+
+        $scope.editProfile = function () {
+            if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR) {
                 if ($scope.matchUsername === $scope.selectedUserName) {
                     return true
                 }
                 else {
                     return false
                 }
+            }
+            else {
+                return true
             }
         }
         var modalCompleteIncompleteActions = { complete: 'complete', completeAndExit: 'completeandexit', completeEnrollment: 'completeenrollment', edit: 'edit' };

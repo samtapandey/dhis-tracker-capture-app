@@ -51,7 +51,7 @@ trackerCapture.controller('RegistrationController',
     var flag = {debug: true, verbose: false};
     $rootScope.ruleeffects = {};
 
-    $scope.usernameAttributeId ='oauWNA1RdWm';   
+    $scope.usernameAttributeId ='GCyx4hTzy3j';   
     $scope.username = '';
     $scope.matchUsername = '';
 
