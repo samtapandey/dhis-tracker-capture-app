@@ -45,13 +45,14 @@
                     ng-class="{true: 'inactive-tei'} [trackedEntity.inactive]"
                     title="{{mainTei.trackedEntityInstance ? 'select' : 'go_to_dashboard'| translate}}">
 					<td ng-show="selectedProgram.id=='SUCUF657zNe'">
-					<button id="test" class="btn btn-danger btn-sm "  
+					
+					<button  
                  
               
-                data-toggle="popover" title="Number of Visits" data-content={{visitnumber}}
+                class="meddelanden"  data-toggle="popover" 
                  
                    ng-click="medicaldetails(trackedEntity.id)">
-                          <span class="glyphicon glyphicon-star"></span> </button> 
+                          <span class="glyphicon glyphicon-star"></span> </button>
           
        
      

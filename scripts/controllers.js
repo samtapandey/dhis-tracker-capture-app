@@ -675,7 +675,8 @@ $scope.medicaldetails=function(medicalid){
 	  $.ajaxSetup({
         async: false
     });
-
+$("[data-toggle='popover']").popover('destroy');
+        
       var trackid =medicalid;
 	
 	 var ancvisisttnumber=0;
@@ -716,10 +717,14 @@ $scope.medicaldetails=function(medicalid){
 			
 			  }); 
 			$scope.visitnumber="ANC"+"-"+ancvisisttnumber+"    "+"PNC"+"-"+pncvisisttnumber+"    "+"Delivery"+"-"+deliveryvisisttnumber;
- $('[data-toggle="popover"]').popover({
-        placement : 'top',
-        trigger : 'click'
-    });
+    $('[data-toggle="popover"]').popover({
+        placement : 'right',
+		 trigger : 'click',
+	    title : 'Number of Visits&nbsp<button id="close-popover" data-toggle="clickover" class="btn btn-small btn-danger" onclick="$(&quot;.meddelanden&quot;).popover(&quot;hide&quot;);event.stopPropagation();">X</button>',
+     
+        content : "<table class='table table-bordered'><thead><tr><th>Name</th><th>Number</th></tr></thead><tbody><tr><td>ANC</td><td>"+ancvisisttnumber+"</td></tr><tr><td>PNC</td><td>"+pncvisisttnumber+"</td></tr><tr><td>Delivery</td><td>"+deliveryvisisttnumber+"</td></tr></tbody></table>",
+        html: true
+    }); 
  event.stopPropagation();
 	
 	
