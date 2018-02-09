@@ -1,3 +1,4 @@
+
 <div class="row vertical-spacing" ng-if="enrollmentStatus==='TODAY' && selectedProgram && (selectedProgram.displayFrontPageList || frontPageListEnabled)">
     <div id="selectDropDownParent" class="input-group col-md-3">
         <button type="button" class="select-dropdown-button form-control">{{selectedEventsTodayFilter.name}}</button>
@@ -21,8 +22,9 @@
         <table class="table table-striped dhis2-table-hover table-bordered">               
             <thead>                        
                 <tr>
+				 <td ng-show="selectedProgram.id=='SUCUF657zNe'"><b>Visit Number</b></td> 
                     <th ng-repeat="gridColumn in gridColumns| filter:{show: true}" class='mouse-pointer' ng-click="sortGrid(gridColumn)">                            
-                        <!-- sort icon begins -->                                
+                        <!-- sort icon begins -->                              
                         <span ng-hide="gridColumn.showFilter" class="bold pointer" title="{{'sort'| translate}}" class="fa fa-sort">
                             <span class="fa-stack">
                                 <span ng-class="{true: 'red'} [sortColumn.id === gridColumn.id && !reverse]"><i class="fa fa-sort-asc fa-stack-1x"></i></span>
@@ -35,11 +37,25 @@
                 </tr>                        
             </thead>
             <tbody id="list">
-                <tr ng-if="!addingTeiAssociate"
+			    
+                <tr
+			ng-if="!addingTeiAssociate"
                     ng-repeat="trackedEntity in trackedEntityList.rows.own | orderBy:d2Sort:reverse" 
                     ng-click="mainTei.trackedEntityInstance ? assignRelationship(trackedEntity) : showDashboard(trackedEntity)"
                     ng-class="{true: 'inactive-tei'} [trackedEntity.inactive]"
                     title="{{mainTei.trackedEntityInstance ? 'select' : 'go_to_dashboard'| translate}}">
+					<td ng-show="selectedProgram.id=='SUCUF657zNe'">
+					<button id="test" class="btn btn-danger btn-sm "  
+                 
+              
+                data-toggle="popover" title="Number of Visits" data-content={{visitnumber}}
+                 
+                   ng-click="medicaldetails(trackedEntity.id)">
+                          <span class="glyphicon glyphicon-star"></span> </button> 
+          
+       
+     
+       </td>
                     <td ng-repeat="gridColumn in gridColumns| filter:{show: true}">
                         <span ng-switch="gridColumn.valueType">
                             <span ng-switch-when="BOOLEAN">
@@ -56,6 +72,7 @@
                         </span>
                     </td>
                 </tr>
+				
                 <tr ng-if="!addingTeiAssociate"
                     ng-repeat="trackedEntity in trackedEntityList.rows.other | orderBy:d2Sort:reverse" 
                     ng-click="mainTei.trackedEntityInstance ? assignRelationship(trackedEntity) : showDashboard(trackedEntity)"
@@ -128,3 +145,4 @@
 
     </div>
 </div>
+

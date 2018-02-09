@@ -1,7 +1,6 @@
-
 <style>
 
-.search-box{
+.search-box,btn btn-info btn-sm{
 	position: relative;
 	padding: 6px 12px;
 }
@@ -413,9 +412,9 @@ font-size: 14px;
                                ng-blur="teiValueUpdated(selectedTei, attribute.id)"
                                ng-required="attribute.mandatory"
 							   ng-change="validate(selectedTei, attribute.id)"/> 
-							   <!-- <button id="speechbtn" class="btn btn-info btn-sm " ng-click="speechrecognise(attribute.id)">
+							   <!--<button id="speechbtn" class="btn btn-info btn-sm " ng-click="speechrecognise(attribute.id)">
                           <span class="glyphicon glyphicon-volume-up"></span>
-                                  </button>-->
+                                  </button> -->
 					  <p ng-show="attribute.id=='gZAFVJdEgIQ'  && selectedTei.gZAFVJdEgIQ.length > 18"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  class="help-block" >MTCS ID is too Long</p>
 					   <p ng-show="attribute.id=='gZAFVJdEgIQ' && selectedTei.gZAFVJdEgIQ.length < 18"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  >MTCS ID is too Short</p>
                       <p ng-show="attribute.id=='AiPFBqutPYy'  && selectedTei.AiPFBqutPYy.length > 18"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  class="help-block" >MTCS ID is too Long</p>

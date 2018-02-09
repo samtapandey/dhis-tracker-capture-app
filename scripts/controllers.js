@@ -667,7 +667,64 @@ function($rootScope,
         }, function () {
         });
     };
+	
+	
+	
 
+$scope.medicaldetails=function(medicalid){
+	  $.ajaxSetup({
+        async: false
+    });
+
+      var trackid =medicalid;
+	
+	 var ancvisisttnumber=0;
+	var pncvisisttnumber=0;
+	var deliveryvisisttnumber="No";
+ $.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=SUCUF657zNe&trackedEntityInstance="+trackid+"&skipPaging=true", function (data) {
+	
+			var trackdata=data;
+                
+				 var iDiv = document.createElement('table');
+                 iDiv.id = 'tablepopover';
+				 iDiv.class='report';
+				for(var i=0;i<trackdata.events.length;i++)
+				{
+				var matchevent=trackdata.events[i].programStage;
+			
+				if(matchevent=="aAmtHNAQo7g"||matchevent=="WMnWjG8PS58")//aAmtHNAQo7g
+				{
+
+				if(trackdata.events[i].eventDate)
+			     ancvisisttnumber++;
+				}
+				
+				else if(matchevent=="DEwcVnLljOB")//aAmtHNAQo7g
+				{
+
+				if(trackdata.events[i].eventDate)
+				pncvisisttnumber++;
+				}
+				else if(matchevent=="u0c2uIZBvks")//aAmtHNAQo7g
+				{
+
+				if(trackdata.events[i].eventDate)
+				deliveryvisisttnumber="Yes";
+				}
+				}
+			
+			
+			  }); 
+			$scope.visitnumber="ANC"+"-"+ancvisisttnumber+"    "+"PNC"+"-"+pncvisisttnumber+"    "+"Delivery"+"-"+deliveryvisisttnumber;
+ $('[data-toggle="popover"]').popover({
+        placement : 'top',
+        trigger : 'click'
+    });
+ event.stopPropagation();
+	
+	
+	
+};
     $scope.showDashboard = function(currentEntity){
         var sortedTei = [];
         var sortedTeiIds = [];
