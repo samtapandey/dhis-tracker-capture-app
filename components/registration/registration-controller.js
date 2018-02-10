@@ -564,7 +564,9 @@ $scope.recognition.onresult = function() {
 	  $scope.validate = function (tei, field) {
 		console.log(tei);
 		$scope.mtcsid0fchild=tei.gZAFVJdEgIQ;
-		$scope.mtcsid0fmother=tei.AiPFBqutPYy
+		$scope.mtcsid0fmother=tei.AiPFBqutPYy;
+		$scope.house_unniqueid=tei.uHv60gjn2gp;
+		$scope.familymember_unniqueid=tei.Dnm1mq6iq2d;
 		if(field=="gZAFVJdEgIQ"){
 		if($scope.mtcsid0fchild.length>18 ||$scope.mtcsid0fchild.length <18 ){
 			
@@ -586,6 +588,30 @@ $scope.recognition.onresult = function() {
 			// block the save button
 			//alert("please check value");
 			document.getElementById("AiPFBqutPYy").style.backgroundColor = "white";
+		}
+		}
+		else if(field=="Dnm1mq6iq2d"){
+		 if($scope.familymember_unniqueid.length>20 ||$scope.familymember_unniqueid.length <20 ){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("Dnm1mq6iq2d").style.backgroundColor = "#FF6760";
+		}
+		else if($scope.familymember_unniqueid.length==20){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("Dnm1mq6iq2d").style.backgroundColor = "white";
+		}
+		}
+			else if(field=="uHv60gjn2gp"){
+		 if($scope.house_unniqueid.length>20 ||$scope.house_unniqueid.length <20 ){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("uHv60gjn2gp").style.backgroundColor = "#FF6760";
+		}
+		else if($scope.house_unniqueid.length==20){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("uHv60gjn2gp").style.backgroundColor = "white";
 		}
 		}
        
