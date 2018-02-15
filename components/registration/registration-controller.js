@@ -692,7 +692,15 @@ $scope.recognition.onresult = function() {
         });
         modalInstance.result.then(function (res) {
             if (res && res.id) {
-                $scope.selectedTei[selectedAttribute.id] = res.ZQMF7taSAw8;
+                $scope.selectedTei[selectedAttribute.id] = res.ZQMF7taSAw8;        // value for household        
+				if($scope.selectedTei["MV4wWoZBrJS"]==undefined && res.MV4wWoZBrJS)
+				{
+				$scope.selectedTei["MV4wWoZBrJS"] = res.MV4wWoZBrJS;                         // value for locality
+				}
+				if($scope.selectedTei["yDCO4KM4WVA"]==undefined && res.yDCO4KM4WVA)     
+				{
+				$scope.selectedTei["yDCO4KM4WVA"] = res.yDCO4KM4WVA;                            // value of anm 
+				}
             }
         });
     };
