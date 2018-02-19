@@ -47,8 +47,9 @@ trackerCapture.controller('RegistrationController',
     $scope.registrationMode = 'REGISTRATION';
     var flag = {debug: true, verbose: false};
     $rootScope.ruleeffects = {};
+     $scope.projectDonor = "";
 
-    $scope.generatedCustomId = '';
+   
     $scope.attributesById = CurrentSelection.getAttributesById();
 
     if(!$scope.attributesById){
@@ -84,10 +85,12 @@ trackerCapture.controller('RegistrationController',
         });
     }
 
+	
+
     // update for PLAN for disable attribute patient_identifier
     $scope.isDisabled = function(attribute) {
-
-        if( attribute.code === 'patient_identifier')
+   return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
+       /* if( attribute.code === 'patient_identifier')
         {
             return true;
         }
@@ -95,7 +98,7 @@ trackerCapture.controller('RegistrationController',
         {
             return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
         }
-
+*/
     };
 
     var selectedOrgUnit = CurrentSelection.get()["orgUnit"];
@@ -371,8 +374,15 @@ trackerCapture.controller('RegistrationController',
                                     $scope.selectedEnrollment = enrollment;
                                     var avilableEvent = $scope.currentEvent && $scope.currentEvent.event ? $scope.currentEvent : null;
                                     var dhis2Events = EventUtils.autoGenerateEvents($scope.tei.trackedEntityInstance, $scope.selectedProgram, $scope.selectedOrgUnit, enrollment, avilableEvent);
+
+                                    
+                                    if ($scope.selectedTei.KLSVjftH2xS != undefined)
+                                    {
+                                        $scope.projectDonor = $scope.selectedTei.KLSVjftH2xS;
+                                    }
 									// custom id start
-										//CustomIDGenerationService.validateAndCreateCustomId($scope.tei,$scope.selectedProgram.id,$scope.attributes,destination,$scope.optionSets,$scope.attributesById,$scope.selectedEnrollment.enrollmentDate).then(function(){
+									
+										CustomIDGenerationService.validateAndCreateCustomId($scope.tei,$scope.selectedProgram.id,$scope.attributes,destination,$scope.optionSets,$scope.attributesById,$scope.selectedEnrollment.enrollmentDate, $scope.projectDonor).then(function(){
                                     if (dhis2Events.events.length > 0) {
                                         DHIS2EventFactory.create(dhis2Events).then(function () {
                                             notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
@@ -382,7 +392,7 @@ trackerCapture.controller('RegistrationController',
                                     }
 									
 									// custom id close
-                                    //});
+                                  });
                                 }
                                 else {
                                     //enrollment has failed
@@ -442,7 +452,7 @@ trackerCapture.controller('RegistrationController',
 
 
         // custom ID generation for PLAN
-        if ($scope.registrationMode === 'REGISTRATION' && $scope.selectedProgram.id === 'y6lXVg8TdOj')
+       /* if ($scope.registrationMode === 'REGISTRATION' && $scope.selectedProgram.id === 'y6lXVg8TdOj')
         {
             $.ajax({
                 async:false,
@@ -484,13 +494,14 @@ trackerCapture.controller('RegistrationController',
                 }
 
             });
-        }
+        }*/
         //end custom ID generation for PLAN
 
         //get tei attributes and their values
         //but there could be a case where attributes are non-mandatory and
         //registration form comes empty, in this case enforce at least one value
-        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById, $scope.generatedCustomId);
+		
+        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById);
         $scope.formEmpty = result.formEmpty;
         $scope.tei = result.tei;
 
