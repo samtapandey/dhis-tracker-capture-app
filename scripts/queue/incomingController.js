@@ -77,100 +77,144 @@ trackerCapture.controller('incomingController', ["$rootScope", "$scope", "$timeo
 		return ounamee;
 	};
 
+
+	var getAllEvents = function (tei) {
+		var data5 = "";
+		$.ajax({
+			async: false,
+			type: "GET",
+			url: "../api/events.json?program=L78QzNqadTV&trackedEntityInstance=" + tei + "&order=eventDate:ASC&skipPaging=false",
+			success: function (data) {
+				data5 = data;
+			}
+		});
+		return data5;
+	};
+
 	var oun = "";
 	$scope.getOu = function (tei) {
 		$.ajax({
 			async: false,
 			type: "GET",
-			url: '../api/events.json?program=L78QzNqadTV&programStage=zLxGw3kEplq&trackedEntityInstance='+tei,
+			url: '../api/events.json?program=L78QzNqadTV&programStage=zLxGw3kEplq&trackedEntityInstance=' + tei,
 			success: function (data) {
-				if(data.events.length == 0){oun = "";}
-				else{oun = data.events[0].orgUnit;}
+				if (data.events.length == 0) { oun = ""; }
+				else { oun = data.events[0].orgUnit; }
 			}
 		});
 		return oun;
 	};
 
 
+	var getTeiData = function (tei) {
+		var teidata = "";
+		$.ajax({
+			async: false,
+			type: "GET",
+			url: '../api/trackedEntityInstances/' + tei + '.json',
+			success: function (data) {
+				teidata = data;
+			}
+		});
+
+		return teidata;
+	};
+
+	var teiMap = function (data) {
+		var mappedteis = [];
+		var k = 0;
+		for (var i = 0; i < data.events.length; i++) {
+			if (mappedteis.indexOf(data.events[i].trackedEntityInstance) == -1) {
+				mappedteis[k] = data.events[i].trackedEntityInstance;
+				k++;
+			}
+		}
+		return mappedteis;
+
+	};
+
+
 	$scope.loadQueue = function () {
 		var filtered_data = [];
-		var tei = "";
 		var pdata = "";
 		var flag;
-		CustomService.getOuLevel($scope.selectedOrgUnitUid).then(function (response) {
-			if (response.level == 5) {
-				CustomService.getAllEvents($scope.selectedOrgUnitUid).then(function (data1) {
-					//	console.log(data1);
-					for (var i = 0; i < data1.events.length; i++) {
-						tei = data1.events[i].trackedEntityInstance;
-						pdata = data1.events[i];
-						
-						$.ajax({
-							async: false,
-							type: "GET",
-							url: "../api/trackedEntityInstances/" + tei + ".json",
-							success: function (data) {
+		CustomService.getOuLevel($scope.selectedOrgUnitUid).then(function (oudata) {
+		
+			//checking ou level
+			if (oudata.level == 5) {
+				//getting all events on selected ou
+				CustomService.getAllEvents($scope.selectedOrgUnitUid).then(function (eventsdata) {
+					//getting unique teis from all events occuring on selected ou
+					var allTeis = teiMap(eventsdata);
+					
+					for (var j = 0, len = allTeis.length; j < len; j++) {	
+						var tei = allTeis[j];
 
-								if ($scope.selectedOrgUnitUid == data.orgUnit) { }
+						//getting all events on one tei
+						var teieventsd = getAllEvents(tei);
+						var teievents = teieventsd.events;
+						for (var y = 0, lenn = teievents.length - 1; y < lenn; y++) {
+
+							//checking ou of two consecutive events and checking for refferals
+							if (teievents[y].orgUnit != $scope.selectedOrgUnitUid && teievents[y + 1].orgUnit == $scope.selectedOrgUnitUid && teievents[y + 1].status != "COMPLETED") {
+								
+								//getting data of particular tei
+								var returnedDdata = getTeiData(tei);
+								var psd = "";
+								var ps = teievents[y+1].programStage;
+
+								//checking and filtering for program stage
+								if (ps == "zLxGw3kEplq") { psd = "ART-HIV Counselling and Testing"; }
+								else if (ps == "YRSdePjzzfs") { psd = "ART Follow-up"; }
 								else {
-
-									if (pdata.status == "COMPLETED") { }
-									else {
-										flag = 0;
-										var psd = "";
-										var ps = pdata.programStage;
-										if (ps == "zLxGw3kEplq") { psd = "ART-HIV Counselling and Testing"; }
-										else if (ps == "YRSdePjzzfs") { psd = "ART Follow-up"; flag = 1; }
-										else {
-											var psd = "";
-											return;
-										}
-
-										var teidata = data;
-										teidata.tei = data.trackedEntityInstance;
-										teidata.psd = psd;
-										//console.log(teidata);
-										for (var j = 0; j < data.attributes.length; j++) {
-											if (data.attributes[j].displayName == "Client code") {
-												teidata.clientcode = data.attributes[j].value;
-											}
-											if (data.attributes[j].displayName == "Marital status") {
-												teidata.maritalstatus = data.attributes[j].value;
-											}
-											if (data.attributes[j].displayName == "Age") {
-												teidata.age = data.attributes[j].value;
-											}
-											if (data.attributes[j].displayName == "Sex") {
-												teidata.sex = data.attributes[j].value;
-											}
-											if (data.attributes[j].displayName == "Risk group") {
-												var rg = $scope.getRiskGroup(data.attributes[j].value);
-												teidata.riskgroup = rg;
-											}
-											if (data.attributes[j].displayName == "Entry point") {
-												var ep = $scope.getEntryPoint(data.attributes[j].value);
-												teidata.entrypoint = ep;
-											}
-
-										}
-										var ouname = $scope.getOuName(data.orgUnit);
-										if (flag == 1) {
-											var ouname2 = $scope.getOu(teidata.tei);
-												if(teidata.orgUnit != ouname2){
-													ouname = $scope.getOuName(ouname2);
-												}
-										}
-										teidata.rf = ouname;
-										filtered_data.push(teidata);
-										//console.log(filtered_data);
-									}
+									var psd = "";
 								}
+								
+								//pushing all data to tei object
+								if (psd != "") {
+									var teidata = returnedDdata;
+									teidata.tei = returnedDdata.trackedEntityInstance;
+									teidata.psd = psd;
+
+									//getting all values of tei attributes
+									for (var j = 0; j < returnedDdata.attributes.length; j++) {
+										if (returnedDdata.attributes[j].displayName == "Client code") {
+											teidata.clientcode = returnedDdata.attributes[j].value;
+										}
+										if (returnedDdata.attributes[j].displayName == "Marital status") {
+											teidata.maritalstatus = returnedDdata.attributes[j].value;
+										}
+										if (returnedDdata.attributes[j].displayName == "Age (at registration)") {
+											teidata.age = returnedDdata.attributes[j].value;
+										}
+										if (returnedDdata.attributes[j].displayName == "Sex") {
+											teidata.sex = returnedDdata.attributes[j].value;
+										}
+										if (returnedDdata.attributes[j].displayName == "Risk group") {
+											var rg = $scope.getRiskGroup(returnedDdata.attributes[j].value);
+											teidata.riskgroup = rg;
+										}
+										if (returnedDdata.attributes[j].displayName == "Entry point") {
+											var ep = $scope.getEntryPoint(returnedDdata.attributes[j].value);
+											teidata.entrypoint = ep;
+										}
+
+									}
+
+									// getting ou name through whichtei is reffered
+									var ouname = $scope.getOuName(teievents[y].orgUnit);
+									teidata.rf = ouname;
+									filtered_data.push(teidata);
+								}
+
 							}
-						});
+						}
 					}
+
 				});
 				$timeout(function () {
 					$scope.filtered_teidata = filtered_data;
+					//document.getElementById('loader').style.display = "none";
 				});
 			}
 			else { alert("Wrong Selection !"); }

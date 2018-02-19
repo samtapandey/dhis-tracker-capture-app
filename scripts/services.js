@@ -2090,7 +2090,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
         },
         getAllEvents: function (ou) {
             var def = $q.defer();
-            $http.get('../api/events.json?program=L78QzNqadTV&orgUnit='+ ou).then(function (response) {
+            $http.get('../api/events.json?program=L78QzNqadTV&orgUnit='+ ou + '&fields=trackedEntityInstance&skipPaging=true').then(function (response) {
 
                 def.resolve(response.data);
             });
