@@ -99,10 +99,12 @@
                         ng-click="search(searchMode.listAll)">
                     {{listAllLabel}}
                 </button>
+
                 <button type="button"
                         class="btn btn-primary"
                         ng-disabled="showRegistrationDiv || selectedOrgUnit.closedStatus"
-                        ng-click="showRegistration()">
+                        ng-click="showRegistration()"
+                        ng-if="selectedProgram.id === 'y6lXVg8TdOj' || selectedProgram.id === 'Fcyldy4VqSt'" ng-show = "true">
                     {{registerLabel}}
                 </button>                
                 <button type="button"

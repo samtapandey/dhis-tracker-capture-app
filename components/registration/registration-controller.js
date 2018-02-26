@@ -376,10 +376,15 @@ trackerCapture.controller('RegistrationController',
                                     var dhis2Events = EventUtils.autoGenerateEvents($scope.tei.trackedEntityInstance, $scope.selectedProgram, $scope.selectedOrgUnit, enrollment, avilableEvent);
 
                                     
-                                    if ($scope.selectedTei.KLSVjftH2xS != undefined)
+                                    if ($scope.selectedProgram.id == "y6lXVg8TdOj" && $scope.selectedTei.KLSVjftH2xS != undefined )
                                     {
                                         $scope.projectDonor = $scope.selectedTei.KLSVjftH2xS;
                                     }
+                                    else if ( $scope.selectedProgram.id  == "Fcyldy4VqSt" && $scope.selectedTei.o94ggG6Mhx8 != undefined)
+                                     {
+                                        $scope.projectDonor = $scope.selectedTei.o94ggG6Mhx8;
+                                    }
+
 									// custom id start
 									
 										CustomIDGenerationService.validateAndCreateCustomId($scope.tei,$scope.selectedProgram.id,$scope.attributes,destination,$scope.optionSets,$scope.attributesById,$scope.selectedEnrollment.enrollmentDate, $scope.projectDonor).then(function(){
