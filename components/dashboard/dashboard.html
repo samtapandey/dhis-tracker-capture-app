@@ -85,12 +85,12 @@
                     </select>
                     <!-- For Intpart Trigger the modal with a button -->
                     <button type="button"  id="myBtn" class="btn btn-default"  ng-click="eventmodel();">Medical History</button>
-                    
-                        <!-- Modal -->
+                    <button type="button" ng-show="selectedProgram.id=='jC8Gprj4pWV'" id="myBtnchart" class="btn btn-default"  ng-click="chartmodel();">Graph</button>
+                        <!-- Modal for medical history-->
                         <div class="modal fade" id="myModal" role="dialog">
                             <div class="modal-dialog">
                             
-                                <!-- Modal content-->
+                                <!-- Modal content for medical history-->
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -99,6 +99,29 @@
 
                                     <div class="modal-body">
                                         <p><table id="table1" class="reporttt" style="width:100%"> </table></p>
+                                    </div>
+                                    
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+						
+						<!--         modal for chart      --->
+						    <div class="modal fade" id="myModalchart" role="dialog">
+                            <div class="modal-dialog" style="width:800px">
+                            
+                                <!-- Modal content for chart-->
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h2 class="modal-title"><h2><b>Graph For HTN..</b></h2>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <p><canvas id="myChart"></canvas></p>
                                     </div>
                                     
                                     <div class="modal-footer">

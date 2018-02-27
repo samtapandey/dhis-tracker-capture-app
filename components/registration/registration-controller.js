@@ -561,6 +561,15 @@ $scope.recognition.onresult = function() {
 	 $scope.executeRules();
 	
 }*/
+
+$scope.dhis2_to_openmrs = function(patentid){
+	 var uniqueidofpatient= patentid
+	 if(uniqueidofpatient){
+     var url=document.location.href='http://apps.hispindia.org/pgichd/module/patientdashboard/main.htm?identifier='+uniqueidofpatient+'&opdId=3713&referralId=945';
+	 }
+	 else
+		 alert("Please enter openmrs id");
+}
 	  $scope.validate = function (tei, field) {
 		console.log(tei);
 		$scope.mtcsid0fchild=tei.gZAFVJdEgIQ;

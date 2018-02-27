@@ -19,7 +19,10 @@ font-size: 14px;
 	box-shadow: 0 0 15px 5px #b0e0ee;
 	border: 2px solid #bebede;
 }
-
+ .btncolor {
+      background-color:#FC6700;
+	  color:white;
+    }
 
 </style>
 
@@ -415,6 +418,9 @@ font-size: 14px;
 							   <!--<button id="speechbtn" class="btn btn-info btn-sm " ng-click="speechrecognise(attribute.id)">
                           <span class="glyphicon glyphicon-volume-up"></span>
                                   </button> -->
+								   <button  ng-show="attribute.id=='NTm8KwaUAkq'"  id="patientid" class="btncolor" ng-click="dhis2_to_openmrs(selectedTei[attribute.id])">
+                                     Link to openMrs
+                                  </button> 
 						<p ng-show="attribute.id=='uHv60gjn2gp'  &&  selectedTei.uHv60gjn2gp.length > 20"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  class="help-block" >House ID is too Long</p>
 					   <p ng-show="attribute.id=='uHv60gjn2gp' && selectedTei.uHv60gjn2gp.length < 20"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  >House ID is too Short</p>		  
 						<p ng-show="attribute.id=='Dnm1mq6iq2d'  &&  selectedTei.Dnm1mq6iq2d.length > 20"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  class="help-block" >Family Member ID is too Long</p>

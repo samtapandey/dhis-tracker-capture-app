@@ -1186,6 +1186,120 @@ trackerCapture.controller('DashboardController',
             }
         };
 
+		
+		
+		
+		
+	$scope.chartmodel = function () {
+
+   $.ajaxSetup({
+        async: false
+    });
+		var datavalueofchart_systolic=[];
+		var datavalueofchart_diastolic=[];
+		var orinalid=["HQz8UUWfvo0","pTuKCcPRn9k"];
+		var dateofvisit=[];
+		var objid=[];
+			 var url = window.location.href;
+			 var params = url.split('=');
+			 var per =params[1];
+			 var finper=per.split('&');
+	var trackid=finper[0];
+	
+		  $.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=jC8Gprj4pWV&trackedEntityInstance="+trackid+"&order=eventDate:asc", function (data1) {
+			  var trackdata=data1;
+			  for(var j=0;j<trackdata.events.length;j++)
+				{
+				
+				   var dataval=trackdata.events[j].dataValues;
+				   if(dataval.length >1){
+					   dateofvisit.push(trackdata.events[j].eventDate.substring(0, 10));
+				   for(var q=0;q<dataval.length;q++)
+				   {
+				   var id=dataval[q].dataElement;
+				 
+				 objid.push(id);
+				     if(id=="HQz8UUWfvo0")// systolic blood presure  
+				   {
+				      var systol=dataval[q].value;
+					  datavalueofchart_systolic.push(systol);
+				  
+				   }
+				     else if(id=="pTuKCcPRn9k")// diasitoli cblood presure
+				   {
+				   var diasit=dataval[q].value;
+				  datavalueofchart_diastolic.push(diasit);
+				   }
+				 
+				   }
+				    var array3 = orinalid.filter(function(obj) { return objid.indexOf(obj) == -1; });
+		          for(var t=0;t<array3.length;t++)
+					{
+					if(array3[t]=="HQz8UUWfvo0")
+				        datavalueofchart_systolic.push("0");
+					else if(array3[t]=="pTuKCcPRn9k")
+					datavalueofchart_diastolic.push("0");
+					}
+					objid=[];
+			
+				   }
+				   }
+				  
+				 
+				 
+			  });
+			  
+
+var ctx = document.getElementById('myChart').getContext('2d');
+var myLineChart = new Chart(ctx, {
+    type: 'line',
+     data: {
+        labels: dateofvisit,
+			responsive: true,
+        datasets: [{
+            label: "Systolic",
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data:datavalueofchart_systolic,
+				responsive: true,
+			fill: false,
+			lineTension:0
+        },{
+		   label: "Diastolic",
+            backgroundColor: '#0F75F7',
+            borderColor: '#0F75F7',
+				responsive: true,
+            data:datavalueofchart_diastolic,
+			fill: false,
+			lineTension:0
+        }]
+    },
+  	options: {
+					responsive: true,
+					
+					tooltips: {
+						position: 'nearest',
+						mode: 'index',
+						intersect: false,
+						yPadding: 10,
+						xPadding: 10,
+						caretSize: 8,
+						backgroundColor: '#FAFAFA',
+						titleFontColor:'#000',
+						bodyFontColor:'#000',
+						borderColor: 'rgba(0,0,0,1)',
+						borderWidth: 4
+					},
+				}
+});
+
+	$("#myModalchart").modal('show');
+	
+		}
+		 
+
+		
+		
 
         $scope.showEnrollment = function () {
             $scope.displayEnrollment = true;
