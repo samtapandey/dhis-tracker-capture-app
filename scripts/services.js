@@ -452,22 +452,22 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                 return def.promise;
             }            
         },
-        processForm: function(existingTei, formTei, originalTei, attributesById, finalCustomId){
+        processForm: function(existingTei, formTei, originalTei, attributesById){
             var tei = angular.copy(existingTei);            
             tei.attributes = [];
             var formEmpty = true;            
             for(var k in attributesById){
 
-                // custom development for MSF
-                if( finalCustomId != null && finalCustomId != "" )
-                {
-                    if(  attributesById[k].code === 'patient_identifier' )
-                    {
-                        formTei[k] = finalCustomId;
-                        console.log( " Final Custom Id -- " + finalCustomId );
-                    }
-                }
-                // end
+                // // custom development for MSF
+                // if( finalCustomId != null && finalCustomId != "" )
+                // {
+                //     if(  attributesById[k].code === 'patient_identifier' )
+                //     {
+                //         formTei[k] = finalCustomId;
+                //         console.log( " Final Custom Id -- " + finalCustomId );
+                //     }
+                // }
+                // // end
 
                 if(originalTei && formTei[k] !== originalTei[k] && !formTei[k] && !originalTei[k]){
                     formChanged = true;

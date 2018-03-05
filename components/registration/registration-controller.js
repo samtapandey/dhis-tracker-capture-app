@@ -29,7 +29,7 @@ trackerCapture.controller('RegistrationController',
                 ModalService,
                  // add for Generate CustomId for msf-customizations
                  CustomIDGenerationService,
-                 CustomIdService) {
+                ) {
     $scope.today = DateUtils.getToday();
     $scope.trackedEntityForm = null;
     $scope.customRegistrationForm = null;    
@@ -391,47 +391,44 @@ trackerCapture.controller('RegistrationController',
                                     $scope.selectedEnrollment = enrollment;
                                     var avilableEvent = $scope.currentEvent && $scope.currentEvent.event ? $scope.currentEvent : null;
                                     var dhis2Events = EventUtils.autoGenerateEvents($scope.tei.trackedEntityInstance, $scope.selectedProgram, $scope.selectedOrgUnit, enrollment, avilableEvent);
-                                    if (dhis2Events.events.length > 0) {
-                                        DHIS2EventFactory.create(dhis2Events).then(function () {
-                                            notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
-                                        });
-                                    } else {
-                                        notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
+                                    	// custom id start
+									
+										CustomIDGenerationService.validateAndCreateCustomId($scope.tei,$scope.selectedProgram.id,$scope.attributes,destination,$scope.optionSets,$scope.attributesById,$scope.selectedEnrollment.enrollmentDate).then(function(){
+                                            if (dhis2Events.events.length > 0) {
+                                                DHIS2EventFactory.create(dhis2Events).then(function () {
+                                                    notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
+                                                });
+                                            } else {
+                                                notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
+                                            }
+                                            
+                                            // custom id close
+                                          });
+                                        }
+                                        else {
+                                            //enrollment has failed
+                                            NotificationService.showNotifcationDialog($translate.instant("enrollment_error"), enrollmentResponse.message);
+                                            return;
+                                        }
                                     }
-                                }
-                                else {
-                                    //enrollment has failed
-                                    NotificationService.showNotifcationDialog($translate.instant("enrollment_error"), enrollmentResponse.message);
-                                    return;
-                                }
+                                });
                             }
-                        });
+                            else {
+                                notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
+                                $scope.model.savingRegistration = false;
+                            }
+                        }
                     }
-                    else {
-                        notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
+                    else {//update/registration has failed
+                        var headerText = $scope.tei && $scope.tei.trackedEntityInstance ? $translate.instant('update_error') :
+                                         $translate.instant('registration_error');
+                        var bodyText = regResponse.message;
+                        NotificationService.showNotifcationDialog(headerText, bodyText);
                         $scope.model.savingRegistration = false;
+                        return;
                     }
-                }
-
-                // create custom id for MSF
-                /*
-                CustomIDGenerationService.validateAndCreateCustomId($scope.tei,$scope.selectedProgram.id,$scope.attributes,destination,$scope.optionSets,$scope.attributesById,$scope.selectedEnrollment.enrollmentDate).then(function(){
-
                 });
-                */
-
-            }
-            else {//update/registration has failed
-                var headerText = $scope.tei && $scope.tei.trackedEntityInstance ? $translate.instant('update_error') :
-                                 $translate.instant('registration_error');
-                var bodyText = regResponse.message;
-                NotificationService.showNotifcationDialog(headerText, bodyText);
-                $scope.model.savingRegistration = false;
-                return;
-            }
-        });
-    };
-
+            };
     function broadcastTeiEnrolled() {
         $rootScope.$broadcast('teienrolled', {});
     }
@@ -464,8 +461,8 @@ trackerCapture.controller('RegistrationController',
         }
 
         // custom ID generation for MSF
-        if ($scope.registrationMode === 'REGISTRATION' && $scope.selectedProgram.id === 'VCuHIFtJJSv')
-        {
+        //if ($scope.registrationMode === 'REGISTRATION' && $scope.selectedProgram.id === 'VCuHIFtJJSv')
+       // {
             /*
             var isValidProgram = false;
 
@@ -510,7 +507,7 @@ trackerCapture.controller('RegistrationController',
             });
             */
 
-            $.ajax({
+         /*   $.ajax({
                 async:false,
                 type: "GET",
                 url: '../api/trackedEntityInstances.json?program=' + $scope.selectedProgram.id + "&ouMode=ALL&skipPaging=true",
@@ -529,14 +526,14 @@ trackerCapture.controller('RegistrationController',
                             var prefix = "";
                             var regDate = $scope.selectedEnrollment.enrollmentDate;
                             var customRegDate = regDate.split("-")[0].slice(-2);
-                            var totalTeiCount = parseInt( totalTei )  + 1 ;
+                            var totalTeiCount = parseInt( totalTei )  + 1 ;*/
 
                             /*
                              totalTei = totalTei%10000;
                              if( totalTei == 0 ) totalTei = 1;
                              */
 
-                            if( totalTeiCount <10) prefix="0000";
+                        /*    if( totalTeiCount <10) prefix="0000";
                             else if (totalTeiCount >9 && totalTeiCount<100) prefix="000";
                             else if(totalTeiCount>99 && totalTeiCount<1000) prefix="00";
                             else if(totalTeiCount>999 && totalTeiCount<10000) prefix="0";
@@ -558,7 +555,7 @@ trackerCapture.controller('RegistrationController',
                 }
 
             });
-        }
+        }*/
         //end custom ID generation for MSF
 
         //get tei attributes and their values

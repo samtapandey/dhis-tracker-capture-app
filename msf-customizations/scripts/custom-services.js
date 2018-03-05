@@ -410,7 +410,7 @@ angular.module('trackerCaptureServices')
             return def.promise;
         },
 
-        getTotalTeiByProgram: function ( programUid ) {
+       /* getTotalTeiByProgram: function ( programUid ) {
             var def = $q.defer();
             $http.get('../api/trackedEntityInstances.json?program=' + programUid + "&ouMode=ALL&skipPaging=true").then(function (response) {
 
@@ -418,6 +418,27 @@ angular.module('trackerCaptureServices')
             });
             return def.promise;
         },
+*/
+        getTotalTeiByProgram: function ( programUid ) {
+            var def = $q.defer();
+            var basicUrl = "../api/sqlViews/";
+            var id = 'AuJuEDb89ty';
+            
+            var url3 = basicUrl + id + "/data.json?";
+            url3 += "var=programUid:" + programUid;
+            $.get(url3, function (data) {
+
+                def.resolve(data);
+              
+               
+            });
+            return def.promise;
+          //  $http.get('../api/trackedEntityInstances.json?fields=trackedEntityInstance&program=' + programUid + "&ouMode=ALL&skipPaging=true").then(function (response) {
+
+        //         def.resolve(response.data);
+        //     });
+        //     return def.promise;
+         },
 
         getOrgunitCode: function ( orgUnitUid ) {
             var def = $q.defer();
