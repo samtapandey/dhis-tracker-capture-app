@@ -1469,6 +1469,457 @@ trackerCapture.controller('DataEntryController',
         return def.promise;
     };
     
+
+    $scope.printLicense = function() {
+        $scope.printForm = true;
+        $scope.printEmptyForm = true;
+        var selections = CurrentSelection.get();
+        $scope.selectedEntityinstance = selections.tei;
+        $scope.TEI_ID=$scope.selectedEntityinstance.trackedEntityInstance
+        //  var promise = $http.get('../api/trackedEntityInstances/w8kYzsMDQHa.json?program=ieLe1vT4Vad&ouMode=ALL&skipPaging=true').then(function (response) {
+        
+         $scope.orgname=selections.orgUnit.displayName;
+         var orgid=selections.orgUnit.id;
+         var orgid_District=selections.orgUnit.id;
+       
+        $.ajax({
+            async:false,
+            type: "GET",
+            url: '../api/organisationUnits/'+orgid_District+'.json?fields=name,parent[id,name,parent[id,name]]&skipPaging=true',
+            success: function(res){
+                $scope.orgid_District_new=res.parent.parent.name;
+            }
+        });            
+
+            $.ajax({
+                async:false,
+                type: "GET",
+                url: '../api/trackedEntityInstances/'+$scope.TEI_ID+ '.json?&skipPaging=true',
+                success: function(response){
+
+                    $scope.asstrackedEntityInstances = [];
+
+                    for(var j=0;j<response.attributes.length;j++)
+                    {
+                        $scope.asstrackedEntityInstances[response.attributes[j].attribute]=response.attributes[j].value;
+                    }
+
+                    
+                },
+                error: function(response){
+                }
+
+            });
+            $scope.asstrackedEntityInstances_Final=[];
+            $scope.demoTEI_arr=['WOACLVH2VAh','ucChpKrA87g','qrqPNb4Vwcg','RxZw2ak8DBb','YmzbWrANPWQ','UG03n3pVk7J','TRLvB9AaMPO',
+            'vf9DxLOjyBl','yfl4DB9vl5e','weinW2nVMlu','nIfVuSoEDl1','PnwCIL7wNCY','OYUJqnlwXfr'];
+
+            if($scope.asstrackedEntityInstances.length==0)
+            {
+                for(var t=0;t<$scope.demoTEI_arr.length;t++){
+                        $scope.asstrackedEntityInstances_Final[$scope.demoTEI_arr[t]]="";
+                       }
+                    }
+            for(var s in $scope.asstrackedEntityInstances)
+            {
+                for(var t=0;t<$scope.demoTEI_arr.length;t++){
+                    if(s==$scope.demoTEI_arr[t])
+                    {
+                        $scope.asstrackedEntityInstances_Final[$scope.demoTEI_arr[t]]=$scope.asstrackedEntityInstances[s];
+                        $scope.demoTEI_arr.splice(t,1);
+                    }
+                    else $scope.asstrackedEntityInstances_Final[$scope.demoTEI_arr[t]]="";
+                }
+            }
+
+            for (var i in $scope.asstrackedEntityInstances_Final) {
+                if (i === "PnwCIL7wNCY") {//Provisional Diagnosis with major ailments if any
+                    $scope.Provisional_Diagnosis = $scope.asstrackedEntityInstances_Final[i];
+              }
+              if (i === "OYUJqnlwXfr") {//Final Diagnosis
+                $scope.Final_Diagnosis = $scope.asstrackedEntityInstances_Final[i];
+          }
+                if (i === "WOACLVH2VAh") {//Name - Pregnant woman
+                  $scope.selectedcontactperson = $scope.asstrackedEntityInstances_Final[i];
+            }
+                if (i === "ucChpKrA87g") {//W/O or D/O
+                $scope.WO_or_DO= $scope.asstrackedEntityInstances_Final[i];
+            }
+                if (i === "qrqPNb4Vwcg") {//Address
+                $scope.Address = $scope.asstrackedEntityInstances_Final[i];
+            }
+
+            if (i === "RxZw2ak8DBb") {//Registration number 
+                $scope.Registration_number = $scope.asstrackedEntityInstances_Final[i];
+            }
+            if (i === "YmzbWrANPWQ") {//Name - ASHA
+                $scope.Name_ASHA = $scope.asstrackedEntityInstances_Final[i];
+            }
+            if (i === "UG03n3pVk7J") {//MCTS / RCH No. 
+                $scope.MCTS_RCH_No = $scope.asstrackedEntityInstances_Final[i];
+            }
+            if (i === "TRLvB9AaMPO") {//BPL (TEI – registration ) 
+                $scope.BPL = $scope.asstrackedEntityInstances_Final[i];
+                if($scope.BPL=="true")
+                $scope.BPL="yes";
+                if($scope.BPL=="false")
+                $scope.BPL="no";
+                
+            }
+            if (i === "vf9DxLOjyBl") {//Contact number (facility)    
+                $scope.Contact_number  = $scope.asstrackedEntityInstances_Final[i];
+            }
+            if (i === "yfl4DB9vl5e") {//Mob no of ASHA 
+                $scope.Mob_no_of_ASHA  = $scope.asstrackedEntityInstances_Final[i];
+            }
+
+            if (i === "weinW2nVMlu") {//AGE
+                $scope.age  = $scope.asstrackedEntityInstances_Final[i];
+            }
+           
+            if (i === "nIfVuSoEDl1") {//Block  (TEI – registration ) 
+                $scope.orgid = $scope.asstrackedEntityInstances_Final[i];
+                $.ajax({
+                    async:false,
+                    type: "GET",
+                    url: '../api/organisationUnits/'+$scope.orgid+'.json?fields=name&skipPaging=true',
+                    success: function(res){
+                        $scope.orgName=res.name;
+                    }
+                });            
+
+            }
+         }
+
+            $scope.dataElement=[];
+            $.ajax({
+                async:false,
+                type: "GET",
+                url: '../api/events.json?orgUnit='+orgid+'&program=f1ctOk0ZOZw&trackedEntityInstance='+$scope.TEI_ID+'&skipPaging=true',
+                success: function(response){
+
+                    for(var i=0;i<response.events.length;i++)
+                    {
+                        for(var j=0;j<response.events[i].dataValues.length;j++)
+                        {
+                            $scope.dataElement[response.events[i].dataValues[j].dataElement]=response.events[i].dataValues[j].value;
+                        }
+                    }
+                },
+                error: function(response){
+                }
+
+            });
+
+            $scope.final_dataElement=[];
+            $scope.checkarray=['svCs0pUtvUS','tOVruUeCPtb','BLJFQdwKach','hrZJGngoEhrzQ','Uze0JLIKNR6','XBD1C8zRBpY','ReIRf8HTZbY','Q8yAamcgfuX','oH4BSBx2Xx0',
+            'SMweB4Y1wLt','f3GBHXJufrq','UJllY3Myq7D','HHbsty9dR06','pJXvSjh47wC','rM9QSdu1c1J',
+            'VuMpqzxZ3MT','oH4BSBx2Xx0','RyC53aXVGht','UHcg0y0YkEW','xKtxBWKjntx','Wt9lwK57fp1','SfG4Dhqa1Ak','SEW6XTOz2jS'];
+            
+            
+            if($scope.dataElement.length===0){
+                for(var y=0;y<$scope.checkarray.length;y++)
+                {
+                    
+                        $scope.final_dataElement[$scope.checkarray[y]]="";
+                }
+
+            }
+            for(var x in $scope.dataElement)
+            {
+              for(var y=0;y<$scope.checkarray.length;y++)
+                {
+                    if(x===$scope.checkarray[y])
+                    {
+                        $scope.final_dataElement[$scope.checkarray[y]]=$scope.dataElement[x];
+                        $scope.checkarray.splice(y,1);
+                    }
+                    
+                    else $scope.final_dataElement[$scope.checkarray[y]]="";
+                    
+                }
+
+                
+            }
+
+            for(var key in $scope.final_dataElement){
+
+                if(key==="Wt9lwK57fp1"){//Injection vitamin K -
+                    $scope.Injection_vitamin_K=$scope.final_dataElement[key];
+                }
+                if(key==="SfG4Dhqa1Ak"){//Other Complications (specify)
+                    $scope.Other_Complications=$scope.final_dataElement[key];
+                }
+                if(key==="SEW6XTOz2jS"){//Indication for assisted VD / LSCS / Others -  
+                    $scope.Indication_for_assisted=$scope.final_dataElement[key];
+                }
+                
+                if(key==="svCs0pUtvUS"){//Blood group/Rh  (DE - Post Obs/Lab invest)-
+                    $scope.Blood_group_Rh=$scope.final_dataElement[key];
+                }
+                if(key==="tOVruUeCPtb"){//Discharge date (DE- Discharge details)
+                    $scope.Discharge_date=$scope.final_dataElement[key];
+                }
+                if(key==="BLJFQdwKach"){//Time (DE- Discharge details)-------time format -
+                    $scope.Discharge_time_format=$scope.final_dataElement[key];
+                }
+                if(key==="hrZJGngoEhrzQ"){//Time (DE- Discharge details)-------time -
+                    $scope.Discharge_time=$scope.final_dataElement[key];
+                }
+                if(key==="Uze0JLIKNR6"){//Time (DE- Discharge details)-------time min -
+                    $scope.Discharge_time_min=$scope.final_dataElement[key];
+                }
+                if(key==="SMweB4Y1wLt"){//Delivery date  (DE- Check 2/deliver notes)
+                    $scope.Delivery_date=$scope.final_dataElement[key];
+                }
+                if(key=="f3GBHXJufrq"){//Mode of delivery /Procedure:  (DE- Check 2/deliver notes)
+                    $scope.Mode_of_delivery_Procedure=$scope.final_dataElement[key];
+                 }
+                 if( key==="xKtxBWKjntx"){//Single - ……      Twin /Multiple---Delivery Outcome: 
+                    $scope.Live_birth_val=$scope.final_dataElement[key];
+                    
+                }
+                if(key==="UJllY3Myq7D" ){//Delivery Outcome: Live (DE- Check 2/deliver notes)
+                    $scope.Delivery_Outcome_Live=$scope.final_dataElement[key];
+                    
+                }
+                if(key==="HHbsty9dR06"){//Sex of baby (DE- Check 2/baby notes)
+
+                    $scope.Sex_of_baby=$scope.final_dataElement[key];
+                    if($scope.Sex_of_baby==="2")
+                    {
+                        $scope.Sex_of_baby_val="Female";
+                        
+                    }
+                    if($scope.Sex_of_baby==="1")
+                    {
+                        $scope.Sex_of_baby_val="Male";
+                        
+                    }
+                    if($scope.Sex_of_baby==="")
+                    {
+                        $scope.Sex_of_baby_val="......";
+                        
+                    }
+                    
+                }
+                if(key==="pJXvSjh47wC"){//Birth weight – (in gram) (DE- Check 2/baby notes)
+                    $scope.Birth_weight=$scope.final_dataElement[key];
+                }
+                if(key==="rM9QSdu1c1J"){//BCG (DE- Check 2/baby notes) : 
+                    $scope.BCG_val=$scope.final_dataElement[key];
+                        if($scope.BCG_val=="true")
+                            $scope.BCG="yes";
+                        if($scope.BCG_val=="false")
+                            $scope.BCG="no";
+                        if($scope.BCG_val=="")
+                        $scope.BCG="";
+                }
+                if(key==="VuMpqzxZ3MT"){//OPV- (DE- Check 2/baby notes) 
+                    $scope.OPV_val=$scope.final_dataElement[key];
+                        if($scope.OPV_val=="true")
+                            $scope.OPV="yes";
+                        if($scope.OPV_val=="false")
+                            $scope.OPV="no";
+                        if($scope.OPV_val=="")
+                        $scope.OPV="";
+                }
+
+                if(key==="oH4BSBx2Xx0"){//H/O Birth Asphyxia 
+                    $scope.HO_Birth_Asphyxia =$scope.final_dataElement[key];
+                }
+                if(key==="RyC53aXVGht"){//Apgar score at 5 min after birth  (DE- Check 2/baby notes)
+                    $scope.Apgar_score_at_5min=$scope.final_dataElement[key];
+                }
+
+                if(key==="UHcg0y0YkEW"){//HepB- (DE- Check 2/baby notes) 
+                    $scope.HepB_val=$scope.final_dataElement[key];
+                        if($scope.HepB_val=="true")
+                            $scope.HepB="yes";
+                        if($scope.HepB_val=="false")
+                            $scope.HepB="no";
+                        if($scope.HepB_val=="")
+                        $scope.HepB="";    
+                }
+
+                if(key==="XBD1C8zRBpY"){//Time (DE- Check 2/deliver notes) format----time in hour
+                    $scope.deliver_notes_hour=$scope.final_dataElement[key];
+                }
+                if(key==="ReIRf8HTZbY"){//Time (DE- Check 2/deliver notes) format----time in min
+                    $scope.deliver_notes_min=$scope.final_dataElement[key];
+                }
+                if(key==="oH4BSBx2Xx0"){//Apgar score at birth (DE- Check 2/baby notes) 
+                    $scope.Apgar_score_at_birth=$scope.final_dataElement[key];
+                }
+                if(key==="Q8yAamcgfuX"){//Final Outcome--Discharge /Referral /Death /LAMA-
+                    $scope.Final_Outcome=$scope.final_dataElement[key];
+                }
+            }
+
+            if($scope.Delivery_Outcome_Live==="Still birth")
+            $scope.Live_birth_val_new=$scope.Live_birth_val;
+            else
+            $scope.Live_birth_val_new="";
+
+        
+
+        var address = $scope.selectedAddress1 + ", " + $scope.selectedAddress2 + ", " + $scope.selectedAddress3 + ", " + $scope.selectedAddress4;
+        address = address.replace(/undefined,/g, '');
+        address = address.replace(/(^[,\s]+)|([,\s]+$)/g, '');
+
+        var currentTime = new Date();
+        var year = currentTime.getFullYear();
+        var date = 12 + "/" + 31 + "/" + year;
+
+
+        //  var printContents = document.getElementById(divName).innerHTML;
+        var heading = "<p style='font-family: 'Times New Roman', Times' align=" + "'center'" + ">Discharge Slip</p>" + "<p style='font-family: 'Times New Roman', Times, serif' align=" + "'center'" + ">(To be handed over to patient /attendant)</p>";
+
+       var content="<table class='tg'>"+
+        "<tr>"+
+        "<th class='tg-031e' style='font-weight:bold'>MCTS/RCH No.</th>"+
+        "<th class='tg-yw4l' colspan='3'>"+$scope.MCTS_RCH_No+"</th>"+
+        "<th class='tg-yw4l' style='font-weight:bold'>Name of facility</th>"+
+        "<th class='tg-yw4l' colspan='2'>"+$scope.orgname+"</th>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>IPD Registration No.</td>"+
+        "<td class='tg-yw4l' colspan='3'>"+$scope.Registration_number+"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Block</td>"+
+        "<td class='tg-yw4l' colspan='2'>"+$scope.orgName+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>BPL</td>"+
+        "<td class='tg-yw4l' colspan='3'>"+$scope.BPL+"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>District</td>"+
+        "<td class='tg-yw4l' colspan='2'>"+$scope.orgid_District_new+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Name of ASHA</td>"+
+        "<td class='tg-yw4l' colspan='3'>"+$scope.Name_ASHA +"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Contact number (facility)</td>"+
+        "<td class='tg-yw4l' colspan='2'>"+$scope.Contact_number+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Mob no of ASHA</td>"+
+        "<td class='tg-yw4l' colspan='3'>"+$scope.Mob_no_of_ASHA+"</td>"+
+        "<td class='tg-yw4l'></td>"+
+        "<td class='tg-yw4l' colspan='2'></td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' colspan='7'></td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Name</td>"+
+        "<td class='tg-yw4l' colspan='3'>"+$scope.selectedcontactperson+"</td>"+
+        "<td class='tg-yw4l' ><b>Age:</b>"+$scope.age+"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>W/o or D/o :</td>"+
+        "<td class='tg-yw4l'>"+$scope.WO_or_DO+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Full Address</td>"+
+        "<td class='tg-yw4l' colspan='6'>"+$scope.Address+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Admission date</td>"+
+        "<td class='tg-yw4l' colspan='3'></td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Blood group/Rh</td>"+
+        " <td class='tg-yw4l' colspan='2'>"+$scope.Blood_group_Rh+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Discharge date</td>"+
+        "<td class='tg-yw4l' colspan='3'>"+$scope.Discharge_date+"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Discharge Time<br></td>"+
+        "<td class='tg-yw4l' colspan='2'><b>Time Format-</b>"+$scope.Discharge_time_format+"<br><b>Time in hour-</b>"+$scope.Discharge_time+"<br><b>Time in min-</b>"+$scope.Discharge_time_min+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Provisional Diagnosis with major ailments if any</td>"+
+        "<td class='tg-yw4l' colspan='3'>"+$scope.Provisional_Diagnosis+"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Final Diagnosis</td>"+
+        "<td class='tg-yw4l' colspan='2'>"+$scope.Final_Diagnosis+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Delivery date</td>"+
+        "<td class='tg-yw4l' colspan='3'>"+$scope.Delivery_date+"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Delivery Time</td>"+
+        "<td class='tg-yw4l' colspan='2'><b>Time Format-</b>"+$scope.Discharge_time_format+"<br><b>Time in hour-</b>"+$scope.deliver_notes_hour+"<br><b>Time in min-</b>"+$scope.deliver_notes_min+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Mode of delivery /Procedure:</td>"+
+        "<td class='tg-yw4l' colspan='3'>"+$scope.Mode_of_delivery_Procedure+"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Other Complications (specify)</td>"+
+        "<td class='tg-yw4l' colspan='2'>"+$scope.Other_Complications+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Indication for assisted/ LSCS/ Others</td>"+
+        "<td class='tg-yw4l' colspan='6'>"+$scope.Indication_for_assisted+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold' rowspan='2'>Delivery Outcome: Live </td>"+
+        "<td class='tg-yw4l' colspan='3'><br>"+$scope.Delivery_Outcome_Live+"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Sex of baby </td>"+
+        "<td class='tg-yw4l' colspan='2'>"+$scope.Sex_of_baby_val+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        " <td class='tg-yw4l' colspan='3'><b>Live Birth:</b>"+$scope.Live_birth_val_new+"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Birth weight – (in gram)</td>"+
+        "<td class='tg-yw4l' colspan='2'>"+$scope.Birth_weight+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Final Outcome</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold' colspan='2'>"+$scope.Final_Outcome+"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Immunization</td>"+
+        "<td class='tg-yw4l'><b>BCG :</b>"+$scope.BCG+"</td>"+
+        "<td class='tg-yw4l'><b>OPV :</b>"+$scope.OPV+"</td>"+
+        "<td class='tg-yw4l'><b>HepB :</b>"+$scope.HepB+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>H/O Birth Asphyxia</td>"+
+        "<td class='tg-yw4l' colspan='3'>"+$scope.HO_Birth_Asphyxia +"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Apgar score at birth</td>"+
+        "<td class='tg-yw4l' colspan='2'>"+$scope.Apgar_score_at_birth+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Injection Vitamin K</td>"+
+        "<td class='tg-yw4l' colspan='3'>"+ $scope.Injection_vitamin_K+"</td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Apgar score at 5 min after birth</td>"+
+        "<td class='tg-yw4l' colspan='2'>"+$scope.Apgar_score_at_5min+"</td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Advice for Mother</td>"+
+        "<td class='tg-yw4l' colspan='3'></td>"+
+        "<td class='tg-yw4l' style='font-weight:bold'>Advice for Baby</td>"+
+        "<td class='tg-yw4l' colspan='2'></td>"+
+        "</tr>"+
+        "<tr>"+
+        "<td class='tg-yw4l' style='font-weight:bold' colspan='3'>Name,and signature of Service provider</td>"+
+        "<td class='tg-yw4l' colspan='4'></td>"+
+        "</tr>"+
+        "</table>";
+
+
+        var printContents = heading + content  /*+ footer2 + footer3*/
+
+        var popupWin = window.open('', '_blank', 'fullscreen=1');
+                popupWin.document.open();
+                popupWin.document.write('<html>\n\
+                                        <head>\n\
+                                                <link rel="stylesheet" type="text/css" href="../dhis-web-commons/bootstrap/css/bootstrap.min.css" />\n\
+                                                <link type="text/css" rel="stylesheet" href="../dhis-web-commons/javascripts/angular/plugins/select.css">\n\
+                                                <link type="text/css" rel="stylesheet" href="../dhis-web-commons/javascripts/angular/plugins/select2.css">\n\
+                                                <link rel="stylesheet" type="text/css" href="styles/style.css" />\n\
+                                                <link rel="stylesheet" type="text/css" href="styles/print.css" />\n\
+                                        </head>\n\
+                                        <body onload="window.print()"><table><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td>' + printContents +
+                    '</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></table></html>');
+                popupWin.document.close();
+                $scope.printForm = false;
+                $scope.printEmptyForm = false;
+
+    };
+
+
+
     $scope.saveDataValueForEvent = function (prStDe, field, eventToSave, backgroundUpdate) {
         
         if( !prStDe ){

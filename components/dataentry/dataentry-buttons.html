@@ -13,7 +13,11 @@
             class="btn btn-warning" 
             ng-disabled="currentEvent.editingNotAllowed"
             ng-if="!currentEvent.eventDate">{{currentEvent.status === 'SKIPPED' ? 'unskip' : 'skip'| translate}}</a>
+        <!-- Print Discharge Slip -->     
+        <a href ng-click="printLicense()" 
+            class="btn btn-warning" ng-if="currentEvent.programStage==='euhjpKogFZy'">{{'Print Discharge Slip'| translate}}</a>    
     
+            
         <div class="pull-right">
             <a href ng-click="deleteEvent()" 
                 ng-disabled="currentEvent.editingNotAllowed"
