@@ -23,6 +23,11 @@ font-size: 14px;
       background-color:#FC6700;
 	  color:white;
     }
+	.btncolorgenerate{
+	 background-color:#FC0008;
+	  color:white;
+	
+	}
 
 </style>
 
@@ -421,10 +426,16 @@ font-size: 14px;
 								   <button  ng-show="attribute.id=='NTm8KwaUAkq'"  id="patientid" class="btncolor" ng-click="dhis2_to_openmrs(selectedTei[attribute.id])">
                                      Link to openMrs
                                   </button> 
+								  <button  ng-show="attribute.id=='Dnm1mq6iq2d'"  id="familyid" class="btncolorgenerate" ng-click="autogenerate(selectedTei, attribute.id)">
+                                     Generate
+                                  </button>
+								   <button  ng-show="attribute.id=='uHv60gjn2gp'"  id="houseid" class="btncolorgenerate" ng-click="autogeneratehouse(selectedTei, attribute.id)">
+                                     Generate
+                                  </button>
 						<p ng-show="attribute.id=='uHv60gjn2gp'  &&  selectedTei.uHv60gjn2gp.length > 20"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  class="help-block" >House ID is too Long</p>
 					   <p ng-show="attribute.id=='uHv60gjn2gp' && selectedTei.uHv60gjn2gp.length < 20"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  >House ID is too Short</p>		  
-						<p ng-show="attribute.id=='Dnm1mq6iq2d'  &&  selectedTei.Dnm1mq6iq2d.length > 20"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  class="help-block" >Family Member ID is too Long</p>
-					   <p ng-show="attribute.id=='Dnm1mq6iq2d' && selectedTei.Dnm1mq6iq2d.length < 20"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  >Family Member ID is too Short</p>		  
+						<p ng-show="attribute.id=='Dnm1mq6iq2d'  &&  selectedTei.Dnm1mq6iq2d.length > 21"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  class="help-block" >Family Member ID is too Long</p>
+					   <p ng-show="attribute.id=='Dnm1mq6iq2d' && selectedTei.Dnm1mq6iq2d.length < 21"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  >Family Member ID is too Short</p>		  
 					  <p ng-show="attribute.id=='gZAFVJdEgIQ'  && selectedTei.gZAFVJdEgIQ.length > 18"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  class="help-block" >MTCS ID is too Long</p>
 					   <p ng-show="attribute.id=='gZAFVJdEgIQ' && selectedTei.gZAFVJdEgIQ.length < 18"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  >MTCS ID is too Short</p>
                       <p ng-show="attribute.id=='AiPFBqutPYy'  && selectedTei.AiPFBqutPYy.length > 18"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  class="help-block" >MTCS ID is too Long</p>

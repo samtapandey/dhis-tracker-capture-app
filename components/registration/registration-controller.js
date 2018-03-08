@@ -33,6 +33,8 @@ trackerCapture.controller('RegistrationController',
     $scope.selectedTei = {};
 	 $scope.ageInYears = 'iIf1gJ4FVdR'; 
 	  $scope.dateofbirth = 'kelN057pfhq'; 
+	   $scope.familymemberid = 'Dnm1mq6iq2d';
+        $scope.householdid = 'uHv60gjn2gp'; 	   
     $scope.tei = {};    
     $scope.warningMessages = [];
     $scope.hiddenFields = [];    
@@ -561,11 +563,45 @@ $scope.recognition.onresult = function() {
 	 $scope.executeRules();
 	
 }*/
+$scope.autogenerate= function(trackvalues,b){
+	var seriesofmember=trackvalues.UqhbFTbVeSD;
+	var typeofhouse=trackvalues.dCer94znEuY;
+	var nameoffamily=trackvalues.xalnzkNfD77;
+	var uppercasename=nameoffamily.toUpperCase();
+	var household =trackvalues.YFjB0zhySP6;
+	if(seriesofmember && typeofhouse && nameoffamily)
+	{
+		var mergedata='CHD25/'+household+typeofhouse+'/'+uppercasename.substring(0,4)+'/'+seriesofmember;
+		$scope.selectedTei[$scope.familymemberid]=mergedata;
+		
+		
+	}
+	else
+		alert("Please fill neccessary deatils.");
+	
+}
 
+$scope.autogeneratehouse= function(trackvalues,b){
+	
+	var typeofhouse=trackvalues.dCer94znEuY;
+	var headoffamily=trackvalues.FML9pARILz5;
+	var uppercaseheadname=headoffamily.toUpperCase();
+	var household =trackvalues.ZQMF7taSAw8;
+	if(household && typeofhouse && headoffamily)
+	{
+		var mergedata='CHD25/'+household+typeofhouse+'/'+uppercaseheadname.substring(0,4)+'/H1';
+		$scope.selectedTei[$scope.householdid]=mergedata;
+		
+		
+	}
+	else
+		alert("Please fill neccessary deatils.");
+	
+}
 $scope.dhis2_to_openmrs = function(patentid){
 	 var uniqueidofpatient= patentid
 	 if(uniqueidofpatient){
-     var url=document.location.href='http://apps.hispindia.org/pgichd/module/patientdashboard/main.htm?identifier='+uniqueidofpatient+'&opdId=3713&referralId=945';
+     var url=document.location.href='http://192.168.1.10/emr/module/patientdashboard/main.htm?identifier='+uniqueidofpatient+'&opdId=3713&referralId=945';
 	 }
 	 else
 		 alert("Please enter openmrs id");
@@ -600,12 +636,12 @@ $scope.dhis2_to_openmrs = function(patentid){
 		}
 		}
 		else if(field=="Dnm1mq6iq2d"){
-		 if($scope.familymember_unniqueid.length>20 ||$scope.familymember_unniqueid.length <20 ){
+		 if($scope.familymember_unniqueid.length>21 ||$scope.familymember_unniqueid.length <21 ){
 			// block the save button
 			//alert("please check value");
 			document.getElementById("Dnm1mq6iq2d").style.backgroundColor = "#FF6760";
 		}
-		else if($scope.familymember_unniqueid.length==20){
+		else if($scope.familymember_unniqueid.length==21){
 			// block the save button
 			//alert("please check value");
 			document.getElementById("Dnm1mq6iq2d").style.backgroundColor = "white";
