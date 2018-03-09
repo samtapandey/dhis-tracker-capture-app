@@ -88,10 +88,10 @@ graphplotter.controller('graphController',
                 url:urlToSend,
                 success : function(data,status,jqXHR){
                     $scope.smsState = JSON.parse(defaultVal);
-                    alert("SMS SENT")
+                    // alert("SMS SENT")
                 },
                 error :function(jqXhr,status,errorThrown){
-                    alert("Error Updating sms state");
+                    // alert("Error Updating sms state");
 
                 }
             });
