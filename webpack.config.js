@@ -77,10 +77,15 @@ module.exports = {
             template: './index.ejs',
             stylesheets: makeLinkTags([
                 ['styles/style.css'],
+                ['styles/graph.css'],
                 ['styles/print.css', { media: 'print' }],
             ]),
             scripts: makeScriptTags([
                 'core/tracker-capture.js',
+                'highcharts/highcharts.js',
+           'highcharts/highcharts-more.js',
+          'highcharts/series-label.js',
+           'highcharts/exporting.js',
                 '../main.js',
             ]),
         }),
