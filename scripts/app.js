@@ -28,6 +28,7 @@ import '../components/dataentry/modal-default-form-controller.js';
 import '../components/dataentry/new-event-controller.js';
 import '../components/dataentry/event-cocbo-controller.js';
 import '../components/report/tei-report-controller.js';
+import '../components/dataentry/graph-controller.js'
 import '../components/report/program-summary-controller.js';
 import '../components/report/program-statistics-controller.js';
 import '../components/report/overdue-events-controller.js';
