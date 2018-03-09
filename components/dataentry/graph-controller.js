@@ -1,15 +1,15 @@
 
-///added for labour clinic graph 
+///added for labour clinic graph
 
 var graphplotter = angular.module('trackerCapture');
 
 graphplotter.controller('graphController',
     function($rootScope,$scope,CurrentSelection){
-        // console.log("Output;");  
+        // console.log("Output;");
         // console.log(location.hostname);
         // console.log(document.domain);
         // alert(window.location.hostname)
-        
+
         // console.log("document.URL : "+document.URL);
         // console.log("document.location.href : "+document.location.href);
         // console.log("document.location.origin : "+document.location.origin);
@@ -26,7 +26,7 @@ graphplotter.controller('graphController',
         //var attributes = CurrentSelection.getAttributesById();
         $scope.accessDataStore = function(teiid){
             var urlToSend = "../api/dataStore/partograph/"+teiid;
-            
+
             $.ajax({
                 type:'GET',
                 encoding:"UTF-8",
@@ -42,18 +42,18 @@ graphplotter.controller('graphController',
                     $scope.smsState = data;
                 }
             });
-            
+
         }
 
         $scope.storeDataStore = function(teiid){
-            
+
             var defaultVal = {}
             defaultVal[teiid] = false;
-            
+
             defaultVal = JSON.stringify(defaultVal);
-            
+
             var urlToSend = "../api/dataStore/partograph/"+teiid;
-            
+
             $.ajax({
                 type:'POST',
                 encoding:"UTF-8",
@@ -72,13 +72,13 @@ graphplotter.controller('graphController',
         }
 
         $scope.updateStore = function(teiid,value){
-            
+
             var defaultVal = {}
             defaultVal[teiid] = value;
             defaultVal = JSON.stringify(defaultVal);
-            
+
             var urlToSend = "../api/dataStore/partograph/"+teiid;
-            
+
             $.ajax({
                 type:'PUT',
                 encoding:"UTF-8",
@@ -109,24 +109,24 @@ graphplotter.controller('graphController',
             $rootScope.chart = new Highcharts.chart('graphcontainer', {
                             chart:{
                                 plotBackgroundColor:'#ffff1d'//'#ECD003', //yellow for alert area which is plot area background
-                                
+
                             },
                             exporting:{
                                 enabled:true
                             },
-                
+
                             title: {
                                 text: 'Labour Details'
                             },
                             subtitle:{
                                 text: subtitleval
                             },
-                            
+
                             tooltip:{
                                 formatter: function() {
                                     return 'The value is <b>' + this.y + '</b>, in series '+ this.series.name;
                                 }
-                            },  
+                            },
                             yAxis: {
                                 title: {
                                     text: 'Cervical dilation (cm)'
@@ -146,7 +146,7 @@ graphplotter.controller('graphController',
                                 align: 'right',
                                 verticalAlign: 'middle'
                             },
-                
+
                             plotOptions: {
                                 series: {
                                     label: {
@@ -155,12 +155,12 @@ graphplotter.controller('graphController',
                                     pointStart: 0
                                 }
                             },
-                
+
                             series: [
                             {
                                 name: 'Data',
                                 data: [],
-                                color: '#000000', //black for data line 
+                                color: '#000000', //black for data line
                                 zIndex : 5
                             },
                             {
@@ -168,7 +168,7 @@ graphplotter.controller('graphController',
                                 name: 'Safe Area',
                                 data: [[0,10,4],[6,10,10]],
                                 fillOpacity : 70,
-                                color   : '#92d050'//'#31FF69' // green for safe zone 
+                                color   : '#92d050'//'#31FF69' // green for safe zone
                             },
                             {//this series is dummy series just to show the color in legend the color should be same as ploat area background color
                                 type: 'area',
@@ -176,15 +176,15 @@ graphplotter.controller('graphController',
                                 data: [],
                                 color: '#ECD003'//color of alert area
                             },
-                             
+
                             {
                                 type: 'area',
                                 name: 'Action Area',
                                 data: [[4,4],[10,10]],
-                                color: '#f33333'//'#E87249 '//red for action line 
+                                color: '#f33333'//'#E87249 '//red for action line
                             }
                             ],
-                
+
                             responsive: {
                             rules: [{
                                 condition: {
@@ -202,7 +202,7 @@ graphplotter.controller('graphController',
                         });
 
                         //$rootScope.chart['subtitle'] = subtitle + 'At '+currentEvent.orgUnit;
-            
+
             // var dataElementsInOrder = ['FmVJzYVDVcz','pVowz22vGbF','AXFTeswZfLi','WBgaNvjJYrE'
             // ,'J2MElelRH9p','HNpSco5aovr','ThVQ8cJuMw5','AMS7Bj0pVX9'
             // ,'c6F35sCSFV3','Aqr0MvXJ0Zz']
@@ -219,7 +219,7 @@ graphplotter.controller('graphController',
                 ['Rjg6ET2Odna', 'J2MElelRH9p'],
                 ['Peq77iP5YTW', 'Aqr0MvXJ0Zz']
             ];
-            $rootScope.dataforGraph = []; 
+            $rootScope.dataforGraph = [];
             $scope.startingvalue = 0;
             $scope.critical = false;
             for(var elementIdKey in dataElementsInOrder){
@@ -231,10 +231,10 @@ graphplotter.controller('graphController',
                     var d = parseInt(time);
                     var f = $scope.convertMinToFrac(parseFloat(time)%1);
                     var f = f+d;
-                    
+
                     if(mappedobject[1]=='FmVJzYVDVcz'){
                         $scope.startingvalue = f;
-                    } 
+                    }
                     obj.push(f-$scope.startingvalue);
                     obj.push(parseInt(currentEvent[mappedobject[1]]));
                     if(obj[0]>=4 && obj[1]<=obj[0]){
@@ -254,20 +254,20 @@ graphplotter.controller('graphController',
                 //             $rootScope.dataforGraph.push(parseInt(currentEvent[elementId]));
                 //         //     break;
                 //         // }
-            
-                        
+
+
                 //     }
                 // }    working without time element ends
-            }                        
-                                 
+            }
+
             $rootScope.chart.series[0].setData($rootScope.dataforGraph,true);
 
-            
-            
-            
+
+
+
             if(initial===false){
                 //check whether the data line croses the critical line
-                //critical line follows the graph as y=x 
+                //critical line follows the graph as y=x
                 //so any value y>x where x>4 is on safe or alert zone
                 //any value y<x where x>4 is on critical zone
                 if($scope.smsState == null){
@@ -279,7 +279,7 @@ graphplotter.controller('graphController',
                 if($scope.critical && $scope.smsState[currentEvent.trackedEntityInstance]==false){
                     var contentToSend = $scope.getUrl()+"ou="+currentEvent.orgUnit+"&tei="+currentEvent.trackedEntityInstance;
                     var shorterUrl = $scope.shortUrl(contentToSend);
-                    if(shorterUrl!=null) contentToSend = shorterUrl; 
+                    if(shorterUrl!=null) contentToSend = shorterUrl;
                     if(currentEvent.patientName!=null){
                         contentToSend = "Patient : "+currentEvent.patientName+" "+contentToSend;
                     }
@@ -291,18 +291,18 @@ graphplotter.controller('graphController',
                     }else{
                         alert("Mobile number for the facility not found");
                     }
-                    
+
                 }
 
-                
+
             }
-           
+
         }
 
         $scope.convertMinToFrac = function(f){
-            return f/6 *10;//this function changes the interval from 60 to hundred 
+            return f/6 *10;//this function changes the interval from 60 to hundred
         }
-        
+
         $rootScope.refreshGraph($scope.currentEvent);
 
         $scope.sendsms = function (smscontent, mobile) {
@@ -311,7 +311,7 @@ graphplotter.controller('graphController',
             var finalcontent = encodeURIComponent(smscontent);
             var smsurl = "http://bulksms.mysmsmantra.com:8080/WebSMS/SMSAPI.jsp?username=hispindia&password=hisp1234&sendername=HSSPIN&mobileno="+mobile+"&message="+finalcontent;
             //var smsurl = "http://msdgweb.mgov.gov.in/esms/sendsmsrequest?username=PHD25PGIMER&password=sph@25&smsservicetype=unicodemsg&content=" + finalcontent + "&mobileno=" + mobile + "&senderid=PGIMER";
-            
+
 
             $.ajax({
                 type:'POST',
@@ -409,5 +409,5 @@ graphplotter.controller('graphController',
             return objToReturn;
         }
 
-        
+
 });
