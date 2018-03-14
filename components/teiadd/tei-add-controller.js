@@ -59,6 +59,8 @@ trackerCapture.controller('TEIAddController',
     $scope.addingRelationship = addingRelationship;
     $scope.selectedAttribute = selectedAttribute;
     $scope.selectedProgram = selectedProgram;
+	$scope.familymemberid = 'Dnm1mq6iq2d';
+        $scope.householdid = 'uHv60gjn2gp';
     $scope.relatedProgramRelationship = relatedProgramRelationship;
     $scope.mainTei = selectedTei;    
     $scope.attributesById = CurrentSelection.getAttributesById();
@@ -677,6 +679,48 @@ trackerCapture.controller('TEIAddController',
             $scope.selectedTei[$scope.dateofbirth] = '';
         }
     };
+	
+	$scope.autogenerate= function(trackvalues,b){
+	var seriesofmember=trackvalues.UqhbFTbVeSD;
+	var typeofhouse=trackvalues.dCer94znEuY;
+	var nameoffamily=trackvalues.xalnzkNfD77;
+	var uppercasename=nameoffamily.toUpperCase();
+	var household =trackvalues.YFjB0zhySP6;
+	if(seriesofmember && typeofhouse && nameoffamily)
+	{
+		var mergedata='CHD25/'+household+typeofhouse+'/'+uppercasename.substring(0,4)+'/'+seriesofmember;
+		$scope.selectedTei[$scope.familymemberid]=mergedata;
+		
+		
+	}
+	else
+		alert("Please fill neccessary deatils.");
+	
+}
+
+$scope.autogeneratehouse= function(trackvalues,b){
+	
+	var typeofhouse=trackvalues.dCer94znEuY;
+	var headoffamily=trackvalues.FML9pARILz5;
+	var uppercaseheadname=headoffamily.toUpperCase();
+	var household =trackvalues.ZQMF7taSAw8;
+	if(household && typeofhouse && headoffamily)
+	{
+		var mergedata='CHD25/'+household+typeofhouse+'/'+uppercaseheadname.substring(0,4)+'/H1';
+		$scope.selectedTei[$scope.householdid]=mergedata;
+		
+		
+	}
+	else
+		alert("Please fill neccessary deatils.");
+	
+}
+	
+	
+	
+	
+	
+	
 	
 	
     $scope.registerEntity = function(){
