@@ -1479,7 +1479,7 @@ trackerCapture.controller('DataEntryController',
 
                         var m = pstage[i];
                         var stageid = m.programStage;
-                            if(stageid=="WMnWjG8PS58")
+                           
                         for (var k = 0; k < m.dataValues.length; k++) {
                             var dataval = m.dataValues[k];
                             var dataEle = dataval.dataElement;
