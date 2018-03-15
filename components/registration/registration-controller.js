@@ -567,10 +567,12 @@ $scope.autogenerate= function(trackvalues,b){
 	var seriesofmember=trackvalues.UqhbFTbVeSD;
 	var typeofhouse=trackvalues.dCer94znEuY;
 	var nameoffamily=trackvalues.xalnzkNfD77;
-	var uppercasename=nameoffamily.toUpperCase();
+	
 	var household =trackvalues.YFjB0zhySP6;
 	if(seriesofmember && typeofhouse && nameoffamily)
 	{
+		var uppercasename=nameoffamily.toUpperCase();
+		household=household.substring(0,4);
 		var mergedata='CHD25/'+household+typeofhouse+'/'+uppercasename.substring(0,4)+'/'+seriesofmember;
 		$scope.selectedTei[$scope.familymemberid]=mergedata;
 		
@@ -585,10 +587,12 @@ $scope.autogeneratehouse= function(trackvalues,b){
 	
 	var typeofhouse=trackvalues.dCer94znEuY;
 	var headoffamily=trackvalues.FML9pARILz5;
-	var uppercaseheadname=headoffamily.toUpperCase();
+	
 	var household =trackvalues.ZQMF7taSAw8;
 	if(household && typeofhouse && headoffamily)
 	{
+		var uppercaseheadname=headoffamily.toUpperCase();
+		household=household.substring(0,4);
 		var mergedata='CHD25/'+household+typeofhouse+'/'+uppercaseheadname.substring(0,4)+'/H1';
 		$scope.selectedTei[$scope.householdid]=mergedata;
 		
