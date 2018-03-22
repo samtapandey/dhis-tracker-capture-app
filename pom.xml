@@ -5,12 +5,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.hisp.dhis</groupId>
-  <artifactId>dhis-app-tracker-capture</artifactId>
+  <artifactId>dhis-app-tracker-capture-intpart</artifactId>
   <version>2.28-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>Tracker capture</name>
-  <description>DHIS 2 tracker capture app</description>
-  <url>https://github.com/dhis2/tracker-capture-app</url>
+  <description>DHIS 2 tracker capture app INTPART</description>
+  <url>https://github.com/hispindia/tracker-capture-app</url>
 
   <organization>
     <name>DHIS 2</name>
@@ -44,6 +44,7 @@
 	<url>https://github.com/dhis2/tracker-capture-app</url>
   </issueManagement>
 
+  <!--
   <distributionManagement>
     <snapshotRepository>
       <id>ossrh</id>
@@ -53,6 +54,25 @@
       <id>ossrh</id>
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
     </repository>
+  </distributionManagement>
+-->
+
+
+<!-- add for get tracker capture app from HISP-INDIA Repo -->
+
+   <distributionManagement>
+    <repository>
+      <id>shimla-nexus</id>
+      <name>Shimla nexus repo</name>
+      <url>http://hospdev.hispindia.org/nexus/content/repositories/org.hispindia.dhis2/</url>
+    </repository>
+    <!-- use the following if you ARE using a snapshot version. -->
+    <snapshotRepository>
+      <id>shimla-nexus</id>
+      <name>Shimla nexus repo</name>
+      <url>http://hospdev.hispindia.org/nexus/content/repositories/org.hispindia.dhis2/</url>
+      <uniqueVersion>false</uniqueVersion>
+    </snapshotRepository>
   </distributionManagement>
 
   <build>
