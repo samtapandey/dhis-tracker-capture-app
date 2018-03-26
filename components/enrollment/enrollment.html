@@ -24,7 +24,7 @@
                             | <a href ng-click="loadEnrollmentDetails(currentEnrollment)" title="{{'current'| translate}}"><span ng-class="{true: 'widget-link-active bold', false: 'widget-link'} [showEnrollmentDiv]">{{'current'| translate}}</span></a>
                         </span>
                         <span class="nav-pills" ng-show="selectedProgram && !currentEnrollment && !selectedTei.inactive">
-                            <span ng-show="selectedProgram && currentEnrollment && currentEnrollment !== selectedEnrollment">|</span> <a href ng-click="showNewEnrollment()" title="{{'add_new'| translate}}"><span ng-class="{true: 'widget-link-active', false: 'widget-link'} [showEnrollmentDiv]">{{'add_new'| translate}}</span></a>
+                            <span ng-show="selectedProgram && currentEnrollment && currentEnrollment !== selectedEnrollment">|</span> <a ng-hide="true" href ng-click="showNewEnrollment()" title="{{'add_new'| translate}}"><span ng-class="{true: 'widget-link-active', false: 'widget-link'} [showEnrollmentDiv]">{{'add_new'| translate}}</span></a>
                         </span>
                         <span class="nav-pills" ng-show="hasEnrollmentHistory">
                             | <a href ng-click="showEnrollmentHistory()" title="{{'history'| translate}}"><span ng-class="{true: 'widget-link-active bold', false: 'widget - link'} [showEnrollmentHistoryDiv]">{{'history'| translate}}</span></a>
@@ -101,6 +101,7 @@
                                     </button>                                    
                                     <button type="button" 
                                             class="btn btn-danger pull-right"
+                                            ng-hide="true"
                                             ng-click="deleteEnrollment()">
                                         {{'delete' | translate}}
                                     </button>
