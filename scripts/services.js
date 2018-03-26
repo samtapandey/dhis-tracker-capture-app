@@ -460,7 +460,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                 if(originalTei && formTei[k] !== originalTei[k] && !formTei[k] && !originalTei[k]){
                     formChanged = true;
                 }
-                if( formTei[k] ){
+                if( k in formTei ){
                     var att = attributesById[k];
                     tei.attributes.push({attribute: att.id, value: formTei[k], displayName: att.displayName, valueType: att.valueType});
                     formEmpty = false;
@@ -819,9 +819,11 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
         },
         update: function(tei, optionSets, attributesById){
             var formattedTei = angular.copy(tei);
+            var attributes = [];
             angular.forEach(formattedTei.attributes, function(att){
-                att.value = CommonUtils.formatDataValue(null, att.value, attributesById[att.attribute], optionSets, 'API');
+                attributes.push({attribute: att.attribute, value: CommonUtils.formatDataValue(null, att.value, attributesById[att.attribute], optionSets, 'API')});
             });
+            formattedTei.attributes = attributes;
             var promise = $http.put( DHIS2URL + '/trackedEntityInstances/' + formattedTei.trackedEntityInstance , formattedTei ).then(function(response){
                 return response.data;
             }, function(response){
@@ -931,6 +933,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                             if(pAttribute.renderOptionsAsRadio){
                                 att.renderOptionsAsRadio = pAttribute.renderOptionsAsRadio;
                             }
+                            att.allowFutureDate = pAttribute.allowFutureDate;
                             programAttributes.push(att);
                         }
                     });

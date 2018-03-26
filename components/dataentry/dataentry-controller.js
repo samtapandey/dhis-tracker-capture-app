@@ -50,6 +50,7 @@ trackerCapture.controller('DataEntryController',
         $scope.displayCustomForm = false;
         $scope.currentElement = {};
         $scope.schedulingEnabled = false;
+        $scope.mandatoryFields = [];
         $scope.eventPeriods = [];
         $scope.currentPeriod = [];
         $scope.showEventsAsTables = false;
@@ -274,6 +275,7 @@ trackerCapture.controller('DataEntryController',
         $scope.warningMessages[event] = [];
         $scope.errorMessages[event] = [];
         $scope.hiddenFields[event] = [];
+        $scope.mandatoryFields[event] = [];
         
         angular.forEach($rootScope.ruleeffects[event], function (effect) {
             //in the data entry controller we only care about the "hidefield", showerror and showwarning actions
@@ -369,20 +371,20 @@ trackerCapture.controller('DataEntryController',
                             processedValue = OptionSetService.getName(
                                     $scope.optionSets[$scope.prStDes[effect.dataElement.id].dataElement.optionSet.id].options, processedValue);
                         }
-
-                        processedValue = processedValue === "true" ? true : processedValue;
-                        processedValue = processedValue === "false" ? false : processedValue;
-
+                        var prStDe = $scope.prStDes[effect.dataElement.id];
+                        processedValue = CommonUtils.formatDataValue(affectedEvent.event, processedValue, prStDe.dataElement, $scope.optionSets, 'USER');
+                        
                         affectedEvent[effect.dataElement.id] = processedValue;
                         $scope.assignedFields[event][effect.dataElement.id] = true;
                         
                         if(callerId === $scope.instanceId) {
-                            $scope.saveDataValueForEvent($scope.prStDes[effect.dataElement.id], null, affectedEvent, true);
+                            $scope.saveDataValueForEvent(prStDe, null, affectedEvent, true);
                         }
                     }
                 }
-            }
-            else if (effect.action === "HIDEPROGRAMSTAGE") {
+            }else if (effect.action === "SETMANDATORYFIELD"){                    
+                $scope.mandatoryFields[event][effect.dataElement.id] = effect.ineffect;
+            }else if (effect.action === "HIDEPROGRAMSTAGE") {
                 if (effect.programStage) {
                     if($scope.stagesNotShowingInStageTasks[effect.programStage.id] !== effect.ineffect )
                     {
@@ -396,6 +398,7 @@ trackerCapture.controller('DataEntryController',
         });
         
         updateTabularEntryStages();
+        $rootScope.$broadcast('tei-report-widget', {events: $scope.allEventsSorted});
     };
 
         function updateTabularEntryStages() {
@@ -709,6 +712,7 @@ trackerCapture.controller('DataEntryController',
                         $scope.model.minDate = $scope.selectedOrgUnit.reportDateRange.minDate;
                         //minDate is in Georgian format, but maxDate is not. This Service converts the date.
                         $scope.model.minDate = DateUtils.formatFromApiToUserCalendar($scope.model.minDate);
+                        $scope.model.minDate = DateUtils.formatFromApiToUser($scope.model.minDate);
                     }
                     if ($scope.selectedOrgUnit.reportDateRange.maxDate) {
                         $scope.model.maxDate = $scope.selectedOrgUnit.reportDateRange.maxDate;
@@ -1016,10 +1020,48 @@ trackerCapture.controller('DataEntryController',
                     return $scope.selectedEnrollment.status !== 'ACTIVE' ? 'col-xs-12' : 'col-xs-10 col-sm-11';
                 }
                 else {
-                    return 'col-xs-2 col-sm-1';
-                }
+                return 'col-xs-2 col-sm-1';
             }
-        };
+        }        
+    };    
+    
+    $scope.displayStageTasksInTopLine = function(stage) {
+        if($scope.stagesNotShowingInStageTasks[stage.id]){
+            return false;
+        }   
+        
+        return $scope.stageNeedsEvent(stage);
+    };
+    
+    $scope.showStageTasks = false;
+    $scope.toggleShowStageTasks = function(){
+        $scope.showStageTasks = !$scope.showStageTasks;
+    };
+    
+    $scope.addNewEvent = function(newEvent,setProgramStage) {
+        //Have to make sure the event is preprocessed - this does not happen unless "Dashboardwidgets" is invoked.
+        newEvent = EventUtils.processEvent(newEvent, $scope.stagesById[newEvent.programStage], $scope.optionSets, $scope.prStDes);
+        if(setProgramStage) $scope.currentStage = $scope.stagesById[newEvent.programStage];
+        sortEventsByStage('ADD', newEvent);
+        broadcastDataEntryControllerData();
+    };
+    
+    function getApplicableStagesForStageTasks(){
+        
+        if(angular.isUndefined($scope.stagesNotShowingInStageTasks)){
+            return $scope.programStages;
+        }
+        else {
+            var applicableStages = [];
+            angular.forEach($scope.programStages, function(stage){
+                if(!$scope.stagesNotShowingInStageTasks[stage.id]){
+                    applicableStages.push(stage);
+                }
+            });
+                    return applicableStages;
+                
+            }
+        }
 
         $scope.displayStageTasksInTopLine = function (stage) {
             if ($scope.stagesNotShowingInStageTasks[stage.id]) {
@@ -1276,16 +1318,14 @@ trackerCapture.controller('DataEntryController',
         $scope.eventRowChanged = false;
         $scope.eventRowClicked = function (event) {
 
-            if ($scope.currentEvent !== event) {
-                $scope.eventRowChanged = true;
-                $scope.switchToEventRow(event);
-            }
-            else {
-                $scope.eventRowChanged = false;
-            }
+                //possibility of infinite loops(rules updating datavalues, that triggers a new 
+                //rule execution)
+                if(!backgroundUpdate) {
+                    //Run rules on updated data:
+                    $scope.executeRules();
+                }
 
             if ($scope.tableEditMode === $scope.tableEditModes.form) {
-                $scope.openEventEditFormModal(event);
             }
 
         };
@@ -1606,6 +1646,24 @@ trackerCapture.controller('DataEntryController',
                 }
 
 
+    var setStatusColor = function () {
+        var statusColor = EventUtils.getEventStatusColor($scope.currentEvent);
+        var continueLoop = true;
+        for (var i = 0; i < $scope.eventsByStage[$scope.currentEvent.programStage].length && continueLoop; i++) {
+            if ($scope.eventsByStage[$scope.currentEvent.programStage][i].event === $scope.currentEvent.event) {
+                $scope.eventsByStage[$scope.currentEvent.programStage][i].statusColor = statusColor;
+                $scope.currentEvent.statusColor = statusColor;
+                continueLoop = false;
+            }
+        }
+    };
+    
+    $scope.eventEditable = function(){
+        if(!$scope.currentStage) return false;
+        if($scope.selectedOrgUnit.closedStatus || $scope.selectedEnrollment.status !== 'ACTIVE') return false;
+        if(!$scope.currentEvent || $scope.currentEvent.editingNotAllowed) return false;
+        return true;
+    }
 
 
 
@@ -1697,19 +1755,59 @@ trackerCapture.controller('DataEntryController',
 
                     $scope.currentStageEventsOriginal = angular.copy($scope.currentStageEvents);
 
-                    //In some cases, the rules execution should be suppressed to avoid the 
-                    //possibility of infinite loops(rules updating datavalues, that triggers a new 
-                    //rule execution)
-                    if (!backgroundUpdate) {
-                        //Run rules on updated data:
-                        $scope.executeRules();
+                $scope.eventPeriods[key] = periods;
+                $scope.currentPeriod[key] = periods.length > 0 ? periods[0] : null;
+                $scope.eventFilteringRequired = $scope.eventFilteringRequired ? $scope.eventFilteringRequired : periods.length > 1;
+            });
+        
+        
+        if (operation) {
+            if (operation === 'ADD' && newEvent && newEvent.event) {
+                var ev = newEvent;               
+                ev.enrollment = newEvent.enrollment;
+                ev.visited = newEvent.visited;
+                ev.orgUnitName = newEvent.orgUnitName;
+                ev.name = newEvent.name;
+                ev.sortingDate =newEvent.sortingDate;
+                
+                $scope.allEventsSorted.push(ev);
+                $scope.eventsByStage[newEvent.programStage].push(ev);
+            }
+            if (operation === 'UPDATE') {
+                var ev = $scope.currentEvent;
+                ev.enrollment = $scope.currentEvent.enrollment;
+                ev.visited = $scope.currentEvent.visited;
+                ev.orgUnitName = $scope.currentEvent.orgUnitName;
+                ev.name = $scope.currentEvent.name;
+                ev.sortingDate = $scope.currentEvent.sortingDate;
+                var index = -1;
+                for (var i = 0; i < $scope.allEventsSorted.length && index === -1; i++) {
+                    if ($scope.allEventsSorted[i].event === $scope.currentEvent.event) {
+                        index = i;
+                    }
+                }
+                if (index !== -1) {
+                    $scope.allEventsSorted[index] = ev;
+                }
+            }
+            if (operation === 'REMOVE') {
+                var index = -1;
+                for (var i = 0; i < $scope.allEventsSorted.length && index === -1; i++) {
+                    if ($scope.allEventsSorted[i].event === $scope.currentEvent.event) {
+                        index = i;
                     }
 
-                });
+                };
 
 
             }
 
+            $timeout(function () {
+                $rootScope.$broadcast('tei-report-widget', {events: $scope.allEventsSorted});
+            }, 200);
+        }        
+        $scope.allEventsSorted = orderByFilter($scope.allEventsSorted, '-sortingDate').reverse();         
+    };
 
 
 
@@ -3443,6 +3541,7 @@ trackerCapture.controller('DataEntryController',
             }
         };
 
+<<<<<<< HEAD
         $scope.saveAttributeCategoryOptions = function () {
             var selectedOptions = [], optionsReady = true;
             $scope.changedCat = { id: -1, saved: false };
@@ -3469,6 +3568,67 @@ trackerCapture.controller('DataEntryController',
 
                     if (ev.status) {
                         dhis2Event.status = ev.status;
+=======
+    $scope.downloadFile = function(eventUid, dataElementUid, e) {
+        eventUid = eventUid ? eventUid : $scope.currentEvent.event ? $scope.currentEvent.event : null;        
+        if( !eventUid || !dataElementUid){
+            NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("missing_file_identifier"));
+            return;
+        }
+        
+        $window.open('../api/events/files?eventUid=' + eventUid +'&dataElementUid=' + dataElementUid, '_blank', '');
+        if(e){
+            e.stopPropagation();
+            e.preventDefault();
+        }
+    };
+    
+    $scope.deleteFile = function(ev, dataElement){
+        
+        if( !dataElement ){
+            NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("missing_file_identifier"));
+            return;
+        }
+        
+        var modalOptions = {
+            closeButtonText: 'cancel',
+            actionButtonText: 'remove',
+            headerText: 'remove',
+            bodyText: 'are_you_sure_to_remove'
+        };
+
+        ModalService.showModal({}, modalOptions).then(function(result){            
+            $scope.fileNames[$scope.currentEvent.event][dataElement] = null;
+            $scope.currentEvent[dataElement] = null;
+            ev[dataElement] = null;
+            $scope.saveDatavalue($scope.prStDes[dataElement], null);
+            //$scope.updateEventDataValue($scope.currentEvent, dataElement);
+        });
+    };
+    
+    $scope.updateFileNames = function(){        
+        for(var dataElement in $scope.currentFileNames){
+            if($scope.currentFileNames[dataElement]){
+                if(!$scope.fileNames[$scope.currentEvent.event]){
+                    $scope.fileNames[$scope.currentEvent.event] = [];
+                }                 
+                $scope.fileNames[$scope.currentEvent.event][dataElement] = $scope.currentFileNames[dataElement];
+            }
+        }
+    };
+
+    $scope.editAttributeCategoryOptions = function(){
+        $scope.showAttributeCategoryOptions = !$scope.showAttributeCategoryOptions;
+        
+        if( $scope.showAttributeCategoryOptions && $scope.currentEvent && $scope.currentEvent.attributeCategoryOptions ){                        
+            var selectedOptions = $scope.currentEvent.attributeCategoryOptions.split(";");
+            var reverse = false;
+            for (var i=0; i<$scope.selectedCategories.length; i++) {
+                for(var j=0; j<$scope.selectedCategories[i].categoryOptions.length; j++) {
+                    if($scope.selectedCategories[i].categoryOptions[j].id === selectedOptions[i]){
+                        $scope.selectedCategories[i].selectedOption = $scope.selectedCategories[i].categoryOptions[j];
+                        break;
+>>>>>>> origin/v28
                     }
 
                     if (ev.eventDate) {
