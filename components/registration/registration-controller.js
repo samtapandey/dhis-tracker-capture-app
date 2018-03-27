@@ -390,7 +390,7 @@ trackerCapture.controller('RegistrationController',
             $scope.model.maxEnrollmentDate = ($scope.selectedProgram && $scope.selectedProgram.selectEnrollmentDatesInFuture) ? '' : "0";
             if ($scope.selectedOrgUnit.reportDateRange) {
                 if ($scope.selectedOrgUnit.reportDateRange.minDate) {
-                    $scope.model.minEnrollmentDate = $scope.selectedOrgUnit.reportDateRange.minDate;
+                    $scope.model.minEnrollmentDate = DateUtils.formatFromApiToUserCalendar($scope.selectedOrgUnit.reportDateRange.minDate);
                 }
                 if ($scope.selectedOrgUnit.reportDateRange.maxDate) {
                     $scope.model.maxEnrollmentDate = $scope.selectedOrgUnit.reportDateRange.maxDate;
@@ -594,7 +594,6 @@ trackerCapture.controller('RegistrationController',
                             }
 
                             EnrollmentService.enroll(enrollment).then(function (enrollmentResponse) {
-                                $scope.model.savingRegistration = false;
                                 if (enrollmentResponse) {
                                     var en = enrollmentResponse.response && enrollmentResponse.response.importSummaries &&
                                         enrollmentResponse.response.importSummaries[0] ? enrollmentResponse.response.importSummaries[0] : {};
@@ -716,7 +715,15 @@ trackerCapture.controller('RegistrationController',
                 return;
             }
 
-            performRegistration(destination);
+            if (!destination) {
+                TEIService.getRelationships($scope.tei.trackedEntityInstance).then(function (result) {
+                    $scope.tei.relationships = result;
+                    performRegistration(destination);
+                });
+            } else {
+                performRegistration(destination);
+            }
+
         };
 
         $scope.executeRules = function () {
@@ -758,10 +765,10 @@ trackerCapture.controller('RegistrationController',
 
         //check if field is hidden
         $scope.isHidden = function (id) {
-            //In case the field contains a value, we cant hide it.
-            //If we hid a field with a value, it would falsely seem the user was aware that the value was entered in the UI.
-
-            return $scope.selectedTei[id] ? false : $scope.hiddenFields[id];
+            if ($scope.currentEvent && $scope.hiddenFields[$scope.currentEvent.event] && $scope.hiddenFields[$scope.currentEvent.event][id]) {
+                return $scope.hiddenFields[$scope.currentEvent.event][id];
+            }
+            return false;
         };
 
         $scope.teiValueUpdated = function (tei, field) {
@@ -798,6 +805,7 @@ trackerCapture.controller('RegistrationController',
                 $scope.hiddenSections = effectResult.hiddenSections;
                 $scope.assignedFields = effectResult.assignedFields;
                 $scope.warningMessages = effectResult.warningMessages;
+                $scope.mandatoryFields = effectResult.mandatoryFields;
             }
         });
 
