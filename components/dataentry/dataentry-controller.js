@@ -29,7 +29,10 @@ trackerCapture.controller('DataEntryController',
         OptionSetService,
         AttributesFactory,
         TrackerRulesFactory,
-        EventCreationService) {
+        EventCreationService,
+        OrganisationUnitService,
+        EventAndDataValueService,
+        CustomIdService) {
 
         //Unique instance id for the controller:
         $scope.instanceId = Math.floor(Math.random() * 1000000000);
