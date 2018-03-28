@@ -89,7 +89,6 @@ trackerCapture.controller('RegistrationController',
 
     // update for PLAN for disable attribute patient_identifier
     $scope.isDisabled = function(attribute) {
-   return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
         if( attribute.code === 'patient_identifier')
         {
             return true;
