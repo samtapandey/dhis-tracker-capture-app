@@ -179,14 +179,14 @@ trackerCapture.controller('EventCreationController',
             var trackedEntityInstanceId = getTei.split('&')[0];
             $scope.prgId = getprg.split('&')[0];
 
-            if ($scope.prgId == 'HTCqTWEF1XS' || $scope.prgId == 'K3XysZ53B4r' || $scope.prgId == 'CsEmq8UNA6z') {
+            if ($scope.selectedProgram.id == 'HTCqTWEF1XS' || $scope.selectedProgram.id == 'K3XysZ53B4r' || $scope.selectedProgram.id == 'CsEmq8UNA6z') {
 
               
 
                 $.ajax({
                     async: false,
                     type: "GET",
-                    url: "../api/events.json?fields=*&trackedEntityInstance=" + trackedEntityInstanceId + "&order=eventDate:DESC&skipPaging=true",
+                    url: "../api/events.json?fields=*&trackedEntityInstance=" + trackedEntityInstanceId + "&programStage="+ dummyEvent.programStage +"&order=eventDate:DESC&skipPaging=true",
                     success: function (response) {
                         if (response.events.length > 0) {
                             $scope.allCreatedDates = [];
@@ -442,3 +442,4 @@ trackerCapture.controller('EventCreationController',
         };
 
     });
+    
