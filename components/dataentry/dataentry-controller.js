@@ -3541,131 +3541,112 @@ trackerCapture.controller('DataEntryController',
             }
         };
 
-        $scope.downloadFile = function(eventUid, dataElementUid, e) {
-            eventUid = eventUid ? eventUid : $scope.currentEvent.event ? $scope.currentEvent.event : null;        
-            if( !eventUid || !dataElementUid){
-                NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("missing_file_identifier"));
-                return;
-            }
-            
-            $window.open('../api/events/files?eventUid=' + eventUid +'&dataElementUid=' + dataElementUid, '_blank', '');
-            if(e){
-                e.stopPropagation();
-                e.preventDefault();
-            }
-        };
-        
-        $scope.deleteFile = function(ev, dataElement){
-            
-            if( !dataElement ){
-                NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("missing_file_identifier"));
-                return;
-            }
-            
-            var modalOptions = {
-                closeButtonText: 'cancel',
-                actionButtonText: 'remove',
-                headerText: 'remove',
-                bodyText: 'are_you_sure_to_remove'
-            };
-    
-            ModalService.showModal({}, modalOptions).then(function(result){            
-                $scope.fileNames[$scope.currentEvent.event][dataElement] = null;
-                $scope.currentEvent[dataElement] = null;
-                ev[dataElement] = null;
-                $scope.saveDatavalue($scope.prStDes[dataElement], null);
-                //$scope.updateEventDataValue($scope.currentEvent, dataElement);
-            });
-        };
-        
-        $scope.updateFileNames = function(){        
-            for(var dataElement in $scope.currentFileNames){
-                if($scope.currentFileNames[dataElement]){
-                    if(!$scope.fileNames[$scope.currentEvent.event]){
-                        $scope.fileNames[$scope.currentEvent.event] = [];
-                    }                 
-                    $scope.fileNames[$scope.currentEvent.event][dataElement] = $scope.currentFileNames[dataElement];
-                }
-            }
-        };
-    
-        $scope.editAttributeCategoryOptions = function(){
-            $scope.showAttributeCategoryOptions = !$scope.showAttributeCategoryOptions;
-            
-            if( $scope.showAttributeCategoryOptions && $scope.currentEvent && $scope.currentEvent.attributeCategoryOptions ){                        
-                var selectedOptions = $scope.currentEvent.attributeCategoryOptions.split(";");
-                var reverse = false;
-                for (var i=0; i<$scope.selectedCategories.length; i++) {
-                    for(var j=0; j<$scope.selectedCategories[i].categoryOptions.length; j++) {
-                        if($scope.selectedCategories[i].categoryOptions[j].id === selectedOptions[i]){
-                            $scope.selectedCategories[i].selectedOption = $scope.selectedCategories[i].categoryOptions[j];
-                            break;
-                        }
-                        else{
-                            reverse = true;
-                        }
-                    }
-                }
-                
-                if( reverse ){
-                    selectedOptions = selectedOptions.reverse();
-                    $scope.currentEvent.attributeCategoryOptions = selectedOptions.join(';');
-                    for (var i=0; i<$scope.selectedCategories.length; i++) {
-                        for(var j=0; j<$scope.selectedCategories[i].categoryOptions.length; j++) {
-                            if($scope.selectedCategories[i].categoryOptions[j].id === selectedOptions[i]){
-                                $scope.selectedCategories[i].selectedOption = $scope.selectedCategories[i].categoryOptions[j];
-                                break;
-                            }
-                        }
-                    }
-                }
-            }        
-        };
-        
-        $scope.saveAttributeCategoryOptions = function(){
+<<<<<<< HEAD
+        $scope.saveAttributeCategoryOptions = function () {
             var selectedOptions = [], optionsReady = true;
-            $scope.changedCat = {id: -1, saved: false};
+            $scope.changedCat = { id: -1, saved: false };
             for (var i = 0; i < $scope.selectedCategories.length; i++) {
-                
-                if( $scope.selectedCategories[i].selectedOption.id !== $scope.currentEvent.attributeCategoryOptions.split(';')[i] ){                
+
+                if ($scope.selectedCategories[i].selectedOption.id !== $scope.currentEvent.attributeCategoryOptions.split(';')[i]) {
                     $scope.changedCat.id = $scope.selectedCategories[i].id;
                 }
                 if ($scope.selectedCategories[i].selectedOption && $scope.selectedCategories[i].selectedOption.id) {
                     selectedOptions.push($scope.selectedCategories[i].selectedOption.id);
                 }
-                else{
+                else {
                     optionsReady = false;
                 }
             }
-            
+
             var acos = selectedOptions.join(';');
-            if( optionsReady && acos !== $scope.currentEvent.attributeCategoryOptions ){
-                
+            if (optionsReady && acos !== $scope.currentEvent.attributeCategoryOptions) {
+
                 var ev = EventUtils.processEvent($scope.currentEvent, $scope.currentStage, $scope.optionSets, $scope.prStDes);
-                
-                if( ev.event && ev.enrollment && ev.trackedEntityInstance && ev.attributeCategoryOptions && ev.attributeOptionCombo){
-                    var dhis2Event = {event: ev.event, orgUnit: ev.orgUnit, enrollment: ev.enrollment, program: ev.program, programStage: ev.programStage, dataValues: ev.dataValues};
-                    
-                    if( ev.status ){
+
+                if (ev.event && ev.enrollment && ev.trackedEntityInstance && ev.attributeCategoryOptions && ev.attributeOptionCombo) {
+                    var dhis2Event = { event: ev.event, orgUnit: ev.orgUnit, enrollment: ev.enrollment, program: ev.program, programStage: ev.programStage, dataValues: ev.dataValues };
+
+                    if (ev.status) {
                         dhis2Event.status = ev.status;
+=======
+    $scope.downloadFile = function(eventUid, dataElementUid, e) {
+        eventUid = eventUid ? eventUid : $scope.currentEvent.event ? $scope.currentEvent.event : null;        
+        if( !eventUid || !dataElementUid){
+            NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("missing_file_identifier"));
+            return;
+        }
+        
+        $window.open('../api/events/files?eventUid=' + eventUid +'&dataElementUid=' + dataElementUid, '_blank', '');
+        if(e){
+            e.stopPropagation();
+            e.preventDefault();
+        }
+    };
+    
+    $scope.deleteFile = function(ev, dataElement){
+        
+        if( !dataElement ){
+            NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("missing_file_identifier"));
+            return;
+        }
+        
+        var modalOptions = {
+            closeButtonText: 'cancel',
+            actionButtonText: 'remove',
+            headerText: 'remove',
+            bodyText: 'are_you_sure_to_remove'
+        };
+
+        ModalService.showModal({}, modalOptions).then(function(result){            
+            $scope.fileNames[$scope.currentEvent.event][dataElement] = null;
+            $scope.currentEvent[dataElement] = null;
+            ev[dataElement] = null;
+            $scope.saveDatavalue($scope.prStDes[dataElement], null);
+            //$scope.updateEventDataValue($scope.currentEvent, dataElement);
+        });
+    };
+    
+    $scope.updateFileNames = function(){        
+        for(var dataElement in $scope.currentFileNames){
+            if($scope.currentFileNames[dataElement]){
+                if(!$scope.fileNames[$scope.currentEvent.event]){
+                    $scope.fileNames[$scope.currentEvent.event] = [];
+                }                 
+                $scope.fileNames[$scope.currentEvent.event][dataElement] = $scope.currentFileNames[dataElement];
+            }
+        }
+    };
+
+    $scope.editAttributeCategoryOptions = function(){
+        $scope.showAttributeCategoryOptions = !$scope.showAttributeCategoryOptions;
+        
+        if( $scope.showAttributeCategoryOptions && $scope.currentEvent && $scope.currentEvent.attributeCategoryOptions ){                        
+            var selectedOptions = $scope.currentEvent.attributeCategoryOptions.split(";");
+            var reverse = false;
+            for (var i=0; i<$scope.selectedCategories.length; i++) {
+                for(var j=0; j<$scope.selectedCategories[i].categoryOptions.length; j++) {
+                    if($scope.selectedCategories[i].categoryOptions[j].id === selectedOptions[i]){
+                        $scope.selectedCategories[i].selectedOption = $scope.selectedCategories[i].categoryOptions[j];
+                        break;
+>>>>>>> origin/v28
                     }
-                    
-                    if( ev.eventDate ){
+
+                    if (ev.eventDate) {
                         dhis2Event.eventDate = ev.eventDate;
                     }
-                    
-                    if( ev.notes ){
+
+                    if (ev.notes) {
                         dhis2Event.notes = ev.notes;
                     }
-                    
-                    if( ev.coordinate ){
+
+                    if (ev.coordinate) {
                         dhis2Event.coordinate = ev.coordinate;
                     }
-                    
+
                     dhis2Event.attributeCategoryOptions = acos;
-                }            
-                
-                DHIS2EventFactory.update(dhis2Event).then(function(data){            
+                }
+
+                DHIS2EventFactory.update(dhis2Event).then(function (data) {
                     $scope.currentEvent.attributeCategoryOptions = dhis2Event.attributeCategoryOptions;
                     $scope.changedCat.saved = true;
                 });
