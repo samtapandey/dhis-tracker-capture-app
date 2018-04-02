@@ -47,7 +47,7 @@ angular.module('trackerCaptureServices')
                 var thisDef = $.Deferred();
 
                
-                var prefix = "";
+               /* var prefix = "";
                 //console.log( "total Count -- " + response.data.height);
                 //var totalTei = response.data.height + 1;
 
@@ -67,7 +67,30 @@ angular.module('trackerCaptureServices')
                 //def.resolve(constant + prefix + totalTei );
 
                 var finalCustomId = orgUnitCode +"-" + regDate + "-"+ prefix + totalTei;
-                thisDef.resolve(finalCustomId);
+                thisDef.resolve(finalCustomId);*/
+
+            var date = new Date();
+            var year = date.getFullYear();
+
+            var prefix = "";
+
+            // for Reset after count 9999
+            //totalTei = 10000;
+            var totalTei = totalTeiCount;
+            totalTei = totalTei%10000;
+
+            if( totalTei === 0 ) totalTei = 1;
+
+            if( totalTei <10) prefix="0000";
+            else if (totalTei >9 && totalTei<100) prefix="000";
+            else if(totalTei>99 && totalTei<1000) prefix="00";
+            else if(totalTei>999 && totalTei<10000) prefix="0";
+            // change in requirement - adding random number
+            //prefix=Math.floor(Math.random()*(9999-1000) + 1000);
+            //def.resolve(constant + prefix + totalTei );
+
+            var finalCustomId = orgUnitCode +"-" + year + "-"+ prefix + totalTei;
+            thisDef.resolve(finalCustomId);
 
                 /*
 
@@ -142,14 +165,26 @@ angular.module('trackerCaptureServices')
                 var def = $.Deferred();
                 var thiz = this;
                 var customIDAttribute;
-                //var isValidProgram = false;
+               var isValidProgram = false;
                 var isValidAttribute = false;
                 if (destination == 'PROFILE' || !destination || !programUid){
                     def.resolve("Not Needed");
                     return def;
                 }
-
-                CustomIdService.getTEAttributesAttributeAndValue().then(function(tea) {
+				  //ProgramFactory.get(programUid).then(function(program) {
+                CustomIdService.getProgramAttributeAndValue(programUid).then(function(data){
+                    if( data.attributeValues != undefined )
+                    {
+                        for (var i=0;i<data.attributeValues.length;i++)
+                        {
+                            if (data.attributeValues[i].attribute.code == 'allowRegistration' && data.attributeValues[i].value == "true"){
+                                isValidProgram = true; break;
+                            }
+                        }
+                    }
+				
+				 
+             CustomIdService.getTEAttributesAttributeAndValue().then(function(tea) {
                         if( tea.trackedEntityAttributes != undefined )
                         {
                             for (var j=0;j<tea.trackedEntityAttributes.length;j++)
@@ -174,20 +209,21 @@ angular.module('trackerCaptureServices')
                             }
                         }
 
-                        if (isValidAttribute)
+
+                        if (isValidAttribute && isValidProgram)
                         {
-                            //var regDate = enrolmentdate;
-							              //var customRegDate=enrolmentdate.substring(8);
-                            var customRegDate=enrolmentdate.split("-")[0];
+                            var regDate = enrolmentdate;
 
                             //var customRegDate = regDate.split("-")[2]+regDate.split("-")[1]+regDate.split("-")[0];
-						                //	var customRegDate = regDate.split("-")[2]+regDate.split("-")[2];
+                            var customRegDate = regDate.split("-")[1]+regDate.split("-")[0].slice(-2);
 							
-                          //  var customRegDate = regDate.split("-")[1]+regDate.split("-")[0].slice(-2);
+							CustomIdService.getAll().then(function(data){
+                            CustomIdService.getTotalTeiByProgram(programUid,data).then(function(teiResponse){
+                                var count = teiResponse.rows[0];
+                                var countTeiByProgram = count[0];
+                               
 
-                            CustomIdService.getTotalTeiByOrgUnit( tei.orgUnit ).then(function(teiResponse){
-							
-                                var totalTei = teiResponse.trackedEntityInstances.length;
+                                var totalTei = countTeiByProgram;
                                 CustomIdService.getOrgunitCode(tei.orgUnit).then(function(orgUnitCodeResponse){
                                 var orgUnitCode = orgUnitCodeResponse.code;
                                     thiz.createCustomIdAndSave(tei,customIDAttribute,optionSets,attributesById,customRegDate,totalTei,orgUnitCode).then(function(response){
@@ -197,13 +233,16 @@ angular.module('trackerCaptureServices')
                                 });
 
                             });
+							});
+						}
 
-                        }
+                      
                         else
                         {
                             def.resolve("Validation Failed");
                         }
-                    });
+				});
+				});
 
                     /*
                     var promise = this.getProgramAttributeAndValue(program);
@@ -399,14 +438,50 @@ angular.module('trackerCaptureServices')
             return def.promise;
         },
 
-        getTotalTeiByProgram: function ( programUid ) {
+       /* getTotalTeiByProgram: function ( programUid ) {
             var def = $q.defer();
             $http.get('../api/trackedEntityInstances.json?program=' + programUid + "&ouMode=ALL&skipPaging=true").then(function (response) {
 
                 def.resolve(response.data);
             });
             return def.promise;
-        },
+        },*/
+		
+	getTotalTeiByProgram: function ( programUid,data ) {
+            var def = $q.defer();
+            var basicUrl = "../api/sqlViews/";
+			var id;
+			
+            var sqlViews = data.sqlViews;
+			
+			for(var i=0;i<data.sqlViews.length;i++)
+			{
+			if(sqlViews[i].name=="Unique Id Generation")
+			{
+			 id=sqlViews[i].id;
+			}
+			}
+				
+          //  var id = 'CxJERywgrmU';
+            
+            var url3 = basicUrl + id + "/data.json?";
+            url3 += "var=programUid:" + programUid;
+            $.get(url3, function (data) {
+
+                def.resolve(data);
+                      
+            });
+            return def.promise;
+         },
+		 
+		 getAll: function () {
+                var promise = $http.get('../api/sqlViews.json?fields=[id,name]&paging=false').then(function (response) {
+		
+                    return response.data ;
+                });
+                return promise;
+            },
+			
 		
 		    //api/trackedEntityInstances.json?ou=CPtzIhyn36z
         getTotalTeiByOrgUnit: function ( orgUnitId ) {

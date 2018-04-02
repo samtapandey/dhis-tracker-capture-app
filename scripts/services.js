@@ -452,14 +452,14 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                 return def.promise;
             }            
         },
-        processForm: function(existingTei, formTei, originalTei, attributesById, finalCustomId){
+        processForm: function(existingTei, formTei, originalTei, attributesById){
             var tei = angular.copy(existingTei);            
             tei.attributes = [];
             var formEmpty = true;            
             for(var k in attributesById){
 
                 // custon development for tibet
-                if( finalCustomId != null && finalCustomId != "" )
+               /* if( finalCustomId != null && finalCustomId != "" )
                 {
 
                     if(  attributesById[k].code === 'doh_id_no' )
@@ -467,7 +467,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                         formTei[k] = finalCustomId;
                         console.log( " Final Custome Id -- " + finalCustomId );
                     }
-                }
+                }*/
                 // end
                 if(originalTei && formTei[k] !== originalTei[k] && !formTei[k] && !originalTei[k]){
                     formChanged = true;

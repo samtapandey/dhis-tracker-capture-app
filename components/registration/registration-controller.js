@@ -26,7 +26,8 @@ trackerCapture.controller('RegistrationController',
                 TrackerRulesFactory,
                 TrackerRulesExecutionService,
                 TCStorageService,
-                ModalService) {
+                ModalService,
+				CustomIDGenerationService) {
     $scope.today = DateUtils.getToday();
     $scope.trackedEntityForm = null;
     $scope.customRegistrationForm = null;    
@@ -55,7 +56,7 @@ trackerCapture.controller('RegistrationController',
 
     $scope.eddDate = 'vvqXiTuKL9V';
     $scope.updatedEDDDate = '';
-    $scope.generatedCustomId = '';
+   // $scope.generatedCustomId = '';
 
     $scope.calculatedDOB ='anFTfRZyC1Q';
     $scope.ageInYears = 'GjdO5wHfmru';
@@ -407,6 +408,9 @@ trackerCapture.controller('RegistrationController',
                                     $scope.selectedEnrollment = enrollment;
                                     var avilableEvent = $scope.currentEvent && $scope.currentEvent.event ? $scope.currentEvent : null;
                                     var dhis2Events = EventUtils.autoGenerateEvents($scope.tei.trackedEntityInstance, $scope.selectedProgram, $scope.selectedOrgUnit, enrollment, avilableEvent);
+                                  // custom id start
+									
+										CustomIDGenerationService.validateAndCreateCustomId($scope.tei,$scope.selectedProgram.id,$scope.attributes,destination,$scope.optionSets,$scope.attributesById,$scope.selectedEnrollment.enrollmentDate).then(function(){
                                     if (dhis2Events.events.length > 0) {
                                         DHIS2EventFactory.create(dhis2Events).then(function () {
                                             notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
@@ -414,7 +418,10 @@ trackerCapture.controller('RegistrationController',
                                     } else {
                                         notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
                                     }
-                                }
+									
+								});
+								}
+								
                                 else {
                                     //enrollment has failed
                                     NotificationService.showNotifcationDialog($translate.instant("enrollment_error"), enrollmentResponse.message);
@@ -472,7 +479,7 @@ trackerCapture.controller('RegistrationController',
         }
 
         // custom ID generation for tibet format -- org_code - year -  4 digit tei count
-        if ($scope.registrationMode === 'REGISTRATION')
+       /* if ($scope.registrationMode === 'REGISTRATION')
         {
             var date = new Date();
             var year = date.getFullYear();
@@ -510,13 +517,13 @@ trackerCapture.controller('RegistrationController',
                 }
 
             });
-        }
+        }*/
 // end
 
         //get tei attributes and their values
         //but there could be a case where attributes are non-mandatory and
         //registration form comes empty, in this case enforce at least one value
-        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById, $scope.generatedCustomId);
+        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById);
         $scope.formEmpty = result.formEmpty;
         $scope.tei = result.tei;
 
