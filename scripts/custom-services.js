@@ -45,7 +45,7 @@ angular.module('trackerCaptureServices')
                 return def.promise();
             },
             createCustomId :  function(regDate,totalTeiCount,orgUnitCode){
-
+                var sqlview=[],AllTieValue=[];
                 var thisDef = $.Deferred();
 
                
@@ -53,23 +53,50 @@ angular.module('trackerCaptureServices')
                 //console.log( "total Count -- " + response.data.height);
                 //var totalTei = response.data.height + 1;
 
-                var totalTei = totalTeiCount;
-                // for Reset after count 9999
-                //totalTei = 10000;
-                totalTei = totalTei%10000;
+                
+                CustomIdService.getSQLView().then(function(data){
+                    
+                    for(var i=0;i<data.sqlViews.length;i++)
+                    {
+                        sqlview[data.sqlViews[i].displayName]=data.sqlViews[i].id;
+                    }
+                    CustomIdService.getTeiValue(sqlview['TEI_ID_VALIDATION']).then(function(data){
+                    
+                        for(var i=0;i<data.rows.length;i++)
+                        {
+                            AllTieValue.push(data.rows[i][0]);
+                        }
+    
+                        var totalTei = totalTeiCount;
+                        // for Reset after count 9999
+                        //totalTei = 10000;
+                        totalTei = totalTei%10000;
+        
+                        if( totalTei == 0 ) totalTei = 1;
+        
+                        if( totalTei <10) prefix="00";
+                        else if (totalTei >9 && totalTei<100) prefix="0";
+                        //else if(totalTei>99 && totalTei<1000) prefix="00";
+                       // else if(totalTei>999 && totalTei<10000) prefix="0";
+                        // change in requirement - adding random number
+                        //prefix=Math.floor(Math.random()*(9999-1000) + 1000);
+                        //def.resolve(constant + prefix + totalTei );
+        
+                        var finalCustomId = orgUnitCode +"-" + regDate + "-"+ prefix + totalTei;
+        
+                        
+                        CustomIdService.getfinalCustomId(finalCustomId,AllTieValue).then(function(data){
+                        
+                            finalCustomId=data;
 
-                if( totalTei == 0 ) totalTei = 1;
+                            thisDef.resolve(finalCustomId);
 
-                if( totalTei <10) prefix="00";
-                else if (totalTei >9 && totalTei<100) prefix="0";
-                //else if(totalTei>99 && totalTei<1000) prefix="00";
-               // else if(totalTei>999 && totalTei<10000) prefix="0";
-                // change in requirement - adding random number
-                //prefix=Math.floor(Math.random()*(9999-1000) + 1000);
-                //def.resolve(constant + prefix + totalTei );
 
-                var finalCustomId = orgUnitCode +"-" + regDate + "-"+ prefix + totalTei;
-                thisDef.resolve(finalCustomId);
+                            
+                         }) 
+                        })
+                          })
+                          return thisDef;
 
                 /*
 
@@ -103,9 +130,10 @@ angular.module('trackerCaptureServices')
 
                  */
 
-                return thisDef;
+               
 
             },
+            
             createCustomIdAndSave: function(tei,customIDAttribute,optionSets,attributesById,regDate,totalTeiCount,orgUnitCode){
                 var def = $.Deferred();
                 console.log( regDate +"--"+ totalTeiCount + "--" + orgUnitCode);
@@ -508,7 +536,75 @@ angular.module('trackerCaptureServices')
                     def.resolve(response.data);
                 });
                 return def.promise;
+            },
+            getSQLView : function(){
+                var def = $.Deferred();
+
+                $http.get('../api/sqlViews.json?paging=false').then(function (response) {
+
+                    def.resolve(response.data);
+                });
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json",
+                    async:false,
+                    url: '../api/sqlViews.json?paging=false',
+                    success: function (data) {
+                        def.resolve(data);
+                    }
+                });
+                return def;
+            },
+
+            getTeiValue : function(sqlViewUID){
+                var def = $.Deferred();
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    async:false,
+                    contentType: "application/json",
+                    url: '../api/sqlViews/'+sqlViewUID+'/data?paging=false',
+                    success: function (data) {
+                        def.resolve(data);
+                    }
+                });
+                return def;
+            },
+            getfinalCustomIdval:function()
+            {
+                for(var j=0;j<AllTieValue.length;j++)
+                {
+                    if(finalCustomId===AllTieValue[j])
+                    {
+                       // deferred.resolve(finalCustomId);
+                      return true
+                    }
+                   
+                    
+                    
+                }
+            },
+            getfinalCustomId:function(finalCustomId,AllTieValue){
+               
+                var def = $.Deferred();
+                var thiz=this;
+                for(var j=0;j<AllTieValue.length;j++)
+                {
+                    if(finalCustomId===AllTieValue[j])
+                    {
+                       var str=finalCustomId.split('-');
+                       var newtei=Number(str[2])+1;
+                       finalCustomId=str[0]+"-"+str[1]+"-"+newtei
+                       thiz.getfinalCustomId(finalCustomId,AllTieValue)
+                    }
+                 }
+                 def.resolve(finalCustomId);
+                return def
+               
             }
+
+
 		
     };
 })
