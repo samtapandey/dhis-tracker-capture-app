@@ -540,11 +540,7 @@ angular.module('trackerCaptureServices')
             getSQLView : function(){
                 var def = $.Deferred();
 
-                $http.get('../api/sqlViews.json?paging=false').then(function (response) {
-
-                    def.resolve(response.data);
-                });
-                $.ajax({
+               $.ajax({
                     type: "GET",
                     dataType: "json",
                     contentType: "application/json",
