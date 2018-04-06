@@ -478,48 +478,6 @@ trackerCapture.controller('RegistrationController',
             $scope.selectedTei.attributes = $scope.tei.attributes = [];
         }
 
-        // custom ID generation for tibet format -- org_code - year -  4 digit tei count
-       /* if ($scope.registrationMode === 'REGISTRATION')
-        {
-            var date = new Date();
-            var year = date.getFullYear();
-
-            var org_id = $scope.selectedOrgUnit.id;
-
-            $.ajax({
-                async:false,
-                type: "GET",
-                url: '../api/trackedEntityInstances.json?ou=' + org_id + "&skipPaging=true",
-                success: function(responseTei){
-
-                    var totalTei = responseTei.trackedEntityInstances.length;
-
-                    var prefix = "";
-
-                    // for Reset after count 9999
-                    //totalTei = 10000;
-                    totalTei = totalTei%10000;
-
-                    if( totalTei === 0 ) totalTei = 1;
-
-                    if( totalTei <10) prefix="0000";
-                    else if (totalTei >9 && totalTei<100) prefix="000";
-                    else if(totalTei>99 && totalTei<1000) prefix="00";
-                    else if(totalTei>999 && totalTei<10000) prefix="0";
-                    // change in requirement - adding random number
-                    //prefix=Math.floor(Math.random()*(9999-1000) + 1000);
-                    //def.resolve(constant + prefix + totalTei );
-
-                    $scope.generatedCustomId = $scope.orgUnitCode +"-" + year + "-"+ prefix + totalTei;
-
-                },
-                error: function(responseTei){
-                }
-
-            });
-        }*/
-// end
-
         //get tei attributes and their values
         //but there could be a case where attributes are non-mandatory and
         //registration form comes empty, in this case enforce at least one value
