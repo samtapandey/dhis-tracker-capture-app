@@ -5,11 +5,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.hisp.dhis</groupId>
-  <artifactId>dhis-app-tracker-capture-intpart</artifactId>
+  <artifactId>dhis-app-tracker-capture-intpart-khera</artifactId>
   <version>2.28-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>Tracker capture</name>
-  <description>DHIS 2 tracker capture app INTPART</description>
+  <description>DHIS 2 tracker capture app INTPART KHERA</description>
   <url>https://github.com/hispindia/tracker-capture-app</url>
 
   <organization>
