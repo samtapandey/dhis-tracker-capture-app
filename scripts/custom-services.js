@@ -12,7 +12,7 @@
 angular.module('trackerCaptureServices')
 
 
-    .service('CustomIDGenerationService',function($http,$q,ProgramFactory,RegistrationService,CustomIdService){
+    .service('CustomIDGenerationService',function($http,$q,ProgramFactory,RegistrationService,CustomIdService,OrganisationUnitService){
 
         return {
             getOu: function (ou) {
@@ -44,23 +44,21 @@ angular.module('trackerCaptureServices')
                 });
                 return def.promise();
             },
-            createCustomId :  function(regDate,totalTeiCount,orgUnitCode){
+            createCustomId :  function(regDate,totalTeiCount,orgUnitCode,orgunitid){
                 var sqlview=[],AllTieValue=[];
                 var thisDef = $.Deferred();
-
-               
+                
                 var prefix = "";
                 //console.log( "total Count -- " + response.data.height);
                 //var totalTei = response.data.height + 1;
-
-                
+               
                 CustomIdService.getSQLView().then(function(data){
                     
                     for(var i=0;i<data.sqlViews.length;i++)
                     {
                         sqlview[data.sqlViews[i].displayName]=data.sqlViews[i].id;
                     }
-                    CustomIdService.getTeiValue(sqlview['TEI_ID_VALIDATION']).then(function(data){
+                    CustomIdService.getTeiValue(sqlview['TEI_ID_VALIDATION'],orgunitid).then(function(data){
                     
                         for(var i=0;i<data.rows.length;i++)
                         {
@@ -137,7 +135,8 @@ angular.module('trackerCaptureServices')
             createCustomIdAndSave: function(tei,customIDAttribute,optionSets,attributesById,regDate,totalTeiCount,orgUnitCode){
                 var def = $.Deferred();
                 console.log( regDate +"--"+ totalTeiCount + "--" + orgUnitCode);
-                this.createCustomId(regDate,totalTeiCount,orgUnitCode).then(function(customId){
+                var orgunitid=tei.orgUnit;
+                this.createCustomId(regDate,totalTeiCount,orgUnitCode,orgunitid).then(function(customId){
                     var attributeExists = false;
                     angular.forEach(tei.attributes,function(attribute){
                         if (attribute.attribute == customIDAttribute.id){
@@ -553,14 +552,14 @@ angular.module('trackerCaptureServices')
                 return def;
             },
 
-            getTeiValue : function(sqlViewUID){
+            getTeiValue : function(sqlViewUID,param){
                 var def = $.Deferred();
                 $.ajax({
                     type: "GET",
                     dataType: "json",
                     async:false,
                     contentType: "application/json",
-                    url: '../api/sqlViews/'+sqlViewUID+'/data?paging=false',
+                    url: '../api/sqlViews/'+sqlViewUID+'/data?var orgunit='+param+'paging=false',
                     success: function (data) {
                         def.resolve(data);
                     }
