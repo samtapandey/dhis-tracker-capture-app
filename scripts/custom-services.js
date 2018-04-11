@@ -44,64 +44,67 @@ angular.module('trackerCaptureServices')
                 });
                 return def.promise();
             },
-            createCustomId :  function(regDate,totalTeiCount,orgUnitCode){
+
+            createCustomId :  function( regDate, totalTeiCount, orgUnitCode, orgUnitUid, sQLViewNameToUidMap ){
 
                 var thisDef = $.Deferred();
-                var sqlview = [];
+                //var sqlview = [];
                 var attributeValueList = [];
                
                 var prefix = "";
                 //console.log( "total Count -- " + response.data.height);
                 //var totalTei = response.data.height + 1;
 
-                CustomIdService.getALLSQLView().then(function(responseSQLViews){
-                    
-                    for(var i=0;i<responseSQLViews.sqlViews.length;i++)
+                //CustomIdService.getALLSQLView().then(function(responseSQLViews){
+
+                //for(var i=0;i<responseSQLViews.sqlViews.length;i++)
+                //{
+                //    sqlview[responseSQLViews.sqlViews[i].displayName]=responseSQLViews.sqlViews[i].id;
+                //}
+
+                CustomIdService.getTeiAttributeValues(sQLViewNameToUidMap['TEI_ID_VALIDATION'], orgUnitUid).then(function(attributeValues){
+
+                    for(var i=0;i<attributeValues.rows.length;i++)
                     {
-                        sqlview[responseSQLViews.sqlViews[i].displayName]=responseSQLViews.sqlViews[i].id;
+                        attributeValueList.push(attributeValues.rows[i][0]);
                     }
-                    CustomIdService.getTeiAttributeValues(sqlview['TEI_ID_VALIDATION']).then(function(attributeValues){
-                    
-                        for(var i=0;i<attributeValues.rows.length;i++)
-                        {
-                            attributeValueList.push(attributeValues.rows[i][0]);
-                        }
-    
-                        var totalTei = totalTeiCount;
-                        // for Reset after count 9999
-                        //totalTei = 10000;
-                        totalTei = totalTei%10000;
-        
-                        if( totalTei == 0 ) totalTei = 1;
-        
-                        if( totalTei <10) prefix="00";
-                        else if (totalTei >9 && totalTei<100) prefix="0";
-                        //else if(totalTei>99 && totalTei<1000) prefix="00";
-                       // else if(totalTei>999 && totalTei<10000) prefix="0";
-                        // change in requirement - adding random number
-                        //prefix=Math.floor(Math.random()*(9999-1000) + 1000);
-                        //def.resolve(constant + prefix + totalTei );
-        
-                        var finalCustomId = orgUnitCode +"-" + regDate + "-"+ prefix + totalTei;
 
-                        CustomIdService.getUniqueCustomId(finalCustomId,attributeValueList).then(function(uniqueCustomId){
-                        
-                            finalCustomId = uniqueCustomId;
+                    var totalTei = totalTeiCount;
+                    // for Reset after count 9999
+                    //totalTei = 10000;
+                    totalTei = totalTei%10000;
 
-                            thisDef.resolve(finalCustomId);
+                    if( totalTei == 0 ) totalTei = 1;
 
-                         });
-                    });
+                    if( totalTei <10) prefix="00";
+                    else if (totalTei >9 && totalTei<100) prefix="0";
+                    //else if(totalTei>99 && totalTei<1000) prefix="00";
+                   // else if(totalTei>999 && totalTei<10000) prefix="0";
+                    // change in requirement - adding random number
+                    //prefix=Math.floor(Math.random()*(9999-1000) + 1000);
+                    //def.resolve(constant + prefix + totalTei );
+
+                    var finalCustomId = orgUnitCode +"-" + regDate + "-"+ prefix + totalTei;
+
+                    CustomIdService.getUniqueCustomId(finalCustomId, attributeValueList, prefix).then(function(uniqueCustomId){
+
+                        finalCustomId = uniqueCustomId;
+
+                        thisDef.resolve(finalCustomId);
+
+                     });
                 });
+            //});
 
-                return thisDef;
+            return thisDef;
 
-            },
+        },
             
-            createCustomIdAndSave: function(tei,customIDAttribute,optionSets,attributesById,regDate,totalTeiCount,orgUnitCode){
+            createCustomIdAndSave: function(tei,customIDAttribute,optionSets,attributesById,regDate,totalTeiCount,orgUnitCode, sQLViewNameToUidMap ){
                 var def = $.Deferred();
                 console.log( regDate +"--"+ totalTeiCount + "--" + orgUnitCode);
-                this.createCustomId(regDate,totalTeiCount,orgUnitCode).then(function(customId){
+                var orgUnitUid = tei.orgUnit;
+                this.createCustomId(regDate,totalTeiCount,orgUnitCode, orgUnitUid, sQLViewNameToUidMap).then(function(customId){
                     var attributeExists = false;
                     angular.forEach(tei.attributes,function(attribute){
                         if (attribute.attribute == customIDAttribute.id){
@@ -182,26 +185,45 @@ angular.module('trackerCaptureServices')
                         if (isValidAttribute && isValidProgram)
                         {
                             var regDate = enrolmentdate;
-							var customRegDate=enrolmentdate.substring(8);
+							              var customRegDate=enrolmentdate.substring(8);
 
                             //var customRegDate = regDate.split("-")[2]+regDate.split("-")[1]+regDate.split("-")[0];
-						//	var customRegDate = regDate.split("-")[2]+regDate.split("-")[2];
+						                //	var customRegDate = regDate.split("-")[2]+regDate.split("-")[2];
 							
-                          //  var customRegDate = regDate.split("-")[1]+regDate.split("-")[0].slice(-2);
+                            //  var customRegDate = regDate.split("-")[1]+regDate.split("-")[0].slice(-2);
 
-                            CustomIdService.getTotalTeiByOrgUnit( tei.orgUnit ).then(function(teiResponse){
-							
-                                var totalTei = teiResponse.trackedEntityInstances.length;
-                                CustomIdService.getOrgunitCode(tei.orgUnit).then(function(orgUnitCodeResponse){
-                                var orgUnitCode = orgUnitCodeResponse.code;
-                                    thiz.createCustomIdAndSave(tei,customIDAttribute,optionSets,attributesById,customRegDate,totalTei,orgUnitCode).then(function(response){
-                                        def.resolve(response);
+                            //CustomIdService.getALLSQLView().then(function(responseSQLViews){
+
+                            //for(var i=0;i<responseSQLViews.sqlViews.length;i++)
+                            //{
+                            //    sqlview[responseSQLViews.sqlViews[i].displayName]=responseSQLViews.sqlViews[i].id;
+                            //}
+
+
+
+                            CustomIdService.getALLSQLView( ).then(function( responseSQLViews ){
+                                var sqlViewNameToUIDMap = [];
+                                for(var i=0; i<responseSQLViews.sqlViews.length; i++)
+                                {
+                                    sqlViewNameToUIDMap[responseSQLViews.sqlViews[i].displayName]=responseSQLViews.sqlViews[i].id;
+                                }
+
+                                CustomIdService.getTeiCountByOrgUnitThroughSQLView( sqlViewNameToUIDMap['TEI_COUNT_ORGUNIT_WISE'], tei.orgUnit ).then(function(teiResponse){
+
+                                    var countTeiByOrgUnit = teiResponse.rows[0];
+
+                                    var totalTei = countTeiByOrgUnit[0];
+
+                                    //var totalTei = teiResponse.trackedEntityInstances.length;
+                                    CustomIdService.getOrgunitCode(tei.orgUnit).then(function(orgUnitCodeResponse){
+                                    var orgUnitCode = orgUnitCodeResponse.code;
+                                        thiz.createCustomIdAndSave(tei,customIDAttribute,optionSets,attributesById,customRegDate,totalTei,orgUnitCode, sqlViewNameToUIDMap).then(function(response){
+                                            def.resolve(response);
+                                        });
                                     });
 
                                 });
-
                             });
-
                         }
                         else
                         {
@@ -517,14 +539,15 @@ angular.module('trackerCaptureServices')
                 return def;
             },
 
-            getTeiAttributeValues : function(sqlViewUID){
+            getTeiAttributeValues : function(sqlViewUID,orgUnitUid){
                 var def = $.Deferred();
+                var param = "var=orgUnitUid:" + orgUnitUid;
                 $.ajax({
                     type: "GET",
                     dataType: "json",
                     async:false,
                     contentType: "application/json",
-                    url: '../api/sqlViews/'+sqlViewUID+'/data?paging=false',
+                    url: '../api/sqlViews/'+sqlViewUID+"/data?"+param+"&paging=false",
                     success: function (data) {
                         def.resolve(data);
                     }
@@ -543,7 +566,7 @@ angular.module('trackerCaptureServices')
 
                 }
             },
-            getUniqueCustomId:function(finalCustomId,attributeValues){
+            getUniqueCustomId:function(finalCustomId,attributeValues, prefix){
 
                 var def = $.Deferred();
                 var thiz=this;
@@ -553,12 +576,45 @@ angular.module('trackerCaptureServices')
                     {
                         var str = finalCustomId.split('-');
                         var incrementedId = parseInt(str[2])+1;
-                        finalCustomId = str[0]+"-"+str[1]+"-"+ incrementedId;
+                        finalCustomId = str[0]+"-"+str[1]+"-"+ prefix + incrementedId;
                         thiz.getUniqueCustomId(finalCustomId,attributeValues)
                     }
                 }
                 def.resolve(finalCustomId);
                 return def
+            },
+            getSQLViewName2UID : function(){
+                var def = $.Deferred();
+                var SQLViewsName2IdMap = [];
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json",
+                    async:false,
+                    url: '../api/sqlViews.json?paging=false',
+                    success: function (responseSQLViews) {
+                        for ( var i=0; i<responseSQLViews.sqlViews.length; i++ ){
+                            SQLViewsName2IdMap[responseSQLViews.sqlViews[i].name] = responseSQLViews.sqlViews[i].id;
+                        }
+                        def.resolve(SQLViewsName2IdMap);
+                    }
+                });
+                return def;
+            },
+            getTeiCountByOrgUnitThroughSQLView : function( sqlViewUID, orgUnitUid ){
+                var def = $.Deferred();
+                var param = "var=orgUnitUid:" + orgUnitUid;
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    async:false,
+                    contentType: "application/json",
+                    url: '../api/sqlViews/'+sqlViewUID+"/data?"+param+"&paging=false",
+                    success: function (data) {
+                        def.resolve(data);
+                    }
+                });
+                return def;
             }
     };
 })
