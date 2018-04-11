@@ -45,26 +45,26 @@ angular.module('trackerCaptureServices')
                 return def.promise();
             },
             createCustomId :  function(regDate,totalTeiCount,orgUnitCode){
-                var sqlview=[],AllTieValue=[];
-                var thisDef = $.Deferred();
 
+                var thisDef = $.Deferred();
+                var sqlview = [];
+                var attributeValueList = [];
                
                 var prefix = "";
                 //console.log( "total Count -- " + response.data.height);
                 //var totalTei = response.data.height + 1;
 
-                
-                CustomIdService.getSQLView().then(function(data){
+                CustomIdService.getALLSQLView().then(function(responseSQLViews){
                     
-                    for(var i=0;i<data.sqlViews.length;i++)
+                    for(var i=0;i<responseSQLViews.sqlViews.length;i++)
                     {
-                        sqlview[data.sqlViews[i].displayName]=data.sqlViews[i].id;
+                        sqlview[responseSQLViews.sqlViews[i].displayName]=responseSQLViews.sqlViews[i].id;
                     }
-                    CustomIdService.getTeiValue(sqlview['TEI_ID_VALIDATION']).then(function(data){
+                    CustomIdService.getTeiAttributeValues(sqlview['TEI_ID_VALIDATION']).then(function(attributeValues){
                     
-                        for(var i=0;i<data.rows.length;i++)
+                        for(var i=0;i<attributeValues.rows.length;i++)
                         {
-                            AllTieValue.push(data.rows[i][0]);
+                            attributeValueList.push(attributeValues.rows[i][0]);
                         }
     
                         var totalTei = totalTeiCount;
@@ -83,54 +83,18 @@ angular.module('trackerCaptureServices')
                         //def.resolve(constant + prefix + totalTei );
         
                         var finalCustomId = orgUnitCode +"-" + regDate + "-"+ prefix + totalTei;
-        
+
+                        CustomIdService.getUniqueCustomId(finalCustomId,attributeValueList).then(function(uniqueCustomId){
                         
-                        CustomIdService.getfinalCustomId(finalCustomId,AllTieValue).then(function(data){
-                        
-                            finalCustomId=data;
+                            finalCustomId = uniqueCustomId;
 
                             thisDef.resolve(finalCustomId);
 
+                         });
+                    });
+                });
 
-                            
-                         }) 
-                        })
-                          })
-                          return thisDef;
-
-                /*
-
-                def.then(function(currentToRootOrgunitCodes){
-                    var referenceLevel = 6;
-                    var codes = currentToRootOrgunitCodes.split(":");
-                    var level2Code = "00";
-                    var level5code = "0000";
-                    var level6code = "00";
-                    var randomNo =  Math.floor(Math.random()*(99999-10000) + 10000);
-                    if (codes[referenceLevel-4]){
-                        level2Code = codes[referenceLevel-4].substr(0,2);
-                    }
-                    if (codes[referenceLevel-1]){
-                        level5code = codes[referenceLevel-1].substr(0,4);
-                    }
-                    if (codes[referenceLevel]){
-                        level6code = codes[referenceLevel].substr(0,2);
-                    }
-
-                    var Id = level2Code+ level5code+ level6code+ randomNo;
-                    thisDef.resolve(Id);
-                })
-
-                 function random (low, high) {
-                 return Math.random() * (high - low) + low;
-                 }
-
-
-
-
-                 */
-
-               
+                return thisDef;
 
             },
             
@@ -537,10 +501,10 @@ angular.module('trackerCaptureServices')
                 });
                 return def.promise;
             },
-            getSQLView : function(){
+            getALLSQLView : function(){
                 var def = $.Deferred();
 
-               $.ajax({
+                $.ajax({
                     type: "GET",
                     dataType: "json",
                     contentType: "application/json",
@@ -553,7 +517,7 @@ angular.module('trackerCaptureServices')
                 return def;
             },
 
-            getTeiValue : function(sqlViewUID){
+            getTeiAttributeValues : function(sqlViewUID){
                 var def = $.Deferred();
                 $.ajax({
                     type: "GET",
@@ -571,59 +535,33 @@ angular.module('trackerCaptureServices')
             {
                 for(var j=0;j<AllTieValue.length;j++)
                 {
-                    if(finalCustomId===AllTieValue[j])
+                    if(finalCustomId === AllTieValue[j])
                     {
-                       // deferred.resolve(finalCustomId);
-                      return true
+                        // deferred.resolve(finalCustomId);
+                        return true
                     }
-                   
-                    
-                    
+
                 }
             },
-            getfinalCustomId:function(finalCustomId,AllTieValue){
-               
+            getUniqueCustomId:function(finalCustomId,attributeValues){
+
                 var def = $.Deferred();
                 var thiz=this;
-                for(var j=0;j<AllTieValue.length;j++)
+                for(var j=0;j<attributeValues.length;j++)
                 {
-                    if(finalCustomId===AllTieValue[j])
+                    if(finalCustomId === attributeValues[j])
                     {
-                       var str=finalCustomId.split('-');
-                       var newtei=Number(str[2])+1;
-                       finalCustomId=str[0]+"-"+str[1]+"-"+newtei
-                       thiz.getfinalCustomId(finalCustomId,AllTieValue)
+                        var str = finalCustomId.split('-');
+                        var incrementedId = parseInt(str[2])+1;
+                        finalCustomId = str[0]+"-"+str[1]+"-"+ incrementedId;
+                        thiz.getUniqueCustomId(finalCustomId,attributeValues)
                     }
-                 }
-                 def.resolve(finalCustomId);
+                }
+                def.resolve(finalCustomId);
                 return def
-               
             }
-
-
-		
     };
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     .service('HideProgramFromDashboardService', function(){
         return {
