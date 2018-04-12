@@ -42,7 +42,7 @@ angular.module('trackerCaptureServices')
                 });
                 return def.promise();
             },
-            createCustomId :  function(regDate,totalTeiCount,orgUnitCode){
+            createCustomId :  function(regDate,totalTeiCount,orgUnitCode, orgUnitUid, sQLViewNameToUidMap, programUID ){
 
                 var thisDef = $.Deferred();
 
@@ -52,12 +52,12 @@ angular.module('trackerCaptureServices')
                 var attributeValueList = [];
                 var prefix = "";
 
-                CustomIdService.getALLSQLView().then(function(responseSQLViews){
-                    for(var i=0;i<responseSQLViews.sqlViews.length;i++)
-                    {
-                        sqlview[responseSQLViews.sqlViews[i].displayName] = responseSQLViews.sqlViews[i].id;
-                    }
-                    CustomIdService.getTeiAttributeValues(sqlview['TEI_ID_VALIDATION']).then(function(attributeValues){
+                //CustomIdService.getALLSQLView().then(function(responseSQLViews){
+                //    for(var i=0;i<responseSQLViews.sqlViews.length;i++)
+                //    {
+                //        sqlview[responseSQLViews.sqlViews[i].displayName] = responseSQLViews.sqlViews[i].id;
+                //    }
+                    CustomIdService.getTeiAttributeValues(sQLViewNameToUidMap['TEI_ID_VALIDATION'], orgUnitUid, programUID ).then(function(attributeValues){
                         for(var i=0;i<attributeValues.rows.length;i++)
                         {
                             attributeValueList.push(attributeValues.rows[i][0]);
@@ -77,7 +77,8 @@ angular.module('trackerCaptureServices')
                         //def.resolve(constant + prefix + totalTei );
 
                         var finalCustomId = orgUnitCode +"-" + year + "-"+ prefix + totalTei;
-                        CustomIdService.getUniqueCustomId(finalCustomId,attributeValueList).then(function(uniqueCustomId){
+
+                        CustomIdService.getUniqueCustomId( finalCustomId, attributeValueList, prefix).then(function(uniqueCustomId){
                             finalCustomId = uniqueCustomId;
 
                             thisDef.resolve(finalCustomId);
@@ -85,15 +86,16 @@ angular.module('trackerCaptureServices')
                         });
                     });
 
-                });
+                //});
 
                 return thisDef;
 
             },
-            createCustomIdAndSave: function(tei,customIDAttribute,optionSets,attributesById,regDate,totalTeiCount,orgUnitCode){
+            createCustomIdAndSave: function(tei,customIDAttribute,optionSets,attributesById,regDate,totalTeiCount,orgUnitCode, sQLViewNameToUidMap, programUid){
                 var def = $.Deferred();
                 console.log( regDate +"--"+ totalTeiCount + "--" + orgUnitCode);
-                this.createCustomId(regDate,totalTeiCount,orgUnitCode).then(function(customId){
+                var orgUnitUid = tei.orgUnit;
+                this.createCustomId(regDate,totalTeiCount,orgUnitCode, orgUnitUid, sQLViewNameToUidMap, programUid ).then(function(customId){
                     var attributeExists = false;
                     angular.forEach(tei.attributes,function(attribute){
                         if (attribute.attribute == customIDAttribute.id){
@@ -177,25 +179,31 @@ angular.module('trackerCaptureServices')
 
                             //var customRegDate = regDate.split("-")[2]+regDate.split("-")[1]+regDate.split("-")[0];
                             var customRegDate = regDate.split("-")[1]+regDate.split("-")[0].slice(-2);
-							
-							              CustomIdService.getAll().then(function(data){
-                            CustomIdService.getTotalTeiByProgramBySQLView(programUid,data).then(function(teiResponse){
-                                var count = teiResponse.rows[0];
-                                var countTeiByProgram = count[0];
-                               
 
-                                var totalTei = countTeiByProgram;
-                                CustomIdService.getOrgunitCode(tei.orgUnit).then(function(orgUnitCodeResponse){
-                                var orgUnitCode = orgUnitCodeResponse.code;
-                                    thiz.createCustomIdAndSave(tei,customIDAttribute,optionSets,attributesById,customRegDate,totalTei,orgUnitCode).then(function(response){
-                                        def.resolve(response);
+
+
+                            CustomIdService.getALLSQLView().then(function( responseSQLViews ){
+                                var sqlViewNameToUIDMap = [];
+                                for(var i=0; i<responseSQLViews.sqlViews.length; i++)
+                                {
+                                    sqlViewNameToUIDMap[responseSQLViews.sqlViews[i].displayName]=responseSQLViews.sqlViews[i].id;
+                                }
+                                CustomIdService.getTeiCountByOrgUnitAndProgramThroughSQLView( sqlViewNameToUIDMap['TEI_COUNT_ORGUNIT_PROGRAM_WISE'], tei.orgUnit, programUid ).then(function(teiResponse){
+                                    var countTeiByOrgUnit = teiResponse.rows[0];
+
+                                    var totalTei = countTeiByOrgUnit[0];
+
+                                    CustomIdService.getOrgunitCode(tei.orgUnit).then(function(orgUnitCodeResponse){
+                                    var orgUnitCode = orgUnitCodeResponse.code;
+                                        thiz.createCustomIdAndSave(tei,customIDAttribute,optionSets,attributesById,customRegDate,totalTei,orgUnitCode, sqlViewNameToUIDMap, programUid ).then(function(response){
+                                            def.resolve(response);
+                                         });
+
+                                        });
+
                                     });
-
-                                });
-
-                            });
-							});
-						}
+							              });
+						            }
 
                       
                         else
@@ -544,14 +552,15 @@ angular.module('trackerCaptureServices')
                 return def;
             },
 
-        getTeiAttributeValues : function(sqlViewUID){
+            getTeiAttributeValues : function(sqlViewUID, orgUnitUid, programUID ){
                 var def = $.Deferred();
+                var param = "var=orgUnitUid:" + orgUnitUid + "&var=programUid:" + programUID;
                 $.ajax({
                     type: "GET",
                     dataType: "json",
                     async:false,
                     contentType: "application/json",
-                    url: '../api/sqlViews/'+sqlViewUID+'/data?paging=false',
+                    url: '../api/sqlViews/'+sqlViewUID+"/data?"+param+"&paging=false",
                     success: function (data) {
                         def.resolve(data);
                     }
@@ -570,7 +579,7 @@ angular.module('trackerCaptureServices')
 
                 }
             },
-            getUniqueCustomId:function(finalCustomId,attributeValues){
+            getUniqueCustomId:function( finalCustomId, attributeValues, prefix){
 
                 var def = $.Deferred();
                 var thiz=this;
@@ -580,12 +589,27 @@ angular.module('trackerCaptureServices')
                     {
                         var str = finalCustomId.split('-');
                         var incrementedId = parseInt(str[2])+1;
-                        finalCustomId = str[0]+"-"+str[1]+"-"+ incrementedId;
-                        thiz.getUniqueCustomId(finalCustomId,attributeValues)
+                        finalCustomId = str[0]+"-"+str[1]+"-" + prefix + incrementedId;
+                        thiz.getUniqueCustomId( finalCustomId, attributeValues, + prefix)
                     }
                 }
                 def.resolve(finalCustomId);
                 return def
+            },
+            getTeiCountByOrgUnitAndProgramThroughSQLView : function( sqlViewUID, orgUnitUid, programUID ){
+                var def = $.Deferred();
+                var param = "var=orgUnitUid:" + orgUnitUid + "&var=programUid:" + programUID;
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    async:false,
+                    contentType: "application/json",
+                    url: '../api/sqlViews/'+sqlViewUID+"/data?"+param+"&paging=false",
+                    success: function (data) {
+                        def.resolve(data);
+                    }
+                });
+                return def;
             }
     };
 })
