@@ -577,7 +577,7 @@ angular.module('trackerCaptureServices')
                         var str = finalCustomId.split('-');
                         var incrementedId = parseInt(str[2])+1;
                         finalCustomId = str[0]+"-"+str[1]+"-"+ prefix + incrementedId;
-                        thiz.getUniqueCustomId(finalCustomId,attributeValues)
+                        thiz.getUniqueCustomId( finalCustomId, attributeValues,  prefix)
                     }
                 }
                 def.resolve(finalCustomId);
