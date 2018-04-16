@@ -683,6 +683,7 @@ $("[data-toggle='popover']").popover('destroy');
 	
 	 var ancvisisttnumber=0;
 	var pncvisisttnumber=0;
+	var outcomeofdelivery="NA";
 	var deliveryvisisttnumber="No";
  $.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=SUCUF657zNe&trackedEntityInstance="+trackid+"&skipPaging=true", function (data) {
 	
@@ -708,11 +709,30 @@ $("[data-toggle='popover']").popover('destroy');
 				if(trackdata.events[i].eventDate)
 				pncvisisttnumber++;
 				}
-				else if(matchevent=="u0c2uIZBvks")//aAmtHNAQo7g
+				else if(matchevent=="u0c2uIZBvks")//Delivery stage
 				{
 
-				if(trackdata.events[i].eventDate)
-				deliveryvisisttnumber="Yes";
+				if(trackdata.events[i].eventDate){
+					 var eventdata=trackdata.events[i].dataValues;
+				
+				for(var q=0;q<eventdata.length;q++)
+				   {
+				   var id=eventdata[q].dataElement;
+				  //objid.push(id);
+				   
+				 if(id=="YBMVx48hw5o")// Outcome of delivery
+				{
+				var vall=eventdata[q].value;
+				   outcomeofdelivery=vall;
+				   
+				}
+				
+				
+				
+				}
+                
+					  
+				}
 				}
 				}
 			
@@ -724,7 +744,7 @@ $("[data-toggle='popover']").popover('destroy');
 		 trigger : 'click',
 	    title : 'Number of Visits&nbsp<button id="close-popover" data-toggle="clickover" class="btn btn-small btn-danger" onclick="$(&quot;.meddelanden&quot;).popover(&quot;hide&quot;);event.stopPropagation();">X</button>',
      
-        content : "<table class='table table-bordered'><thead><tr><th>Name</th><th>Number</th></tr></thead><tbody><tr><td>ANC</td><td>"+ancvisisttnumber+"</td></tr><tr><td>PNC</td><td>"+pncvisisttnumber+"</td></tr><tr><td>Delivery</td><td>"+deliveryvisisttnumber+"</td></tr></tbody></table>",
+        content : "<table class='table table-bordered'><thead><tr><th>Name</th><th>Number</th></tr></thead><tbody><tr><td>ANC</td><td>"+ancvisisttnumber+"</td></tr><tr><td>Delivery Outcome</td><td>"+outcomeofdelivery+"</td></tr><tr><td>PNC</td><td>"+pncvisisttnumber+"</td></tr></tbody></table>",
         html: true
     }); 
  event.stopPropagation();
