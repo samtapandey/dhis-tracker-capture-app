@@ -638,7 +638,7 @@ trackerCapture.controller('RegistrationController',
             var coustomDate = new Date();
             var coustomYear = coustomDate.getFullYear();
 
-            var yearOfDob = parseInt( coustomYear ) - parseInt( inputAge )
+            var yearOfDob = parseInt( coustomYear ) - parseInt( inputAge );
 
             $scope.selectedTei[$scope.calculatedDOB] = yearOfDob + '-07-01';//put calculated value in month text box
         }

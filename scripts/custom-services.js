@@ -579,7 +579,7 @@ angular.module('trackerCaptureServices')
 
                 }
             },
-            getUniqueCustomId:function( finalCustomId, attributeValues, prefix){
+            getUniqueCustomId_temp:function(finalCustomId,attributeValues, prefix){
 
                 var def = $.Deferred();
                 var thiz=this;
@@ -589,13 +589,31 @@ angular.module('trackerCaptureServices')
                     {
                         var str = finalCustomId.split('-');
                         var incrementedId = parseInt(str[2])+1;
-                        finalCustomId = str[0]+"-"+str[1]+"-" + prefix + incrementedId;
-                        thiz.getUniqueCustomId( finalCustomId, attributeValues, + prefix)
+                        finalCustomId = str[0]+"-"+str[1]+"-"+ prefix + incrementedId;
+                        thiz.getUniqueCustomId( finalCustomId, attributeValues,  prefix)
                     }
                 }
                 def.resolve(finalCustomId);
                 return def
             },
+            getUniqueCustomId : function( finalCustomId, attributeValues, prefix ){
+                var tempThis = this;
+                var def = $.Deferred();
+                var tempCount = attributeValues.indexOf( finalCustomId );
+                if( tempCount === -1 )
+                {
+                    def.resolve(finalCustomId);
+                    return def;
+                }
+                else
+                {
+                    var str = finalCustomId.split('-');
+                    var incrementedId = parseInt(str[2])+1;
+                    var tempFinalCustomId = str[0]+"-"+str[1]+"-"+ prefix + incrementedId;
+                    return tempThis.getUniqueCustomId( tempFinalCustomId, attributeValues, prefix );
+                }
+            },
+
             getTeiCountByOrgUnitAndProgramThroughSQLView : function( sqlViewUID, orgUnitUid, programUID ){
                 var def = $.Deferred();
                 var param = "var=orgUnitUid:" + orgUnitUid + "&var=programUid:" + programUID;
