@@ -28,7 +28,7 @@ trackerCapture.controller('RegistrationController',
                 TCStorageService,
                 ModalService,
                  // add for Generate CustomId for msf-customizations
-                 CustomIDGenerationService,
+                 CustomIDGenerationService
                 ) {
     $scope.today = DateUtils.getToday();
     $scope.trackedEntityForm = null;
