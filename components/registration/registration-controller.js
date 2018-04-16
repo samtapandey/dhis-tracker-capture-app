@@ -657,7 +657,7 @@ trackerCapture.controller('RegistrationController',
             var differenceInMonths = (currentDateObject.getFullYear()*12 + currentDateObject.getMonth()) - (selectedDOBObject.getFullYear()*12 + selectedDOBObject.getMonth());
             var diffYear = differenceInMonths/12;
 
-            var yearInDecimal = ( Math.round(diffYear*100))/100;
+            var yearInDecimal = ((Math.round(diffYear*100))/100).toFixed(2);
 
             var year = yearInDecimal.toString().split(".")[0];
             var ageInMonth = ( yearInDecimal.toString().split(".")[1]*12)/100;
