@@ -127,7 +127,7 @@
         
         <!--registration form begins -->
         <div class="row">
-            <div class="col-sm-4 bordered-div container-min-width add-default-padding" ng-if="showRegistrationDiv" ng-include="'components/registration/registration.html'"></div>
+            <div class="col-sm-4 bordered-div container-min-width add-default-padding" ng-show="showRegistrationDiv" ng-include="'components/registration/registration.html'"></div>
         </div>        
         <!-- registration form ends -->
 
@@ -135,7 +135,7 @@
         <div class="row col-sm-12 long-vertical-spacing">
             <span ng-if='!showRegistrationDiv'>
                 <span class="btn-group" ng-if="selectedProgram">
-                    <label ng-if="selectedProgram.displayFrontPageList" class="btn btn-default" ng-model="enrollmentStatus" btn-radio="'TODAY'" title="{{todayLabel}}" ng-click='filterByEnrollmentStatus("TODAY")'><i class='fa fa-calendar-o mouse-pointer'></i></label>
+                    <label ng-if="selectedProgram.displayFrontPageList || frontPageListEnabled" class="btn btn-default" ng-model="enrollmentStatus" btn-radio="'TODAY'" title="{{todayLabel}}" ng-click='filterByEnrollmentStatus("TODAY")'><i class='fa fa-calendar-o mouse-pointer'></i></label>
                     <label ng-if="selectedProgram.displayFrontPageList || frontPageListEnabled" class="btn btn-default" ng-model="enrollmentStatus" btn-radio="'ALL'" title="{{allEnrollmentsLabel}}" ng-click='filterByEnrollmentStatus("ALL")'><i class="fa fa-list mouse-pointer"></i></label>
                     <label ng-if="selectedProgram.displayFrontPageList || frontPageListEnabled" class="btn btn-default" ng-model="enrollmentStatus" btn-radio="'ACTIVE'" title="{{activeEnrollmentsLabel}}" ng-click='filterByEnrollmentStatus("ACTIVE")'><i class="fa fa-circle-o mouse-pointer"></i></label>
                     <label ng-if="selectedProgram.displayFrontPageList || frontPageListEnabled" class="btn btn-default" ng-model="enrollmentStatus" btn-radio="'COMPLETED'" title="{{completedEnrollmentsLabel}}" ng-click='filterByEnrollmentStatus("COMPLETED")'><i class="fa fa-check mouse-pointer"></i></label>
