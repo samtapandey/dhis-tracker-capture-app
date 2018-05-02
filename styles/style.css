@@ -2297,3 +2297,24 @@ button.list-group-item-danger.active:focus {
 .loading-audit-data {
     margin-left: 43%;
 }
+
+.custom thead {
+	display:block;
+}
+
+.custom tbody{
+	display:block;
+	height:400px;
+	overflow-y:auto;
+	overflow-x:hidden;
+}
+
+.custom thead th{
+	min-width:90px;
+	word-break:break-word;
+}
+
+.custom tbody td{
+	min-width:90px;
+	word-break:break-word;
+}
