@@ -2353,11 +2353,14 @@ trackerCapture.controller('DataEntryController',
             var orgUnitc = $scope.currentEvent.orgUnit;
             var tei = $scope.currentEvent.trackedEntityInstance;
             // }
-
-            // $http.post("http://ds-india.org/aessms/sendSMS",data).then(function(response){
-
-            // })
-            CustomIdService.getPhysiciansNum(tei).then(function (data) {
+			
+			if($scope.currentEvent.programStage == "GOWaC9DJ8ua" || $scope.currentEvent.programStage == "u75cboMxKPs"){
+				CustomIdService.getTeiData(tei).then(function(data){
+					orgUnitc = data.orgUnit;
+				});
+			}
+            
+			CustomIdService.getPhysiciansNum(tei).then(function (data) {
                 var physicians = data.attributes;
                 var phones1 = "";
                 var patientName = "";
@@ -2408,6 +2411,7 @@ trackerCapture.controller('DataEntryController',
                                 if (values[i].dataElement === 'K24hMmaJvrV') { arrayDPs = arrayDPs + "CSF sample 2 - JE IgM,"; }
                                 if (values[i].dataElement === 'KVJSXRivsHL') { arrayDPs = arrayDPs + "Serum sample 2 - JE IgM,"; }
                                 if (values[i].dataElement === 'DG9PTsQmliZ') { arrayDPs = arrayDPs + "Serum - JE IgM,"; }
+                                if (values[i].dataElement === 'AFOmrXIxfNY') { arrayDPs = arrayDPs + "Serum - Chikungunya IgM ELISA,"; }
                                 if (values[i].dataElement === 'LpT8hxDYDHq') { arrayDPs = arrayDPs + "Serum - JE IgM,"; }
                                 if (values[i].dataElement === 'N6Yfs0jO6FY') { arrayDPs = arrayDPs + "CSF - JE IgM,"; }
                                 if (values[i].dataElement === 'SyVZXV49iO9') { arrayDPs = arrayDPs + "Serum - Scrub typhus IgM,"; }
@@ -2432,6 +2436,7 @@ trackerCapture.controller('DataEntryController',
                                 if (values[i].dataElement === 'S8WGc5h1GLh') { arrayDEEs = arrayDEEs + "Serum - West Nile Virus IgM ELISA,"; }
                                 if (values[i].dataElement === 'xw487RVnvqZ') { arrayDEEs = arrayDEEs + "Serum - Dengue IgM ELISA,"; }
                                 if (values[i].dataElement === 'JGUJLviOcFS') { arrayDEEs = arrayDEEs + "CSF - JE IgM,"; }
+								if (values[i].dataElement === 'AFOmrXIxfNY') { arrayDEEs = arrayDEEs + "Serum - Chikungunya IgM ELISA,"; }
                                 if (values[i].dataElement === 'rshKNXqDUUG') { arrayDEEs = arrayDEEs + "Serum - JE IgM,"; }
                                 if (values[i].dataElement === 'zTcOSPpQv1U') { arrayDEEs = arrayDEEs + "CSF - Leptospira DNA PCR,"; }
                                 if (values[i].dataElement === 'FUmazOWerB5') { arrayDEEs = arrayDEEs + "CSF - Trioplex PCR,"; }

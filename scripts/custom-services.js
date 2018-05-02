@@ -507,6 +507,14 @@ angular.module('trackerCaptureServices')
                 });
                 return def.promise;
             },
+			getTeiData: function getTeiData(tei) {
+	            var def = $q.defer();
+	            $http.get('../api/trackedEntityInstances/' + tei + '.json?fields=orgUnit').then(function (response) {
+	
+	                def.resolve(response.data);
+	            });
+	            return def.promise;
+	        },
             getPhysiciansNum: function (tei) {
                 var def = $q.defer();
                 $http.get('../api/trackedEntityInstances/'+tei+'.json').then(function (response) {
