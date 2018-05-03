@@ -181,91 +181,161 @@ trackerCapture.controller('EventCreationController',
 
             if ($scope.selectedProgram.id == 'HTCqTWEF1XS' || $scope.selectedProgram.id == 'K3XysZ53B4r' || $scope.selectedProgram.id == 'CsEmq8UNA6z') {
 
-              
+                if (dummyEvent.programStage == 'XOD2Nl5kncW' || dummyEvent.programStage == 'tOQIl0vKx7l' || dummyEvent.programStage == 'PfRIIrvnjcU') {
 
-                $.ajax({
-                    async: false,
-                    type: "GET",
-                    url: "../api/events.json?fields=*&trackedEntityInstance=" + trackedEntityInstanceId + "&programStage="+ dummyEvent.programStage +"&order=eventDate:DESC&skipPaging=true",
-                    success: function (response) {
-                        if (response.events.length > 0) {
-                            $scope.allCreatedDates = [];
-                            for (var p = 0; p < response.events.length; p++) {
-                                if (response.events[p].eventDate) {
-                                    $scope.createdDate = response.events[p].eventDate.split("T")[0];
-                                    $scope.allCreatedDates.push($scope.createdDate);
+
+                    $scope.validEventDate = $scope.dhis2Event.eventDate;
+
+                    $.ajax({
+                        async: false,
+                        type: "GET",
+                        url: "../api/events.json?fields=*&trackedEntityInstance=" + trackedEntityInstanceId + "&programStage=" + dummyEvent.programStage + "&startDate=" + $scope.validEventDate + "&endDate=" + $scope.validEventDate + "&skipPaging=true",
+                        success: function (response) {
+                            if (response.events.length > 0) {
+                                alert("Event of selected date already exist!");
+                            }
+                            else {
+                                $scope.getCategoryOptions();
+
+                                //check for form validity
+                                $scope.eventCreationForm.submitted = true;
+                                if ($scope.eventCreationForm.$invalid) {
+                                    return false;
                                 }
-                            }
-                        }
-                        $scope.matchingDate1 = $scope.dhis2Event.eventDate;
-                        $scope.matchingDate = $scope.matchingDate1.split("-").reverse().join("-");
-
-                        if ($scope.allCreatedDates != undefined && $scope.allCreatedDates.indexOf($scope.matchingDate) > -1) {
-                            alert("Event of selected date already exist!")
-                        }
-                        else {
-                            $scope.getCategoryOptions();
-
-                            //check for form validity
-                            $scope.eventCreationForm.submitted = true;
-                            if ($scope.eventCreationForm.$invalid) {
-                                return false;
-                            }
 
 
-                            if ($scope.isReferralEvent && !$scope.selectedSearchingOrgUnit) {
-                                $scope.orgUnitError = true;
-                                return false;
-                            }
-
-                            $scope.orgUnitError = false;
-
-                            if ($scope.model.selectedStage.periodType) {
-                                $scope.dhis2Event.eventDate = $scope.dhis2Event.selectedPeriod.endDate;
-                                $scope.dhis2Event.dueDate = $scope.dhis2Event.selectedPeriod.endDate;
-                            }
-
-                            var eventDate = DateUtils.formatFromUserToApi($scope.dhis2Event.eventDate);
-                            var dueDate = DateUtils.formatFromUserToApi($scope.dhis2Event.dueDate);
-                            var newEvents = { events: [] };
-                            var newEvent = {
-                                trackedEntityInstance: dummyEvent.trackedEntityInstance,
-                                program: dummyEvent.program,
-                                programStage: dummyEvent.programStage,
-                                enrollment: dummyEvent.enrollment,
-                                orgUnit: dummyEvent.orgUnit,
-                                dueDate: dueDate,
-                                eventDate: eventDate,
-                                notes: [],
-                                dataValues: [],
-                                status: 'ACTIVE'
-                            };
-
-                            newEvent.status = newEvent.eventDate ? 'ACTIVE' : 'SCHEDULE';
-
-                            /*for saving category combo*/
-                            if ($scope.selectedProgram.categoryCombo && !$scope.selectedProgram.categoryCombo.isDefault) {
-                                if ($scope.selectedOptions.length !== $scope.selectedCategories.length) {
-                                    NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("fill_all_category_options"));
-                                    return;
+                                if ($scope.isReferralEvent && !$scope.selectedSearchingOrgUnit) {
+                                    $scope.orgUnitError = true;
+                                    return false;
                                 }
-                                newEvent.attributeCategoryOptions = $scope.selectedOptions.join(';');
-                            }
-                            /*for saving category combo*/
 
-                            newEvents.events.push(newEvent);
-                            DHIS2EventFactory.create(newEvents).then(function (response) {
-                                if (response && response.response && response.response.importSummaries[0].status === 'SUCCESS') {
-                                    newEvent.event = response.response.importSummaries[0].reference;
-                                    $modalInstance.close({ dummyEvent: dummyEvent, ev: newEvent });
-                                } else {
-                                    $scope.eventCreationForm.submitted = false;
+                                $scope.orgUnitError = false;
+
+                                if ($scope.model.selectedStage.periodType) {
+                                    $scope.dhis2Event.eventDate = $scope.dhis2Event.selectedPeriod.endDate;
+                                    $scope.dhis2Event.dueDate = $scope.dhis2Event.selectedPeriod.endDate;
                                 }
-                            });
-                        }
 
-                    }
-                });
+                                var eventDate = DateUtils.formatFromUserToApi($scope.dhis2Event.eventDate);
+                                var dueDate = DateUtils.formatFromUserToApi($scope.dhis2Event.dueDate);
+                                var newEvents = { events: [] };
+                                var newEvent = {
+                                    trackedEntityInstance: dummyEvent.trackedEntityInstance,
+                                    program: dummyEvent.program,
+                                    programStage: dummyEvent.programStage,
+                                    enrollment: dummyEvent.enrollment,
+                                    orgUnit: dummyEvent.orgUnit,
+                                    dueDate: dueDate,
+                                    eventDate: eventDate,
+                                    notes: [],
+                                    dataValues: [],
+                                    status: 'ACTIVE'
+                                };
+
+                                newEvent.status = newEvent.eventDate ? 'ACTIVE' : 'SCHEDULE';
+
+                                /*for saving category combo*/
+                                if ($scope.selectedProgram.categoryCombo && !$scope.selectedProgram.categoryCombo.isDefault) {
+                                    if ($scope.selectedOptions.length !== $scope.selectedCategories.length) {
+                                        NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("fill_all_category_options"));
+                                        return;
+                                    }
+                                    newEvent.attributeCategoryOptions = $scope.selectedOptions.join(';');
+                                }
+                                /*for saving category combo*/
+
+                                newEvents.events.push(newEvent);
+                                DHIS2EventFactory.create(newEvents).then(function (response) {
+                                    if (response && response.response && response.response.importSummaries[0].status === 'SUCCESS') {
+                                        newEvent.event = response.response.importSummaries[0].reference;
+                                        $modalInstance.close({ dummyEvent: dummyEvent, ev: newEvent });
+                                    } else {
+                                        $scope.eventCreationForm.submitted = false;
+                                    }
+                                });
+                            }
+
+                        }
+                    });
+                }
+                else if (dummyEvent.programStage === 'd8ar9Ndh5mL') {
+
+
+                    $scope.eventStartDate = $scope.dhis2Event.selectedPeriod.startDate;
+                    $scope.eventEndDate = $scope.dhis2Event.selectedPeriod.endDate;
+
+                    $.ajax({
+                        async: false,
+                        type: "GET",
+                        url: "../api/events.json?fields=*&trackedEntityInstance=" + trackedEntityInstanceId + "&programStage=" + dummyEvent.programStage + "&startDate=" + $scope.eventStartDate + "&endDate=" + $scope.eventEndDate + "&skipPaging=true",
+                        success: function (response) {
+                            if (response.events.length > 0) {
+                                alert("Event of selected date already exist!")
+                            }
+                            else {
+                                $scope.getCategoryOptions();
+
+                                //check for form validity
+                                $scope.eventCreationForm.submitted = true;
+                                if ($scope.eventCreationForm.$invalid) {
+                                    return false;
+                                }
+
+
+                                if ($scope.isReferralEvent && !$scope.selectedSearchingOrgUnit) {
+                                    $scope.orgUnitError = true;
+                                    return false;
+                                }
+
+                                $scope.orgUnitError = false;
+
+                                if ($scope.model.selectedStage.periodType) {
+                                    $scope.dhis2Event.eventDate = $scope.dhis2Event.selectedPeriod.endDate;
+                                    $scope.dhis2Event.dueDate = $scope.dhis2Event.selectedPeriod.endDate;
+                                }
+
+                                var eventDate = DateUtils.formatFromUserToApi($scope.dhis2Event.eventDate);
+                                var dueDate = DateUtils.formatFromUserToApi($scope.dhis2Event.dueDate);
+                                var newEvents = { events: [] };
+                                var newEvent = {
+                                    trackedEntityInstance: dummyEvent.trackedEntityInstance,
+                                    program: dummyEvent.program,
+                                    programStage: dummyEvent.programStage,
+                                    enrollment: dummyEvent.enrollment,
+                                    orgUnit: dummyEvent.orgUnit,
+                                    dueDate: dueDate,
+                                    eventDate: eventDate,
+                                    notes: [],
+                                    dataValues: [],
+                                    status: 'ACTIVE'
+                                };
+
+                                newEvent.status = newEvent.eventDate ? 'ACTIVE' : 'SCHEDULE';
+
+                                /*for saving category combo*/
+                                if ($scope.selectedProgram.categoryCombo && !$scope.selectedProgram.categoryCombo.isDefault) {
+                                    if ($scope.selectedOptions.length !== $scope.selectedCategories.length) {
+                                        NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("fill_all_category_options"));
+                                        return;
+                                    }
+                                    newEvent.attributeCategoryOptions = $scope.selectedOptions.join(';');
+                                }
+                                /*for saving category combo*/
+
+                                newEvents.events.push(newEvent);
+                                DHIS2EventFactory.create(newEvents).then(function (response) {
+                                    if (response && response.response && response.response.importSummaries[0].status === 'SUCCESS') {
+                                        newEvent.event = response.response.importSummaries[0].reference;
+                                        $modalInstance.close({ dummyEvent: dummyEvent, ev: newEvent });
+                                    } else {
+                                        $scope.eventCreationForm.submitted = false;
+                                    }
+                                });
+                            }
+
+                        }
+                    });
+                }
             }
             else {
                 $scope.getCategoryOptions();
@@ -442,4 +512,3 @@ trackerCapture.controller('EventCreationController',
         };
 
     });
-    
