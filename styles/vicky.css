@@ -2,8 +2,8 @@
 /*  Left Plam  */
 .lefthandContainer {
     position: relative;
-    width: 500px;
-    height: 550px;
+    width: 400px;
+    height: 400px;
     border: 1px black solid;
     overflow: hidden;
     background-color: #EEE;
@@ -78,8 +78,8 @@
 
 .righthandContainer {
     position: relative;
-    width: 500px;
-    height: 550px;
+    width: 400px;
+    height: 400px;
     border: 1px black solid;
     overflow: hidden;
     background-color: #EEE;
@@ -153,8 +153,8 @@
 
 .leftsoleContainer {
     position: relative;
-    width: 500px;
-    height: 550px;
+    width: 400px;
+    height: 400px;
     border: 1px black solid;
     overflow: hidden;
     background-color: #EEE;
@@ -228,8 +228,8 @@
 
 .rightsoleContainer {
     position: relative;
-    width: 500px;
-    height: 550px;
+    width: 400px;
+    height: 400px;
     border: 1px black solid;
     overflow: hidden;
     background-color: #EEE;
@@ -296,4 +296,226 @@
     border-radius: 25px 25px;
     transition: left .5s cubic-bezier(.42, -0.3, .78, 1.25),
     top .5s cubic-bezier(.42, -0.3, .78, 1.25);
+}
+
+
+/*  Front Body  */
+.FrontBodyContainer {
+    position: relative;
+    width: 400px;
+    height: 600px;
+    border: 1px black solid;
+    overflow: hidden;
+    background-color: #EEE;
+    cursor: pointer;
+    background: url('./img/Front_body.png') no-repeat;
+    background-size: 100% 100%;
+}
+
+.fbthing {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    left: 50px;
+    top: 50px;
+    background-color: red;
+    border-radius: 25px 25px;
+    transition: left .5s cubic-bezier(.42, -0.3, .78, 1.25),
+    top .5s cubic-bezier(.42, -0.3, .78, 1.25);
+}
+
+.fbthing1 {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    left: 50px;
+    top: 50px;
+    background-color: red;
+    border-radius: 25px 25px;
+    transition: left .5s cubic-bezier(.42, -0.3, .78, 1.25),
+    top .5s cubic-bezier(.42, -0.3, .78, 1.25);
+}
+
+.fbthing2 {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    left: 50px;
+    top: 50px;
+    background-color: red;
+    border-radius: 25px 25px;
+    transition: left .5s cubic-bezier(.42, -0.3, .78, 1.25),
+    top .5s cubic-bezier(.42, -0.3, .78, 1.25);
+}
+
+
+/* Front Body Drop Point location */
+
+.FrontBodyDropconatiner{
+    width: 300px;
+    text-align: center;
+}
+
+#Fbdcthing {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    left: 50px;
+    top: 50px;
+    border: 2px solid red;
+    transition: left .5s cubic-bezier(.42, -0.3, .78, 1.25),
+    top .5s cubic-bezier(.42, -0.3, .78, 1.25);
+}
+
+#Fbdcthing1 {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    left: 50px;
+    top: 50px;
+    border: 2px solid red;
+    transition: left .5s cubic-bezier(.42, -0.3, .78, 1.25),
+    top .5s cubic-bezier(.42, -0.3, .78, 1.25);
+}
+
+#Fbdcthing2 {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    left: 50px;
+    top: 50px;
+    border: 2px solid red;
+    transition: left .5s cubic-bezier(.42, -0.3, .78, 1.25),
+    top .5s cubic-bezier(.42, -0.3, .78, 1.25);
+}
+
+
+
+
+
+/*  Back Body  */
+.BackBodyContainer {
+    position: relative;
+    width: 400px;
+    height: 600px;
+    border: 1px black solid;
+    overflow: hidden;
+    background-color: #EEE;
+    cursor: pointer;
+    background: url('./img/Back_body.png') no-repeat;
+    background-size: 100% 100%;
+}
+
+
+
+
+#bbthing {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    left: 50px;
+    top: 50px;
+    border: 2px solid red;
+    transition: left .5s cubic-bezier(.42, -0.3, .78, 1.25),
+    top .5s cubic-bezier(.42, -0.3, .78, 1.25);
+}
+
+#bbthing1 {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    left: 50px;
+    top: 50px;
+    border: 2px solid red;
+    transition: left .5s cubic-bezier(.42, -0.3, .78, 1.25),
+    top .5s cubic-bezier(.42, -0.3, .78, 1.25);
+}
+
+#bbthing2 {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    left: 50px;
+    top: 50px;
+    border: 2px solid red;
+    transition: left .5s cubic-bezier(.42, -0.3, .78, 1.25),
+    top .5s cubic-bezier(.42, -0.3, .78, 1.25);
+}
+
+
+
+/*  Side Body  */
+.SideBodyContainer {
+    position: relative;
+    width: 400px;
+    height: 600px;
+    border: 1px black solid;
+    overflow: hidden;
+    background-color: #EEE;
+    cursor: pointer;
+    background: url('./img/Side_body.png') no-repeat;
+    background-size: 100% 100%;
+}
+
+
+#sbthing {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    left: 50px;
+    top: 50px;
+    border: 2px solid red;
+    transition: left .5s cubic-bezier(.42, -0.3, .78, 1.25),
+    top .5s cubic-bezier(.42, -0.3, .78, 1.25);
+}
+
+#sbthing1 {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    left: 50px;
+    top: 50px;
+    border: 2px solid red;
+    transition: left .5s cubic-bezier(.42, -0.3, .78, 1.25),
+    top .5s cubic-bezier(.42, -0.3, .78, 1.25);
+}
+
+#sbthing2 {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    left: 50px;
+    top: 50px;
+    border: 2px solid red;
+    transition: left .5s cubic-bezier(.42, -0.3, .78, 1.25),
+    top .5s cubic-bezier(.42, -0.3, .78, 1.25);
+}
+
+
+/* Left Eye Container */
+.leftEyeContainer {
+    position: relative;
+    width: 250px;
+    height: 150px;
+    border: 1px black solid;
+    overflow: hidden;
+    background-color: #EEE;
+    cursor: pointer;
+    background: url('./img/lefteye.jpg') no-repeat;
+    background-size: 100% 100%;
+}
+
+
+
+/* Right Eye Container */
+.rightEyeContainer {
+    position: relative;
+    width: 250px;
+    height: 150px;
+    border: 1px black solid;
+    overflow: hidden;
+    background-color: #EEE;
+    cursor: pointer;
+    background: url('./img/righteye.jpg') no-repeat;
+    background-size: 100% 100%;
 }
