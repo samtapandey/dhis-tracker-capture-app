@@ -1,0 +1,81 @@
+<!-- custom cascading table Starts-->
+<div>
+    <table class="dhis2-list-table-striped default-form-table">
+        <!--Current Address Organisation Units-->
+        <tr>
+            <td>
+                {{'current_state' | translate}}
+            </td>
+            <td class="absorbing-column">
+                <select name="selectedState" id="selectedState" ng-model="selectedState" ng-change="getDistrict(selectedState)" class="form-control"
+                    ng-options="state.id as state.name for state in stateList | orderBy: 'name'" ng-disabled="stateList.length < 1">
+                    <option value="">{{'please_select'| translate}}</option>
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                {{'current_district' | translate}}
+            </td>
+            <td class="absorbing-column">
+                <select name="selectedDistrict" id="selectedDistrict" ng-model="selectedDistrict" ng-change="getBlock(selectedDistrict)"
+                    class="form-control" ng-options="districtOrgUnit.id as districtOrgUnit.name for districtOrgUnit in districtList | orderBy: 'name'"
+                    ng-disabled="districtList.length < 1">
+                    <option value="">{{'please_select'| translate}}</option>
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                {{'current_block' | translate}}
+            </td>
+            <td class="absorbing-column">
+                <select name="selectedBlock" id="selectedBlock" ng-model="selectedBlock" class="form-control" ng-change="getBlockName(selectedBlock)"
+                    ng-options="blockOrgUnit.id as blockOrgUnit.name for blockOrgUnit in blockList | orderBy: 'name'" ng-disabled="blockList.length < 1">
+                    <option value="">{{'please_select'| translate}}</option>
+                </select>
+            </td>
+        </tr>
+
+        <!--Permanent Address Organisation Units-->
+
+        <tr>
+            <td>
+                {{'permanent_state' | translate}}
+            </td>
+            <td class="absorbing-column">
+                <select name="selectedState1" id="selectedState1" ng-model="selectedState1" ng-change="getPermanentDistrict(selectedState1)" class="form-control"
+                    ng-options="state1.id as state1.name for state1 in permanentStateList | orderBy: 'name'" ng-disabled="permanentStateList.length < 1">
+                    <option value="">{{'please_select'| translate}}</option>
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                {{'permanent_district' | translate}}
+            </td>
+            <td class="absorbing-column">
+                <select name="selectedDistrict1" id="selectedDistrict1" ng-model="selectedDistrict1" ng-change="getPermanentBlock(selectedDistrict1)"
+                    class="form-control" ng-options="districtOrgUnit1.id as districtOrgUnit1.name for districtOrgUnit1 in permanentDistrictList | orderBy: 'name'"
+                    ng-disabled="permanentDistrictList.length < 1">
+                    <option value="">{{'please_select'| translate}}</option>
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                {{'permanent_block' | translate}}
+            </td>
+            <td class="absorbing-column">
+                <select name="selectedBlock1" id="selectedBlock1" ng-model="selectedBlock1" ng-change="getPermanentBlockName(selectedBlock1)" class="form-control"
+                    ng-options="blockOrgUnit1.id as blockOrgUnit1.name for blockOrgUnit1 in permanentBlockList | orderBy: 'name'" ng-disabled="permanentBlockList.length < 1">
+                    <option value="">{{'please_select'| translate}}</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+</div>

@@ -452,11 +452,73 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                 return def.promise;
             }
         },
-        processForm: function(existingTei, formTei, originalTei, attributesById){
+        processForm: function(existingTei, formTei, originalTei, attributesById,stateName,districtName,blockName,permanentStateName,permanentDistrictName,permanentBlockName){
             var tei = angular.copy(existingTei);
             tei.attributes = [];
             var formEmpty = true;
             for(var k in attributesById){
+
+                if(stateName != null )
+                {
+                    //Current Address State
+                    if(  attributesById[k].code === 'state_(current_address)' )
+                    {
+                        formTei[k] = stateName;
+                        console.log( "Current State Name -- " + stateName );
+                    }
+                }
+
+                if( districtName != null )
+                {
+                    //Current Address district
+                    if(  attributesById[k].code === 'district_(current_address)' ) 
+                    {
+                        formTei[k] = districtName;
+                        console.log( "Current District Name -- " + districtName );
+                    }
+                }
+
+                if( blockName != null )
+                {
+                    //Current Address Block
+                    if(  attributesById[k].code === 'block_(current_address)' ) 
+                    {
+                        formTei[k] = blockName;
+                        console.log( "Current Block Name -- " + blockName );
+                    }
+                }
+
+                if(permanentStateName != null )
+                {
+                    //Permanent Address State
+                    if(  attributesById[k].code === 'state_(permanent_address)' )
+                    {
+                        formTei[k] = permanentStateName;
+                        console.log( "Permanent State Name -- " + permanentStateName );
+                    }
+                }
+
+                if( permanentDistrictName != null )
+                {
+                    //Permanent Address district
+                    if(  attributesById[k].code === 'district_(permanent_address)' ) 
+                    {
+                        formTei[k] = permanentDistrictName;
+                        console.log( "Permanent District Name -- " + permanentDistrictName );
+                    }
+                }
+
+                if( permanentBlockName != null )
+                {
+                    //Permanent Address Block
+                    if(  attributesById[k].code === 'block_(permanent_address)' ) 
+                    {
+                        formTei[k] = permanentBlockName;
+                        console.log( "Permanent Block Name -- " + permanentBlockName );
+                    }
+                }
+
+
                 if(originalTei && formTei[k] !== originalTei[k] && !formTei[k] && !originalTei[k]){
                     formChanged = true;
                 }
