@@ -53,7 +53,8 @@
         <!-- top bar begins -->
         <div class="top-bar row">        
             <div class="col-sm-12">                
-                {{trackerCaptureLabel}}                
+                <!--{{trackerCaptureLabel}} -->
+				Case register	
             </div>        
         </div>
         <!-- top bar ends -->
@@ -92,13 +93,15 @@
 
             <!--search/registration buttons begin-->
             <div class="col-md-4 trim hideInPrint">            
-                <button type="button" 
+                <!--
+				<button type="button" 
                         class="btn btn-success"
                         ng-if="selectedProgram && selectedProgram.displayFrontPageList"
                         ng-disabled="showRegistrationDiv"
                         ng-click="search(searchMode.listAll)">
                     {{listAllLabel}}
                 </button>
+				-->
                 <button type="button"
                         class="btn btn-primary"
                         ng-disabled="showRegistrationDiv || selectedOrgUnit.closedStatus"
