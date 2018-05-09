@@ -161,8 +161,8 @@ trackerCapture.controller('outgoingController', ["$rootScope", "$scope", "$timeo
 											var cc = $scope.getcasecat(returnedDdata.attributes[j].value);
 											teidata.casecat = cc;
 										}
-										if (returnedDdata.attributes[j].displayName == "Gender") {
-											teidata.gender = $scope.gender(returnedDdata.attributes[j].value);
+										if (returnedDdata.attributes[j].displayName == "Sex") {
+											teidata.gender = returnedDdata.attributes[j].value;
 										}
 
 									}
