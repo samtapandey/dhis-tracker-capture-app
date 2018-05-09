@@ -473,7 +473,14 @@ angular.module('trackerCaptureServices')
             });
             return def.promise;
         },
-		
+		getAllEvents: function (ou) {
+            var def = $q.defer();
+            $http.get('../api/events.json?program=vopM2i6vTGC&orgUnit='+ ou + '&fields=trackedEntityInstance&skipPaging=true').then(function (response) {
+
+                def.resolve(response.data);
+            });
+            return def.promise;
+        },
 		getLoginLevel: function () {
             var def = $q.defer();
             $http.get('../api/me.json?fields=organisationUnits[id,name,level]&paging=false').then(function (response) {

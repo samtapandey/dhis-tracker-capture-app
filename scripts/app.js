@@ -13,6 +13,8 @@ import '../scripts/services.js';
 import '../scripts/filters.js';
 import '../scripts/directives.js';
 import '../scripts/controllers.js';
+import '../scripts/queue/incomingController.js';
+import '../scripts/queue/outgoingController.js';
 import '../scripts/leftbar-menu-controller.js';
 import '../scripts/report-types-controller.js';
 import '../scripts/display-mode-controller.js';
@@ -82,6 +84,12 @@ angular.module('trackerCapture')
     }).when('/upcoming-events',{
         templateUrl:'components/report/upcoming-events.html',
         controller: 'UpcomingEventsController'
+    }).when('/incoming-referrals',{
+        templateUrl:'views/incoming-referrals.html',
+        controller: 'incomingController'
+    }).when('/outgoing-referrals',{
+        templateUrl:'views/outgoing-referrals.html',
+        controller: 'outgoingController'
     }).otherwise({
         redirectTo : '../dhis-web-commons/security/login.action'
     });
