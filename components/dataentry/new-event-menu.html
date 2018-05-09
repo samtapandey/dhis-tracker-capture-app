@@ -63,11 +63,21 @@
                 </a>                
             </div>
             <!-- TODO: Edit so that referral shows-->
-            <!--  <div ng-if="useReferral && showReferral"> -->           
-            <div>
+            <!--  <div ng-if="useReferral && showReferral"> -->
+            <!--
+			<div>
                 <a href class="disable-link-effects" ng-click="useMainMenu ? showCreateEventIfStageNeedsEvent(selectedMainMenuStage, eventCreationActions.referral, false, true) : showCreateEvent(null, eventCreationActions.referral)" title="{{'make_referral'| translate}}">
                     <span class="stage-tasks-badge" ng-class="useMainMenu ? {'stage-tasks-badge-disabled': !stageNeedsEventOfType(selectedMainMenuStage, eventCreationActions.referral)} : ''">                                     
                         <span><i class="fa fa-share vertical-center"></i></span>                
+                    </span>
+                </a>                
+            </div>
+			-->
+            <br />
+			<div>
+                <a href class="disable-link-effects" ng-click="useMainMenu ? showCreateEventIfStageNeedsEvent(selectedMainMenuStage, eventCreationActions.referral, false, true) : showCreateEvent(null, eventCreationActions.referral)" title="{{'transfer'| translate}}">
+                    <span  ng-class="useMainMenu ? {'stage-tasks-badge-disabled': !stageNeedsEventOfType(selectedMainMenuStage, eventCreationActions.referral)} : ''">                                     
+                        <span><b><font color="red">{{'transfer'| translate}}</font></b></span>                
                     </span>
                 </a>                
             </div>

@@ -21,20 +21,20 @@
 </span>
 
 <div id="leftBar">
-    
+
     <d2-left-bar></d2-left-bar>
-    
+
     <div id="orgUnitTree">
         <ul>
         </ul>
     </div>
-    
+
     <img id="ouwt_loader" src="../images/ajax-loader-bar.gif" alt="{{'in_progress'| translate}}"/>
-    
+
     <div class="small-horizontal-spacing" ng-if="!treeLoaded">
         {{'loading_tree'| translate}}
     </div>
-    
+
 </div>
 
 <div class="page add-default-right-padding" id="mainPage">
@@ -42,30 +42,30 @@
     <!--- selected org unit begins -->
     <input type="text" selected-org-unit ng-model="selectedOrgUnit.displayName" ng-hide=true>
     <!--- selected org unit ends  -->
-        
+
     <div ng-if="treeLoaded && !selectedOrgUnit" class="row col-sm-12">
         <img src="../images/ajax-loader-bar.gif" alt="{{'in_progress'| translate}}"/><br>
         {{'loading_metadata'| translate}}
-    </div> 
+    </div>
 
     <div ng-show="selectedOrgUnit && selectedOrgUnit.id">
-        
+
         <!-- top bar begins -->
-        <div class="top-bar row">        
-            <div class="col-sm-12">                
+        <div class="top-bar row">
+            <div class="col-sm-12">
                 <!--{{trackerCaptureLabel}} -->
-				Case register	
-            </div>        
+				        Case register	
+            </div>
         </div>
         <!-- top bar ends -->
-        
-        <!--- search and registration menu begins -->        
+
+        <!--- search and registration menu begins -->
         <div class="row">
-            
+
             <!-- program selection begins -->
             <div class="col-md-4 small-vertical-spacing hideInPrint">
-                <ui-select ng-model="model.selectedProgram" 
-                        theme="select2" 
+                <ui-select ng-model="model.selectedProgram"
+                        theme="select2"
                         on-select="getProgramAttributes(model.selectedProgram)"
                         style="width:100%;">
                     <ui-select-match allow-clear="true" class="form-control-ui-select" placeholder="{{'select_or_search' | translate}}">{{$select.selected.displayName  || $select.selected}}</ui-select-match>
@@ -73,7 +73,7 @@
                         <span ng-bind-html="program.displayName | highlight: $select.search"></span>
                     </ui-select-choices>
                 </ui-select>
-            </div>            
+            </div>
             <!-- program selection ends -->
 
             <!-- simple/advanced search begins -->
@@ -87,27 +87,27 @@
                             <div ng-include="'views/advanced-search.html'"></div>
                         </form>
                     </div>
-                </div>                
+                </div>
             </div>
             <!-- simple/advanced search ends -->
 
             <!--search/registration buttons begin-->
-            <div class="col-md-4 trim hideInPrint">            
+            <div class="col-md-4 trim hideInPrint">
                 <!--
-				<button type="button" 
-                        class="btn btn-success"
-                        ng-if="selectedProgram && selectedProgram.displayFrontPageList"
-                        ng-disabled="showRegistrationDiv"
-                        ng-click="search(searchMode.listAll)">
-                    {{listAllLabel}}
-                </button>
-				-->
+      				<button type="button"
+                              class="btn btn-success"
+                              ng-if="selectedProgram && selectedProgram.displayFrontPageList"
+                              ng-disabled="showRegistrationDiv"
+                              ng-click="search(searchMode.listAll)">
+                          {{listAllLabel}}
+               </button>
+				       -->
                 <button type="button"
                         class="btn btn-primary"
                         ng-disabled="showRegistrationDiv || selectedOrgUnit.closedStatus"
                         ng-click="showRegistration()">
                     {{registerLabel}}
-                </button>                
+                </button>
                 <button type="button"
                         class="btn btn-info"
                         ng-if="teiCount > 0"
@@ -115,23 +115,23 @@
                     {{printLabel}}
                 </button>
             </div>
-            <!--search/registration buttons end-->            
-            
+            <!--search/registration buttons end-->
+
         </div>
         <!--- search and registration menu ends -->
-        
+
         <!--- Error display for search begins -->
         <div class="row">
             <div class="vertical-spacing" ng-if="emptySearchAttribute || !model.searchText && emptySearchText">
                 <div class="alert alert-warning">{{'search_input_required'| translate}}</div>
             </div>
-        </div>        
-        <!--- Error display for search ends -->        
-        
+        </div>
+        <!--- Error display for search ends -->
+
         <!--registration form begins -->
         <div class="row">
             <div class="col-sm-4 bordered-div container-min-width add-default-padding" ng-if="showRegistrationDiv" ng-include="'components/registration/registration.html'"></div>
-        </div>        
+        </div>
         <!-- registration form ends -->
 
         <!-- entity grid begins -->
@@ -167,10 +167,8 @@
             </span>
             <i ng-if="!teiFetched && showTrackedEntityDiv && enrollmentStatus!=='TODAY'" class="fa fa-spinner fa-spin fa-2x"></i>
             <div ng-if="!showRegistrationDiv" ng-include="'views/tei.html'"></div>
-        </div>        
+        </div>
         <!-- entity grid ends -->
     </div>
 
-</div>           
-
-
+</div>
