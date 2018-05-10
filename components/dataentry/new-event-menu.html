@@ -4,7 +4,7 @@
         <div class="panel-heading">{{'new_event'| translate}}
             <span class="pull-right">
                 <a class="small-horizontal-spacing" href ng-click="toggleShowStageTasks()">
-                    <span><i class="fa fa-chevron-right vertical-center" title="{{'hide_menu'| translate}}"></i></span>                    
+                    <span><i class="fa fa-chevron-right vertical-center" title="{{'hide_menu'| translate}}"></i></span>
                 </a>
             </span>
         </div>
@@ -36,50 +36,50 @@
                     </div>
                 </div>
             </div>
-            <div ng-if="!creatableStagesExist(creatableStages)" class="alert alert-warning">{{'no_stages_available'| translate}}</div> 
+            <div ng-if="!creatableStagesExist(creatableStages)" class="alert alert-warning">{{'no_stages_available'| translate}}</div>
         </div>
-    </div>       
+    </div>
         <div ng-if="!showStageTasks && selectedEnrollment.status === 'ACTIVE'" class="pull-right">
         <div ng-if="!useMainMenu">
             <a href ng-click="toggleShowStageTasks()" title="{{'show_new_event_menu'| translate}}">
-                <span class="stage-tasks-badge stage-tasks-badge-back">                                     
-                    <span><i class="fa fa-chevron-left vertical-center"></i></span>                
+                <span class="stage-tasks-badge stage-tasks-badge-back">
+                    <span><i class="fa fa-chevron-left vertical-center"></i></span>
                 </span>
             </a>
-        </div> 
+        </div>
         <div ng-if="!useMainMenu || (useMainMenu && topLineEvents.length > 0 && !hideTopLineEventsForFormTypes[displayCustomForm])">
             <div>
                 <a href class="disable-link-effects" ng-click="useMainMenu ? showCreateEventIfStageNeedsEvent(selectedMainMenuStage, eventCreationActions.add, false, true) : showCreateEvent(null, eventCreationActions.add)" title="{{'add_new'| translate}}">
-                    <span class="stage-tasks-badge" ng-class="useMainMenu ? {'stage-tasks-badge-disabled': !stageNeedsEventOfType(selectedMainMenuStage, eventCreationActions.add)} : ''">                                     
-                        <span><i class="fa fa-plus vertical-center"></i></span>                
+                    <span class="stage-tasks-badge" ng-class="useMainMenu ? {'stage-tasks-badge-disabled': !stageNeedsEventOfType(selectedMainMenuStage, eventCreationActions.add)} : ''">
+                        <span><i class="fa fa-plus vertical-center"></i></span>
                     </span>
-                </a>                
+                </a>
             </div>
             <div>
                 <a href class="disable-link-effects" ng-click="useMainMenu ? showCreateEventIfStageNeedsEvent(selectedMainMenuStage, eventCreationActions.schedule, false, true) : showCreateEvent(null, eventCreationActions.schedule)" title="{{'schedule_new'| translate}}">
-                    <span class="stage-tasks-badge" ng-class="useMainMenu ? {'stage-tasks-badge-disabled': !stageNeedsEventOfType(selectedMainMenuStage, eventCreationActions.schedule)} : ''">                                     
-                        <span><i class="fa fa-calendar vertical-center"></i></span>                
+                    <span class="stage-tasks-badge" ng-class="useMainMenu ? {'stage-tasks-badge-disabled': !stageNeedsEventOfType(selectedMainMenuStage, eventCreationActions.schedule)} : ''">
+                        <span><i class="fa fa-calendar vertical-center"></i></span>
                     </span>
-                </a>                
+                </a>
             </div>
             <!-- TODO: Edit so that referral shows-->
             <!--  <div ng-if="useReferral && showReferral"> -->
             <!--
 			<div>
                 <a href class="disable-link-effects" ng-click="useMainMenu ? showCreateEventIfStageNeedsEvent(selectedMainMenuStage, eventCreationActions.referral, false, true) : showCreateEvent(null, eventCreationActions.referral)" title="{{'make_referral'| translate}}">
-                    <span class="stage-tasks-badge" ng-class="useMainMenu ? {'stage-tasks-badge-disabled': !stageNeedsEventOfType(selectedMainMenuStage, eventCreationActions.referral)} : ''">                                     
-                        <span><i class="fa fa-share vertical-center"></i></span>                
+                    <span class="stage-tasks-badge" ng-class="useMainMenu ? {'stage-tasks-badge-disabled': !stageNeedsEventOfType(selectedMainMenuStage, eventCreationActions.referral)} : ''">
+                        <span><i class="fa fa-share vertical-center"></i></span>
                     </span>
-                </a>                
+                </a>
             </div>
 			-->
             <br />
 			<div>
                 <a href class="disable-link-effects" ng-click="useMainMenu ? showCreateEventIfStageNeedsEvent(selectedMainMenuStage, eventCreationActions.referral, false, true) : showCreateEvent(null, eventCreationActions.referral)" title="{{'transfer'| translate}}">
-                    <span  ng-class="useMainMenu ? {'stage-tasks-badge-disabled': !stageNeedsEventOfType(selectedMainMenuStage, eventCreationActions.referral)} : ''">                                     
-                        <span><b><font color="red">{{'transfer'| translate}}</font></b></span>                
+                    <span  ng-class="useMainMenu ? {'stage-tasks-badge-disabled': !stageNeedsEventOfType(selectedMainMenuStage, eventCreationActions.referral)} : ''">
+                        <span><b><font color="red">{{'transfer_patient'| translate}}</font></b></span>                
                     </span>
-                </a>                
+                </a>
             </div>
         </div>
     </div>
