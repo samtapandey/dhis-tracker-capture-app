@@ -8,7 +8,6 @@
  * Created by hisp on 09/05/2018.
  */
 
-
 angular.module('trackerCaptureServices')
 
 
@@ -45,13 +44,23 @@ angular.module('trackerCaptureServices')
                 return def.promise();
             },
 
-            createCustomId :  function( regDate, totalTeiCount, orgUnitCode, orgUnitUid, sQLViewNameToUidMap ){
-
+            createCustomId :  function( regDate, totalTeiCount, orgUnitCode, orgUnitUid, sQLViewNameToUidMap, programUID,idd ){
                 var thisDef = $.Deferred();
-                //var sqlview = [];
-                var attributeValueList = [];
                
+                var mon =regDate;
+                var sqlview = [];
+                var attributeValueList = [];
                 var prefix = "";
+                
+               
+                var cusid = idd;
+
+
+
+
+              
+
+
                 //console.log( "total Count -- " + response.data.height);
                 //var totalTei = response.data.height + 1;
 
@@ -62,53 +71,91 @@ angular.module('trackerCaptureServices')
                 //    sqlview[responseSQLViews.sqlViews[i].displayName]=responseSQLViews.sqlViews[i].id;
                 //}
 
-                CustomIdService.getTeiAttributeValues(sQLViewNameToUidMap['TEI_ID_VALIDATION'], orgUnitUid).then(function(attributeValues){
-
+                CustomIdService.getTeiAttributeValues(sQLViewNameToUidMap['TEI_ID_VALIDATION'], orgUnitUid, programUID ).then(function(attributeValues){
                     for(var i=0;i<attributeValues.rows.length;i++)
                     {
                         attributeValueList.push(attributeValues.rows[i][0]);
                     }
 
+                 
                     var totalTei = totalTeiCount;
-                    // for Reset after count 9999
-                    //totalTei = 10000;
                     totalTei = totalTei%10000;
 
-                    if( totalTei == 0 ) totalTei = 1;
+                    if( totalTei === 0 ) totalTei = 1;
 
-                    if( totalTei <10) prefix="00";
-                    else if (totalTei >9 && totalTei<100) prefix="0";
-                    //else if(totalTei>99 && totalTei<1000) prefix="00";
-                   // else if(totalTei>999 && totalTei<10000) prefix="0";
+                    if( totalTei <10) prefix="0000";
+                    else if (totalTei >9 && totalTei<100) prefix="000";
+                    else if(totalTei>99 && totalTei<1000) prefix="00";
+                    else if(totalTei>999 && totalTei<10000) prefix="0";
                     // change in requirement - adding random number
                     //prefix=Math.floor(Math.random()*(9999-1000) + 1000);
                     //def.resolve(constant + prefix + totalTei );
 
-                    var finalCustomId = orgUnitCode +"-" + regDate + "-"+ prefix + totalTei;
+                    var finalCustomId = cusid +"-" + mon + "-"+ prefix + totalTei;
 
-                    CustomIdService.getUniqueCustomId(finalCustomId, attributeValueList, prefix).then(function(uniqueCustomId){
-
+                    CustomIdService.getUniqueCustomId( finalCustomId, attributeValueList, prefix).then(function(uniqueCustomId){
                         finalCustomId = uniqueCustomId;
 
                         thisDef.resolve(finalCustomId);
 
-                     });
+                    });
                 });
+
             //});
 
             return thisDef;
 
         },
             
-            createCustomIdAndSave: function(tei,customIDAttribute,optionSets,attributesById,regDate,totalTeiCount,orgUnitCode, sQLViewNameToUidMap ){
+            createCustomIdAndSave: function(tei,customIDAttribute,optionSets,attributesById,regDate,totalTeiCount,orgUnitCode, sQLViewNameToUidMap, programUid ){
                 var def = $.Deferred();
+
+
+                for(var i=0; i < tei.attributes.length; i++)
+                {
+                  
+
+                        var disAttributeID=tei.attributes[i].attribute;
+                        if (disAttributeID == 'Tr6RBBnWOUG'){
+                            var disName = tei.attributes[i].value;
+                            console.log("attrName" + disName);
+                        }
+                        if(disAttributeID == 'VN05fxaf6m8'){
+                            var stateName = tei.attributes[i].value;
+                            console.log(stateName);
+                        }
+                        if(disAttributeID == 'W8XfjsulErT'){
+                            var blockName = tei.attributes[i].value;
+                            console.log(blockName);
+                        }
+
+                }
+
+                var sta = stateName.slice(0,2);
+               
+                console.log(sta);
+               
+                var dis= disName.slice(0,3);
+                console.log(dis);
+                var blo  = blockName.slice(0,3);
+                console.log(blo);
+
+                var customidd = sta + "-" + dis + "-" + blo;
+                var idd = customidd.toUpperCase();
+                console.log(idd); 
+
+
                 console.log( regDate +"--"+ totalTeiCount + "--" + orgUnitCode);
                 var orgUnitUid = tei.orgUnit;
-                this.createCustomId(regDate,totalTeiCount,orgUnitCode, orgUnitUid, sQLViewNameToUidMap).then(function(customId){
+                this.createCustomId(regDate,totalTeiCount,orgUnitCode, orgUnitUid, sQLViewNameToUidMap, programUid, idd ).then(function(customId){
                     var attributeExists = false;
                     angular.forEach(tei.attributes,function(attribute){
+
+                       
+
+
                         if (attribute.attribute == customIDAttribute.id){
-                            attribute.value = customId;
+                         attribute.value = customId;
                             attributeExists = true;
                         }
                     });
@@ -185,7 +232,67 @@ angular.module('trackerCaptureServices')
                         if (isValidAttribute && isValidProgram)
                         {
                             var regDate = enrolmentdate;
-							              var customRegDate=enrolmentdate.substring(8);
+                            var customRegDate = regDate.split("-");
+                            var year = customRegDate[0];
+                            var month =customRegDate[1];
+                            var mon = '';
+
+                            if(month == 1)
+                            {
+                                mon = 'JAN';
+                            }
+                            if(month == 2)
+                            {
+                                mon = 'FEB';
+                            }
+                            if(month == 3)
+                            {
+                                mon = 'MAR';
+                            }
+                            if(month == 4)
+                            {
+                                mon = 'APR';
+                            }
+                            if(month == 5)
+                            {
+                                mon = 'MAY';
+                            }
+                            if(month == 6)
+                            {
+                                mon = 'JUN';
+                            }
+                            if(month == 7 )
+                            {
+                                mon = 'JUL';
+                            }
+                            if(month == 8)
+                            {
+                                mon = 'AUG';
+                                
+                            }
+                            if(month == 9)
+                            {
+                                mon = 'SEP';
+                            }
+                            if(month == 10)
+                            {
+                                mon = 'OCT';
+                            }
+                            if(month == 11)
+                            {
+                                mon = 'NOV';
+                            }
+                            if(month == 12)
+                            {
+                                mon = 'DEC';
+                            }
+
+                        var customdate = mon + year;
+
+                                                      
+
+                           // var customRegDate = regDate.split("-")[2]+regDate.split("-")[1]+regDate.split("-")[0];
+                            //var customRegDate = regDate.split("-")[1]+regDate.split("-")[0].slice(-2);
 
                             //var customRegDate = regDate.split("-")[2]+regDate.split("-")[1]+regDate.split("-")[0];
 						                //	var customRegDate = regDate.split("-")[2]+regDate.split("-")[2];
@@ -208,8 +315,7 @@ angular.module('trackerCaptureServices')
                                     sqlViewNameToUIDMap[responseSQLViews.sqlViews[i].displayName]=responseSQLViews.sqlViews[i].id;
                                 }
 
-                                CustomIdService.getTeiCountByOrgUnitThroughSQLView( sqlViewNameToUIDMap['TEI_COUNT_ORGUNIT_WISE'], tei.orgUnit ).then(function(teiResponse){
-
+                                CustomIdService.getTeiCountByOrgUnitAndProgramThroughSQLView( sqlViewNameToUIDMap['TEI_COUNT_ORGUNIT_PROGRAM_WISE'], tei.orgUnit, programUid ).then(function(teiResponse){
                                     var countTeiByOrgUnit = teiResponse.rows[0];
 
                                     var totalTei = countTeiByOrgUnit[0];
@@ -217,7 +323,7 @@ angular.module('trackerCaptureServices')
                                     //var totalTei = teiResponse.trackedEntityInstances.length;
                                     CustomIdService.getOrgunitCode(tei.orgUnit).then(function(orgUnitCodeResponse){
                                     var orgUnitCode = orgUnitCodeResponse.code;
-                                        thiz.createCustomIdAndSave(tei,customIDAttribute,optionSets,attributesById,customRegDate,totalTei,orgUnitCode, sqlViewNameToUIDMap).then(function(response){
+                                        thiz.createCustomIdAndSave(tei,customIDAttribute,optionSets,attributesById,customdate,totalTei,orgUnitCode, sqlViewNameToUIDMap, programUid ).then(function(response){
                                             def.resolve(response);
                                         });
                                     });
@@ -667,9 +773,9 @@ angular.module('trackerCaptureServices')
                 return def;
             },
 
-            getTeiAttributeValues : function(sqlViewUID,orgUnitUid){
+            getTeiAttributeValues : function(sqlViewUID, orgUnitUid, programUID ){
                 var def = $.Deferred();
-                var param = "var=orgUnitUid:" + orgUnitUid;
+                var param = "var=orgUnitUid:" + orgUnitUid + "&var=programUid:" + programUID;
                 $.ajax({
                     type: "GET",
                     dataType: "json",
@@ -743,6 +849,21 @@ angular.module('trackerCaptureServices')
                             SQLViewsName2IdMap[responseSQLViews.sqlViews[i].name] = responseSQLViews.sqlViews[i].id;
                         }
                         def.resolve(SQLViewsName2IdMap);
+                    }
+                });
+                return def;
+            },
+            getTeiCountByOrgUnitAndProgramThroughSQLView : function( sqlViewUID, orgUnitUid, programUID ){
+                var def = $.Deferred();
+                var param = "var=orgUnitUid:" + orgUnitUid + "&var=programUid:" + programUID;
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    async:false,
+                    contentType: "application/json",
+                    url: '../api/sqlViews/'+sqlViewUID+"/data?"+param+"&paging=false",
+                    success: function (data) {
+                        def.resolve(data);
                     }
                 });
                 return def;
