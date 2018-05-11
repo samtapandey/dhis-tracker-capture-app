@@ -29,7 +29,8 @@ trackerCapture.controller('RegistrationController',
         ModalService,
         // For ICMR Leprosy
         OrganisationUnitService,
-        CustomIDGenerationService) {
+        CustomIDGenerationService,
+        DialogService) {
         $scope.today = DateUtils.getToday();
         $scope.trackedEntityForm = null;
         $scope.customRegistrationForm = null;
@@ -67,6 +68,7 @@ trackerCapture.controller('RegistrationController',
         $scope.selectedPermanentStateName = null;
         $scope.selectedPermanentDistrictName = null;
         $scope.selectedPermanentBlockName = null;
+        $scope.addPermanentAddress = null;
 
         $scope.attributesById = CurrentSelection.getAttributesById();
 
@@ -253,6 +255,13 @@ trackerCapture.controller('RegistrationController',
                 $scope.selectedPermanentBlockName = orgUnitPermanentBlockObject.displayName;
             });
         }
+
+        $scope.getPermanentAddress = function (permanentAddress)
+        {
+            $scope.addPermanentAddress = null;
+            $scope.addPermanentAddress = permanentAddress;
+        }
+
 
         //watch for selection of program
         $scope.$watch('selectedProgram', function (newValue, oldValue) {
@@ -568,11 +577,38 @@ trackerCapture.controller('RegistrationController',
                 $scope.selectedTei.orgUnit = $scope.tei.orgUnit = $scope.selectedOrgUnit.id;
                 $scope.selectedTei.attributes = $scope.tei.attributes = [];
             }
+// For ICMR Leprosy validations
+            if ($scope.registrationMode === 'REGISTRATION') {
+                if (!$scope.selectedTei.trackedEntityInstance && ($scope.selectedStateName == "" || $scope.selectedStateName == null)) {
+                    var dialogOptions = {
+                        headerText: 'registration_error',
+                        bodyText: $translate.instant('Please Select Current State')
+                    };
+                    DialogService.showDialog({}, dialogOptions);
+                    return;
+                }
+                else if (!$scope.selectedTei.trackedEntityInstance && ($scope.selectedDistrictName == "" || $scope.selectedDistrictName == null)) {
+                    var dialogOptions = {
+                        headerText: 'registration_error',
+                        bodyText: $translate.instant('Please Select Current District')
+                    };
+                    DialogService.showDialog({}, dialogOptions);
+                    return;
+                }
+                else if (!$scope.selectedTei.trackedEntityInstance && ($scope.selectedBlockName == "" || $scope.selectedBlockName == null)) {
+                    var dialogOptions = {
+                        headerText: 'registration_error',
+                        bodyText: $translate.instant('Please Select Current Block')
+                    };
+                    DialogService.showDialog({}, dialogOptions);
+                    return;
+                }
+            }
 
             //get tei attributes and their values
             //but there could be a case where attributes are non-mandatory and
             //registration form comes empty, in this case enforce at least one value
-            var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById,$scope.selectedStateName,$scope.selectedDistrictName,$scope.selectedBlockName,$scope.selectedPermanentStateName,$scope.selectedPermanentDistrictName,$scope.selectedPermanentBlockName);
+            var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById,$scope.selectedStateName,$scope.selectedDistrictName,$scope.selectedBlockName,$scope.selectedPermanentStateName,$scope.selectedPermanentDistrictName,$scope.selectedPermanentBlockName,$scope.addPermanentAddress);
             $scope.formEmpty = result.formEmpty;
             $scope.tei = result.tei;
 

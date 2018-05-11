@@ -452,7 +452,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                 return def.promise;
             }
         },
-        processForm: function(existingTei, formTei, originalTei, attributesById,stateName,districtName,blockName,permanentStateName,permanentDistrictName,permanentBlockName){
+        processForm: function(existingTei, formTei, originalTei, attributesById,stateName,districtName,blockName,permanentStateName,permanentDistrictName,permanentBlockName,permanentaddress){
             var tei = angular.copy(existingTei);
             tei.attributes = [];
             var formEmpty = true;
@@ -515,6 +515,16 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                     {
                         formTei[k] = permanentBlockName;
                         console.log( "Permanent Block Name -- " + permanentBlockName );
+                    }
+                }
+
+                if( permanentaddress != null )
+                {
+                    //Permanent Address 
+                    if(  attributesById[k].code === 'permanent_address' ) 
+                    {
+                        formTei[k] = permanentaddress;
+                        console.log( "Permanent Address -- " + permanentaddress );
                     }
                 }
 

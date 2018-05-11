@@ -2,7 +2,7 @@
     {{'profile'| translate}}
 </div>
 <table class="dhis2-list-table-striped default-form-table">
-    <tr ng-repeat="attribute in attributes | filter: {attribute: 'true'} " ng-if="(attribute.code != 'state_(current_address)' && attribute.code != 'state_(permanent_address)' && attribute.code != 'district_(current_address)' && attribute.code != 'district_(permanent_address)' && attribute.code != 'block_(current_address)' && attribute.code != 'block_(permanent_address)') && (!hiddenFields[attribute.id] && ((editingDisabled  && attribute.show) || !editingDisabled))">
+    <tr ng-repeat="attribute in attributes | filter: {attribute: 'true'} " ng-if="(attribute.code != 'permanent_address' && attribute.code != 'state_(current_address)' && attribute.code != 'state_(permanent_address)' && attribute.code != 'district_(current_address)' && attribute.code != 'district_(permanent_address)' && attribute.code != 'block_(current_address)' && attribute.code != 'block_(permanent_address)') && (!hiddenFields[attribute.id] && ((editingDisabled  && attribute.show) || !editingDisabled))">
         <td>
             <span d2-pop-over
                 details="{{'details'| translate}}"
@@ -332,7 +332,7 @@
                                 d2-orgunit-names="orgUnitNames">
                         </d2-org-unit-tree>
                     </span>
-                    <span ng-switch-when="TEXT" ng-if"attribute.code != 'state_(current_address)' && attribute.code != 'state_(permanent_address)' && attribute.code != 'district_(current_address)' && attribute.code != 'district_(permanent_address)' && attribute.code != 'block_(current_address)' && attribute.code != 'block_(permanent_address)'">
+                    <span ng-switch-when="TEXT" ng-if"attribute.code != 'permanent_address' && attribute.code != 'state_(current_address)' && attribute.code != 'state_(permanent_address)' && attribute.code != 'district_(current_address)' && attribute.code != 'district_(permanent_address)' && attribute.code != 'block_(current_address)' && attribute.code != 'block_(permanent_address)'">
                         <input type="text"
                                name="foo" 
                                class="form-control"

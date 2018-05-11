@@ -5,6 +5,7 @@
         <tr>
             <td>
                 {{'current_state' | translate}}
+                <span class="required">*</span>
             </td>
             <td class="absorbing-column">
                 <select name="selectedState" id="selectedState" ng-model="selectedState" ng-change="getDistrict(selectedState)" class="form-control"
@@ -17,6 +18,7 @@
         <tr>
             <td>
                 {{'current_district' | translate}}
+                <span class="required">*</span>
             </td>
             <td class="absorbing-column">
                 <select name="selectedDistrict" id="selectedDistrict" ng-model="selectedDistrict" ng-change="getBlock(selectedDistrict)"
@@ -30,6 +32,7 @@
         <tr>
             <td>
                 {{'current_block' | translate}}
+                <span class="required">*</span>
             </td>
             <td class="absorbing-column">
                 <select name="selectedBlock" id="selectedBlock" ng-model="selectedBlock" class="form-control" ng-change="getBlockName(selectedBlock)"
@@ -43,11 +46,21 @@
 
         <tr>
             <td>
+                {{'permanent_address' | translate}}
+            </td>
+            <td class="absorbing-column">
+                <input type="text" class="form-control" ng-model="permanentAddress" id="permanentAddress" ng-change="getPermanentAddress(permanentAddress)" />
+            </td>
+        </tr>
+
+        <tr>
+            <td>
                 {{'permanent_state' | translate}}
             </td>
             <td class="absorbing-column">
-                <select name="selectedState1" id="selectedState1" ng-model="selectedState1" ng-change="getPermanentDistrict(selectedState1)" class="form-control"
-                    ng-options="state1.id as state1.name for state1 in permanentStateList | orderBy: 'name'" ng-disabled="permanentStateList.length < 1">
+                <select name="selectedState1" id="selectedState1" ng-model="selectedState1" ng-change="getPermanentDistrict(selectedState1)"
+                    class="form-control" ng-options="state1.id as state1.name for state1 in permanentStateList | orderBy: 'name'"
+                    ng-disabled="permanentStateList.length < 1">
                     <option value="">{{'please_select'| translate}}</option>
                 </select>
             </td>
@@ -71,8 +84,9 @@
                 {{'permanent_block' | translate}}
             </td>
             <td class="absorbing-column">
-                <select name="selectedBlock1" id="selectedBlock1" ng-model="selectedBlock1" ng-change="getPermanentBlockName(selectedBlock1)" class="form-control"
-                    ng-options="blockOrgUnit1.id as blockOrgUnit1.name for blockOrgUnit1 in permanentBlockList | orderBy: 'name'" ng-disabled="permanentBlockList.length < 1">
+                <select name="selectedBlock1" id="selectedBlock1" ng-model="selectedBlock1" ng-change="getPermanentBlockName(selectedBlock1)"
+                    class="form-control" ng-options="blockOrgUnit1.id as blockOrgUnit1.name for blockOrgUnit1 in permanentBlockList | orderBy: 'name'"
+                    ng-disabled="permanentBlockList.length < 1">
                     <option value="">{{'please_select'| translate}}</option>
                 </select>
             </td>
