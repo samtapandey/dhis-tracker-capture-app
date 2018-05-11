@@ -30,7 +30,8 @@ trackerCapture.controller('DataEntryController',
         AttributesFactory,
         TrackerRulesFactory,
         EventCreationService,
-        AuthorityService) {
+        AuthorityService,
+        CustomIdService) {
 
         //Unique instance id for the controller:
         $scope.instanceId = Math.floor(Math.random() * 1000000000);
@@ -1834,6 +1835,11 @@ trackerCapture.controller('DataEntryController',
             //input is valid
             var value = eventToSave[prStDe.dataElement.id];
 
+            if (prStDe.dataElement.id == "AXkKXFvECDV") {
+                if (value == "PB") { sendAlerts("PB", eventToSave); }
+                if (value == "MB") { sendAlerts("MB", eventToSave); }
+            }
+
             if (oldValue !== value) {
 
                 value = CommonUtils.formatDataValue(eventToSave.event, value, prStDe.dataElement, $scope.optionSets, 'API');
@@ -3521,6 +3527,71 @@ trackerCapture.controller('DataEntryController',
         $scope.hideEditAttributeCategoryOptions = function () {
             $scope.showAttributeCategoryOptions = !$scope.showAttributeCategoryOptions;
         };
+        //code to send messages
+        // functions for date formatting
+        function getProperDate(d) {
+            var y = d.getFullYear();
+            var m = (d.getMonth() + 1);
+            var dd = d.getDate();
+            if (parseInt(m) < 10) { m = '0' + m }
+            return y + "-" + m + "-" + dd;
+        }
+
+        function getDates(d) {
+            var newdate28 = d;
+            newdate28 = newdate28.setDate(newdate28.getDate() + 28);
+            return d;
+        }
+
+        function sendAlerts(option, eventToSave) {
+            var stringofdates = "";
+            var today = new Date();
+            if (option == "PB") {
+                var index = 8;
+            }
+            if (option == "MB") {
+                var index = 17;
+            }
+
+            for (var i = 0; i < index; i++) {
+                var newdate = getDates(today);
+                stringofdates = stringofdates + getProperDate(newdate) + ", ";
+                today = newdate;
+            }
+            var tei = eventToSave.trackedEntityInstance;
+            var ou = eventToSave.orgUnitName;
+            var mobnum = "";
+            var patientfname = "";
+            var patientlname = "";
+            CustomIdService.getTeiNameandNum(tei).then(function (teidata) {
+                var attributes = teidata.attributes;
+                for (var k = 0; k < attributes.length; k++) {
+                    if (attributes[k].displayName == "Mobile number") {
+                        mobnum = attributes[k].value;
+                    }
+                    if (attributes[k].displayName == "First name") {
+                        patientfname = attributes[k].value;
+                    }
+                    if (attributes[k].displayName == "Last name") {
+                        patientlname = attributes[k].value;
+                    }
+                }
+                var messagetosend = "Dear " + patientfname + " " + patientlname + ", please visit " + ou + " for treatment on " + stringofdates;
+                if(messagetosend.length >= 160){
+                    var firstmsg = messagetosend.substring(0,158) + "-";
+                    var secondmsg = "-" + messagetosend.substring(159,messagetosend.length-1);
+                    CustomIdService.sendMessages(firstmsg,mobnum);
+                    CustomIdService.sendMessages(secondmsg,mobnum);
+                }
+                else{
+                    CustomIdService.sendMessages(messagetosend,mobnum);
+                }
+               
+            });
+            
+        }
+
+        //code for sending messages ends here
 
     })
     .controller('EventOptionsInTableController', function ($scope, $translate) {
