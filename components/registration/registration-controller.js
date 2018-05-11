@@ -31,7 +31,6 @@ trackerCapture.controller('RegistrationController',
 	  $scope.dateofbirth = 'kelN057pfhq'; 
 	   $scope.familymemberid = 'Dnm1mq6iq2d';
         $scope.householdid = 'uHv60gjn2gp'; 
-		
     var flag = {debug: true, verbose: false};
     var initValues = function(){
         $scope.today = DateUtils.getToday();
