@@ -11,4 +11,7 @@ trackerCapture.controller('LeftBarMenuController',
     $scope.showReportTypes = function(){
         $location.path('/report-types').search();
     };
+	$scope.showQueueInterface = function(){
+        $location.path('/waitingqueue').search();
+    };
 });
