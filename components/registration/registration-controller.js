@@ -30,7 +30,8 @@ trackerCapture.controller('RegistrationController',
         // For ICMR Leprosy
         OrganisationUnitService,
         CustomIDGenerationService,
-        DialogService) {
+        DialogService,
+        OptionSetsService) {
         $scope.today = DateUtils.getToday();
         $scope.trackedEntityForm = null;
         $scope.customRegistrationForm = null;
@@ -61,6 +62,8 @@ trackerCapture.controller('RegistrationController',
         $scope.permanentBlockList = [];
         $scope.blockOrgUnits = [];
         $scope.tempAllChildrenList = [];
+        $scope.durationOfCurrentAddressList = [];
+        $scope.visitingPermanentAddressList = [];
         $scope.tempSelectedStateName = null;
         $scope.selectedStateName = null;
         $scope.selectedDistrictName = null;
@@ -69,6 +72,8 @@ trackerCapture.controller('RegistrationController',
         $scope.selectedPermanentDistrictName = null;
         $scope.selectedPermanentBlockName = null;
         $scope.addPermanentAddress = null;
+        $scope.durationValue = null;
+        $scope.visitingPermanentAddressValue = null;
 
         $scope.attributesById = CurrentSelection.getAttributesById();
 
@@ -284,7 +289,29 @@ trackerCapture.controller('RegistrationController',
             }
         });
 
+        OptionSetsService.getDurationOfCurrentAddress().then(function (durationOfCurrentAddress) {
+            $scope.durationOfCurrentAddressList = durationOfCurrentAddress.options;
+        });
 
+        $scope.getDurationOfCurrentAddressValue = function (duration)
+        {
+                OptionSetsService.optionsObject(duration).then(function (durationObject){
+                $scope.durationValue = null;
+                $scope.durationValue = durationObject.code;
+            });
+        }
+
+        OptionSetsService.getFrequencyOfVisitingPermanentAddress().then(function (visitPermanentAddress) {
+            $scope.visitingPermanentAddressList = visitPermanentAddress.options;
+        });
+
+        $scope.getvisitingPermanentAddressValue = function (visitPermanentAddressCode)
+        {
+                OptionSetsService.optionsObject(visitPermanentAddressCode).then(function (visitObject){
+                $scope.visitingPermanentAddressValue = null;
+                $scope.visitingPermanentAddressValue = visitObject.code;
+            });
+        }
 
         //listen to modes of registration
         $scope.$on('registrationWidget', function (event, args) {
@@ -608,7 +635,7 @@ trackerCapture.controller('RegistrationController',
             //get tei attributes and their values
             //but there could be a case where attributes are non-mandatory and
             //registration form comes empty, in this case enforce at least one value
-            var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById,$scope.selectedStateName,$scope.selectedDistrictName,$scope.selectedBlockName,$scope.selectedPermanentStateName,$scope.selectedPermanentDistrictName,$scope.selectedPermanentBlockName,$scope.addPermanentAddress);
+            var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById,$scope.selectedStateName,$scope.selectedDistrictName,$scope.selectedBlockName,$scope.selectedPermanentStateName,$scope.selectedPermanentDistrictName,$scope.selectedPermanentBlockName,$scope.addPermanentAddress,$scope.durationValue,$scope.visitingPermanentAddressValue);
             $scope.formEmpty = result.formEmpty;
             $scope.tei = result.tei;
 

@@ -452,7 +452,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                 return def.promise;
             }
         },
-        processForm: function(existingTei, formTei, originalTei, attributesById,stateName,districtName,blockName,permanentStateName,permanentDistrictName,permanentBlockName,permanentaddress){
+        processForm: function(existingTei, formTei, originalTei, attributesById,stateName,districtName,blockName,permanentStateName,permanentDistrictName,permanentBlockName,permanentaddress,durationValue,visitPermanentAddressValue){
             var tei = angular.copy(existingTei);
             tei.attributes = [];
             var formEmpty = true;
@@ -528,6 +528,26 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                     }
                 }
 
+                if( durationValue != null )
+                {
+                    //Duration of stay at current address
+                    if(  attributesById[k].code === 'Duration_of_stay_at_current_address' ) 
+                    {
+                        formTei[k] = durationValue;
+                        console.log( "Duration of stay at current address -- " + durationValue );
+                    }
+                }
+
+                if( visitPermanentAddressValue != null )
+                {
+                    //Frequency of visiting Permanent address (In last year) 
+                    if(  attributesById[k].code === 'Frequency_of_visiting_Permanent_address' ) 
+                    {
+                        formTei[k] = visitPermanentAddressValue;
+                        console.log( "Frequency of visiting Permanent address (In last year) -- " + visitPermanentAddressValue );
+                    }
+                }
+                visitPermanentAddressValue
 
                 if(originalTei && formTei[k] !== originalTei[k] && !formTei[k] && !originalTei[k]){
                     formChanged = true;

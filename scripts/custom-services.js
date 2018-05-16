@@ -474,7 +474,34 @@ angular.module('trackerCaptureServices')
     })
 
 
+    .service('OptionSetsService', function ($http, $q) {
+        return {
+            getDurationOfCurrentAddress: function (){
+                var def = $q.defer();
+                $http.get('../api/optionSets/m7Dg4X8SVnZ.json?fields=options[id,name]&paging=false').then(function (response) {
+                    def.resolve(response.data);
+                });
+                return def.promise;
+            },
 
+            getFrequencyOfVisitingPermanentAddress: function (){
+                var def = $q.defer();
+                $http.get('../api/optionSets/R8OXOyJjGR4.json?fields=options[id,name]&paging=false').then(function (response) {
+                    def.resolve(response.data);
+                });
+                return def.promise;
+            },
+
+            optionsObject: function (option) {
+                var def = $q.defer();
+                $http.get('../api/options/' + option + ".json?fields=id,name,displayName,code&paging=false").then(function (response) {
+                    def.resolve(response.data);
+                });
+
+                return def.promise;
+            }
+        };
+    })
     /*
     .service('ProgramStageSequencingService',function(CalendarService,$filter,orderByFilter) {
         return {

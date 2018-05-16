@@ -42,6 +42,18 @@
             </td>
         </tr>
 
+        <tr>
+            <td>
+                {{'duration_of_current_address' | translate}}
+            </td>
+            <td class="absorbing-column">
+                <select name="durationofcurrentaddress" id="durationofcurrentaddress" ng-model="durationofcurrentaddress" class="form-control" ng-change="getDurationOfCurrentAddressValue(durationofcurrentaddress)"
+                    ng-options="durationValues.id as durationValues.name for durationValues in durationOfCurrentAddressList" >
+                    <option value="">{{'please_select'| translate}}</option>
+                </select>
+            </td>
+        </tr>
+
         <!--Permanent Address Organisation Units-->
 
         <tr>
@@ -87,6 +99,18 @@
                 <select name="selectedBlock1" id="selectedBlock1" ng-model="selectedBlock1" ng-change="getPermanentBlockName(selectedBlock1)"
                     class="form-control" ng-options="blockOrgUnit1.id as blockOrgUnit1.name for blockOrgUnit1 in permanentBlockList | orderBy: 'name'"
                     ng-disabled="permanentBlockList.length < 1">
+                    <option value="">{{'please_select'| translate}}</option>
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                {{'Frequency_of_visiting_Permanent_address' | translate}}
+            </td>
+            <td class="absorbing-column">
+                <select name="visitingPermanentAddress" id="visitingPermanentAddress" ng-model="visitingPermanentAddress" class="form-control" ng-change="getvisitingPermanentAddressValue(visitingPermanentAddress)"
+                    ng-options="visitingValues.id as visitingValues.name for visitingValues in visitingPermanentAddressList" >
                     <option value="">{{'please_select'| translate}}</option>
                 </select>
             </td>
