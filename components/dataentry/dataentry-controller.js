@@ -1441,40 +1441,40 @@ trackerCapture.controller('DataEntryController',
             if (prStDe.dataElement.id === 'tFZQIt6d9pk' || prStDe.dataElement.id === 'jDiCrciKu7Z' || prStDe.dataElement.id === 'fczAudE6eS6') {
                 if (value === 'true') {
                     var tei = $scope.currentEvent.trackedEntityInstance;
-                    CustomIdService.getParentId(event.orgUnit).then(function (data1) {
-                        var ouid = data1.parent.id;
-                        CustomIdService.getUsersId(ouid).then(function (data) {
-                            var users = data.users;
-                            var phones = "";
-                            for (var i = 0; i < users.length; i++) {
-                                if (users[i].phoneNumber) {
-                                    phones = phones + users[i].phoneNumber + ",";
-                                }
-                            }
-                            CustomIdService.getPhysiciansNum(tei).then(function (data) {
-                                var physicians = data.attributes;
-                                var patientName = "";
-                                var AesId = "";
-                                for (var i = 0; i < physicians.length; i++) {
-                                    if (physicians[i].attribute === 'B8Ohks1Zf91') {
-                                        patientName = physicians[i].value;
-                                    }
-                                    if (physicians[i].attribute === 'eZAMzTucu0x') {
-                                        AesId = physicians[i].value;
-                                    }
-                                }
-                                if (prStDe.dataElement.id === 'tFZQIt6d9pk') {
-                                    CustomIdService.sendMessages("CSF samples sent to apex lab, patient name :" + patientName + ", AES Id :" + AesId, phones);
-                                }
-                                else if (prStDe.dataElement.id === 'jDiCrciKu7Z') {
-                                    CustomIdService.sendMessages("Serum samples sent to apex lab, patient name :" + patientName + ", AES Id :" + AesId, phones);
-                                }
-                                else if (prStDe.dataElement.id === 'fczAudE6eS6') {
-                                    CustomIdService.sendMessages("Whole Blood samples sent to apex lab, patient name :" + patientName + ", AES Id :" + AesId, phones);
-                                }
-                            });
-                        });
-                    });
+                    // CustomIdService.getParentId(event.orgUnit).then(function (data1) {
+                    //     var ouid = data1.parent.id;
+                    //     CustomIdService.getUsersId(ouid).then(function (data) {
+                    //         var users = data.users;
+                    //         var phones = "";
+                    //         for (var i = 0; i < users.length; i++) {
+                    //             if (users[i].phoneNumber) {
+                    //                 phones = phones + users[i].phoneNumber + ",";
+                    //             }
+                    //         }
+                    //         CustomIdService.getPhysiciansNum(tei).then(function (data) {
+                    //             var physicians = data.attributes;
+                    //             var patientName = "";
+                    //             var AesId = "";
+                    //             for (var i = 0; i < physicians.length; i++) {
+                    //                 if (physicians[i].attribute === 'B8Ohks1Zf91') {
+                    //                     patientName = physicians[i].value;
+                    //                 }
+                    //                 if (physicians[i].attribute === 'eZAMzTucu0x') {
+                    //                     AesId = physicians[i].value;
+                    //                 }
+                    //             }
+                    //             if (prStDe.dataElement.id === 'tFZQIt6d9pk') {
+                    //                 CustomIdService.sendMessages("CSF samples sent to apex lab, patient name :" + patientName + ", AES Id :" + AesId, phones);
+                    //             }
+                    //             else if (prStDe.dataElement.id === 'jDiCrciKu7Z') {
+                    //                 CustomIdService.sendMessages("Serum samples sent to apex lab, patient name :" + patientName + ", AES Id :" + AesId, phones);
+                    //             }
+                    //             else if (prStDe.dataElement.id === 'fczAudE6eS6') {
+                    //                 CustomIdService.sendMessages("Whole Blood samples sent to apex lab, patient name :" + patientName + ", AES Id :" + AesId, phones);
+                    //             }
+                    //         });
+                    //     });
+                    // });
                     var newProgramStage = "";
                     $timeout(function () {
                         var dhis2ParentEvents = { events: [] };
