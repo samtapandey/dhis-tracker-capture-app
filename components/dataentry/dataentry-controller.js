@@ -1543,7 +1543,7 @@ trackerCapture.controller('DataEntryController',
                 if (value === 'true') {
                     var tei = $scope.currentEvent.trackedEntityInstance;
                     var ouid = "jeaBUFagj6m";
-                    CustomIdService.getUsersId(ouid).then(function (data) {
+                 /*   CustomIdService.getUsersId(ouid).then(function (data) {
                         var users = data.users;
                         var phones = "";
                         for (var i = 0; i < users.length; i++) {
@@ -1575,7 +1575,7 @@ trackerCapture.controller('DataEntryController',
                                 CustomIdService.sendMessages("Whole Blood samples sent to NIMHANS lab, patient name :" + patientName + ", AES Id :" + AesId, phones);
                             }
                         });
-                    });
+                    }); */
 
 
                     var nimhansProgramStage = "";
