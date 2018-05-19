@@ -641,6 +641,8 @@ $scope.dhis2_to_openmrs = function(patentid){
 		$scope.mtcsid0fmother=tei.AiPFBqutPYy;
 		$scope.house_unniqueid=tei.uHv60gjn2gp;
 		$scope.familymember_unniqueid=tei.Dnm1mq6iq2d;
+		$scope.rch_id_mother=tei.nxYjIIBWcao;
+		$scope.rch_id_child=tei.DGlvE3h58kz;
 		if(field=="gZAFVJdEgIQ"){
 		if($scope.mtcsid0fchild.length>18 ||$scope.mtcsid0fchild.length <18 ){
 			
@@ -688,7 +690,31 @@ $scope.dhis2_to_openmrs = function(patentid){
 			document.getElementById("uHv60gjn2gp").style.backgroundColor = "white";
 		}
 		}
-       
+		
+			else if(field=="nxYjIIBWcao"){
+		 if($scope.rch_id_mother.length>12 ||$scope.rch_id_mother.length <12 ){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("nxYjIIBWcao").style.backgroundColor = "#FF6760";
+		}
+		else if($scope.rch_id_mother.length==12){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("nxYjIIBWcao").style.backgroundColor = "white";
+		}
+		}
+       	else if(field=="DGlvE3h58kz"){
+		 if($scope.rch_id_child.length>12 ||$scope.rch_id_child.length <12 ){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("DGlvE3h58kz").style.backgroundColor = "#FF6760";
+		}
+		else if($scope.rch_id_child.length==12){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("DGlvE3h58kz").style.backgroundColor = "white";
+		}
+		}
     };
 
 
