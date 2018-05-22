@@ -81,7 +81,8 @@ trackerCapture.controller('TEIAddController',
         $scope.selectedEnrollment = {
             enrollmentDate: $scope.today,
             incidentDate: $scope.today,
-            orgUnitName: $scope.selectedOrgUnit.displayName
+            orgUnitName: $scope.selectedOrgUnit.displayName,
+            orgUnit: $scope.selectedOrgUnit.id
         };
 
         //Selections
@@ -750,7 +751,7 @@ trackerCapture.controller('TEIAddController',
         });
         
         if($scope.selectedProgram && $scope.selectedProgram.id){
-            TrackerRulesExecutionService.executeRules($scope.allProgramRules, 'registration', null, null, $scope.selectedTei, $scope.selectedEnrollment, flag);
+            TrackerRulesExecutionService.executeRules($scope.allProgramRules, 'registration', null, null, null, $scope.selectedTei, $scope.selectedEnrollment, null, flag);
         }        
     };
     

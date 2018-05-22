@@ -471,7 +471,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                 if(originalTei && formTei[k] !== originalTei[k] && !formTei[k] && !originalTei[k]){
                     formChanged = true;
                 }
-                if( formTei[k] ){
+                if( k in formTei ){
                     var att = attributesById[k];
                     tei.attributes.push({attribute: att.id, value: formTei[k], displayName: att.displayName, valueType: att.valueType});
                     formEmpty = false;              
@@ -942,6 +942,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                             if(pAttribute.renderOptionsAsRadio){
                                 att.renderOptionsAsRadio = pAttribute.renderOptionsAsRadio;
                             }
+                            att.allowFutureDate = pAttribute.allowFutureDate;
                             programAttributes.push(att);
                         }
                     });
@@ -1806,8 +1807,8 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             };
 
         angular.forEach(programStage.programStageDataElements, function(prStDe){
-            if(dhis2Event[prStDe.dataElement.id]){                    
-                var value = CommonUtils.formatDataValue(dhis2Event.event, dhis2Event[prStDe.dataElement.id], prStDe.dataElement, optionSets, 'API');                    
+            if(dhis2Event[prStDe.dataElement.id] || dhis2Event[prStDe.dataElement.id] === 0){
+                var value = CommonUtils.formatDataValue(dhis2Event.event, dhis2Event[prStDe.dataElement.id], prStDe.dataElement, optionSets, 'API');
                 var val = {value: value, dataElement: prStDe.dataElement.id};
                 if(dhis2Event.providedElsewhere[prStDe.dataElement.id]){
                     val.providedElsewhere = dhis2Event.providedElsewhere[prStDe.dataElement.id];

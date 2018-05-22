@@ -169,7 +169,7 @@
         <!--- search and registration menu ends -->
 
         <!--- Error display for search begins -->
-        <div class="row blurr">
+        <div class="row">
             <div class="vertical-spacing" ng-if="emptySearchAttribute || !model.searchText && emptySearchText">
                 <div class="alert alert-warning">{{'search_input_required'| translate}}</div>
             </div>
@@ -177,7 +177,7 @@
         <!--- Error display for search ends -->
 
         <!--registration form begins -->
-        <div class="row blurr">
+        <div class="row">
             <div class="col-sm-4 bordered-div container-min-width add-default-padding" ng-if="showRegistrationDiv" ng-include="'components/registration/registration.html'"></div>
         </div>
         <!-- registration form ends -->

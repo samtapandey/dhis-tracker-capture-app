@@ -166,7 +166,17 @@ function getSystemSetting()
        return; 
     }
     
-    return dhis2.tracker.getTrackerObject(null, 'SYSTEM_SETTING', DHIS2URL + '/systemSettings', 'key=keyGoogleMapsApiKey&key=keyMapzenSearchApiKey&key=keyCalendar&key=keyDateFormat', 'localStorage', dhis2.tc.store);
+    return dhis2.tracker.getTrackerObject(null, 'SYSTEM_SETTING', DHIS2URL + '/systemSettings', 'key=keyGoogleMapsApiKey&key=keyCalendar&key=keyDateFormat', 'localStorage', dhis2.tc.store);
+}
+
+function getUserSetting()
+{   
+    var SessionStorageService = angular.element('body').injector().get('SessionStorageService');    
+    if( SessionStorageService.get('USER_SETTING') ){
+       return; 
+    }
+    
+    return dhis2.tracker.getTrackerObject(null, 'USER_SETTING', DHIS2URL + '/userSettings.json', 'key=keyDbLocale&key=keyUiLocale&key=keyCurrentStyle&key=keyStyle', 'sessionStorage', dhis2.tc.store);
 }
 
 function getUserSetting()
