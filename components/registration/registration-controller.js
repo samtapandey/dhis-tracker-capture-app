@@ -47,7 +47,6 @@ trackerCapture.controller('RegistrationController',
         $scope.registrationMode = 'REGISTRATION';
         $rootScope.ruleeffects = {};
     }
-
 	$scope.generatedCustomId = ''; // custom change for SAVE-CHILD
     var setOrgUnit = function() {
         var selectedOrgUnit = CurrentSelection.get()["orgUnit"];
@@ -70,6 +69,7 @@ trackerCapture.controller('RegistrationController',
             orgUnit: $scope.selectedOrgUnit.id,
             orgUnitName: $scope.selectedOrgUnit ? $scope.selectedOrgUnit.displayName : ""
         };
+
 
         $scope.trackedEntities = {available: []};
         TEService.getAll().then(function (entities) {
@@ -113,6 +113,7 @@ trackerCapture.controller('RegistrationController',
         }
 	}
     // custom change for SAVE-CHILD end
+
     $scope.attributesById = CurrentSelection.getAttributesById();
     if(!$scope.attributesById){
         $scope.attributesById = [];
@@ -151,11 +152,6 @@ trackerCapture.controller('RegistrationController',
         init();
     });
 
-    /*
-    $scope.isDisabled = function(attribute) {
-        return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
-    };
-    */
     // custom change for SAVE-CHILD Start
     // update for SAVE CHILD  for disable attribute patient_identifier
     $scope.isDisabled = function (attribute) {
@@ -167,6 +163,13 @@ trackerCapture.controller('RegistrationController',
         }
     };
     // custom change for SAVE-CHILD end
+
+	/*
+    $scope.isDisabled = function(attribute) {
+        return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
+    };
+	*/
+
     var getProgramRules = function () {
         $scope.trackedEntityForm = null;
         $scope.customRegistrationForm = null;
