@@ -746,7 +746,7 @@ $("[data-toggle='popover']").popover('destroy');
         content : "<table class='table table-bordered'><thead><tr><th>Name</th><th>Number</th></tr></thead><tbody><tr><td>ANC</td><td>"+ancvisisttnumber+"</td></tr><tr><td>Delivery Outcome</td><td>"+outcomeofdelivery+"</td></tr><tr><td>PNC</td><td>"+pncvisisttnumber+"</td></tr></tbody></table>",
         html: true
     }); 
- event.stopPropagation();
+// event.stopPropagation();
 	
 	
 	
