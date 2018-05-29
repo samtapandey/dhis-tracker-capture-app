@@ -2422,6 +2422,7 @@ trackerCapture.controller('DataEntryController',
                                 if (values[i].dataElement === 'tNhYQKLuGnM') { arrayDPs = arrayDPs + "Serum - Scrub typhus IgM ELISA,"; }
                                 if (values[i].dataElement === 'DHpb0qQ61ZE') { arrayDPs = arrayDPs + "Serum - Dengue NS1 rapid,"; }
                                 if (values[i].dataElement === 'vVBtXVY5Mwf') { arrayDPs = arrayDPs + "Serum - Dengue NS1 ELISA,"; }
+                                if (values[i].dataElement === 'C0hDBgFcB6m') { arrayDPs = arrayDPs + "Serum - Dengue NS1 ELISA,"; }
                                 if (values[i].dataElement === 'mcZ5Pb1SIcU') { arrayDPs = arrayDPs + "Serum - Dengue IgM ELISA,"; }
                                 if (values[i].dataElement === 'GBLuVWTAzYM' && (values[i].value === 'Probable scrub typhus' || values[i].value === 'Confirmed scrub typhus')) { arrayDPs = arrayDPs + "Serum - Scrub Typhus IFA,"; }
                                 if (values[i].dataElement === 'wBZftjodDAi') { arrayDPs = arrayDPs + "CSF - PRNT,"; }
@@ -2456,6 +2457,7 @@ trackerCapture.controller('DataEntryController',
                                 if (values[i].dataElement === 'tNhYQKLuGnM') { arrayDEEs = arrayDEEs + "Serum - Scrub typhus IgM ELISA,"; }
                                 if (values[i].dataElement === 'DHpb0qQ61ZE') { arrayDEEs = arrayDEEs + "Serum - Dengue NS1 rapid,"; }
                                 if (values[i].dataElement === 'vVBtXVY5Mwf') { arrayDEEs = arrayDEEs + "Serum - Dengue NS1 ELISA,"; }
+                                if (values[i].dataElement === 'C0hDBgFcB6m') { arrayDEEs = arrayDEEs + "Serum - Dengue NS1 ELISA,"; }
                                 if (values[i].dataElement === 'mcZ5Pb1SIcU') { arrayDEEs = arrayDEEs + "Serum - Dengue IgM ELISA,"; }
                                 if (values[i].dataElement === 'wBZftjodDAi') { arrayDEEs = arrayDEEs + "CSF - PRNT,"; }
                             }
