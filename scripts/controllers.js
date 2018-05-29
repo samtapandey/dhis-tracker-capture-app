@@ -587,7 +587,10 @@ function($rootScope,
         if($scope.showRegistrationDiv){
             $scope.showTrackedEntityDiv = false;
             $scope.showSearchDiv = false;
-            $rootScope.$broadcast('registrationWidget', {registrationMode: 'REGISTRATION'});
+			//custom changes timeout
+            $timeout(function() {
+				$rootScope.$broadcast('registrationWidget', {registrationMode: 'REGISTRATION'});
+			}, 200);
         }
     };
 
