@@ -4,6 +4,7 @@ var trackerCapture = angular.module('trackerCapture');
 trackerCapture.controller('RegistrationController', 
         function($rootScope,
                 $scope,
+				$http,
                 $location,
                 $timeout,
                 $modal,
@@ -31,6 +32,10 @@ trackerCapture.controller('RegistrationController',
 	  $scope.dateofbirth = 'kelN057pfhq'; 
 	   $scope.familymemberid = 'Dnm1mq6iq2d';
         $scope.householdid = 'uHv60gjn2gp'; 
+		$scope.mothernameid='zNTlzse3eoz';
+		
+		 
+		
     var flag = {debug: true, verbose: false};
     var initValues = function(){
         $scope.today = DateUtils.getToday();
@@ -274,6 +279,7 @@ trackerCapture.controller('RegistrationController',
                 });
             }
         });
+		
     };
 
     var goToDashboard = function (destination, teiId) {
@@ -609,6 +615,7 @@ $scope.autogenerate= function(trackvalues,b){
 	
 }
 
+		
 $scope.autogeneratehouse= function(trackvalues,b){
 	
 	var typeofhouse=trackvalues.dCer94znEuY;
@@ -628,6 +635,7 @@ $scope.autogeneratehouse= function(trackvalues,b){
 		alert("Please fill neccessary deatils.");
 	
 }
+
 $scope.dhis2_to_openmrs = function(patentid){
 	 var uniqueidofpatient= patentid
 	 if(uniqueidofpatient){
@@ -717,7 +725,56 @@ $scope.dhis2_to_openmrs = function(patentid){
 		}
 		}
     };
-
+	
+	
+	
+	//fetching name from realtionship  and assign to mother name
+$timeout(function(){
+               var url = window.location.href;
+			 var params = url.split('=');
+			 var per =params[1];
+			 var finper=per.split('&');
+	var trackid=finper[0];
+	 var perr =params[2];
+	 if(perr==undefined)
+		 return false ;
+			 var finperr=perr.split('&');
+	var programidd=finperr[0];
+			
+			var childid="JdZ3gv6cx54";
+			if(childid==programidd){
+	 
+	  $.get("../api/trackedEntityInstances.json?ou=lZtSBQjZCaX&program=JdZ3gv6cx54&trackedEntityInstance="+trackid+"&skipPaging=true&fields=[relationships]", function (data1) {
+			  var trackdata=data1;
+			 
+			  			  for(var i=0;i<trackdata.trackedEntityInstances[0].relationships.length;i++)
+				{
+			            
+						if(trackdata.trackedEntityInstances[0].relationships[i].displayName=="Mother - child"){
+						
+						var relativelength=trackdata.trackedEntityInstances[0].relationships[i].relative;
+						
+						
+						var dataval=relativelength.attributes;
+						
+						  for(var q=0;q<dataval.length;q++){
+						  if(dataval[q].attribute=="xalnzkNfD77"){
+						  var mothername=dataval[q].value;
+						  	console.log(mothername);
+				$scope.selectedTei[$scope.mothernameid] = mothername;
+				
+				$scope.registerEntity(null);
+						  }
+						  }
+						
+						}
+				  }
+				
+			    }); 
+	  }
+	  else
+	 return false ;
+                       },3000);
 
     $scope.saveDataValueForRadio = function(field, context, value){
         if(field.dataElement) {
