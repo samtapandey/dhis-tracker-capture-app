@@ -109,7 +109,7 @@ trackerCapture.controller('DataEntryController',
 
         $scope.editProfile = function () {
             if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR) {
-                if ($scope.matchUsername === $scope.selectedUserName) {
+                if ($scope.matchUsername === $scope.selectedUserName || $scope.matchUsername === "admin") {
                     return true
                 }
                 else {
