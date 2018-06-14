@@ -26,10 +26,12 @@ trackerCapture.controller('RegistrationController',
                 TrackerRulesFactory,
                 TrackerRulesExecutionService,
                 TCStorageService,
+
                 ModalService,
 				// for plan custom ID Generation
                 CustomIDGenerationService) {
-    var flag = {debug: true, verbose: false};
+    var flag = {debug: true, verbose: $location.search().verbose ? true : false};
+
     var initValues = function(){
         $scope.today = DateUtils.getToday();
         $scope.trackedEntityForm = null;
