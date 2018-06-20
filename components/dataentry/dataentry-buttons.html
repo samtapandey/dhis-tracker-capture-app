@@ -15,6 +15,7 @@
             ng-if="!currentEvent.eventDate">{{currentEvent.status === 'SKIPPED' ? 'unskip' : 'skip'| translate}}</a>
     
         <div class="pull-right">
+		<button type="button"  id="printslip" class="btn btn-success"  ng-click="printslip(currentEvent.event,'printJS-form');">Print Slip</button>
             <a href ng-click="deleteEvent()" 
                 ng-disabled="!eventEditable(true)"
                 class="btn btn-danger horizontal-spacing">{{'delete'| translate}}</a>
