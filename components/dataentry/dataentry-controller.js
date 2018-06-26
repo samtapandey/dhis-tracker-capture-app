@@ -1545,7 +1545,31 @@ trackerCapture.controller('DataEntryController',
 	    };
 	
 	
-    
+    ///Assign value to option set 
+	$timeout(function(){
+		 var url = window.location.href;
+			 var params = url.split('=');
+			 var per =params[1];
+			 var finper=per.split('&');
+	var trackid=finper[0];
+	 var perr =params[2];
+	 if(perr==undefined)
+		 return false ;
+			 var finperr=perr.split('&');
+	var programidd=finperr[0];
+			
+			var npcdcs="jC8Gprj4pWV";
+			if(npcdcs==programidd){
+		if(($scope.currentEvent.name ==="NPCDCS examination"||$scope.currentEvent.name ==="NPCDCS Follow up")&&($scope.currentEvent.GNIBMkEsKgs ===undefined)){
+			 $scope.currentEvent.GNIBMkEsKgs ="On Follow-up";  
+		
+		}
+			}
+		
+		},3000);
+	
+	
+	
     $scope.saveDataValueForRadio = function(prStDe, event, value){
         
         var def = $q.defer();
@@ -1754,6 +1778,27 @@ trackerCapture.controller('DataEntryController',
     };
 
     $scope.saveEventDateForEvent = function (eventToSave, reOrder) {
+		//Assign value to option set 
+		     var url = window.location.href;
+			 var params = url.split('=');
+			 var per =params[1];
+			 var finper=per.split('&');
+	var trackid=finper[0];
+	 var perr =params[2];
+	 if(perr==undefined)
+		 return false ;
+			 var finperr=perr.split('&');
+	var programidd=finperr[0];
+			
+			var npcdcs="jC8Gprj4pWV";
+			if(npcdcs==programidd){
+		if(($scope.currentEvent.name ==="NPCDCS examination"||$scope.currentEvent.name ==="NPCDCS Follow up")&&($scope.currentEvent.GNIBMkEsKgs ===undefined)){
+			 $scope.currentEvent.GNIBMkEsKgs ="On Follow-up";  
+		
+		}
+			}
+		
+		
         if(!eventToSave.eventDate) {
             return;
         }
@@ -2679,6 +2724,8 @@ trackerCapture.controller('DataEntryController',
     };
 
     $scope.showDataEntryForEvent = function (event) {
+		
+		
 
         var period = {event: event.event, stage: event.programStage, name: event.sortingDate};
         $scope.currentPeriod[event.programStage] = period;
