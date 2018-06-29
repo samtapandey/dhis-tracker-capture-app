@@ -45,75 +45,88 @@ angular.module('trackerCaptureServices')
                 return def.promise();
             },
            
-            createCustomId :  function(regDate,totalTeiCount,orgUnitCode,projectdonner){
+            createCustomId :  function(regDate,totalTeiCount,orgUnitCode,projectDonner, sqlViewNameToUIDMap, orgUnitUid, programUid ){
 
                 var thisDef = $.Deferred();
 
                 var constantPreFix = "PLAN";
                 var prefix = "";
-               
+                var attributeValueList = [];
                 
                 //console.log( "total Count -- " + response.data.height);
                 //var totalTei = response.data.height + 1;
-
-                var totalTei = totalTeiCount;
-                // for Reset after count 9999
-                //totalTei = 10000;
-                totalTei = totalTei%10000;
-
-                if( totalTei == 0 ) totalTei = 1;
-
-                if( totalTei <10) prefix="0000";
-                else if (totalTei >9 && totalTei<100) prefix="000";
-                else if(totalTei>99 && totalTei<1000) prefix="00";
-                else if(totalTei>999 && totalTei<10000) prefix="0";
-                // change in requirement - adding random number
-                //prefix=Math.floor(Math.random()*(9999-1000) + 1000);
-                //def.resolve(constant + prefix + totalTei );
-
-                var finalCustomId = constantPreFix + "-" + projectdonner + "-"  + regDate + "-" + prefix + totalTei;
-                thisDef.resolve(finalCustomId);
-
-                /*
-
-                def.then(function(currentToRootOrgunitCodes){
-                    var referenceLevel = 6;
-                    var codes = currentToRootOrgunitCodes.split(":");
-                    var level2Code = "00";
-                    var level5code = "0000";
-                    var level6code = "00";
-                    var randomNo =  Math.floor(Math.random()*(99999-10000) + 10000);
-                    if (codes[referenceLevel-4]){
-                        level2Code = codes[referenceLevel-4].substr(0,2);
-                    }
-                    if (codes[referenceLevel-1]){
-                        level5code = codes[referenceLevel-1].substr(0,4);
-                    }
-                    if (codes[referenceLevel]){
-                        level6code = codes[referenceLevel].substr(0,2);
+                CustomIdService.getTeiAttributeValues(sqlViewNameToUIDMap['TEI_ID_VALIDATION'], orgUnitUid, programUid ).then(function(attributeValues){
+                    for(var i=0;i<attributeValues.rows.length;i++)
+                    {
+                        attributeValueList.push(attributeValues.rows[i][0]);
                     }
 
-                    var Id = level2Code+ level5code+ level6code+ randomNo;
-                    thisDef.resolve(Id);
-                })
+                    var totalTei = totalTeiCount;
+                    // for Reset after count 9999
+                    //totalTei = 10000;
+                    totalTei = totalTei%10000;
 
-                 function random (low, high) {
-                 return Math.random() * (high - low) + low;
-                 }
+                    if( totalTei == 0 ) totalTei = 1;
+                    if( totalTei <10) prefix="0000";
+                    else if (totalTei >9 && totalTei<100) prefix="000";
+                    else if(totalTei>99 && totalTei<1000) prefix="00";
+                    else if(totalTei>999 && totalTei<10000) prefix="0";
 
+                    // change in requirement - adding random number
+                    //prefix=Math.floor(Math.random()*(9999-1000) + 1000);
+                    //def.resolve(constant + prefix + totalTei );
+                    //Math.floor(Math.random() * (max - min + 1) ) + min;
+                    prefix = Math.floor(Math.random() * (999999 - 100000 + 1) ) + 100000;
 
+                    //var finalCustomId = constantPreFix + "-" + projectDonner + "-"  + regDate + "-" + prefix + totalTei;
+                    //var finalCustomId = constantPreFix + "-" + projectDonner + "-"  + regDate + "-" + prefix;
+                    var finalCustomId = constantPreFix + "-" + projectDonner + "-" + prefix;
+                    //thisDef.resolve(finalCustomId);
 
+                    CustomIdService.getUniqueCustomId( finalCustomId, attributeValueList, prefix).then(function(uniqueCustomId){
+                        finalCustomId = uniqueCustomId;
 
-                 */
+                        thisDef.resolve(finalCustomId);
 
+                    });
+
+                    /*
+
+                    def.then(function(currentToRootOrgunitCodes){
+                        var referenceLevel = 6;
+                        var codes = currentToRootOrgunitCodes.split(":");
+                        var level2Code = "00";
+                        var level5code = "0000";
+                        var level6code = "00";
+                        var randomNo =  Math.floor(Math.random()*(99999-10000) + 10000);
+                        if (codes[referenceLevel-4]){
+                            level2Code = codes[referenceLevel-4].substr(0,2);
+                        }
+                        if (codes[referenceLevel-1]){
+                            level5code = codes[referenceLevel-1].substr(0,4);
+                        }
+                        if (codes[referenceLevel]){
+                            level6code = codes[referenceLevel].substr(0,2);
+                        }
+
+                        var Id = level2Code+ level5code+ level6code+ randomNo;
+                        thisDef.resolve(Id);
+                    })
+
+                     function random (low, high) {
+                     return Math.random() * (high - low) + low;
+
+                     */
+                });
                 return thisDef;
 
             }, 
            
-            createCustomIdAndSave: function(tei,customIDAttribute,optionSets,attributesById,regDate,totalTeiCount,orgUnitCode,projectdonner){
+            createCustomIdAndSave: function(tei,customIDAttribute,optionSets,attributesById,regDate,totalTeiCount,orgUnitCode,projectDonner, sqlViewNameToUIDMap, programUid){
                 var def = $.Deferred();
                 console.log( regDate +"--"+ totalTeiCount + "--" + orgUnitCode);
-                this.createCustomId(regDate,totalTeiCount,orgUnitCode,projectdonner).then(function(customId){
+                var orgUnitUid = tei.orgUnit;
+                this.createCustomId(regDate,totalTeiCount,orgUnitCode,projectDonner, sqlViewNameToUIDMap, orgUnitUid, programUid ).then(function(customId){
                     var attributeExists = false;
                     angular.forEach(tei.attributes,function(attribute){
                         if (attribute.attribute == customIDAttribute.id){
@@ -127,11 +140,11 @@ angular.module('trackerCaptureServices')
                         tei.attributes.push(customIDAttribute);
                     }
 
-                    var teI = {
-                        "trackedEntity": tei.trackedEntityInstance,
-                        "orgUnit": tei.orgUnit,
-                        "attributes": tei.attributes
-                    }
+                    //var teI = {
+                    //    "trackedEntity": tei.trackedEntityInstance,
+                    //    "orgUnit": tei.orgUnit,
+                    //    "attributes": tei.attributes
+                    //};
                     RegistrationService.registerOrUpdate(tei,optionSets,attributesById).then(function(response){
                         if (response.response.status == "SUCCESS"){
                             //alert("Beneficiary Id : " + customId);
@@ -196,23 +209,27 @@ angular.module('trackerCaptureServices')
                             var regDate = enrolmentdate;
 
                             //var customRegDate = regDate.split("-")[2]+regDate.split("-")[1]+regDate.split("-")[0];
-                            var customRegDate = regDate.split("-")[1]+regDate.split("-")[0].slice(-2);
+                            var customRegDate = regDate.split("-")[0];
+                            CustomIdService.getALLSQLView().then(function( responseSQLViews ){
+                                var sqlViewNameToUIDMap = [];
+                                for(var i=0; i<responseSQLViews.sqlViews.length; i++)
+                                {
+                                    sqlViewNameToUIDMap[responseSQLViews.sqlViews[i].displayName]=responseSQLViews.sqlViews[i].id;
+                                }
+                                //CustomIdService.getTotalTeiByProgram(programUid).then(function(teiResponse){
+                                var totalTei = "";
+                                //var count = teiResponse.rows[0];
+                                //var countTeiByProgram = count[0];
+                                //var totalTei = countTeiByProgram;
+                                    CustomIdService.getOrgunitCode(tei.orgUnit).then(function(orgUnitCodeResponse){
+                                    var orgUnitCode = orgUnitCodeResponse.code;
+                                        thiz.createCustomIdAndSave(tei,customIDAttribute,optionSets,attributesById,customRegDate,totalTei,orgUnitCode,projectdonner, sqlViewNameToUIDMap, programUid ).then(function(response){
+                                            def.resolve(response);
+                                        });
 
-                            CustomIdService.getTotalTeiByProgram(programUid).then(function(teiResponse){
-                                var count = teiResponse.rows[0];
-                                var countTeiByProgram = count[0];
-                               
-
-                                var totalTei = countTeiByProgram;
-                                CustomIdService.getOrgunitCode(tei.orgUnit).then(function(orgUnitCodeResponse){
-                                var orgUnitCode = orgUnitCodeResponse.code;
-                                    thiz.createCustomIdAndSave(tei,customIDAttribute,optionSets,attributesById,customRegDate,totalTei,orgUnitCode,projectdonner).then(function(response){
-                                        def.resolve(response);
                                     });
-
                                 });
-
-                            });
+                            //});
 
                         }
                         else
@@ -457,8 +474,55 @@ angular.module('trackerCaptureServices')
                 def.resolve(response.data);
             });
             return def.promise;
-        }
+        },
+        getALLSQLView : function(){
+            var def = $.Deferred();
 
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json",
+                async:false,
+                url: '../api/sqlViews.json?paging=false',
+                success: function (data) {
+                    def.resolve(data);
+                }
+            });
+            return def;
+        },
+
+        getTeiAttributeValues : function(sqlViewUID, orgUnitUid, programUID ){
+            var def = $.Deferred();
+            var param = "var=orgUnitUid:" + orgUnitUid + "&var=programUid:" + programUID;
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                async:false,
+                contentType: "application/json",
+                url: '../api/sqlViews/'+sqlViewUID+"/data?"+param+"&paging=false",
+                success: function (data) {
+                    def.resolve(data);
+                }
+            });
+            return def;
+        },
+        getUniqueCustomId : function( finalCustomId, attributeValues, prefix ){
+            var tempThis = this;
+            var def = $.Deferred();
+            var tempCount = attributeValues.indexOf( finalCustomId );
+            if( tempCount === -1 )
+            {
+                def.resolve(finalCustomId);
+                return def;
+            }
+            else
+            {
+                var newPrefix = Math.floor(Math.random() * (999999 - 100000 + 1) ) + 100000;
+                var splitString = finalCustomId.split('-');
+                var tempFinalCustomId = splitString[0]+"-"+splitString[1]+"-" + newPrefix;
+                return tempThis.getUniqueCustomId( tempFinalCustomId, attributeValues, prefix );
+            }
+        }
     };
 })
 
