@@ -160,11 +160,14 @@ trackerCapture.controller('RelationshipController',
 			var obj_family_unique_id=[];
 			var obj_locality=[];
 			var obj_anm_name=[];
+			var housemember_religion=[];
 			var obj_asha_name=[];
 			var obj_religion=[];
 			var obj_caste=[];
             var objtrack1=[];
+			var housemember_obj_anm_name=[];
             var count=1;
+			var housemember_locality=[];
             var objatt=[];
             var namee=[];
             var adharnumber=[];
@@ -172,7 +175,7 @@ trackerCapture.controller('RelationshipController',
             var sex=[];
             var dateofbirth=[];
             var maritalstatus=[];
-            var housedetailss=["xalnzkNfD77","nHR1zCU0maL","Dnm1mq6iq2d","PbEhJPnon0o","kelN057pfhq","zLsKdtlBCIx"];
+            var housedetailss=["xalnzkNfD77","nHR1zCU0maL","Dnm1mq6iq2d","PbEhJPnon0o","kelN057pfhq","zLsKdtlBCIx","yDCO4KM4WVA","MV4wWoZBrJS","ZmH0W6XHS9S"];
             // selct_date=document.getElementById('Start').value;
             var url = window.location.href;
                 var params = url.split('=');
@@ -324,6 +327,28 @@ trackerCapture.controller('RelationshipController',
                     sex.push(aa);
                     
                     }
+					 else if(trackdata.attributes[q].attribute=="MV4wWoZBrJS")//locality
+                    {
+                    
+                    var aa=trackdata.attributes[q].value;
+                    
+					//---auto saving--
+						if(aa==obj_locality[0]){
+                    housemember_locality.push(aa);
+					}
+				else 
+				{
+					trackdata.attributes[q].value=obj_locality[0];
+                    RegistrationService.registerOrUpdate(trackdata,$scope.optionSets, $scope.attributesById).then(function(response){
+                        if (response.response.status == "SUCCESS"){  
+							return;
+                        } 
+                    });
+				}
+					
+					//>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                    
+                    }
                    else if(trackdata.attributes[q].attribute=="kelN057pfhq")//date of birth
                     {
                     
@@ -331,36 +356,51 @@ trackerCapture.controller('RelationshipController',
                         dateofbirth.push(aa);
                     
                     }
-                   else if(trackdata.attributes[q].attribute=="zLsKdtlBCIx")//marital status
+                   else if(trackdata.attributes[q].attribute=="zLsKdtlBCIx")//marital status   
                     {
                     
                     var aa=trackdata.attributes[q].value;
                     maritalstatus.push(aa);
                     
                     }
+					 else if(trackdata.attributes[q].attribute=="ZmH0W6XHS9S")//Religion   
+                    {
+                    
+                    var aa=trackdata.attributes[q].value;
+                   
+						if(aa==obj_religion[0]){
+                    housemember_religion.push(aa);
+					}
+				else 
+				{
+					trackdata.attributes[q].value=obj_religion[0];
+                    RegistrationService.registerOrUpdate(trackdata,$scope.optionSets, $scope.attributesById).then(function(response){
+                        if (response.response.status == "SUCCESS"){  
+							return;
+                        } 
+                    });
+				}
+				
+				
+                    
+                    }
                    else if(trackdata.attributes[q].attribute==="yDCO4KM4WVA")//ANM name
                     {
                     var aa=trackdata.attributes[q].value;
+					//---auto saving--
 					if(aa==obj_anm_name[0]){
-                    obj_anm_name.push(aa);
+                    housemember_obj_anm_name.push(aa);
 					}
 				else 
 				{
 					trackdata.attributes[q].value=obj_anm_name[0];
-					
-				   
                     RegistrationService.registerOrUpdate(trackdata,$scope.optionSets, $scope.attributesById).then(function(response){
-                        if (response.response.status == "SUCCESS"){
-                           
+                        if (response.response.status == "SUCCESS"){  
 							return;
-                        }
-                        
+                        } 
                     });
-              
-
-                
 				}
-                
+				//>>>>>>>>>>>>>>>>>>>>>>>>
                     }
                 
                         
@@ -382,19 +422,24 @@ trackerCapture.controller('RelationshipController',
                         dateofbirth.push("NA");
                         else if(array3[t]=="zLsKdtlBCIx")
                         maritalstatus.push("NA");
-                        
+                        else if(array3[t]=="yDCO4KM4WVA")
+                        housemember_obj_anm_name.push("NA");  
+					   else if(array3[t]=="MV4wWoZBrJS")
+                        housemember_locality.push("NA");
+					 else if(array3[t]=="ZmH0W6XHS9S")
+                        housemember_religion.push("NA");
                         }
                         
                             objatt=[];
                         
                     });
                     }
-                    var tabl2="<tr style='border:1px solid black;background-color:#fff2cc;height:30px'> <td ><b>S.No</b><td>	<b>Individual Name	</b>	<td><b>	Aadhaar ID	</b></td>	<td>	<b>Individual Health ID </b></td><td><b>Sex</b></td><td><b>Date of Birth</b></td><tr>";
+                    var tabl2="<tr style='border:1px solid black;background-color:#fff2cc;height:30px'> <td ><b>S.No</b><td>	<b>Individual Name	</b>	<td><b>	Aadhaar ID	</b></td>	<td>	<b>Individual Health ID </b></td><td><b>Sex</b></td><td><b>Date of Birth</b></td><td><b>ANM Name</b></td><td><b>Locality</b></td><td><b>Religion</b></td><tr>";
                     $(".reporthouse").append(tabl2);
                     
                     for(var p=0;p<objtrack1.length;p++)
                         {
-                var group ="<tr style='border:1px solid black;background-color:white;height:30px'><td style= 'text-align:center' >"+count+"</td> <td style= 'text-align:center'>" +namee[p]+ "</td><td style= 'text-align:center'  >" +adharnumber[p] + "</td> <td style= 'text-align:center' >"+familyuniqueid[p]+" </td> <td style= 'text-align:center'>" +sex[p]+ "</td> <td style= 'text-align:center'>"+dateofbirth[p]+"</td></tr>";
+                var group ="<tr style='border:1px solid black;background-color:white;height:30px'><td style= 'text-align:center' >"+count+"</td> <td style= 'text-align:center'>" +namee[p]+ "</td><td style= 'text-align:center'  >" +adharnumber[p] + "</td> <td style= 'text-align:center' >"+familyuniqueid[p]+" </td> <td style= 'text-align:center'>" +sex[p]+ "</td> <td style= 'text-align:center'>"+dateofbirth[p]+"</td><td style= 'text-align:center'>"+housemember_obj_anm_name[p]+"</td><td style= 'text-align:center'>"+housemember_locality[p]+"</td><td style= 'text-align:center'>"+housemember_religion[p]+"</td></tr>";
                 
                 
                     $(".reporthouse").append(group);
