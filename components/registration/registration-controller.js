@@ -852,13 +852,25 @@ $timeout(function(){
         modalInstance.result.then(function (res) {
             if (res && res.id) {
                 $scope.selectedTei[selectedAttribute.id] = res.ZQMF7taSAw8;        // value for household        
-				if($scope.selectedTei["MV4wWoZBrJS"]==undefined && res.MV4wWoZBrJS)
+				if(res.MV4wWoZBrJS)
 				{
 				$scope.selectedTei["MV4wWoZBrJS"] = res.MV4wWoZBrJS;                         // value for locality
 				}
-				if($scope.selectedTei["yDCO4KM4WVA"]==undefined && res.yDCO4KM4WVA)     
+				if(res.yDCO4KM4WVA)     
 				{
 				$scope.selectedTei["yDCO4KM4WVA"] = res.yDCO4KM4WVA;                            // value of anm 
+				}
+				if(res.ZmH0W6XHS9S)     
+				{
+				$scope.selectedTei["ZmH0W6XHS9S"] = res.ZmH0W6XHS9S;                            // value of Religion 
+				}
+				if(res.vbUue5poEcT)     
+				{
+				$scope.selectedTei["vbUue5poEcT"] = res.vbUue5poEcT;                            // value of caste 
+				}
+				if(res.dCer94znEuY)     
+				{
+				$scope.selectedTei["dCer94znEuY"] = res.dCer94znEuY;                            // value of type of house 
 				}
             }
         });

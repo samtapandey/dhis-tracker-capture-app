@@ -12,6 +12,7 @@ trackerCapture.controller('RelationshipController',
                 RelationshipFactory,
                 OrgUnitFactory,
                 ProgramFactory,
+				RegistrationService,
                 EnrollmentService,
                 ModalService,
                 CommonUtils) {
@@ -154,6 +155,14 @@ trackerCapture.controller('RelationshipController',
             Table.innerHTML = "";
             var objhouse=[];
             var objattribute=[];
+			var obj_type_house=[];
+			var obj_family_member=[];
+			var obj_family_unique_id=[];
+			var obj_locality=[];
+			var obj_anm_name=[];
+			var obj_asha_name=[];
+			var obj_religion=[];
+			var obj_caste=[];
             var objtrack1=[];
             var count=1;
             var objatt=[];
@@ -187,13 +196,61 @@ trackerCapture.controller('RelationshipController',
                     var housenumber=trackdata.attributes[q].value;
                     objhouse.push(housenumber);
                 
-                        }
+                    }
+					else if(trackdata.attributes[q].attribute=="dCer94znEuY")//Type of House
+                    {
+                    var typehouse=trackdata.attributes[q].value;
+                    obj_type_house.push(typehouse);
+                
+                    }
+					else if(trackdata.attributes[q].attribute=="FML9pARILz5")//Head of Family Member
+                    {
+                    var typehouse=trackdata.attributes[q].value;
+                    obj_family_member.push(typehouse);
+                
+                    }
+                    else if(trackdata.attributes[q].attribute=="uHv60gjn2gp")//Family unique id
+                    {
+                    var typehouse=trackdata.attributes[q].value;
+                    obj_family_unique_id.push(typehouse);
+                
+                    }
+                    else if(trackdata.attributes[q].attribute=="MV4wWoZBrJS")//Locality name
+                    {
+                    var typehouse=trackdata.attributes[q].value;
+                    obj_locality.push(typehouse);
+                
+                    }
+                    else if(trackdata.attributes[q].attribute=="yDCO4KM4WVA")//ANM name
+                    {
+                    var typehouse=trackdata.attributes[q].value;
+                    obj_anm_name.push(typehouse);
+                
+                    }
+                    else if(trackdata.attributes[q].attribute=="rnCEx9tSU3j")//ASHA name
+                    {
+                    var typehouse=trackdata.attributes[q].value;
+                    obj_asha_name.push(typehouse);
+                
+                    }	
+                  else if(trackdata.attributes[q].attribute=="ZmH0W6XHS9S")//Religion
+                    {
+                    var typehouse=trackdata.attributes[q].value;
+                    obj_religion.push(typehouse);
+                
+                    }	
+                   else if(trackdata.attributes[q].attribute=="vbUue5poEcT")//Caste
+                    {
+                    var typehouse=trackdata.attributes[q].value;
+                    obj_caste.push(typehouse);
+                
+                    }						
                     }		      
                     
 
                         }); 
-                        
-            $.get("../api/trackedEntityInstances.json?ou=lZtSBQjZCaX&program=TcaMMqHJxK5&filter=YFjB0zhySP6:EQ:"+objhouse[0]+"&skipPaging=true", function (data1) {
+                        //api/trackedEntityInstances.json?ou=lZtSBQjZCaX&program=TcaMMqHJxK5&filter=YFjB0zhySP6:EQ:3509,dCer94znEuY:EQ:B2&skipPaging=true
+            $.get("../api/trackedEntityInstances.json?ou=lZtSBQjZCaX&program=TcaMMqHJxK5&filter=YFjB0zhySP6:EQ:"+objhouse[0]+",dCer94znEuY:EQ:"+obj_type_house[0]+"&skipPaging=true", function (data1) {
 
                 var trackkdata=data1;
                 
@@ -242,45 +299,69 @@ trackerCapture.controller('RelationshipController',
                     {
                     
                     var aa=trackdata.attributes[q].value;
+					
                     namee.push(aa);
                     
                     }
-                    if(trackdata.attributes[q].attribute=="nHR1zCU0maL")  //adhar number
+                    else if(trackdata.attributes[q].attribute=="nHR1zCU0maL")  //adhar number
                     {
                     
                     var aa=trackdata.attributes[q].value;
                     adharnumber.push(aa);
                     
                     }
-                    if(trackdata.attributes[q].attribute=="Dnm1mq6iq2d")//family unique id
+                   else if(trackdata.attributes[q].attribute=="Dnm1mq6iq2d")//family unique id
                     {
                     
                     var aa=trackdata.attributes[q].value;
                     familyuniqueid.push(aa);
                     
                     }
-                    if(trackdata.attributes[q].attribute=="PbEhJPnon0o")//sex
+                   else if(trackdata.attributes[q].attribute=="PbEhJPnon0o")//sex
                     {
                     
                     var aa=trackdata.attributes[q].value;
                     sex.push(aa);
                     
                     }
-                    if(trackdata.attributes[q].attribute=="kelN057pfhq")//date of birth
+                   else if(trackdata.attributes[q].attribute=="kelN057pfhq")//date of birth
                     {
                     
                     var aa=trackdata.attributes[q].value;
                         dateofbirth.push(aa);
                     
                     }
-                    if(trackdata.attributes[q].attribute=="zLsKdtlBCIx")//marital status
+                   else if(trackdata.attributes[q].attribute=="zLsKdtlBCIx")//marital status
                     {
                     
                     var aa=trackdata.attributes[q].value;
                     maritalstatus.push(aa);
                     
                     }
-                    
+                   else if(trackdata.attributes[q].attribute==="yDCO4KM4WVA")//ANM name
+                    {
+                    var aa=trackdata.attributes[q].value;
+					if(aa==obj_anm_name[0]){
+                    obj_anm_name.push(aa);
+					}
+				else 
+				{
+					trackdata.attributes[q].value=obj_anm_name[0];
+					
+				   
+                    RegistrationService.registerOrUpdate(trackdata,$scope.optionSets, $scope.attributesById).then(function(response){
+                        if (response.response.status == "SUCCESS"){
+                           
+							return;
+                        }
+                        
+                    });
+              
+
+                
+				}
+                
+                    }
                 
                         
 
