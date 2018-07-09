@@ -2480,25 +2480,31 @@ trackerCapture.controller('DataEntryController',
 	            window.alert("Under development for this program");
 	        }
 	    };
+		
+		
+		
 	    $scope.sendsmss = function (smscontent, mobile) {
 	        //alert("its working");
 	        var finalcontent = encodeURIComponent(smscontent);
-	        var smsurl = "http://msdgweb.mgov.gov.in/esms/sendsmsrequest?username=PHD25PGIMER&password=sph@25&smsservicetype=unicodemsg&content=" + finalcontent + "&mobileno=" + mobile + "&senderid=PGIMER";
-	        $scope.httpGet(smsurl);
+			var http = new XMLHttpRequest();
+var url = 'http://msdgweb.mgov.gov.in/esms/sendsmsrequest';
+var params = "username=PHD25PGIMER&password=sph@25&smsservicetype=unicodemsg&content="+finalcontent+"&mobileno="+mobile+"&senderid=PGIMER";
+http.open('POST', url, true);
+
+//Send the proper header information along with the request
+http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+http.onreadystatechange = function() {//Call a function when the state changes.
+    if(http.readyState == 4 && http.status == 200) {
+        alert(http.responseText);
+    }
+}
+http.send(params);
 	    };
 	
-	    $scope.httpGet = function (theUrl) {
-	        $.ajax({
-	            type: 'POST',
-	            encoding: "UTF-8",
-	            dataType: "html",
-	            contentType: "text/plain; charset=UTF-8",
-	            url: theUrl,
-	            success: function success(msg) {
-	                //alert(msg);
-	            }
-	        });
-	    };
+
+	   
+	   
     var setStatusColor = function () {
         var statusColor = EventUtils.getEventStatusColor($scope.currentEvent);
         var continueLoop = true;
