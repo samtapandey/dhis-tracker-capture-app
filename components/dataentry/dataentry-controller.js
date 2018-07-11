@@ -71,6 +71,8 @@ trackerCapture.controller('DataEntryController',
         $scope.gynaecologistPBR = "Gynaecologist - PBR monitoring";
         $scope.anaesthetistPBR = "Anaesthetist - PBR monitoring";
         $scope.paediatricPBR = "Paediatric - PBR monitoring";
+        $scope.currentUserRole = [];
+        $scope.matchUserRole = $.trim("PBI_admin_user-role");
 
 
         //hideTopLineEventsForFormTypes is only used with main menu
@@ -94,9 +96,12 @@ trackerCapture.controller('DataEntryController',
             dataType: "json",
             async: false,
             contentType: "application/json",
-            url: '../api/me.json',
+            url: '../api/me.json?fields=id,name,userCredentials[*,userRoles[*]],userGroups[id,name]&paging=false',
             success: function (response) {
                 $scope.matchUsername = response.userCredentials.username;
+                for (var i = 0; i < response.userCredentials.userRoles.length; i++) {
+                    $scope.currentUserRole.push(response.userCredentials.userRoles[i].displayName);
+                }
             }
         });
         $scope.selectedEntityinstance = CurrentSelection.currentSelection.tei.attributes;
@@ -108,16 +113,18 @@ trackerCapture.controller('DataEntryController',
 
 
         $scope.editProfile = function () {
-            if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR) {
-                if ($scope.matchUsername === $scope.selectedUserName || $scope.matchUsername === "admin") {
-                    return true
+            if (CurrentSelection.currentSelection.pr) {
+                if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR) {
+                    if ($scope.matchUsername === $scope.selectedUserName || $scope.matchUsername === "admin" || $scope.currentUserRole.indexOf($scope.matchUserRole) > -1) {
+                        return true
+                    }
+                    else {
+                        return false
+                    }
                 }
                 else {
-                    return false
+                    return true
                 }
-            }
-            else {
-                return true
             }
         }
         var modalCompleteIncompleteActions = { complete: 'complete', completeAndExit: 'completeandexit', completeEnrollment: 'completeenrollment', edit: 'edit' };
@@ -3117,12 +3124,16 @@ trackerCapture.controller('DataEntryController',
         };
 
         $scope.buttonDisable = function () {
-            if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR) {
-                $scope.statusValue = $scope.currentEvent.dataValues;
-                for (var a = 0; a < $scope.statusValue.length; a++) {
-                    if ($scope.statusValue[a].value === "Approved" || $scope.statusValue[a].value === "Auto-Approved") {
-                        $scope.currentStatusValue = 'show';
-                        break;
+            if (CurrentSelection.currentSelection.pr) {
+                if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR) {
+                    if ($scope.currentUserRole.indexOf($scope.matchUserRole) == -1) {
+                        $scope.statusValue = $scope.currentEvent.dataValues;
+                        for (var a = 0; a < $scope.statusValue.length; a++) {
+                            if ($scope.statusValue[a].value === "Approved" || $scope.statusValue[a].value === "Auto-Approved") {
+                                $scope.currentStatusValue = 'show';
+                                break;
+                            }
+                        }
                     }
                 }
             }

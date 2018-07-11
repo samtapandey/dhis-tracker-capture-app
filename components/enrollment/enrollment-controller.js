@@ -48,6 +48,10 @@ trackerCapture.controller('EnrollmentController',
                 $scope.gynaecologistPBR = "Gynaecologist - PBR monitoring";
                 $scope.anaesthetistPBR = "Anaesthetist - PBR monitoring";
                 $scope.paediatricPBR = "Paediatric - PBR monitoring";
+                $scope.currentUserRole = [];
+                $scope.matchUserRole = $.trim("PBI_admin_user-role");
+
+
 
                 $scope.programStageNames = selections.prStNames;
                 $scope.attributesById = CurrentSelection.getAttributesById();
@@ -63,9 +67,12 @@ trackerCapture.controller('EnrollmentController',
                     dataType: "json",
                     async: false,
                     contentType: "application/json",
-                    url: '../api/me.json',
+                    url: '../api/me.json?fields=id,name,userCredentials[*,userRoles[*]],userGroups[id,name]&paging=false',
                     success: function (response) {
                         $scope.matchUsername = response.userCredentials.username;
+                        for (var i = 0; i < response.userCredentials.userRoles.length; i++) {
+                            $scope.currentUserRole.push(response.userCredentials.userRoles[i].displayName);
+                        }
                     }
                 });
                 $scope.selectedEntityinstance = CurrentSelection.currentSelection.tei.attributes;
@@ -77,16 +84,20 @@ trackerCapture.controller('EnrollmentController',
 
 
                 $scope.editProfile = function () {
-                    if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR) {
-                        if ($scope.matchUsername === $scope.selectedUserName || $scope.matchUsername === "admin") {
+                    if (CurrentSelection.currentSelection.pr) {
+                        if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR) {
+
+                            if ($scope.matchUsername === $scope.selectedUserName || $scope.matchUsername === "admin" || $scope.currentUserRole.indexOf($scope.matchUserRole) > -1) {
+                                return true
+                            }
+                            else {
+                                return false
+                            }
+                        }
+
+                        else {
                             return true
                         }
-                        else {
-                            return false
-                        }
-                    }
-                    else {
-                        return true
                     }
                 }
 
