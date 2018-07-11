@@ -45,6 +45,7 @@ trackerCapture.controller('SelectionController',
         $scope.gynaecologistPBR = "Gynaecologist - PBR monitoring";
         $scope.anaesthetistPBR = "Anaesthetist - PBR monitoring";
         $scope.paediatricPBR = "Paediatric - PBR monitoring";
+        $scope.paediatrician_PICU_monitoringtool = "Paediatrician _PICU_ monitoring tool";
 
         //Selection
         $scope.ouModes = [{ name: 'SELECTED' }, { name: 'CHILDREN' }, { name: 'DESCENDANTS' }, { name: 'ACCESSIBLE' }];
@@ -793,7 +794,7 @@ trackerCapture.controller('SelectionController',
                 });
             }
             if ($scope.selectedProgram != undefined) {
-                if ($scope.selectedProgram.displayName == $scope.gynaecologistPBR || $scope.selectedProgram.displayName == $scope.anaesthetistPBR || $scope.selectedProgram.displayName == $scope.paediatricPBR) {
+                if ($scope.selectedProgram.displayName == $scope.gynaecologistPBR || $scope.selectedProgram.displayName == $scope.anaesthetistPBR || $scope.selectedProgram.displayName == $scope.paediatricPBR || $scope.selectedProgram.displayName == $scope.paediatrician_PICU_monitoringtool) {
                     if ($scope.trackedEntities.length > 0) {
                         return false
                     }

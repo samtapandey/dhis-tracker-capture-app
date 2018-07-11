@@ -12,6 +12,7 @@ trackerCapture.controller('ProfileController',
         $scope.gynaecologistPBR = "Gynaecologist - PBR monitoring";
         $scope.anaesthetistPBR = "Anaesthetist - PBR monitoring";
         $scope.paediatricPBR = "Paediatric - PBR monitoring";
+        $scope.paediatrician_PICU_monitoringtool = "Paediatrician _PICU_ monitoring tool";
         $scope.currentUserRole = [];
         $scope.matchUserRole = $.trim("PBI_admin_user-role");
 
@@ -75,7 +76,7 @@ trackerCapture.controller('ProfileController',
         };
         $scope.editProfile = function () {
             if (CurrentSelection.currentSelection.pr) {
-                if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR) {
+                if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatrician_PICU_monitoringtool) {
                     if ($scope.matchUsername === $scope.selectedUserName || $scope.matchUsername === "admin" || $scope.currentUserRole.indexOf($scope.matchUserRole) > -1) {
                         return true
                     }

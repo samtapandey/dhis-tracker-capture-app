@@ -179,10 +179,9 @@ trackerCapture.controller('EventCreationController',
             var trackedEntityInstanceId = getTei.split('&')[0];
             $scope.prgId = getprg.split('&')[0];
 
-            if ($scope.selectedProgram.id == 'HTCqTWEF1XS' || $scope.selectedProgram.id == 'K3XysZ53B4r' || $scope.selectedProgram.id == 'CsEmq8UNA6z') {
+            if ($scope.selectedProgram.id == 'HTCqTWEF1XS' || $scope.selectedProgram.id == 'K3XysZ53B4r' || $scope.selectedProgram.id == 'CsEmq8UNA6z' || $scope.selectedProgram.id == 'HzQCXzNmvAK') {
 
-                if (dummyEvent.programStage == 'XOD2Nl5kncW' || dummyEvent.programStage == 'tOQIl0vKx7l' || dummyEvent.programStage == 'PfRIIrvnjcU') {
-
+                if (dummyEvent.programStage == 'XOD2Nl5kncW' || dummyEvent.programStage == 'tOQIl0vKx7l' || dummyEvent.programStage == 'PfRIIrvnjcU' || dummyEvent.programStage == 'Ew6LSYXKAzl') {
 
                     $scope.validEventDate = $scope.dhis2Event.eventDate;
 
@@ -258,7 +257,7 @@ trackerCapture.controller('EventCreationController',
                         }
                     });
                 }
-                else if (dummyEvent.programStage === 'd8ar9Ndh5mL') {
+                else if (dummyEvent.programStage === 'd8ar9Ndh5mL' || dummyEvent.programStage === 'OVBvzaxZpWs') {
 
 
                     $scope.eventStartDate = $scope.dhis2Event.selectedPeriod.startDate;
