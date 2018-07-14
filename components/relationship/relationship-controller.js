@@ -406,7 +406,27 @@ trackerCapture.controller('RelationshipController',
                         
 
                     }
-                    
+					
+					var tei_value_anm = {
+              attribute: "yDCO4KM4WVA",
+			  created: "2018-06-08T12:18:52.971",
+			  displayName: "ANM name",
+			  lastUpdated: "2018-06-08T12:18:52.971",
+			  storedBy: "dilroop",
+			  value: obj_anm_name[0],
+			  valueType: "TEXT"
+                };
+                    var tei_value_locality=	{
+              attribute: "MV4wWoZBrJS",
+			  created: "2018-06-08T12:18:52.971",
+			  displayName: "Locality name",
+			  lastUpdated: "2018-06-08T12:18:52.971",
+			  storedBy: "dilroop",
+			  value: obj_locality[0],
+			  valueType: "TEXT"
+                };
+				
+			
                     var array3 = housedetailss.filter(function(obj) { return objatt.indexOf(obj) == -1; });
                     for(var t=0;t<array3.length;t++)
                         {
@@ -422,12 +442,28 @@ trackerCapture.controller('RelationshipController',
                         dateofbirth.push("NA");
                         else if(array3[t]=="zLsKdtlBCIx")
                         maritalstatus.push("NA");
-                        else if(array3[t]=="yDCO4KM4WVA")
-                        housemember_obj_anm_name.push("NA");  
-					   else if(array3[t]=="MV4wWoZBrJS")
-                        housemember_locality.push("NA");
-					 else if(array3[t]=="ZmH0W6XHS9S")
+                        else if(array3[t]=="yDCO4KM4WVA"){
+                        //housemember_obj_anm_name.push("NA");  
+						trackdata.attributes.push(tei_value_anm);
+                    RegistrationService.registerOrUpdate(trackdata,$scope.optionSets, $scope.attributesById).then(function(response){
+                        if (response.response.status == "SUCCESS"){  
+							return;
+                        } 
+                    });
+						}
+					   else if(array3[t]=="MV4wWoZBrJS"){
+                       // housemember_locality.push("NA");
+					   	trackdata.attributes.push(tei_value_locality);
+                    RegistrationService.registerOrUpdate(trackdata,$scope.optionSets, $scope.attributesById).then(function(response){
+                        if (response.response.status == "SUCCESS"){  
+							return;
+                        } 
+                    });
+					   }
+					 else if(array3[t]=="ZmH0W6XHS9S"){
                         housemember_religion.push("NA");
+					
+					 }
                         }
                         
                             objatt=[];
