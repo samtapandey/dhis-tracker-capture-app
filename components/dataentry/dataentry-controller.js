@@ -28,7 +28,8 @@ trackerCapture.controller('DataEntryController',
         PeriodService,
         OptionSetService,
         TrackerRulesFactory,
-        EventCreationService) {
+        EventCreationService,
+        CustomIDGenerationService) {
 
         //Unique instance id for the controller:
         $scope.instanceId = Math.floor(Math.random() * 1000000000);
@@ -68,10 +69,6 @@ trackerCapture.controller('DataEntryController',
         $scope.useMainMenu = false;
         $scope.mainMenuStages = [];
         $scope.useBottomLine = false;
-        $scope.gynaecologistPBR = "Gynaecologist - PBR monitoring";
-        $scope.anaesthetistPBR = "Anaesthetist - PBR monitoring";
-        $scope.paediatricPBR = "Paediatric - PBR monitoring";
-        $scope.paediatrician_PICU_monitoringtool = "Paediatrician _PICU_ monitoring tool";
         $scope.currentUserRole = [];
         $scope.matchUserRole = $.trim("PBI_admin_user-role");
 
@@ -84,27 +81,33 @@ trackerCapture.controller('DataEntryController',
 
 
         $scope.myValidation = function () {
-            if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatrician_PICU_monitoringtool) {
-                return true;
-            }
-            else {
-                return false;
+            if (CurrentSelection.currentSelection.pr) {
+                $scope.currentSelectedProgramUid = CurrentSelection.currentSelection.pr.id;
+                let programStatus = CustomIDGenerationService.getProgramAttributeAndValue($scope.currentSelectedProgramUid);
+
+                if (programStatus) {
+                    return true
+                }
+                else {
+                    return false
+                }
             }
         }
 
-        $.ajax({
-            type: "GET",
-            dataType: "json",
-            async: false,
-            contentType: "application/json",
-            url: '../api/me.json?fields=id,name,userCredentials[*,userRoles[*]],userGroups[id,name]&paging=false',
-            success: function (response) {
-                $scope.matchUsername = response.userCredentials.username;
-                for (var i = 0; i < response.userCredentials.userRoles.length; i++) {
-                    $scope.currentUserRole.push(response.userCredentials.userRoles[i].displayName);
-                }
-            }
-        });
+        // $.ajax({
+        //     type: "GET",
+        //     dataType: "json",
+        //     async: false,
+        //     contentType: "application/json",
+        //     url: '../api/me.json?fields=id,name,userCredentials[*,userRoles[*]],userGroups[id,name]&paging=false',
+        //     success: function (response) {
+        //         $scope.matchUsername = response.userCredentials.username;
+        //         for (var i = 0; i < response.userCredentials.userRoles.length; i++) {
+        //             $scope.currentUserRole.push(response.userCredentials.userRoles[i].displayName);
+        //         }
+        //     }
+        // });
+
         $scope.selectedEntityinstance = CurrentSelection.currentSelection.tei.attributes;
         for (var i = 0; i < $scope.selectedEntityinstance.length; i++) {
             if ($scope.selectedEntityinstance[i].displayName === "User") {
@@ -112,10 +115,17 @@ trackerCapture.controller('DataEntryController',
             }
         }
 
-
         $scope.editProfile = function () {
             if (CurrentSelection.currentSelection.pr) {
-                if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatrician_PICU_monitoringtool) {
+                $scope.currentSelectedProgramUid = CurrentSelection.currentSelection.pr.id;
+                let programStatus = CustomIDGenerationService.getProgramAttributeAndValue($scope.currentSelectedProgramUid);
+
+                if (programStatus) {
+                    let currentProfileDetails = CustomIDGenerationService.getProfileValues();
+                    $scope.matchUsername = currentProfileDetails[0];
+                    $scope.currentUserRole = currentProfileDetails[1];
+
+
                     if ($scope.matchUsername === $scope.selectedUserName || $scope.matchUsername === "admin" || $scope.currentUserRole.indexOf($scope.matchUserRole) > -1) {
                         return true
                     }
@@ -128,6 +138,22 @@ trackerCapture.controller('DataEntryController',
                 }
             }
         }
+
+        // $scope.editProfile = function () {
+        //     if (CurrentSelection.currentSelection.pr) {
+        //         if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatrician_PICU_monitoringtool) {
+        //             if ($scope.matchUsername === $scope.selectedUserName || $scope.matchUsername === "admin" || $scope.currentUserRole.indexOf($scope.matchUserRole) > -1) {
+        //                 return true
+        //             }
+        //             else {
+        //                 return false
+        //             }
+        //         }
+        //         else {
+        //             return true
+        //         }
+        //     }
+        // }
         var modalCompleteIncompleteActions = { complete: 'complete', completeAndExit: 'completeandexit', completeEnrollment: 'completeenrollment', edit: 'edit' };
 
         //Labels
@@ -3126,7 +3152,10 @@ trackerCapture.controller('DataEntryController',
 
         $scope.buttonDisable = function () {
             if (CurrentSelection.currentSelection.pr) {
-                if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatrician_PICU_monitoringtool) {
+                $scope.currentSelectedProgramUid = CurrentSelection.currentSelection.pr.id;
+                let programStatus = CustomIDGenerationService.getProgramAttributeAndValue($scope.currentSelectedProgramUid);
+
+                if (programStatus) {
                     if ($scope.currentUserRole.indexOf($scope.matchUserRole) == -1) {
                         $scope.statusValue = $scope.currentEvent.dataValues;
                         for (var a = 0; a < $scope.statusValue.length; a++) {

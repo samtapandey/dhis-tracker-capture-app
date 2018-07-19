@@ -25,7 +25,8 @@ trackerCapture.controller('EventCreationController',
         EventUtils,
         events,
         suggestedStage,
-        selectedCategories) {
+        selectedCategories,
+        CustomIDGenerationService) {
         $scope.stages = stages;
         $scope.allStages = allStages;
         $scope.events = events;
@@ -40,6 +41,8 @@ trackerCapture.controller('EventCreationController',
         $scope.selectedProgram = program;
         $scope.selectedCategories = selectedCategories;
         $scope.pleaseSelectLabel = $translate.instant('please_select');
+        $scope.matchUserRole = $.trim("PBI_admin_user-role");
+
 
         var dummyEvent = {};
 
@@ -166,6 +169,16 @@ trackerCapture.controller('EventCreationController',
             }
         };
 
+        $scope.checkUserRole = function () {
+            let currentUserRoleDetails = CustomIDGenerationService.getProfileValues();
+            $scope.currentUserRoleName = currentUserRoleDetails[1];
+            if ($scope.currentUserRoleName.indexOf($scope.matchUserRole) > -1) {
+                return true
+            }
+            else {
+                return false
+            }
+        }
 
 
         $scope.save = function () {
@@ -178,10 +191,15 @@ trackerCapture.controller('EventCreationController',
             var getprg = params[2];
             var trackedEntityInstanceId = getTei.split('&')[0];
             $scope.prgId = getprg.split('&')[0];
+            $scope.currentSelectedProgramUid = $scope.selectedProgram.id;
+            let programStatus = CustomIDGenerationService.getProgramAttributeAndValue($scope.currentSelectedProgramUid);
 
-            if ($scope.selectedProgram.id == 'HTCqTWEF1XS' || $scope.selectedProgram.id == 'K3XysZ53B4r' || $scope.selectedProgram.id == 'CsEmq8UNA6z' || $scope.selectedProgram.id == 'HzQCXzNmvAK') {
+            if (programStatus) {
 
-                if (dummyEvent.programStage == 'XOD2Nl5kncW' || dummyEvent.programStage == 'tOQIl0vKx7l' || dummyEvent.programStage == 'PfRIIrvnjcU' || dummyEvent.programStage == 'Ew6LSYXKAzl') {
+                $scope.currentSelectedProgramStageUid = dummyEvent.programStage;
+                let programStageStatus = CustomIDGenerationService.getProgramStageAttributeAndValue($scope.currentSelectedProgramStageUid);
+
+                if (!programStageStatus) {
 
                     $scope.validEventDate = $scope.dhis2Event.eventDate;
 
@@ -257,9 +275,7 @@ trackerCapture.controller('EventCreationController',
                         }
                     });
                 }
-                else if (dummyEvent.programStage === 'd8ar9Ndh5mL' || dummyEvent.programStage === 'OVBvzaxZpWs') {
-
-
+                else if (programStageStatus) {
                     $scope.eventStartDate = $scope.dhis2Event.selectedPeriod.startDate;
                     $scope.eventEndDate = $scope.dhis2Event.selectedPeriod.endDate;
 

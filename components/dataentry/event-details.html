@@ -28,6 +28,22 @@
     <div ng-class="{true: 'col-sm-12', false: 'col-sm-6'} [currentStage.hideDueDate]" ng-if ="editProfile()" >
         {{currentEvent.executionDateLabel ? currentEvent.executionDateLabel : 'report_date' | translate}}
         <input type="text"
+               ng-if="checkUserRole()"
+               placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
+               class="form-control hideInPrint" 
+               ng-class="{'input-success': eventDateSaved}"
+               d2-date-validator 
+               d2-date 
+               max-date="0"
+               min-date="0"
+               name="eventDate"
+               ng-model="currentEvent.eventDate"
+               ng-disabled="true"    
+               ng-required="true"
+               blur-or-change="saveEventDate()"/>
+
+        <input type="text"
+               ng-if="!checkUserRole()"
                placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
                class="form-control hideInPrint" 
                ng-class="{'input-success': eventDateSaved}"

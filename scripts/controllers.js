@@ -24,7 +24,8 @@ trackerCapture.controller('SelectionController',
         TEIService,
         EventReportService,
         TCStorageService,
-        GridColumnService) {
+        GridColumnService,
+        CustomIDGenerationService) {
         var savedAdvancedSeachOptions = null;
         var defaultColumn = {
             id: 'created',
@@ -42,10 +43,6 @@ trackerCapture.controller('SelectionController',
 
 
         $scope.userUid = "GCyx4hTzy3j";
-        $scope.gynaecologistPBR = "Gynaecologist - PBR monitoring";
-        $scope.anaesthetistPBR = "Anaesthetist - PBR monitoring";
-        $scope.paediatricPBR = "Paediatric - PBR monitoring";
-        $scope.paediatrician_PICU_monitoringtool = "Paediatrician _PICU_ monitoring tool";
 
         //Selection
         $scope.ouModes = [{ name: 'SELECTED' }, { name: 'CHILDREN' }, { name: 'DESCENDANTS' }, { name: 'ACCESSIBLE' }];
@@ -793,8 +790,11 @@ trackerCapture.controller('SelectionController',
                     }
                 });
             }
+
             if ($scope.selectedProgram != undefined) {
-                if ($scope.selectedProgram.displayName == $scope.gynaecologistPBR || $scope.selectedProgram.displayName == $scope.anaesthetistPBR || $scope.selectedProgram.displayName == $scope.paediatricPBR || $scope.selectedProgram.displayName == $scope.paediatrician_PICU_monitoringtool) {
+                $scope.currentSelectedProgramUid = $scope.selectedProgram.id;
+                let programStatus = CustomIDGenerationService.getProgramAttributeAndValue($scope.currentSelectedProgramUid);
+                if (programStatus && $scope.trackedEntities) {
                     if ($scope.trackedEntities.length > 0) {
                         return false
                     }

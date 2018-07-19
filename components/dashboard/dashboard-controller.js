@@ -25,7 +25,8 @@ trackerCapture.controller('DashboardController',
         ModalService,
         AuthorityService,
         OrgUnitFactory,
-        NotificationService) {
+        NotificationService,
+        CustomIDGenerationService) {
 
         //selections
         var orgUnitUrl = ($location.search()).ou;
@@ -33,10 +34,6 @@ trackerCapture.controller('DashboardController',
         $scope.displayEnrollment = false;
         $scope.dataEntryMainMenuItemSelected = false;
         $scope.metaDataCached = false;
-        $scope.gynaecologistPBR = "Gynaecologist - PBR monitoring";
-        $scope.anaesthetistPBR = "Anaesthetist - PBR monitoring";
-        $scope.paediatricPBR = "Paediatric - PBR monitoring";
-        $scope.paediatrician_PICU_monitoringtool = "Paediatrician _PICU_ monitoring tool";
         $scope.currentUserRole = [];
         $scope.matchUserRole = $.trim("PBI_admin_user-role");
         if (!dhis2.tc.metaDataCached) {
@@ -216,19 +213,19 @@ trackerCapture.controller('DashboardController',
                                     });
                                 }
 
-                                $.ajax({
-                                    type: "GET",
-                                    dataType: "json",
-                                    async: false,
-                                    contentType: "application/json",
-                                    url: '../api/me.json?fields=id,name,userCredentials[*,userRoles[*]],userGroups[id,name]&paging=false',
-                                    success: function (response) {
-                                        $scope.matchUsername = response.userCredentials.username;
-                                        for (var i = 0; i < response.userCredentials.userRoles.length; i++) {
-                                            $scope.currentUserRole.push(response.userCredentials.userRoles[i].displayName);
-                                        }
-                                    }
-                                });
+                                // $.ajax({
+                                //     type: "GET",
+                                //     dataType: "json",
+                                //     async: false,
+                                //     contentType: "application/json",
+                                //     url: '../api/me.json?fields=id,name,userCredentials[*,userRoles[*]],userGroups[id,name]&paging=false',
+                                //     success: function (response) {
+                                //         $scope.matchUsername = response.userCredentials.username;
+                                //         for (var i = 0; i < response.userCredentials.userRoles.length; i++) {
+                                //             $scope.currentUserRole.push(response.userCredentials.userRoles[i].displayName);
+                                //         }
+                                //     }
+                                // });
 
                                 var url1 = window.location.href;
                                 var params = url1.split('=');
@@ -257,15 +254,20 @@ trackerCapture.controller('DashboardController',
 
                                 $scope.editProfile = function () {
                                     if (CurrentSelection.currentSelection.pr) {
-                                        if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatrician_PICU_monitoringtool) {
-
+                                        $scope.currentSelectedProgramUid = CurrentSelection.currentSelection.pr.id;
+                                        let programStatus = CustomIDGenerationService.getProgramAttributeAndValue($scope.currentSelectedProgramUid);
+                                        
+                                        if (programStatus) {
+                                            let currentProfileDetails = CustomIDGenerationService.getProfileValues();
+                                            $scope.matchUsername = currentProfileDetails[0];
+                                            $scope.currentUserRole = currentProfileDetails[1];
+                                            
                                             if ($scope.matchUsername === $scope.selectedUserName || $scope.matchUsername === "admin" || $scope.currentUserRole.indexOf($scope.matchUserRole) > -1) {
                                                 return true
                                             }
                                             else {
                                                 return false
                                             }
-
                                         }
                                         else {
                                             return true

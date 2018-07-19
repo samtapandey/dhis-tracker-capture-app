@@ -14,7 +14,8 @@ trackerCapture.controller('EnrollmentController',
         EnrollmentService,
         ModalService,
         NotificationService,
-        OrgUnitFactory) {
+        OrgUnitFactory,
+        CustomIDGenerationService) {
 
         OrgUnitFactory.getOrgUnit(($location.search()).ou).then(function (orgUnit) {
             $scope.today = DateUtils.getToday();
@@ -45,10 +46,6 @@ trackerCapture.controller('EnrollmentController',
                 $scope.programExists = args.programExists;
                 $scope.programNames = selections.prNames;
 
-                $scope.gynaecologistPBR = "Gynaecologist - PBR monitoring";
-                $scope.anaesthetistPBR = "Anaesthetist - PBR monitoring";
-                $scope.paediatricPBR = "Paediatric - PBR monitoring";
-                $scope.paediatrician_PICU_monitoringtool = "Paediatrician _PICU_ monitoring tool";
                 $scope.currentUserRole = [];
                 $scope.matchUserRole = $.trim("PBI_admin_user-role");
 
@@ -63,19 +60,20 @@ trackerCapture.controller('EnrollmentController',
                     }
                 });
 
-                $.ajax({
-                    type: "GET",
-                    dataType: "json",
-                    async: false,
-                    contentType: "application/json",
-                    url: '../api/me.json?fields=id,name,userCredentials[*,userRoles[*]],userGroups[id,name]&paging=false',
-                    success: function (response) {
-                        $scope.matchUsername = response.userCredentials.username;
-                        for (var i = 0; i < response.userCredentials.userRoles.length; i++) {
-                            $scope.currentUserRole.push(response.userCredentials.userRoles[i].displayName);
-                        }
-                    }
-                });
+                // $.ajax({
+                //     type: "GET",
+                //     dataType: "json",
+                //     async: false,
+                //     contentType: "application/json",
+                //     url: '../api/me.json?fields=id,name,userCredentials[*,userRoles[*]],userGroups[id,name]&paging=false',
+                //     success: function (response) {
+                //         $scope.matchUsername = response.userCredentials.username;
+                //         for (var i = 0; i < response.userCredentials.userRoles.length; i++) {
+                //             $scope.currentUserRole.push(response.userCredentials.userRoles[i].displayName);
+                //         }
+                //     }
+                // });
+
                 $scope.selectedEntityinstance = CurrentSelection.currentSelection.tei.attributes;
                 for (var i = 0; i < $scope.selectedEntityinstance.length; i++) {
                     if ($scope.selectedEntityinstance[i].displayName === "User") {
@@ -86,8 +84,14 @@ trackerCapture.controller('EnrollmentController',
 
                 $scope.editProfile = function () {
                     if (CurrentSelection.currentSelection.pr) {
-                        if (CurrentSelection.currentSelection.pr.displayName == $scope.gynaecologistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.anaesthetistPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatricPBR || CurrentSelection.currentSelection.pr.displayName == $scope.paediatrician_PICU_monitoringtool) {
-
+                        $scope.currentSelectedProgramUid = CurrentSelection.currentSelection.pr.id;
+                        let programStatus = CustomIDGenerationService.getProgramAttributeAndValue($scope.currentSelectedProgramUid);
+                        
+                        if (programStatus) {
+                            let currentProfileDetails = CustomIDGenerationService.getProfileValues();
+                            $scope.matchUsername = currentProfileDetails[0];
+                            $scope.currentUserRole = currentProfileDetails[1];
+                            
                             if ($scope.matchUsername === $scope.selectedUserName || $scope.matchUsername === "admin" || $scope.currentUserRole.indexOf($scope.matchUserRole) > -1) {
                                 return true
                             }
@@ -95,7 +99,6 @@ trackerCapture.controller('EnrollmentController',
                                 return false
                             }
                         }
-
                         else {
                             return true
                         }
