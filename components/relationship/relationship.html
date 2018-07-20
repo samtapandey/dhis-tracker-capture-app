@@ -41,7 +41,7 @@
 
     <div ng-show="relationshipsWidget.expand" class="panel-body dashboard-widget-container">
         <div>
-            <div ng-show="selectedTei && !selectedTei.relationships || selectedTei.relationships.length < 1 && selectedProgram.id=='BgTTdBNKHwc'"ng-click="householdmembers()" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-home"></span>Household Realtion</div>
+            <div ng-show="selectedTei && !selectedTei.relationships || selectedTei.relationships.length < 1 && selectedProgram.id=='BgTTdBNKHwc'"ng-click="householdmembers()" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-home"></span>Household Relation</div>
           <div ng-show="selectedTei && !selectedTei.relationships || selectedTei.relationships.length < 1 && selectedProgram.id !='BgTTdBNKHwc'" class="alert alert-warning">{{noRelationshipLabel}}</div>   
             <div ng-show="!selectedTei" class="alert alert-danger">{{'relationship_not_possible'| translate}}</div> 
 

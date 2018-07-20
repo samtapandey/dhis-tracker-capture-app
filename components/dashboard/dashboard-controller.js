@@ -679,7 +679,7 @@ trackerCapture.controller('DashboardController',
                                 else if (id == "pTuKCcPRn9k")// diasitoli cblood presure
                                 {
                                     var diasit = dataval[q].value;
-                                    bloodpressure = bloodpressure + "<td style='border:1px solid black;text-align:center'><b>" + diasit + "&nbsp&nbspDiasitolic" + "<b></td>";
+                                    bloodpressure = bloodpressure + "<td style='border:1px solid black;text-align:center'><b>" + diasit + "&nbsp&nbspDiastolic" + "<b></td>";
                                     // alert("hyy");
                                 }
                                 else if (id == "kfqBvvoWuzA")//FBS (mg/dl)
@@ -1298,9 +1298,449 @@ var myLineChart = new Chart(ctx, {
 		}
 		 
 
-		
+		$scope.chartmodeldm = function () {
+
+   $.ajaxSetup({
+        async: false
+    });
+		var obj_hb_gm_first=[];
+		var reportdate_first=[];
+			 var url = window.location.href;
+			 var params = url.split('=');
+			 var per =params[1];
+			 var finper=per.split('&');
+	var trackid=finper[0];
+	
+		 $.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=SUCUF657zNe&trackedEntityInstance="+trackid+"&order=eventDate:asc", function (data) {
+	
+			var trackdata=data;
+                console.log(trackdata);
+				 
+				for(var i=0;i<trackdata.events.length;i++)
+				{
+				var matchevent=trackdata.events[i].programStage;
+				
+				if(matchevent=="aAmtHNAQo7g") {  //ANC First visist
+				   
+				if(trackdata.events[i].eventDate){
+			
+				 	   var dataval=trackdata.events[i].dataValues;
+				   for(var q=0;q<dataval.length;q++)
+				   {
+				   var id=dataval[q].dataElement;
+				  
+				  
+				  if(id=="yka2bblmdbM")//hb value 1st visit  
+				   {
+				
+				   var vall=dataval[q].value;
+				     obj_hb_gm_first.push(vall);
+					 reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
+					 
+				   }
+				   else if(id=="jTyiikEB6Vm")//hb value 1st visit  
+				   {
+				
+				   var vall=dataval[q].value;
+				     obj_hb_gm_first.push(vall);
+					 reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
+					 
+				   }
+			  }
+			
+				 }
+			
+				}
+				else if(matchevent=="DwoQd5oIicL") {  //Additional ANC visit
+				   
+				if(trackdata.events[i].eventDate){
+			
+				 	   var dataval=trackdata.events[i].dataValues;
+				   for(var q=0;q<dataval.length;q++)
+				   {
+				   var id=dataval[q].dataElement;
+				  
+				  
+				  if(id=="ojdgwkjVyOc")//hb value 1st visit
+				   {
+				
+				   var vall=dataval[q].value;
+				     obj_hb_gm_first.push(vall);
+					 reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
+					 
+				   }
+				   else  if(id=="jTyiikEB6Vm")//hb(gm)
+				   {
+				
+				   var vall=dataval[q].value;
+				     obj_hb_gm_first.push(vall);
+					 reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
+					 
+				   }
+				   
+			  }
+			
+				 }
+			
+				}
+				else if(matchevent=="WMnWjG8PS58") {            // ANC SECOND VISIT
+				if(trackdata.events[i].eventDate){
+				 	   var dataval=trackdata.events[i].dataValues;
+				   for(var q=0;q<dataval.length;q++)
+				   {
+				   var id=dataval[q].dataElement;
+				 
+				    if(id=="XI9R4MyF4cP")// hb value 2nd visit
+				   {
+				 var vall=dataval[q].value;
+				     obj_hb_gm_first.push(vall);
+					 reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
+				   }
+				   else if(id=="RMGf5pzvlGN")// hb value 3rd visit
+				   {
+                     var vall=dataval[q].value;
+				     obj_hb_gm_first.push(vall);
+					 reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));				
+				   
+				   }
+				   else if(id=="HkOHsdUuQSl")// hb value 4th visit
+				   {
+				 var vall=dataval[q].value;
+				     obj_hb_gm_first.push(vall);
+					 reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
+				   
+				   }
+                  else  if(id=="jTyiikEB6Vm")//hb(gm)
+				   {
+				
+				   var vall=dataval[q].value;
+				     obj_hb_gm_first.push(vall);
+					 reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
+					 
+				   }				   
+			  }
+			}
+			
+				}
+		         }
+	
+		   
+		   });
+			  
+
+var ctx = document.getElementById('myChartdm').getContext('2d');
+var myLineChart = new Chart(ctx, {
+    type: 'line',
+     data: {
+        labels: reportdate_first,
+			responsive: true,
+        datasets: [{
+            label: "HB-Value",
+            backgroundColor: 'rgb(255,0,0)',
+            borderColor: 'rgb(255,0,0)',
+            data:obj_hb_gm_first,
+				responsive: true,
+			fill: false,
+			lineTension:0
+        }]
+    },
+  	options: {
+					responsive: true,
+					
+					tooltips: {
+						position: 'nearest',
+						mode: 'index',
+						intersect: false,
+						yPadding: 10,
+						xPadding: 10,
+						caretSize: 8,
+						backgroundColor: '#FAFAFA',
+						titleFontColor:'#000',
+						bodyFontColor:'#000',
+						borderColor: 'rgba(255,0,0)',
+						borderWidth: 4
+					},
+				}
+});
+
+	$("#myModalchartdm").modal('show');
+	
+		}
 		
 
+		$scope.chartmodeldmm = function () {
+
+   $.ajaxSetup({
+        async: false
+    });
+		var obj_hb_gm_first=[];
+		var reportdate_first=[];
+			 var url = window.location.href;
+			 var params = url.split('=');
+			 var per =params[1];
+			 var finper=per.split('&');
+	var trackid=finper[0];
+	
+		 $.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=jC8Gprj4pWV&trackedEntityInstance="+trackid+"&order=eventDate:asc", function (data) {
+	
+			var trackdata=data;
+                console.log(trackdata);
+				 
+				for(var i=0;i<trackdata.events.length;i++)
+				{
+				   
+				if(trackdata.events[i].eventDate){
+			
+				 	   var dataval=trackdata.events[i].dataValues;
+				   for(var q=0;q<dataval.length;q++)
+				   {
+				   var id=dataval[q].dataElement;
+				  
+				  
+				  if(id=="FHBrdgsPgDY")//RBS (mg/dl) 
+				   {
+				
+				   var vall=dataval[q].value;
+				     obj_hb_gm_first.push(vall);
+					 reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
+					 
+				   }
+				 
+			  }
+			
+				 }
+			
+				
+				
+		         }
+	
+		   
+		   });
+			  
+
+var ctx = document.getElementById('myChartdmm').getContext('2d');
+var myLineChart = new Chart(ctx, {
+    type: 'line',
+     data: {
+        labels: reportdate_first,
+			responsive: true,
+        datasets: [{
+            label: "DM-Value",
+            backgroundColor: '#0FFDD6',
+            borderColor: '#0FFDD6',
+            data:obj_hb_gm_first,
+				responsive: true,
+			fill: false,
+			lineTension:0
+        }]
+    },
+  	options: {
+					responsive: true,
+					
+					tooltips: {
+						position: 'nearest',
+						mode: 'index',
+						intersect: false,
+						yPadding: 10,
+						xPadding: 10,
+						caretSize: 8,
+						backgroundColor: '#FAFAFA',
+						titleFontColor:'#000',
+						bodyFontColor:'#000',
+						borderColor: '#0FFDD6',
+						borderWidth: 4
+					},
+				}
+});
+
+	$("#myModalchartdmm").modal('show');
+	
+		}
+		
+		$scope.chartmodelchild = function () {
+
+   $.ajaxSetup({
+        async: false
+    });
+              var dobvalue;	
+		var obj_hb_gm_first=[];
+		var reportdate_first=[];
+			 var url = window.location.href;
+			 var params = url.split('=');
+			 var per =params[1];
+			 var finper=per.split('&');
+	var trackid=finper[0];
+	
+	
+	
+	 $.get("../api/trackedEntityInstances/"+trackid+".json?", function (data1) {
+			  var trackdata=data1;
+			    
+				    for(var i=0;i<trackdata.attributes.length;i++)
+                    {
+
+					 var idd =trackdata.attributes[i].attribute;
+					
+				  
+				if(trackdata.attributes[i].displayName=="Date of birth")
+				  {
+				 dobvalue=trackdata.attributes[i].value;
+				
+				 
+				  }
+				 
+				} 
+				   
+			    });
+	
+	
+	
+	
+	
+		 $.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=JdZ3gv6cx54&trackedEntityInstance="+trackid+"&order=eventDate:asc", function (data) {
+	
+			var trackdata=data;
+                console.log(trackdata);
+				 
+				for(var i=0;i<trackdata.events.length;i++)
+				{
+				   
+				if(trackdata.events[i].eventDate){
+			
+				 	   var dataval=trackdata.events[i].dataValues;
+				   for(var q=0;q<dataval.length;q++)
+				   {
+				   var id=dataval[q].dataElement;
+				  //CALCULATE AGE FROM DOB AND EVENT DATE
+				  
+				  if(id=="X0LM2G9QrRq")//BCG(Birth Dose) 
+				   {
+				
+				   var vall=dataval[q].value;
+				   if(vall=="true"){
+				     
+					 var repodate= new Date (trackdata.events[i].eventDate.substring(0, 10)),dateantime=new Date(dobvalue);
+					var datediff= Math.abs((repodate.getTime() - dateantime.getTime()) / (1000 * 60 * 60 * 24));
+					obj_hb_gm_first.push(Math.round(datediff/7));
+					 reportdate_first.push("BCG(Birth Dose)");
+				   }
+				   }
+				   else if(id=="pY9t6s0BPcx")//DPT/Penta 1
+				   {
+				var vall=dataval[q].value;
+				   if(vall=="true"){
+				     
+					 var repodate= new Date (trackdata.events[i].eventDate.substring(0, 10)),dateantime=new Date(dobvalue);
+					var datediff= Math.abs((repodate.getTime() - dateantime.getTime()) / (1000 * 60 * 60 * 24));
+					obj_hb_gm_first.push(Math.round(datediff/7));
+					 reportdate_first.push("DPT/Penta 1");
+				   }
+				 
+					 
+				   }
+				    else if(id=="pqBNLJWicCs")//DPT/Penta 2
+				   {
+				var vall=dataval[q].value;
+				   if(vall=="true"){
+				     
+					 var repodate= new Date (trackdata.events[i].eventDate.substring(0, 10)),dateantime=new Date(dobvalue);
+					var datediff= Math.abs((repodate.getTime() - dateantime.getTime()) / (1000 * 60 * 60 * 24));
+					obj_hb_gm_first.push(Math.round(datediff/7));
+					 reportdate_first.push("DPT/Penta 2");
+				   }
+				 
+				  
+				   }
+				    else if(id=="bLJEYJvjbtF")//DPT/Penta 3 
+				   {
+				var vall=dataval[q].value;
+				   if(vall=="true"){
+				     
+					 var repodate= new Date (trackdata.events[i].eventDate.substring(0, 10)),dateantime=new Date(dobvalue);
+					var datediff= Math.abs((repodate.getTime() - dateantime.getTime()) / (1000 * 60 * 60 * 24));
+					obj_hb_gm_first.push(Math.round(datediff/7));
+					 reportdate_first.push("DPT/Penta 3");
+				   }
+				 
+				  
+					 
+				   }
+				    else if(id=="kq5XBCko5id")//Measles (1st dose) 
+				   {
+				var vall=dataval[q].value;
+				   if(vall=="true"){
+				     
+					 var repodate= new Date (trackdata.events[i].eventDate.substring(0, 10)),dateantime=new Date(dobvalue);
+					var datediff= Math.abs((repodate.getTime() - dateantime.getTime()) / (1000 * 60 * 60 * 24));
+					obj_hb_gm_first.push(Math.round(datediff/7));
+					 reportdate_first.push("Measles 1");
+				   }
+				 
+					 
+				   }
+				    else if(id=="mtHUBDF91KG")//Measles 2nd Dose 
+				   {
+				var vall=dataval[q].value;
+				   if(vall=="true"){
+				     
+					 var repodate= new Date (trackdata.events[i].eventDate.substring(0, 10)),dateantime=new Date(dobvalue);
+					var datediff= Math.abs((repodate.getTime() - dateantime.getTime()) / (1000 * 60 * 60 * 24));
+					obj_hb_gm_first.push(Math.round(datediff/7));
+					 reportdate_first.push("Measles 2");
+				   }
+				  
+				   }
+				 
+			  }
+			
+				 }
+			
+		         }
+	
+		   
+		   });
+			  
+
+var ctx = document.getElementById('myChartchild').getContext('2d');
+var myLineChart = new Chart(ctx, {
+    type: 'line',
+     data: {
+        labels: reportdate_first,
+			responsive: true,
+        datasets: [{
+            label: "Vaccine(Weeks)",
+            backgroundColor: '#5EFF32',
+            borderColor: '#5EFF32',
+            data:obj_hb_gm_first,
+				responsive: true,
+			fill: false,
+			lineTension:0
+        }]
+    },
+  	options: {
+					responsive: true,
+					
+					tooltips: {
+						position: 'nearest',
+						mode: 'index',
+						intersect: false,
+						yPadding: 10,
+						xPadding: 10,
+						caretSize: 8,
+						backgroundColor: '#FAFAFA',
+						titleFontColor:'#000',
+						bodyFontColor:'#000',
+						borderColor: '#5EFF32',
+						borderWidth: 4
+					},
+				}
+});
+
+	$("#myModalchartchild").modal('show');
+	
+		}
+		
+		
         $scope.showEnrollment = function () {
             $scope.displayEnrollment = true;
         };
