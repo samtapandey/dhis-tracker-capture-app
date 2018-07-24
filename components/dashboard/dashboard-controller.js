@@ -1197,6 +1197,8 @@ trackerCapture.controller('DashboardController',
     });
 		var datavalueofchart_systolic=[];
 		var datavalueofchart_diastolic=[];
+		var default_systolic=[];
+		var default_diastolic=[];
 		var orinalid=["HQz8UUWfvo0","pTuKCcPRn9k"];
 		var dateofvisit=[];
 		var objid=[];
@@ -1223,12 +1225,14 @@ trackerCapture.controller('DashboardController',
 				   {
 				      var systol=dataval[q].value;
 					  datavalueofchart_systolic.push(systol);
+					  default_systolic.push("140");
 				  
 				   }
 				     else if(id=="pTuKCcPRn9k")// diasitoli cblood presure
 				   {
 				   var diasit=dataval[q].value;
 				  datavalueofchart_diastolic.push(diasit);
+				  default_diastolic.push("90");
 				   }
 				 
 				   }
@@ -1272,6 +1276,24 @@ var myLineChart = new Chart(ctx, {
             data:datavalueofchart_diastolic,
 			fill: false,
 			lineTension:0
+        },
+		{
+		   label: "Systolic:Cut-off",
+            backgroundColor: '#23B204',
+            borderColor: '#23B204',
+				responsive: true,
+            data:default_systolic,
+			fill: false,
+			lineTension:0
+        },
+		{
+		   label: "Diastolic:Cut-off",
+            backgroundColor: '#23B204',
+            borderColor: '#23B204',
+				responsive: true,
+            data:default_diastolic,
+			fill: false,
+			lineTension:0
         }]
     },
   	options: {
@@ -1305,6 +1327,9 @@ var myLineChart = new Chart(ctx, {
     });
 		var obj_hb_gm_first=[];
 		var reportdate_first=[];
+		var mild=[];
+		var moderate=[];
+		var severe=[];
 			 var url = window.location.href;
 			 var params = url.split('=');
 			 var per =params[1];
@@ -1336,6 +1361,9 @@ var myLineChart = new Chart(ctx, {
 				   var vall=dataval[q].value;
 				     obj_hb_gm_first.push(vall);
 					 reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
+					 mild.push("11");
+					 moderate.push("9");
+					 severe.push("7");
 					 
 				   }
 				   else if(id=="jTyiikEB6Vm")//hb value 1st visit  
@@ -1344,7 +1372,9 @@ var myLineChart = new Chart(ctx, {
 				   var vall=dataval[q].value;
 				     obj_hb_gm_first.push(vall);
 					 reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
-					 
+					  mild.push("11");
+					 moderate.push("9");
+					 severe.push("7");
 				   }
 			  }
 			
@@ -1367,7 +1397,9 @@ var myLineChart = new Chart(ctx, {
 				   var vall=dataval[q].value;
 				     obj_hb_gm_first.push(vall);
 					 reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
-					 
+					  mild.push("11");
+					 moderate.push("9");
+					 severe.push("7");
 				   }
 				   else  if(id=="jTyiikEB6Vm")//hb(gm)
 				   {
@@ -1375,7 +1407,9 @@ var myLineChart = new Chart(ctx, {
 				   var vall=dataval[q].value;
 				     obj_hb_gm_first.push(vall);
 					 reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
-					 
+					  mild.push("11");
+					 moderate.push("9");
+					 severe.push("7");
 				   }
 				   
 			  }
@@ -1395,12 +1429,18 @@ var myLineChart = new Chart(ctx, {
 				 var vall=dataval[q].value;
 				     obj_hb_gm_first.push(vall);
 					 reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
+					  mild.push("11");
+					 moderate.push("9");
+					 severe.push("7");
 				   }
 				   else if(id=="RMGf5pzvlGN")// hb value 3rd visit
 				   {
                      var vall=dataval[q].value;
 				     obj_hb_gm_first.push(vall);
-					 reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));				
+					 reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));	
+                      mild.push("11");
+					 moderate.push("9");
+					 severe.push("7");					 
 				   
 				   }
 				   else if(id=="HkOHsdUuQSl")// hb value 4th visit
@@ -1408,7 +1448,9 @@ var myLineChart = new Chart(ctx, {
 				 var vall=dataval[q].value;
 				     obj_hb_gm_first.push(vall);
 					 reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
-				   
+				    mild.push("11");
+					 moderate.push("9");
+					 severe.push("7");
 				   }
                   else  if(id=="jTyiikEB6Vm")//hb(gm)
 				   {
@@ -1416,7 +1458,9 @@ var myLineChart = new Chart(ctx, {
 				   var vall=dataval[q].value;
 				     obj_hb_gm_first.push(vall);
 					 reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
-					 
+					  mild.push("11");
+					 moderate.push("9");
+					 severe.push("7");
 				   }				   
 			  }
 			}
@@ -1436,9 +1480,37 @@ var myLineChart = new Chart(ctx, {
 			responsive: true,
         datasets: [{
             label: "HB-Value",
-            backgroundColor: 'rgb(255,0,0)',
-            borderColor: 'rgb(255,0,0)',
+            backgroundColor: '#0686F7',
+            borderColor: '#0686F7',
             data:obj_hb_gm_first,
+			borderDash: [5, 5],
+				responsive: true,
+			fill: false,
+			lineTension:0
+        },{
+            label: "HB-Mild:Cut-off",
+            backgroundColor: '#5BC606',
+            borderColor: '#5BC606',
+			borderWidth:'5px',
+            data:mild,
+				responsive: true,
+			fill: false,
+			lineTension:0
+        },{
+            label: "HB-Moderate:Cut-off",
+            backgroundColor: '#FCA150',
+            borderColor: '#FCA150',
+			borderWidth:'5px',
+            data:moderate,
+				responsive: true,
+			fill: false,
+			lineTension:0
+        },{
+            label: "HB-Severe:Cut-off",
+            backgroundColor: '#FF0000',
+            borderColor: '#FF0000',
+			borderWidth:'5px',
+            data:severe,
 				responsive: true,
 			fill: false,
 			lineTension:0
@@ -1474,6 +1546,7 @@ var myLineChart = new Chart(ctx, {
         async: false
     });
 		var obj_hb_gm_first=[];
+		var default_dm=[];
 		var reportdate_first=[];
 			 var url = window.location.href;
 			 var params = url.split('=');
@@ -1503,6 +1576,7 @@ var myLineChart = new Chart(ctx, {
 				   var vall=dataval[q].value;
 				     obj_hb_gm_first.push(vall);
 					 reportdate_first.push(trackdata.events[i].eventDate.substring(0, 10));
+					 default_dm.push("200");
 					 
 				   }
 				 
@@ -1529,6 +1603,14 @@ var myLineChart = new Chart(ctx, {
             backgroundColor: '#0FFDD6',
             borderColor: '#0FFDD6',
             data:obj_hb_gm_first,
+				responsive: true,
+			fill: false,
+			lineTension:0
+        },{
+            label: "DM:Cut-off",
+            backgroundColor: '#FF0000',
+            borderColor: '#FF0000',
+            data:default_dm,
 				responsive: true,
 			fill: false,
 			lineTension:0
@@ -1564,6 +1646,7 @@ var myLineChart = new Chart(ctx, {
     });
               var dobvalue;	
 		var obj_hb_gm_first=[];
+		var obj_default_value=[];
 		var reportdate_first=[];
 			 var url = window.location.href;
 			 var params = url.split('=');
@@ -1623,6 +1706,7 @@ var myLineChart = new Chart(ctx, {
 					var datediff= Math.abs((repodate.getTime() - dateantime.getTime()) / (1000 * 60 * 60 * 24));
 					obj_hb_gm_first.push(Math.round(datediff/7));
 					 reportdate_first.push("BCG(Birth Dose)");
+					 obj_default_value.push("0");
 				   }
 				   }
 				   else if(id=="pY9t6s0BPcx")//DPT/Penta 1
@@ -1634,6 +1718,7 @@ var myLineChart = new Chart(ctx, {
 					var datediff= Math.abs((repodate.getTime() - dateantime.getTime()) / (1000 * 60 * 60 * 24));
 					obj_hb_gm_first.push(Math.round(datediff/7));
 					 reportdate_first.push("DPT/Penta 1");
+					 obj_default_value.push("6");
 				   }
 				 
 					 
@@ -1647,6 +1732,7 @@ var myLineChart = new Chart(ctx, {
 					var datediff= Math.abs((repodate.getTime() - dateantime.getTime()) / (1000 * 60 * 60 * 24));
 					obj_hb_gm_first.push(Math.round(datediff/7));
 					 reportdate_first.push("DPT/Penta 2");
+					 obj_default_value.push("10");
 				   }
 				 
 				  
@@ -1660,6 +1746,7 @@ var myLineChart = new Chart(ctx, {
 					var datediff= Math.abs((repodate.getTime() - dateantime.getTime()) / (1000 * 60 * 60 * 24));
 					obj_hb_gm_first.push(Math.round(datediff/7));
 					 reportdate_first.push("DPT/Penta 3");
+					 obj_default_value.push("14");
 				   }
 				 
 				  
@@ -1674,6 +1761,7 @@ var myLineChart = new Chart(ctx, {
 					var datediff= Math.abs((repodate.getTime() - dateantime.getTime()) / (1000 * 60 * 60 * 24));
 					obj_hb_gm_first.push(Math.round(datediff/7));
 					 reportdate_first.push("Measles 1");
+					 obj_default_value.push("39");
 				   }
 				 
 					 
@@ -1687,6 +1775,7 @@ var myLineChart = new Chart(ctx, {
 					var datediff= Math.abs((repodate.getTime() - dateantime.getTime()) / (1000 * 60 * 60 * 24));
 					obj_hb_gm_first.push(Math.round(datediff/7));
 					 reportdate_first.push("Measles 2");
+					 obj_default_value.push("78");
 				   }
 				  
 				   }
@@ -1712,6 +1801,14 @@ var myLineChart = new Chart(ctx, {
             backgroundColor: '#5EFF32',
             borderColor: '#5EFF32',
             data:obj_hb_gm_first,
+				responsive: true,
+			fill: false,
+			lineTension:0
+        },{
+			label: "Ideal UIP",
+            backgroundColor: '#FA0715',
+            borderColor: '#FA0715',
+            data:obj_default_value,
 				responsive: true,
 			fill: false,
 			lineTension:0
