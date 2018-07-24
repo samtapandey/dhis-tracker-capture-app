@@ -281,8 +281,12 @@ trackerCapture.controller('TEIAddController',
 
         $scope.fetchTei = function () {
 
+            $scope.selectedOrgUnitPath = $scope.selectedOrgUnit.path;
+            $scope.selectedOrgUnitParentId1 = $scope.selectedOrgUnitPath.split("/");
+            $scope.selectedOrgUnitParentId = $scope.selectedOrgUnitParentId1[ $scope.selectedOrgUnitParentId1.length - 2 ];
+
             //get events for the specified parameters
-            TEIService.search($scope.selectedOrgUnit.id,
+            TEIService.search($scope.selectedOrgUnitParentId,
                 $scope.selectedOuMode.name,
                 $scope.queryUrl,
                 $scope.programUrl,
