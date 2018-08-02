@@ -1261,7 +1261,7 @@ var myLineChart = new Chart(ctx, {
         labels: dateofvisit,
 			responsive: true,
         datasets: [{
-            label: "Systolic",
+            label: "Systolic(mmHg)",
             backgroundColor: 'rgb(255, 99, 132)',
             borderColor: 'rgb(255, 99, 132)',
 			borderDash: [5, 5],
@@ -1270,7 +1270,7 @@ var myLineChart = new Chart(ctx, {
 			fill: false,
 			lineTension:0
         },{
-		   label: "Diastolic",
+		   label: "Diastolic(mmHg)",
             backgroundColor: '#0F75F7',
             borderColor: '#0F75F7',
 			borderDash: [5, 5],
@@ -1281,8 +1281,8 @@ var myLineChart = new Chart(ctx, {
         },
 		{
 		   label: "Systolic:Cut-off",
-            backgroundColor: '#23B204',
-            borderColor: '#23B204',
+            backgroundColor: '#024204',
+            borderColor: '#024204',
 			borderWidth:'5px',
 				responsive: true,
             data:default_systolic,
@@ -1483,7 +1483,7 @@ var myLineChart = new Chart(ctx, {
         labels: reportdate_first,
 			responsive: true,
         datasets: [{
-            label: "HB-Value",
+            label: "HB-Value(gm/dl)",
             backgroundColor: '#0686F7',
             borderColor: '#0686F7',
             data:obj_hb_gm_first,
@@ -1603,7 +1603,7 @@ var myLineChart = new Chart(ctx, {
         labels: reportdate_first,
 			responsive: true,
         datasets: [{
-            label: "DM-Value",
+            label: "RBS mg/dl-Value",
             backgroundColor: '#0B2BF5',
             borderColor: '#0B2BF5',
 			borderDash: [5, 5],
@@ -1612,7 +1612,7 @@ var myLineChart = new Chart(ctx, {
 			fill: false,
 			lineTension:0
         },{
-            label: "DM:Cut-off",
+            label: "RBS mg/dl:Cut-off",
             backgroundColor: '#FF0000',
             borderColor: '#FF0000',
 			borderWidth:'5px',
