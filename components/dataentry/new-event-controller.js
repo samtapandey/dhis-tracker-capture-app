@@ -40,6 +40,13 @@ trackerCapture.controller('EventCreationController',
         $scope.selectedProgram = program;
         $scope.selectedCategories = selectedCategories;
         $scope.pleaseSelectLabel = $translate.instant('please_select');
+        $scope.matchUserRole = $.trim("PBI_admin_user-role");
+        $scope.gynaecologistPBR = "Gynaecologist - PBR monitoring";
+        $scope.anaesthetistPBR = "Anaesthetist - PBR monitoring";
+        $scope.paediatricPBR = "Paediatric - PBR monitoring";
+        $scope.paediatrician_PICU_monitoringtool = "Paediatrician _PICU_ monitoring tool";
+        $scope.currentUserRole = [];
+
 
         var dummyEvent = {};
 
@@ -509,5 +516,28 @@ trackerCapture.controller('EventCreationController',
             }
             $scope.updateSelection();
         };
+
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            async: false,
+            contentType: "application/json",
+            url: '../api/me.json?fields=id,name,userCredentials[*,userRoles[*]],userGroups[id,name]&paging=false',
+            success: function (response) {
+                $scope.matchUsername = response.userCredentials.username;
+                for (var i = 0; i < response.userCredentials.userRoles.length; i++) {
+                    $scope.currentUserRole.push(response.userCredentials.userRoles[i].displayName);
+                }
+            }
+        });
+
+        $scope.checkUserRole = function () {
+            if ($scope.selectedProgram.displayName == $scope.gynaecologistPBR || $scope.selectedProgram.displayName == $scope.anaesthetistPBR || $scope.selectedProgram.displayName == $scope.paediatricPBR || $scope.selectedProgram.displayName == $scope.paediatrician_PICU_monitoringtool) {
+                return true
+            }
+            else {
+                return false
+            }
+        }
 
     });
