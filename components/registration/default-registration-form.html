@@ -56,7 +56,7 @@
                 </span>
 
                 <span ng-if="!attribute.optionSetValue" ng-switch="attribute.valueType">
-                    <span ng-switch-when="DATE">
+                    <span ng-switch-when="DATE" && ng-if="attribute.id != 'k3xIIFoWm04'">
                         <input type="text"
                                placeholder="{{dhis2CalendarFormat.keyDateFormat}}" 
                                name="foo" 
@@ -64,6 +64,24 @@
                                d2-date
                                d2-date-validator 
                                max-date="attribute.allowFutureDate ? '' : 0"
+                               ng-model="selectedTei[attribute.id]"                               
+                               ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
+                               d2-attribute-validator 
+                               attribute-data={{attribute}}
+                               selected-program-id={{selectedProgram.id}}  
+                               selected-tei-id={{selectedTei.trackedEntityInstance}}  
+                               ng-disabled="isDisabled(attribute)"
+                               blur-or-change="teiValueUpdated(selectedTei, attribute.id)"
+                               ng-required="attribute.mandatory"/>
+                    </span>
+					<span ng-switch-when="DATE" && ng-if="attribute.id == 'k3xIIFoWm04'">
+                        <input type="text"
+                               placeholder="{{dhis2CalendarFormat.keyDateFormat}}" 
+                               name="foo" 
+                               class="form-control"
+                               d2-date
+                               d2-date-validator 
+                               max-date="attribute.allowFutureDate ? '' : 2000"
                                ng-model="selectedTei[attribute.id]"                               
                                ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
                                d2-attribute-validator 
