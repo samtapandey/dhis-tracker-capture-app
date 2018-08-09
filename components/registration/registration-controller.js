@@ -33,7 +33,9 @@ trackerCapture.controller('RegistrationController',
                 AccessUtils,
                 AuthorityService,
                 SessionStorageService,
-                AttributeUtils) {
+                AttributeUtils,
+                // for plan custom ID Generation
+                CustomIDGenerationService) {
     var prefilledTet = null;
     $scope.today = DateUtils.getToday();
     $scope.trackedEntityForm = null;
@@ -94,13 +96,18 @@ trackerCapture.controller('RegistrationController',
             CurrentSelection.setOptionSets($scope.optionSets);
         });
     }
-    
-    
+
     $scope.isDisabled = function(attribute) {
-        return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
+        // update for PLAN for disable attribute patient_identifier
+        if( attribute.code === 'patient_identifier') {
+            return true;
+        }
+        else {
+            return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
+        }
     };
 
-    $scope.selectedEnrollment = {
+        $scope.selectedEnrollment = {
         enrollmentDate: $scope.today,
         incidentDate: $scope.today,
         orgUnit: $scope.selectedOrgUnit.id,
@@ -127,7 +134,6 @@ trackerCapture.controller('RegistrationController',
             setSelectedTrackedEntityType();
             return def.promise;
         }
-
     }
 
     var setSelectedTrackedEntityType = function(currentTet){
@@ -496,13 +502,27 @@ trackerCapture.controller('RegistrationController',
                                     $scope.selectedEnrollment = enrollment;
                                     var avilableEvent = $scope.currentEvent && $scope.currentEvent.event ? $scope.currentEvent : null;
                                     var dhis2Events = EventUtils.autoGenerateEvents($scope.tei.trackedEntityInstance, $scope.selectedProgram, $scope.selectedOrgUnit, enrollment, avilableEvent);
-                                    if (dhis2Events.events.length > 0) {
-                                        DHIS2EventFactory.create(dhis2Events).then(function () {
-                                            notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
-                                        });
-                                    } else {
-                                        notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
+
+                                    // update for PLAN for custom_id_generation
+                                    if ($scope.selectedProgram.id == "y6lXVg8TdOj" && $scope.selectedTei.KLSVjftH2xS != undefined )
+                                    {
+                                        $scope.projectDonor = $scope.selectedTei.KLSVjftH2xS;
                                     }
+                                    else if ( $scope.selectedProgram.id  == "Fcyldy4VqSt" && $scope.selectedTei.o94ggG6Mhx8 != undefined)
+                                    {
+                                        $scope.projectDonor = $scope.selectedTei.o94ggG6Mhx8;
+                                    }
+
+                                    CustomIDGenerationService.validateAndCreateCustomId($scope.tei,$scope.selectedProgram.id,$scope.attributes,destination,$scope.optionSets,$scope.attributesById,$scope.selectedEnrollment.enrollmentDate, $scope.projectDonor).then(function(){
+                                        if (dhis2Events.events.length > 0) {
+                                            DHIS2EventFactory.create(dhis2Events).then(function () {
+                                                notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
+                                            });
+                                        } else {
+                                            notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
+                                        }
+                                  });
+                                  // update for PLAN for custom_id_generation  id close
                                 }
                                 else {
                                     //enrollment has failed
