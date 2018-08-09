@@ -76,6 +76,8 @@ trackerCapture.controller('RegistrationController',
         $scope.selectedBlockTaluk = null;
         $scope.selectedVillage = null;
 
+        // for AES display on load
+        $scope.aMESEpidID = 'eZAMzTucu0x';
 
         var flag = { debug: true, verbose: false };
         $rootScope.ruleeffects = {};
@@ -439,6 +441,26 @@ trackerCapture.controller('RegistrationController',
 
             AttributesFactory.getByProgram($scope.selectedProgram).then(function (atts) {
                 $scope.attributes = TEIGridService.generateGridColumns(atts, null, false).columns;
+
+                // change for AES display on load
+                $timeout( function (){
+                    var date = new Date();
+                    var year = date.getFullYear();
+                    var selOrgUnitCode = '';
+                    var selParentParentOrgUnitCode = '';
+                    $.getJSON("../api/organisationUnits/"+ $scope.selectedOrgUnit.id +".json?fields=id,displayName,code,parent[id,displayName,code,parent[id,displayName,code]]&skipPaging=false", function (responseData) {
+
+                        selOrgUnitCode = responseData.code;
+                        selParentParentOrgUnitCode = responseData.parent.parent.code;
+
+                        if( !$scope.selectedTei[$scope.aMESEpidID] && $scope.selectedTei[$scope.aMESEpidID] == undefined)
+                        {
+                            $scope.selectedTei[$scope.aMESEpidID] = $scope.selectedProgram.displayName.split(" ")[0] + "/IND/" + selParentParentOrgUnitCode + "/" + selOrgUnitCode + "/";//put default value on load for
+                        }
+                    });
+                },0);
+
+                // end custom change
                 fetchGeneratedAttributes();
                 if ($scope.selectedProgram && $scope.selectedProgram.id) {
                     if ($scope.selectedProgram.dataEntryForm && $scope.selectedProgram.dataEntryForm.htmlCode) {
