@@ -2470,17 +2470,17 @@ trackerCapture.controller('DataEntryController',
                             arrayDEs = arrayDEs + "Equivocal: " + arrayDEEs;
                         }
                         if (arrayDEs !== "") {
-                            for (var i = 0, charsLength = arrayDEs.length; i < charsLength; i += 80) {
-                                arrayDEs2.push(arrayDEs.substring(i, i + 80));
-                            }
-                            for (var l = 0; l < arrayDEs2.length; l++) {
+                            // for (var i = 0, charsLength = arrayDEs.length; i < charsLength; i += 80) {
+                            //     arrayDEs2.push(arrayDEs.substring(i, i + 80));
+                            // }
+                            // for (var l = 0; l < arrayDEs2.length; l++) {
                                 if (phones1 !== "") {
-                                    CustomIdService.sendMessages("Patient Name : " + patientName + " and ID : " + AesId + " Test results : " + arrayDEs2[l], phones1);
+                                    CustomIdService.sendMessages("Patient Name : " + patientName + " and ID : " + AesId + " Test results : " + arrayDEs, phones1);
                                 }
                                 if (phones2 !== "") {
-                                    CustomIdService.sendMessages("Patient Name : " + patientName + " and ID : " + AesId + " Test results : " + arrayDEs2[l], phones2);
+                                    CustomIdService.sendMessages("Patient Name : " + patientName + " and ID : " + AesId + " Test results : " + arrayDEs, phones2);
                                 }
-                            }
+                            // }
 
 
                         }
