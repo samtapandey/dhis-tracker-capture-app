@@ -501,8 +501,9 @@ angular.module('trackerCaptureServices')
             },
             sendMessages: function (msg,phones) {
                 var def = $q.defer();
-                $http.get('http://bulksms.mysmsmantra.com:8080/WebSMS/SMSAPI.jsp?username=hispindia&password=hisp1234&sendername=HSSPIN&mobileno='+phones+'&message='+msg).then(function (response) {
-
+                // $http.get('http://bulksms.mysmsmantra.com:8080/WebSMS/SMSAPI.jsp?username=hispindia&password=hisp1234&sendername=HSSPIN&mobileno='+phones+'&message='+msg).then(function (response) {
+                $http.get('https://api.textlocal.in/send/?apikey=M5gvi78hoTU-PBGPHappMjp76HGg8WlCgTLVbnNJtB&sender=HISPIN&numbers='+phones+'&message='+msg).then(function (response) {
+                     
                     def.resolve(response.data);
                 });
                 return def.promise;
