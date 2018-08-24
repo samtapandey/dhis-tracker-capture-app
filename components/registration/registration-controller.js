@@ -250,6 +250,21 @@ trackerCapture.controller('RegistrationController',
 
         AttributesFactory.getByProgram($scope.selectedProgram).then(function (atts) {
             $scope.attributes = TEIGridService.generateGridColumns(atts, null, false).columns;
+
+            $timeout( function (){
+                    
+                if( !$scope.selectedTei["UHoTGT1dtjj"] && $scope.selectedTei["UHoTGT1dtjj"] == undefined)
+                {
+                 $scope.selectedTei["UHoTGT1dtjj"] = $scope.fingerprintID; //put default value on load form
+                }
+                if( !$scope.selectedTei["uiOMHu4LtAP"] && $scope.selectedTei["uiOMHu4LtAP"] == undefined)
+                {
+                 $scope.selectedTei["uiOMHu4LtAP"] = $scope.fingerprintStr; //put default value on load form
+                }
+            
+               },0);
+
+
             fetchGeneratedAttributes();
             if ($scope.selectedProgram && $scope.selectedProgram.id) {
                 if ($scope.selectedProgram.dataEntryForm && $scope.selectedProgram.dataEntryForm.htmlCode) {
