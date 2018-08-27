@@ -514,6 +514,7 @@ trackerCapture.controller('RegistrationController',
                                     }
 
                                     CustomIDGenerationService.validateAndCreateCustomId($scope.tei,$scope.selectedProgram.id,$scope.attributes,destination,$scope.optionSets,$scope.attributesById,$scope.selectedEnrollment.enrollmentDate, $scope.projectDonor).then(function(){
+										 $timeout(function () {
                                         if (dhis2Events.events.length > 0) {
                                             DHIS2EventFactory.create(dhis2Events).then(function () {
                                                 notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
@@ -521,6 +522,7 @@ trackerCapture.controller('RegistrationController',
                                         } else {
                                             notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
                                         }
+										}, 0);
                                   });
                                   // update for PLAN for custom_id_generation  id close
                                 }
