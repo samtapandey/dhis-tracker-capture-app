@@ -46,6 +46,7 @@ trackerCapture.controller('EventCreationController',
         $scope.paediatricPBR = "Paediatric - PBR monitoring";
         $scope.paediatrician_PICU_monitoringtool = "Paediatrician _PICU_ monitoring tool";
         $scope.currentUserRole = [];
+        $scope.checkUserRoleForDate;
 
 
         var dummyEvent = {};
@@ -527,6 +528,13 @@ trackerCapture.controller('EventCreationController',
                 $scope.matchUsername = response.userCredentials.username;
                 for (var i = 0; i < response.userCredentials.userRoles.length; i++) {
                     $scope.currentUserRole.push(response.userCredentials.userRoles[i].displayName);
+                }
+                if($scope.currentUserRole.indexOf('PBI_admin_user-role')>-1){
+                    $scope.checkUserRoleForDate = true;
+                }
+                else
+                {
+                    $scope.checkUserRoleForDate = false;
                 }
             }
         });
