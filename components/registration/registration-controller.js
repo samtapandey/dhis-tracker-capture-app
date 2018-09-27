@@ -454,7 +454,7 @@ trackerCapture.controller('RegistrationController',
         //Temp fix for not being able to save images with attribute.value = "" or null.
         var tempAttributes = [];
         angular.forEach($scope.tei.attributes, function (attribute) {
-            if(attribute.value !== '' && attribute.value) {
+            if(attribute.value !== '' && attribute.value != null ) {
                 tempAttributes.push(attribute);
             }
         });
@@ -664,22 +664,25 @@ trackerCapture.controller('RegistrationController',
     };
 
     var getMatchingTeisCount = function(tei, field){
-        var searchGroups = $scope.searchConfig.searchGroupsByAttributeId[field];
         var promises = [];
-        if(searchGroups){
-            if(searchGroups.default){
-                searchGroups.default[field] = tei[field];
-                promises.push(getMatchingTeisCountBySearchGroup(searchGroups.default, field));
-            } 
-            if(searchGroups.unique){
-                searchGroups.unique[field] = tei[field];
-                promises.push(getMatchingTeisCountBySearchGroup(searchGroups.unique, field));
+        if($scope.registrationMode === 'REGISTRATION') {
+            var searchGroups = $scope.searchConfig.searchGroupsByAttributeId[field];
+            if(searchGroups){
+                if(searchGroups.default){
+                    searchGroups.default[field] = tei[field];
+                    promises.push(getMatchingTeisCountBySearchGroup(searchGroups.default, field));
+                } 
+                if(searchGroups.unique){
+                    searchGroups.unique[field] = tei[field];
+                    promises.push(getMatchingTeisCountBySearchGroup(searchGroups.unique, field));
+                }
+            }else{
+                var def = $q.defer();
+                def.resolve();
+                promises.push(def.promise);
             }
-        }else{
-            var def = $q.defer();
-            def.resolve();
-            promises.push(def.promise);
         }
+
         return $q.all(promises);
     }
 
@@ -904,7 +907,8 @@ trackerCapture.controller('RegistrationController',
     $scope.showMatchesModal = function(allowRegistration){
         var modalData = {
             allowRegistration: allowRegistration,
-            translateWithTETName: $scope.translateWithTETName
+            translateWithTETName: $scope.translateWithTETName,
+            optionSets: $scope.optionSets
         }
         var refetch;
         if($scope.programSearchScope){
@@ -924,7 +928,7 @@ trackerCapture.controller('RegistrationController',
                 {
                     $scope.allowRegistration = modalData.allowRegistration;
                     $scope.translateWithTETName = modalData.translateWithTETName;
-                    $scope.gridData = TEIGridService.format(orgUnit.id, data, false, null, null);
+                    $scope.gridData = TEIGridService.format(orgUnit.id, data, false, modalData.optionSets, null);
                     $scope.pager = data && data.metaData ? data.metaData.pager : null;
                     $scope.openTei = function(tei){
                         $modalInstance.close({ action: "OPENTEI", tei: tei});
@@ -939,7 +943,7 @@ trackerCapture.controller('RegistrationController',
                     $scope.refetchData = function(pager, sortColumn){
                         refetchDataFn(pager,sortColumn).then(function(res){
                             $scope.pager = res.data && res.data.metaData ? res.data.metaData.pager : null;
-                            $scope.gridData = TEIGridService.format(orgUnit.id, res.data, false, null, null);
+                            $scope.gridData = TEIGridService.format(orgUnit.id, res.data, false, modalData.optionSets, null);
                         });
                     }
                 },
@@ -984,6 +988,7 @@ trackerCapture.controller('RegistrationController',
             orgUnit: $scope.selectedOrgUnit,
             data: duplicateTei,
             attribute: field,
+            optionSets: $scope.optionSets,
             translateWithTEAName: $scope.translateWithTEAName,
             translateWithTETName: $scope.translateWithTETName
         };
@@ -993,7 +998,7 @@ trackerCapture.controller('RegistrationController',
             controller: function($scope,$modalInstance, TEIGridService,modalData)
             {
                 $scope.attribute = modalData.attribute;
-                $scope.gridData = TEIGridService.format(modalData.orgUnit.id, modalData.data, false, null, null);
+                $scope.gridData = TEIGridService.format(modalData.orgUnit.id, modalData.data, false, modalData.optionSets, null);
                 $scope.translateWithTEAName = modalData.translateWithTEAName;
                 $scope.translateWithTETName = modalData.translateWithTETName;
                 $scope.openTei = function(tei){
