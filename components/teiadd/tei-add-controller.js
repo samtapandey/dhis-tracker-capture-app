@@ -28,8 +28,7 @@ trackerCapture.controller('TEIAddController',
             addingRelationship,
             selectedTei,
             AccessUtils,
-            TEService,
-            allPrograms
+            TEService
             ){
     var selection = CurrentSelection.get();
    
@@ -99,11 +98,7 @@ trackerCapture.controller('TEIAddController',
                 $scope.relatedPredefinedProgram = true;
                 $scope.base.selectedProgramForRelative = program;
                 $scope.onSelectedProgram(program);
-            } else {
-                
-                $scope.relatedAvailablePrograms = $scope.programs.filter(function(p){
-                    return p.trackedEntityType && p.trackedEntityType.id === relatedConstraint.trackedEntityType.id;
-                });
+            }else{
                 $scope.relatedPredefinedProgram = false;
                 $scope.base.selectedProgramForRelative = null;
                 $scope.onSelectedProgram($scope.base.selectedProgramForRelative);
@@ -170,7 +165,7 @@ trackerCapture.controller('TEIAddController',
 
         if ($scope.addingRelationship) {
             $scope.teiAddLabel = $translate.instant('add_relationship');
-            $scope.programs = AccessUtils.toWritable(allPrograms);
+            $scope.programs = AccessUtils.toWritable(selections.prs);
             CurrentSelection.setRelationshipOwner($scope.mainTei);
         }
         else {

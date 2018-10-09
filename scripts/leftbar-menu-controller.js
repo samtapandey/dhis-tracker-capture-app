@@ -11,4 +11,12 @@ trackerCapture.controller('LeftBarMenuController',
     $scope.showReportTypes = function(){
         $location.path('/report-types').search();
     };
+
+    $scope.firstLevelApproval = function(){
+        $location.path('/first-level-approval').search();
+    }
+
+    $scope.secondLevelApproval = function(){
+        $location.path('/second-level-approval').search();
+    }
 });

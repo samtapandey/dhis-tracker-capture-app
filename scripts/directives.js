@@ -625,4 +625,4 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
             };
         }
     }
-});
+})

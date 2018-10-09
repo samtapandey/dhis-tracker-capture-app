@@ -18,11 +18,6 @@ trackerCapture.controller('RelationshipController',
     $rootScope.showAddRelationshipDiv = false;
     $scope.relatedProgramRelationship = false;
     var ENTITYNAME = "TRACKED_ENTITY_INSTANCE";
-    var allPrograms = [];
-
-    ProgramFactory.getAll().then(function(result) {
-        allPrograms = result.programs;
-    });
     
     //listen for the selected entity       
     $scope.$on('dashboardWidgets', function(event, args) { 
@@ -57,7 +52,6 @@ trackerCapture.controller('RelationshipController',
             $scope.relationshipTypes = relTypes.filter(function(relType){
                 return relType.fromConstraint && relType.fromConstraint.relationshipEntity === ENTITYNAME
                     && relType.toConstraint.relationshipEntity === ENTITYNAME
-                    && relType.fromConstraint.trackedEntityType && relType.fromConstraint.trackedEntityType.id === $scope.trackedEntityType.id
                     && (!relType.fromConstraint.program || relType.fromConstraint.program.id === $scope.selectedProgram.id);                
             });
 
@@ -106,9 +100,6 @@ trackerCapture.controller('RelationshipController',
                     },
                     relatedProgramRelationship: function(){
                         return $scope.relatedProgramRelationship;
-                    },
-                    allPrograms: function(){
-                        return allPrograms;
                     }
                 }
             });
