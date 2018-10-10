@@ -15,6 +15,7 @@ import '../scripts/filters.js';
 import '../scripts/directives.js';
 import '../scripts/leftbar-menu-controller.js';
 import '../scripts/report-types-controller.js';
+import '../scripts/amr-custom-service.js';
 import '../scripts/first-level-approval-controller.js';
 import '../scripts/second-level-approval-controller.js';
 import '../scripts/display-mode-controller.js';

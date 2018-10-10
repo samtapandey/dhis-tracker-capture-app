@@ -31,7 +31,8 @@ trackerCapture.controller('DataEntryController',
                 TrackerRulesFactory,
                 EventCreationService,
                 AuthorityService,
-                AccessUtils) {
+                AccessUtils,
+                AMRCustomService) {
     
     //Unique instance id for the controller:
     $scope.instanceId = Math.floor(Math.random() * 1000000000);
@@ -80,6 +81,60 @@ trackerCapture.controller('DataEntryController',
     $scope.useMainMenu = false;
     $scope.mainMenuStages = [];
     $scope.useBottomLine = false; 
+
+    //AMR Custom Variables
+
+    $scope.customSectionName = '';
+    $scope.currentSelectedProgramUid = CurrentSelection.currentSelection.pr.id;
+    $scope.validProgram = false;
+    $scope.currentUserName = '';
+    
+    //FOR AMR Section Work
+    AMRCustomService.getSectionName().then(function(selectedSectionName){
+        var trackdata = selectedSectionName;
+        $scope.customSectionName = trackdata.surname;
+        $scope.currentUserName = trackdata.userCredentials.username;
+        console.log($scope.customSectionName);
+    });
+
+    AMRCustomService.getProgramAttributes($scope.currentSelectedProgramUid).then(function(selectedProgram){
+        if(selectedProgram.attributeValues != undefined){
+            for(var i = 0; i<selectedProgram.attributeValues.length; i++)
+            {
+                if(selectedProgram.attributeValues[i].attribute.code === 'AMRProgram' && selectedProgram.attributeValues[i].value == "true")
+                {
+                    $scope.validProgram = true;
+                    break;
+                }
+            }
+        }
+    });
+    
+    // Custom Changes in AMR for section disable work...
+
+    // $scope.disableSection = function (getSections){
+    //     $.get("../api/me.json?fields=id,name,surname,attributeValues[attribute[id,code,name]]", function (data1) {
+    //         var trackdata = data1;
+    //         $scope.custom_section_name = trackdata.surname;
+    //         console.log($scope.custom_section_name);
+    //         for(var i = 0; i<getSections.length; i++){
+    //             if(getSections[i].displayName === $scope.custom_section_name)
+    //             {
+    //                 $scope.disabledSection = false;
+    //                 $('#disableValues').find('input, textarea, select').attr('disabled',false);
+    //                 // $('#disableValues :input').attr('disabled', false);
+    //                 // $('#disableValues :select').attr('disabled', false);
+    //             }
+    //             else{
+    //                 $scope.disabledSection = true;
+    //                 $('#disableValues').find('input, textarea, select').attr('disabled',true);
+    //                 // $('#disableValues :input').attr('disabled', true);
+    //                 // $('#disableValues :select').attr('disabled', true);
+    //             }
+    //         }
+    //     });
+    // }
+    // $scope.disabledSection = false;
     
     //hideTopLineEventsForFormTypes is only used with main menu
     $scope.hideTopLineEventsForFormTypes = {TABLE: true, COMPARE: true};
@@ -3302,7 +3357,7 @@ trackerCapture.controller('DataEntryController',
         var width = angular.element(document.getElementById('tabelContainer'))[0].clientWidth;
         return width;
     };
-    
+
 })
 .controller('EventOptionsInTableController', function($scope, $translate){
     
