@@ -135,7 +135,7 @@ trackerCapture.controller('FirstLevelApprovalController',
                 dataType: "json",
                 contentType: "application/json",
                 data: JSON.stringify(event),
-                url: DHIS2URL + '/events/' + eventId1, event,
+                url: DHIS2URL + '/events/' + eventId1 + '/'+ event.status, event,
                 success: function (response) {
                     console.log("Event updated with Active status:" + eventId1);
                 },
