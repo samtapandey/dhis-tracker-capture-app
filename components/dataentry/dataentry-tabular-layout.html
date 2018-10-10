@@ -12,7 +12,7 @@
             <a class="small-horizontal-spacing" href ng-click="removeWidget(dataentryTabularWidget)" title="{{removeLabel}}"><i class="fa fa-times-circle"></i></a>
         </span>
     </div>
-
+<div ng-if="editProfile()">
     <div ng-show="dataentryTabularWidget.expand" class="panel-body dashboard-widget-container">
         <div ng-if="selectedEnrollment && selectedEnrollment.enrollment">
             <div>
@@ -63,4 +63,5 @@
         </div>
         <div ng-if="selectedEnrollment && !selectedEnrollment.enrollment" class="alert alert-danger">{{notEnrolledLabel}}</div>
     </div>    
+    </div>
 </div>
