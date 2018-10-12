@@ -36,66 +36,65 @@
         <br><br>
         <div class="row">
             <div class="col-sm-12 col-md-10">
-                <table class="table table-borderless table-striped">
-                    <tr>
-                        <td style="padding: 20px 10px;">{{'org_unit' | translate}}</td>
-                        <td>
-                            <input type="text" class="form-control" value="{{selectedOrgUnit.displayName || 'please_select'| translate}}"
-                                ng-disabled="true">
-                        </td>
-                    </tr>
+                
+                    <table class="table table-borderless table-striped" style="width:50%">
                         <tr>
-                            <td style="padding: 20px 10px;">
-                                {{'program'| translate}}
-                            </td>
+                            <td style="padding: 20px 10px;">{{'org_unit' | translate}}</td>
                             <td>
-                                <select ng-model="selectedProgram" class="form-control" ng-options="program.name for program in programs | orderBy: 'name'"
-                                    ng-change="getProgramStages(selectedProgram)">
-                                    <option value="">{{'Please select program'| translate}}</option>
-                                </select>
+                                <input type="text" class="form-control" value="{{selectedOrgUnit.displayName || 'please_select'| translate}}"
+                                    ng-disabled="true">
                             </td>
-                            <td style="padding: 20px 25px;">
-                                {{'program_stage'| translate}}
-                            </td>
-                            <td>
-                                <select ng-model="selectedProgramStage" class="form-control" ng-options="programStage.name for programStage in programStages | orderBy: 'name'"
-                                    ng-change="getSelectedProgramStage(selectedProgramStage)">
-                                    <option value="">{{'Please select program stage'| translate}}</option>
-                                </select>
+                            <td style="padding: 13px 10px;">
+                                <button type="button" class="btn btn-primary center-block" ng-click="filterOptionsShow()">{{'Filter'|translate}}</button>
                             </td>
                         </tr>
-                    <tr>
-                        <td>
-                            <label>Check to filter by Dates</label>
+                    </table>
+                <div data-ng-init="init()"></div> 
+                <table class="table table-borderless table-striped">
+                    <tr ng-show="checked">
+                        <td style="padding: 20px 10px;">
+                            {{'program'| translate}}
                         </td>
                         <td>
-                            <input type="checkbox" ng-model="checked">
+                            <select ng-model="selectedProgram" class="form-control" ng-options="program.name for program in programs | orderBy: 'name'"
+                                ng-change="getProgramStages(selectedProgram)">
+                                <option value="">{{'Please select program'| translate}}</option>
+                            </select>
+                        </td>
+                        <td style="padding: 20px 25px;">
+                            {{'program_stage'| translate}}
+                        </td>
+                        <td>
+                            <select ng-model="selectedProgramStage" class="form-control" ng-options="programStage.name for programStage in programStages | orderBy: 'name'"
+                                ng-change="getSelectedProgramStage(selectedProgramStage)">
+                                <option value="">{{'Please select program stage'| translate}}</option>
+                            </select>
                         </td>
                     </tr>
-                    <tr>
+                    <tr ng-show="checked">
                         <td style="padding: 20px 10px;">
-                            <label ng-show="checked">Start Date </label>
+                            <label>Start Date </label>
                         </td>
                         <td>
-                            <input type="text" ng-show="checked" ng-attr-placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
-                                name="foo" class="form-control" d2-date d2-date-validator max-date="attribute.allowFutureDate ? '' : 0"
+                            <input type="text" ng-attr-placeholder="{{dhis2CalendarFormat.keyDateFormat}}" name="foo"
+                                class="form-control" d2-date d2-date-validator max-date="attribute.allowFutureDate ? '' : 0"
                                 ng-model="startDate" id="startDate" ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
-                                ng-change="updateStartDate(startdate)" required />
+                                required />
 
                         </td>
                         <td style="padding: 20px 25px;">
-                            <label ng-show="checked">End Date </label>
+                            <label>End Date </label>
                         </td>
                         <td>
-                            <input type="text" ng-show="checked" ng-attr-placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
-                                name="foo" class="form-control" d2-date d2-date-validator max-date="attribute.allowFutureDate ? '' : 0"
+                            <input type="text" ng-attr-placeholder="{{dhis2CalendarFormat.keyDateFormat}}" name="foo"
+                                class="form-control" d2-date d2-date-validator max-date="attribute.allowFutureDate ? '' : 0"
                                 ng-model="endDate" id="endDate" ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
-                                ng-change="updateEndDate(enddate)" required />
+                                required />
                         </td>
                     </tr>
 
                 </table>
-                <div class="col-md-12 trim">
+                <div class="col-md-12 trim" ng-show="checked">
                     <button type="button" class="btn btn-primary center-block" ng-click="fetchData(selectedProgram,selectedProgramStage,startDate,endDate);showLoad();"
                         ng-disabled="((!selectedProgram) || (!selectedProgramStage))">{{'Fetch Records'| translate}}</button>
                 </div><br><br><br>
@@ -103,17 +102,17 @@
         </div>
 
         <div class="loading" id="loader"></div>
-            <table id="tableid" border="1" class="table table-hover" ng-If="showtable" style="width: 100%">
-                <tr>
-                    <th ng-repeat="val in displayAttrHeader">{{val}}</th>
+        <table id="tableid" border="1" class="table table-hover" ng-If="showtable" style="width: 100%">
+            <tr>
+                <th ng-repeat="val in displayAttrHeader">{{val}}</th>
+            </tr>
+            <tbody>
+                <tr ng-repeat="attrVal in displayingValues track by $index" id="appr" title="Go to dashboard" ng-click="approvalDashboard(attrVal.tei,attrVal.eventId,selectedProgram,attrVal.ouId)">
+                    <td> {{attrVal.path}} </td>
+                    <td> {{attrVal.patRegNum}} </td>
+                    <td> {{attrVal.dob}} </td>
+                    <td> {{attrVal.amrId}} </td>
                 </tr>
-                <tbody>
-                    <tr ng-repeat="attrVal in displayingValues track by $index" id="appr" title="Go to dashboard"
-                        ng-click="approvalDashboard(attrVal.tei,attrVal.eventId,selectedProgram)">
-                        <td> {{attrVal.patRegNum}} </td>
-                        <td> {{attrVal.dob}} </td>
-                        <td> {{attrVal.amrId}} </td>
-                    </tr>
-                </tbody>
-            </table>
+            </tbody>
+        </table>
     </div>

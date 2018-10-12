@@ -7,10 +7,13 @@ trackerCapture.controller('FirstLevelApprovalController',
         ProgramFactory,
         AttributesFactory,
         $location,
-        $window) {
+        $window,
+        AMRCustomService,
+        $timeout) {
         var previousProgram = null;
         $scope.showtable = false;
-        $scope.displayAttrHeader = ["Patient Registration Number", "Date of Birth", "AMR ID"];
+        $scope.checked = false;
+        $scope.displayAttrHeader = ["Org Unit" , "Patient Registration Number", "Date of Birth", "AMR ID"];
 
         var resolvedEmptyPromise = function () {
             var deferred = $q.defer();
@@ -42,10 +45,14 @@ trackerCapture.controller('FirstLevelApprovalController',
             });
         }
 
+        var loadAllOU = function () {
+            return AMRCustomService.allOrgUnits().then(function (response) {
+               $scope.pathData = response;
+            });
+        }
+
         $scope.getProgramStages = function (progId) {
-            $scope.selectedProgramID = progId.id;
-            var url1 = DHIS2URL + "/programs/" + progId.id + ".json?fields=id,name,withoutRegistration,programTrackedEntityAttributes[*],programStages[id,name,programStageDataElements[id,dataElement[id,name,optionSet[options[code,displayName]],sortOrder]]]&paging=false";
-            $.get(url1, function (data1) {
+            AMRCustomService.getProgramAttributes(progId.id).then(function (data1) {
                 $scope.programStages = [];
                 data1.programStages.forEach(function (pgStage) {
                     $scope.programStages.push(pgStage)
@@ -53,41 +60,47 @@ trackerCapture.controller('FirstLevelApprovalController',
             });
         }
 
-        $scope.fetchData = function (selectedProgram, selectedProgramStage, startDate, endDate) {
+        $scope.filterOptionsShow = function () {
+            $scope.checked = !$scope.checked;
+        }
+
+        $scope.init = function () {
+            $scope.loadData();
+            loadAllOU();
+        }
+
+        $scope.loadData = function () {
             $scope.allEvents = [];
-            if ((startDate == undefined && endDate == undefined) || (startDate == null && endDate == null) || (startDate == "" && endDate == "")) {
-                $.ajax({
-                    async: false,
-                    type: "GET",
-                    url: DHIS2URL + "/events.json?orgUnit=" + $scope.selectedOrgUnit.id + "&ouMode=DESCENDANTS&program=" + selectedProgram.id + "&programStage=" + selectedProgramStage.id + "&skipPaging=true",
-                    success: function (response) {
-                        response.events.forEach(function (ev) {
-                            $scope.allEvents.push(ev);
-                        });
-                    }
+            var selectedProgram = { id: "vbVyZhBu7GG" };
+            var selectedProgramStage = { id: "YVtfSSmSNjJ" };
+            AMRCustomService.getSectionName().then(function (response) {
+                response.organisationUnits.forEach(function (res) {
+                    $scope.userOU = res;
                 });
-                getEvents($scope.allEvents, selectedProgram, selectedProgramStage);
-            }
-            else {
-                if ((!startDate) || (!endDate)) {
-                    window.alert("Please select the dates correctly");
-                }
-                else if (moment(endDate).isBefore(moment(startDate))) {
-                    window.alert('Please select end date Accordingly');
-                }
-                else {
-                    $.ajax({
-                        async: false,
-                        type: "GET",
-                        url: DHIS2URL + "/events.json?orgUnit=" + $scope.selectedOrgUnit.id + "&ouMode=DESCENDANTS&program=" + selectedProgram.id + "&programStage=" + selectedProgramStage.id + "&startDate=" + startDate + "&endDate=" + endDate + "&skipPaging=true",
-                        success: function (response) {
-                            response.events.forEach(function (ev) {
-                                $scope.allEvents.push(ev);
-                            });
-                        }
+                AMRCustomService.getEventsWithoutFilter($scope.userOU, selectedProgram, selectedProgramStage).then(function (response) {
+                    response.events.forEach(function (ev) {
+                        $scope.allEvents.push(ev);
                     });
                     getEvents($scope.allEvents, selectedProgram, selectedProgramStage);
-                }
+                });
+            });
+        }
+
+        $scope.fetchData = function (selectedProgram, selectedProgramStage, startDate, endDate) {
+            $scope.allEvents = [];
+            if ((!startDate) || (!endDate)) {
+                window.alert("Please select the dates correctly");
+            }
+            else if (moment(endDate).isBefore(moment(startDate))) {
+                window.alert('Please select end date Accordingly');
+            }
+            else {
+                AMRCustomService.getEventsWithFilter($scope.selectedOrgUnit, selectedProgram, selectedProgramStage, startDate, endDate).then(function (response) {
+                    response.events.forEach(function (ev) {
+                        $scope.allEvents.push(ev);
+                    });
+                    getEvents($scope.allEvents, selectedProgram, selectedProgramStage);
+                });
             }
         }
 
@@ -95,38 +108,51 @@ trackerCapture.controller('FirstLevelApprovalController',
             $scope.teiList = []; $scope.displayingValues = [];
             allEvents.forEach(function (evDetails) {
                 if (evDetails.status === "COMPLETED") {
-                    $scope.teiList.push({tei:evDetails.trackedEntityInstance,eventId:evDetails.event});
+                    $scope.teiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit });
                 }
             });
 
             $scope.teiList.forEach(function (evData) {
-                $.ajax({
-                    async: false,
-                    type: "GET",
-                    url: DHIS2URL + "/trackedEntityInstances/" + evData.tei + ".json?fields=trackedEntityInstance,orgUnit,created,attributes[attribute,displayName,value,code]&ou=" + $scope.selectedOrgUnit.id + "&ouMode=DESCENDANTSprogram=" + selectedProgram.id + "&programStage=" + selectedProgramStage.id + "&skipPaging=true",
-                    success: function (response1) {
-                        response1.attributes.forEach(function (attr) {
-                            if (attr.code == 'amr_id') {
-                                $scope.amr_id = attr.value;
-                            }
-                            if (attr.code == 'patient_registration_number') {
-                                $scope.patientRegNum = attr.value;
-                            }
-                            if (attr.code == 'dob') {
-                                $scope.dOb = attr.value;
-                            }
-                        });
-                    }
-                })
+                AMRCustomService.getTEIData(evData, selectedProgram, selectedProgramStage).then(function (response) {
+                    response.attributes.forEach(function (attr) {
+                        if (attr.code == 'amr_id') {
+                            $scope.amr_id = attr.value;
+                        }
+                        if (attr.code == 'patient_registration_number') {
+                            $scope.patientRegNum = attr.value;
+                        }
+                        if (attr.code == 'dob') {
+                            $scope.dOb = attr.value;
+                        }
+                    });
+                    $scope.displayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb });
+                    $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = '';
+                });
                 $scope.showtable = true;
-                $scope.displayingValues.push({ tei: evData.tei, eventId: evData.eventId, amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb });
             });
             console.log($scope.displayingValues);
         }
 
-        $scope.approvalDashboard = function(tei,eventId1,selectedProgram){
-            $window.location.assign('../dhis-web-tracker-capture/index.html#/dashboard?tei=' + tei + '&program=' + selectedProgram.id + '&ou=' +$scope.selectedOrgUnit.id);
-           
+        var getPath = function (pathId) {
+            let pathMap = [];
+            var hierarchy = "";
+           // for (let y = 0; y < pathId.length; y++) {
+              for (let z = 0; z < $scope.pathData.organisationUnits.length; z++) {
+              //  if ($scope.pathData.organisationUnits[z].id == pathId[y]) {
+                if ($scope.pathData.organisationUnits[z].id == pathId) {
+                  pathMap.push($scope.pathData.organisationUnits[z].name);
+                }
+              }
+           // }
+            for (let i = pathMap.length - 1; i >= 0; i--) {
+              hierarchy += pathMap[i] + "/";
+            }
+            return hierarchy;
+          }
+
+        $scope.approvalDashboard = function (tei, eventId1, selectedProgram, evOu) {
+            $window.location.assign('../dhis-web-tracker-capture/index.html#/dashboard?tei=' + tei + '&program=' + selectedProgram.id + '&ou=' + evOu);
+
             var event = {
                 status: "ACTIVE",
             };
@@ -135,7 +161,7 @@ trackerCapture.controller('FirstLevelApprovalController',
                 dataType: "json",
                 contentType: "application/json",
                 data: JSON.stringify(event),
-                url: DHIS2URL + '/events/' + eventId1 + '/'+ event.status, event,
+                url: DHIS2URL + '/events/' + eventId1 + '/' + event.status, event,
                 success: function (response) {
                     console.log("Event updated with Active status:" + eventId1);
                 },
