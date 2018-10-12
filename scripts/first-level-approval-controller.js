@@ -108,7 +108,7 @@ trackerCapture.controller('FirstLevelApprovalController',
             $scope.teiList = []; $scope.displayingValues = [];
             allEvents.forEach(function (evDetails) {
                 if (evDetails.status === "COMPLETED") {
-                    $scope.teiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit });
+                    $scope.teiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit , prgId:evDetails.program });
                 }
             });
 
@@ -125,7 +125,7 @@ trackerCapture.controller('FirstLevelApprovalController',
                             $scope.dOb = attr.value;
                         }
                     });
-                    $scope.displayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb });
+                    $scope.displayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb });
                     $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = '';
                 });
                 $scope.showtable = true;
@@ -151,7 +151,7 @@ trackerCapture.controller('FirstLevelApprovalController',
           }
 
         $scope.approvalDashboard = function (tei, eventId1, selectedProgram, evOu) {
-            $window.location.assign('../dhis-web-tracker-capture/index.html#/dashboard?tei=' + tei + '&program=' + selectedProgram.id + '&ou=' + evOu);
+            $window.location.assign('../dhis-web-tracker-capture/index.html#/dashboard?tei=' + tei + '&program=' + selectedProgram + '&ou=' + evOu);
 
             var event = {
                 status: "ACTIVE",
