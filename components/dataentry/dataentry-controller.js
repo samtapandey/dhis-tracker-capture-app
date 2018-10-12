@@ -87,13 +87,32 @@ trackerCapture.controller('DataEntryController',
     $scope.customSectionName = '';
     $scope.currentSelectedProgramUid = CurrentSelection.currentSelection.pr.id;
     $scope.validProgram = false;
-    $scope.currentUserName = '';
+    $scope.programAttributeCode = 'AMRProgram';
+    $scope.validLevel1UserGroup = false;
+    $scope.validLevel2UserGroup = false;
+    $scope.level1UserGroupNameCode = 'level_1_approval_users'
+    $scope.level2UserGroupNameCode = 'level_2_approval_users'
     
     //FOR AMR Section Work
     AMRCustomService.getSectionName().then(function(selectedSectionName){
         var trackdata = selectedSectionName;
         $scope.customSectionName = trackdata.surname;
-        $scope.currentUserName = trackdata.userCredentials.username;
+        if(trackdata.userGroups != undefined)
+        {
+            for(var j = 0; j<trackdata.userGroups.length; j++)
+            {
+                if(trackdata.userGroups[i].code === $scope.level1UserGroupNameCode)
+                {
+                    $scope.validLevel1UserGroup = true;
+                    break;
+                }
+                else if(trackdata.userGroups[i].code === $scope.level2UserGroupNameCode)
+                {
+                    $scope.validLevel2UserGroup = true;
+                    break;
+                }
+            }
+        }
         console.log($scope.customSectionName);
     });
 
@@ -101,7 +120,7 @@ trackerCapture.controller('DataEntryController',
         if(selectedProgram.attributeValues != undefined){
             for(var i = 0; i<selectedProgram.attributeValues.length; i++)
             {
-                if(selectedProgram.attributeValues[i].attribute.code === 'AMRProgram' && selectedProgram.attributeValues[i].value == "true")
+                if(selectedProgram.attributeValues[i].attribute.code === $scope.programAttributeCode && selectedProgram.attributeValues[i].value == "true")
                 {
                     $scope.validProgram = true;
                     break;
@@ -109,32 +128,6 @@ trackerCapture.controller('DataEntryController',
             }
         }
     });
-    
-    // Custom Changes in AMR for section disable work...
-
-    // $scope.disableSection = function (getSections){
-    //     $.get("../api/me.json?fields=id,name,surname,attributeValues[attribute[id,code,name]]", function (data1) {
-    //         var trackdata = data1;
-    //         $scope.custom_section_name = trackdata.surname;
-    //         console.log($scope.custom_section_name);
-    //         for(var i = 0; i<getSections.length; i++){
-    //             if(getSections[i].displayName === $scope.custom_section_name)
-    //             {
-    //                 $scope.disabledSection = false;
-    //                 $('#disableValues').find('input, textarea, select').attr('disabled',false);
-    //                 // $('#disableValues :input').attr('disabled', false);
-    //                 // $('#disableValues :select').attr('disabled', false);
-    //             }
-    //             else{
-    //                 $scope.disabledSection = true;
-    //                 $('#disableValues').find('input, textarea, select').attr('disabled',true);
-    //                 // $('#disableValues :input').attr('disabled', true);
-    //                 // $('#disableValues :select').attr('disabled', true);
-    //             }
-    //         }
-    //     });
-    // }
-    // $scope.disabledSection = false;
     
     //hideTopLineEventsForFormTypes is only used with main menu
     $scope.hideTopLineEventsForFormTypes = {TABLE: true, COMPARE: true};
