@@ -65,16 +65,15 @@ trackerCapture.controller('FirstLevelApprovalController',
         $scope.loadData = function () {
             $scope.allEvents = [];
             var selectedProgram = { id: "vbVyZhBu7GG" };
-            var selectedProgramStage = { id: "YVtfSSmSNjJ" };
             AMRCustomService.getSectionName().then(function (response) {
                 response.organisationUnits.forEach(function (res) {
                     $scope.userOU = res;
                 });
-                AMRCustomService.getEventsWithoutFilter($scope.userOU, selectedProgram, selectedProgramStage).then(function (response) {
+                AMRCustomService.getEventsWithoutFilter($scope.userOU, selectedProgram).then(function (response) {
                     response.events.forEach(function (ev) {
                         $scope.allEvents.push(ev);
                     });
-                    getEvents($scope.allEvents, selectedProgram, selectedProgramStage);
+                    getEvents($scope.allEvents, selectedProgram);
                 });
             });
         }
@@ -92,12 +91,12 @@ trackerCapture.controller('FirstLevelApprovalController',
                     response.events.forEach(function (ev) {
                         $scope.allEvents.push(ev);
                     });
-                    getEvents($scope.allEvents, selectedProgram, selectedProgramStage);
+                    getEvents($scope.allEvents, selectedProgram);
                 });
             }
         }
 
-        var getEvents = function (allEvents, selectedProgram, selectedProgramStage) {
+        var getEvents = function (allEvents, selectedProgram) {
             $scope.teiList = []; $scope.displayingValues = [];
             allEvents.forEach(function (evDetails) {
                 $scope.eventDV = []; $scope.deExist = false; $scope.approveRejectStatus = '';
@@ -120,7 +119,7 @@ trackerCapture.controller('FirstLevelApprovalController',
                 $('#tableid').html("No records found!");
             } else {
                 $scope.teiList.forEach(function (evData) {
-                    AMRCustomService.getTEIData(evData, selectedProgram, selectedProgramStage).then(function (response) {
+                    AMRCustomService.getTEIData(evData, selectedProgram).then(function (response) {
                         response.attributes.forEach(function (attr) {
                             if (attr.code == 'amr_id') {
                                 $scope.amr_id = attr.value;

@@ -28,17 +28,17 @@ angular.module('trackerCaptureServices')
                 return def.promise;
             },
 
-            getEventsWithoutFilter: function(selectedOrgUnit,selectedProgram,selectedProgramStage){
+            getEventsWithoutFilter: function(selectedOrgUnit,selectedProgram){
                 var def = $q.defer();
-                $http.get(DHIS2URL + "/events.json?orgUnit=" + selectedOrgUnit.id + "&program=" + selectedProgram.id + "&programStage=" + selectedProgramStage.id + "&skipPaging=true").then(function (response) {
+                $http.get(DHIS2URL + "/events.json?orgUnit=" + selectedOrgUnit.id + "&program=" + selectedProgram.id +  "&skipPaging=true").then(function (response) {
                     def.resolve(response.data);
                 });
                 return def.promise;
             },
 
-            getEventsWithoutFilterForSecLevel: function(selectedOrgUnit,selectedProgram,selectedProgramStage){
+            getEventsWithoutFilterForSecLevel: function(selectedOrgUnit,selectedProgram){
                 var def = $q.defer();
-                $http.get(DHIS2URL + "/events.json?orgUnit=" + selectedOrgUnit.id + "&ouMode=DESCENDANTS&program=" + selectedProgram.id + "&programStage=" + selectedProgramStage.id + "&skipPaging=true").then(function (response) {
+                $http.get(DHIS2URL + "/events.json?orgUnit=" + selectedOrgUnit.id + "&ouMode=DESCENDANTS&program=" + selectedProgram.id + "&skipPaging=true").then(function (response) {
                     def.resolve(response.data);
                 });
                 return def.promise;
@@ -52,9 +52,9 @@ angular.module('trackerCaptureServices')
                 return def.promise;
             },
 
-            getTEIData: function(evData,selectedProgram,selectedProgramStage){
+            getTEIData: function(evData,selectedProgram){
                 var def = $q.defer();
-                $http.get(DHIS2URL + "/trackedEntityInstances/" + evData.tei + ".json?fields=trackedEntityInstance,orgUnit,created,attributes[attribute,displayName,value,code]&ou=" + evData.ou + "&ouMode=DESCENDANTSprogram=" + selectedProgram.id + "&programStage=" + selectedProgramStage.id + "&skipPaging=true").then(function (response) {
+                $http.get(DHIS2URL + "/trackedEntityInstances/" + evData.tei + ".json?fields=trackedEntityInstance,orgUnit,created,attributes[attribute,displayName,value,code]&ou=" + evData.ou + "&ouMode=DESCENDANTSprogram=" + selectedProgram.id +  "&skipPaging=true").then(function (response) {
                     def.resolve(response.data);
                 });
                 return def.promise;
