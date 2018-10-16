@@ -65,7 +65,7 @@
                             {{'program_stage'| translate}}
                         </td>
                         <td>
-                            <select ng-model="selectedProgramStage" class="form-control" ng-options="programStage.name for programStage in programStages | orderBy: 'name'"
+                            <select ng-model="selectedProgramStage" class="form-control" ng-disabled="!selectedProgram" ng-options="programStage.name for programStage in programStages | orderBy: 'name'"
                                 ng-change="getSelectedProgramStage(selectedProgramStage)">
                                 <option value="">{{'Please select program stage'| translate}}</option>
                             </select>
@@ -112,6 +112,8 @@
                     <td> {{attrVal.patRegNum}} </td>
                     <td> {{attrVal.dob}} </td>
                     <td> {{attrVal.amrId}} </td>
+                    <td> {{attrVal.apprRejStatus}} </td>
+                    <td> {{attrVal.reasonOfRej}} </td>
                 </tr>
             </tbody>
         </table>

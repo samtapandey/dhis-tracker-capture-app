@@ -13,7 +13,7 @@ trackerCapture.controller('FirstLevelApprovalController',
         var previousProgram = null;
         $scope.showtable = false;
         $scope.checked = false;
-        $scope.displayAttrHeader = ["Org Unit" , "Patient Registration Number", "Date of Birth", "AMR ID"];
+        $scope.displayAttrHeader = ["Org Unit", "Patient Registration Number", "Date of Birth", "AMR ID", "Approval Status", "Reason of Rejection/Reopen"];
 
         var resolvedEmptyPromise = function () {
             var deferred = $q.defer();
@@ -45,12 +45,6 @@ trackerCapture.controller('FirstLevelApprovalController',
             });
         }
 
-        var loadAllOU = function () {
-            return AMRCustomService.allOrgUnits().then(function (response) {
-               $scope.pathData = response;
-            });
-        }
-
         $scope.getProgramStages = function (progId) {
             AMRCustomService.getProgramAttributes(progId.id).then(function (data1) {
                 $scope.programStages = [];
@@ -66,7 +60,6 @@ trackerCapture.controller('FirstLevelApprovalController',
 
         $scope.init = function () {
             $scope.loadData();
-            loadAllOU();
         }
 
         $scope.loadData = function () {
@@ -107,48 +100,104 @@ trackerCapture.controller('FirstLevelApprovalController',
         var getEvents = function (allEvents, selectedProgram, selectedProgramStage) {
             $scope.teiList = []; $scope.displayingValues = [];
             allEvents.forEach(function (evDetails) {
-                if (evDetails.status === "COMPLETED") {
-                    $scope.teiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit , prgId:evDetails.program });
+                $scope.eventDV = []; $scope.deExist = false; $scope.approveRejectStatus = '';
+                evDetails.dataValues.forEach(function (evDV) {
+                    $scope.eventDV.push(evDV.dataElement);
+                    if (evDV.dataElement == 'ZL2TKQz6TKF') {
+                        $scope.approveRejectStatus = evDV.value;
+                    }
+                });
+                if ($scope.eventDV.indexOf('ZL2TKQz6TKF') === -1) {
+                    $scope.deExist = true;
+                }
+                if ((evDetails.status === "COMPLETED" && $scope.approveRejectStatus != 'approve' ) || (evDetails.status === "COMPLETED" && $scope.deExist === true ) ||
+                 (evDetails.status === "ACTIVE" && $scope.approveRejectStatus != 'approve') || (evDetails.status === "ACTIVE" && $scope.deExist === true)) {
+                    $scope.teiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit, prgId: evDetails.program, evDV: evDetails.dataValues });    
                 }
             });
 
-            $scope.teiList.forEach(function (evData) {
-                AMRCustomService.getTEIData(evData, selectedProgram, selectedProgramStage).then(function (response) {
-                    response.attributes.forEach(function (attr) {
-                        if (attr.code == 'amr_id') {
-                            $scope.amr_id = attr.value;
-                        }
-                        if (attr.code == 'patient_registration_number') {
-                            $scope.patientRegNum = attr.value;
-                        }
-                        if (attr.code == 'dob') {
-                            $scope.dOb = attr.value;
-                        }
+            if ($scope.teiList.length == 0) {
+                $('#tableid').html("No records found!");
+            } else {
+                $scope.teiList.forEach(function (evData) {
+                    AMRCustomService.getTEIData(evData, selectedProgram, selectedProgramStage).then(function (response) {
+                        response.attributes.forEach(function (attr) {
+                            if (attr.code == 'amr_id') {
+                                $scope.amr_id = attr.value;
+                            }
+                            if (attr.code == 'patient_registration_number') {
+                                $scope.patientRegNum = attr.value;
+                            }
+                            if (attr.code == 'dob') {
+                                $scope.dOb = attr.value;
+                            }
+                        });
+                        evData.evDV.forEach(function (de) {
+                            if (de.dataElement == 'ZL2TKQz6TKF') {
+                                $scope.approveRejectStatus = de.value;
+                            }
+                            if (de.dataElement == 'PI65n9eD9jh') {
+                                $scope.reasonOfRejection = de.value;
+                            }
+                        });
+                        $scope.displayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, reasonOfRej: $scope.reasonOfRejection });
+                        $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = ''; $scope.approveRejectStatus = ''; $scope.reasonOfRejection = '';
                     });
-                    $scope.displayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb });
-                    $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = '';
+                    $scope.showtable = true;
                 });
-                $scope.showtable = true;
-            });
-            console.log($scope.displayingValues);
+                console.log($scope.displayingValues);
+            }
         }
 
         var getPath = function (pathId) {
-            let pathMap = [];
-            var hierarchy = "";
-           // for (let y = 0; y < pathId.length; y++) {
-              for (let z = 0; z < $scope.pathData.organisationUnits.length; z++) {
-              //  if ($scope.pathData.organisationUnits[z].id == pathId[y]) {
-                if ($scope.pathData.organisationUnits[z].id == pathId) {
-                  pathMap.push($scope.pathData.organisationUnits[z].name);
+            $scope.hierarchy = "";
+            var myMap = [];
+
+            $.ajax({
+                async: false,
+                type: "GET",
+                url: DHIS2URL + "/organisationUnits/" + pathId + ".json?fields=name,level,parent[name,level,parent[id,name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level,parent[name,level]",
+                success: function (response) {
+                    if (response.level == 1) {
+                        myMap.push(response.name);
+                    }
+                    if (response.level == 2) {
+                        myMap.push(response.name);
+                        myMap.push(response.parent.name)
+                    }
+                    if (response.level == 3) {
+                        myMap.push(response.name);
+                        myMap.push(response.parent.name)
+                        myMap.push(response.parent.parent.name)
+                    }
+                    if (response.level == 4) {
+                        myMap.push(response.name);
+                        myMap.push(response.parent.name)
+                        myMap.push(response.parent.parent.name)
+                        myMap.push(response.parent.parent.parent.name)
+                    }
+                    if (response.level == 5) {
+                        myMap.push(response.name);
+                        myMap.push(response.parent.name)
+                        myMap.push(response.parent.parent.name)
+                        myMap.push(response.parent.parent.parent.name)
+                        myMap.push(response.parent.parent.parent.parent.name)
+                    }
+                    if (response.level == 6) {
+                        myMap.push(response.name);
+                        myMap.push(response.parent.name)
+                        myMap.push(response.parent.parent.name)
+                        myMap.push(response.parent.parent.parent.name)
+                        myMap.push(response.parent.parent.parent.parent.name)
+                        myMap.push(response.parent.parent.parent.parent.parent.name)
+                    }
                 }
-              }
-           // }
-            for (let i = pathMap.length - 1; i >= 0; i--) {
-              hierarchy += pathMap[i] + "/";
+            });
+            for (var i = myMap.length - 1; i >= 0; i--) {
+                $scope.hierarchy += myMap[i] + "/";
             }
-            return hierarchy;
-          }
+            return $scope.hierarchy;
+        }
 
         $scope.approvalDashboard = function (tei, eventId1, selectedProgram, evOu) {
             $window.location.assign('../dhis-web-tracker-capture/index.html#/dashboard?tei=' + tei + '&program=' + selectedProgram + '&ou=' + evOu);

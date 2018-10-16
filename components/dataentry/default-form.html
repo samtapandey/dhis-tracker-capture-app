@@ -65,10 +65,10 @@
                                     </span>
                                 </span>
                             </td>
-                            <td ng-if="!validProgram" class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                            <td class="absorbing-column" dhis2-compiled-include="components/dataentry/section-inner-form.html">
                             </td>
-                            <td ng-if="validProgram" class="absorbing-column" dhis2-compiled-include="components/dataentry/custom-section-inner-form.html">
-                            </td>
+                            <!-- <td ng-if="validProgram" class="absorbing-column" dhis2-compiled-include="components/dataentry/custom-section-inner-form.html">
+                            </td> -->
                             <td ng-if="allowProvidedElsewhereExists[currentStage.id]">
                                 <div class="align-center" ng-show="prStDes[de.id].allowProvidedElsewhere">
                                     <input type="checkbox" class="form-control-checkbox" ng-model="currentEvent.providedElsewhere[prStDes[de.id].dataElement.id]"

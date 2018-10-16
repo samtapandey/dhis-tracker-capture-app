@@ -30,6 +30,14 @@ angular.module('trackerCaptureServices')
 
             getEventsWithoutFilter: function(selectedOrgUnit,selectedProgram,selectedProgramStage){
                 var def = $q.defer();
+                $http.get(DHIS2URL + "/events.json?orgUnit=" + selectedOrgUnit.id + "&program=" + selectedProgram.id + "&programStage=" + selectedProgramStage.id + "&skipPaging=true").then(function (response) {
+                    def.resolve(response.data);
+                });
+                return def.promise;
+            },
+
+            getEventsWithoutFilterForSecLevel: function(selectedOrgUnit,selectedProgram,selectedProgramStage){
+                var def = $q.defer();
                 $http.get(DHIS2URL + "/events.json?orgUnit=" + selectedOrgUnit.id + "&ouMode=DESCENDANTS&program=" + selectedProgram.id + "&programStage=" + selectedProgramStage.id + "&skipPaging=true").then(function (response) {
                     def.resolve(response.data);
                 });
@@ -47,14 +55,6 @@ angular.module('trackerCaptureServices')
             getTEIData: function(evData,selectedProgram,selectedProgramStage){
                 var def = $q.defer();
                 $http.get(DHIS2URL + "/trackedEntityInstances/" + evData.tei + ".json?fields=trackedEntityInstance,orgUnit,created,attributes[attribute,displayName,value,code]&ou=" + evData.ou + "&ouMode=DESCENDANTSprogram=" + selectedProgram.id + "&programStage=" + selectedProgramStage.id + "&skipPaging=true").then(function (response) {
-                    def.resolve(response.data);
-                });
-                return def.promise;
-            },
-
-            allOrgUnits: function(){
-                var def = $q.defer();
-                $http.get(DHIS2URL + "/organisationUnits.json?fields=id,name&paging=false").then(function (response) {
                     def.resolve(response.data);
                 });
                 return def.promise;

@@ -102,12 +102,12 @@ trackerCapture.controller('DataEntryController',
         {
             for(var j = 0; j<trackdata.userGroups.length; j++)
             {
-                if(trackdata.userGroups[i].code === $scope.level1UserGroupNameCode)
+                if(trackdata.userGroups[j].code === $scope.level1UserGroupNameCode)
                 {
                     $scope.validLevel1UserGroup = true;
                     break;
                 }
-                else if(trackdata.userGroups[i].code === $scope.level2UserGroupNameCode)
+                else if(trackdata.userGroups[j].code === $scope.level2UserGroupNameCode)
                 {
                     $scope.validLevel2UserGroup = true;
                     break;
