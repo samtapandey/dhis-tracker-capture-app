@@ -34,9 +34,9 @@ trackerCapture.controller('RegistrationController',
                 AuthorityService,
                 SessionStorageService,
                 AttributeUtils,
+				TCOrgUnitService,
                 // for plan custom ID Generation
-                CustomIDGenerationService) {
-                TCOrgUnitService) {
+                CustomIDGenerationService) { 
     var prefilledTet = null;
     $scope.today = DateUtils.getToday();
     $scope.trackedEntityForm = null;
