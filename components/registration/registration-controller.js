@@ -36,6 +36,7 @@ trackerCapture.controller('RegistrationController',
                 AttributeUtils,
                 // for plan custom ID Generation
                 CustomIDGenerationService) {
+                TCOrgUnitService) {
     var prefilledTet = null;
     $scope.today = DateUtils.getToday();
     $scope.trackedEntityForm = null;
@@ -1136,6 +1137,29 @@ trackerCapture.controller('RegistrationController',
 
     };
 
+    var isInSearchOrgUnits = function(orgUnitPath, searchOrgUnits){
+        if($scope.userAuthority.ALL) return true;
+        if(!orgUnitPath) return false;
+        return TCOrgUnitService.isPathInOrgUnitList(orgUnitPath, searchOrgUnits);
+    }
+
+    $scope.reportDateEditable = function() {
+        //Check if user has data write to current program stage
+        if(!$scope.currentStage || !$scope.currentStage.access.data.write) return false;
+        //Check if organisation unit is closed
+        if($scope.selectedOrgUnit.closedStatus) return false;
+        //Check if event is the selected org unit or event is scheduled and org unit exists in users search org units
+        if($scope.currentEvent.orgUnit !== $scope.selectedOrgUnit.id && !($scope.currentEvent.status==='SCHEDULE' && isInSearchOrgUnits($scope.currentEvent.orgUnitPath, userSearchOrgUnits))) return false;
+        // Check if currentProgramStage blocks entry form when status is completed
+        if($scope.currentStage && $scope.currentStage.blockEntryForm && $scope.currentEvent.status ==='COMPLETED') return false;
+        //Check if tei is inactive
+        if($scope.selectedTei.inactive) return false;     
+        //Check if event is expired and user can edit expired stuff
+        if(($scope.currentEvent.expired && !$scope.userAuthority.canEditExpiredStuff)) return false;
+
+        return true;
+    }
+
     $scope.translateWithTETName = function(text, nameToLower){
         var trackedEntityTypeName = $scope.selectedProgram ? 
             $scope.selectedProgram.trackedEntityType.displayName : 
@@ -1168,7 +1192,15 @@ trackerCapture.controller('RegistrationController',
         return translated.replace("{trackedEntityAttributeName}", attributeName);
     }
 
+    $scope.saveAttributedDisabledButton = function(){
+        if($scope.selectedOrgUnit && $scope.selectedOrgUnit.id !== $scope.selectedTei.orgUnit && $scope.registrationMode === 'PROFILE') return true;
+        if($scope.selectedOrgUnit.closedStatus) return true;
+        if(!$scope.hasTeiWrite()) return true;
+        return false;
+    }
+
     $scope.attributeFieldDisabled = function(attribute){
+        if($scope.selectedOrgUnit && $scope.selectedOrgUnit.id !== $scope.selectedTei.orgUnit && $scope.registrationMode === 'PROFILE') return true;
         if($scope.isDisabled(attribute)) return true;
         if($scope.selectedOrgUnit.closedStatus) return true;
         if(!$scope.hasTeiWrite()) return true;
