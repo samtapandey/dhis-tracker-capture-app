@@ -102,12 +102,13 @@
         </div>
 
         <div class="loading" id="loader"></div>
+        <div id="noRecords" ng-If="!showtable"></div>
         <table id="tableid" border="1" class="table table-hover" ng-If="showtable" style="width: 100%">
             <tr>
                 <th ng-repeat="val in displayAttrHeader">{{val}}</th>
             </tr>
             <tbody>
-                <tr ng-repeat="attrVal in displayingValues track by $index" id="appr" title="Go to dashboard" ng-click="approvalDashboard(attrVal.tei,attrVal.eventId,attrVal.prg,attrVal.ouId)">
+                <tr ng-repeat="attrVal in displayingValues track by $index" id="appr" title="Go to dashboard" ng-click="approvalDashboard(attrVal.tei,attrVal.eventId,attrVal.prg,attrVal.prgStg,attrVal.ouId)">
                     <td> {{attrVal.path}} </td>
                     <td> {{attrVal.patRegNum}} </td>
                     <td> {{attrVal.dob}} </td>

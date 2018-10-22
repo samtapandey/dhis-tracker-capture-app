@@ -106,7 +106,7 @@ trackerCapture.controller('SecondLevelApprovalController',
                     }
                 });
                 if ((evDetails.status === "COMPLETED" && $scope.approveRejectStatus === 'approve') || (evDetails.status === "ACTIVE" && $scope.approveRejectStatus === 'approve')) {
-                    $scope.teiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit, prgId: evDetails.program, evDV: evDetails.dataValues });
+                    $scope.teiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit, prgId: evDetails.program, prgStgId:evDetails.programStage, evDV: evDetails.dataValues });
                 }
             });
 
@@ -134,7 +134,7 @@ trackerCapture.controller('SecondLevelApprovalController',
                                 $scope.reasonOfRejection = de.value;
                             }
                         });
-                        $scope.displayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, reasonOfRej: $scope.reasonOfRejection });
+                        $scope.displayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, reasonOfRej: $scope.reasonOfRejection });
                         $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = ''; $scope.approveRejectStatus = ''; $scope.reasonOfRejection = '';
                     });
                     $scope.showtable = true;
@@ -193,8 +193,8 @@ trackerCapture.controller('SecondLevelApprovalController',
             return $scope.hierarchy;
         }
 
-        $scope.approvalDashboard = function (tei, eventId1, selectedProgram, evOu) {
-            $window.location.assign('../dhis-web-tracker-capture/index.html#/dashboard?tei=' + tei + '&program=' + selectedProgram + '&ou=' + evOu);
+        $scope.approvalDashboard = function (tei, eventId1, selectedProgram,evprgStage, evOu) {
+            $window.location.assign('../dhis-web-tracker-capture/index.html#/dashboard?tei=' + tei + '&program=' + selectedProgram + '&ou=' + evOu + '&ev=' + evprgStage);
 
             var event = {
                 status: "ACTIVE",

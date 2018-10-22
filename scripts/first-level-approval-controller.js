@@ -79,6 +79,7 @@ trackerCapture.controller('FirstLevelApprovalController',
         }
 
         $scope.fetchData = function (selectedProgram, selectedProgramStage, startDate, endDate) {
+            $scope.showtable = false;
             $scope.allEvents = [];
             if ((!startDate) || (!endDate)) {
                 window.alert("Please select the dates correctly");
@@ -98,6 +99,7 @@ trackerCapture.controller('FirstLevelApprovalController',
 
         var getEvents = function (allEvents, selectedProgram) {
             $scope.teiList = []; $scope.displayingValues = [];
+            $scope.showtable = true;
             allEvents.forEach(function (evDetails) {
                 $scope.eventDV = []; $scope.deExist = false; $scope.approveRejectStatus = '';
                 evDetails.dataValues.forEach(function (evDV) {
@@ -111,12 +113,13 @@ trackerCapture.controller('FirstLevelApprovalController',
                 }
                 if ((evDetails.status === "COMPLETED" && $scope.approveRejectStatus != 'approve' ) || (evDetails.status === "COMPLETED" && $scope.deExist === true ) ||
                  (evDetails.status === "ACTIVE" && $scope.approveRejectStatus != 'approve') || (evDetails.status === "ACTIVE" && $scope.deExist === true)) {
-                    $scope.teiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit, prgId: evDetails.program, evDV: evDetails.dataValues });    
+                    $scope.teiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit, prgId: evDetails.program, prgStgId:evDetails.programStage, evDV: evDetails.dataValues });    
                 }
             });
 
             if ($scope.teiList.length == 0) {
-                $('#tableid').html("No records found!");
+                $scope.showtable = false;
+                $('#noRecords').html("No records found!");
             } else {
                 $scope.teiList.forEach(function (evData) {
                     AMRCustomService.getTEIData(evData, selectedProgram).then(function (response) {
@@ -139,10 +142,9 @@ trackerCapture.controller('FirstLevelApprovalController',
                                 $scope.reasonOfRejection = de.value;
                             }
                         });
-                        $scope.displayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, reasonOfRej: $scope.reasonOfRejection });
+                        $scope.displayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, reasonOfRej: $scope.reasonOfRejection });
                         $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = ''; $scope.approveRejectStatus = ''; $scope.reasonOfRejection = '';
                     });
-                    $scope.showtable = true;
                 });
                 console.log($scope.displayingValues);
             }
@@ -198,8 +200,8 @@ trackerCapture.controller('FirstLevelApprovalController',
             return $scope.hierarchy;
         }
 
-        $scope.approvalDashboard = function (tei, eventId1, selectedProgram, evOu) {
-            $window.location.assign('../dhis-web-tracker-capture/index.html#/dashboard?tei=' + tei + '&program=' + selectedProgram + '&ou=' + evOu);
+        $scope.approvalDashboard = function (tei, eventId1, selectedProgram, evprgStage, evOu) {
+            $window.location.assign('../dhis-web-tracker-capture/index.html#/dashboard?tei=' + tei + '&program=' + selectedProgram + '&ou=' + evOu + '&ev=' + evprgStage);
 
             var event = {
                 status: "ACTIVE",

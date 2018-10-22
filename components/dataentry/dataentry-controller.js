@@ -891,7 +891,17 @@ trackerCapture.controller('DataEntryController',
                 });
 
                 $scope.programStages = orderByFilter($scope.programStages, '-sortOrder').reverse();
-                if (!$scope.currentStage) {
+				//Custom changes for going to the selected program stage for approval//
+				var apprURL1 = window.location.href;
+
+                if (apprURL1.indexOf("&ev") >= 0) {
+                    var apprURL2 = apprURL1.split('=');
+                    var apprURL = apprURL2[apprURL2.length - 1];
+                    AMRCustomService.getPrgStg(apprURL).then(function (response) {
+                        $scope.currentStage = response;
+                    }); 
+                }
+                else if (!$scope.currentStage) {
                     $scope.currentStage = $scope.programStages[0];
                 }
 

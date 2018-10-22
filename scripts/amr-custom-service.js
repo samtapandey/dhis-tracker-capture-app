@@ -58,6 +58,14 @@ angular.module('trackerCaptureServices')
                     def.resolve(response.data);
                 });
                 return def.promise;
+            },
+
+            getPrgStg: function(prgstg){
+                var def = $q.defer();
+                $http.get( DHIS2URL + "/programStages/" + prgstg + ".json").then(function (response) {
+                    def.resolve(response.data);
+                });
+                return def.promise;
             }
         }
     })
