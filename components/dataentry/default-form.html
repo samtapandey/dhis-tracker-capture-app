@@ -43,9 +43,11 @@
                     <accordion-group is-open="section.open" ng-repeat="section in currentStage.programStageSections | orderBy: 'sortOrder'"
                         ng-if="!hiddenSections[currentEvent.event][section.id]" style="overflow:visible">
                         <!-- <div ng-repeat="customsection in userLevelHiddenSections"> -->
-                        <div ng-hide="section.displayName == 'Level 1 Approve/Reject' || section.displayName == 'Level 2 Approve/Reject'">
+                        <div ng-hide="section.displayName === 'Level 1 Approve/Reject' || section.displayName === 'Level 2 Approve/Reject'">
                             <accordion-heading>
-                                {{section.displayName}}
+                                <div ng-hide="section.displayName === 'Level 1 Approve/Reject' || section.displayName === 'Level 2 Approve/Reject'">
+                                    {{section.displayName}}
+                                </div>
                             </accordion-heading>
                             <div class="alert alert-info" ng-if="section.description">
                                 {{section.description}}
@@ -138,7 +140,9 @@
                         ng-if="!hiddenSections[currentEvent.event][section.id]" style="overflow:visible">
                         <div ng-hide="section.displayName == level1HiddenSections">
                             <accordion-heading>
-                                {{section.displayName}}
+                                <div ng-hide="section.displayName == level1HiddenSections">
+                                    {{section.displayName}}
+                                </div>
                             </accordion-heading>
                             <div class="alert alert-info" ng-if="section.description">
                                 {{section.description}}
