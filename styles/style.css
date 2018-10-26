@@ -1405,7 +1405,8 @@ ul.tree ul li:last-child:before {
 }
 
 th, td {
-    padding: 0 5px;
+    /* padding: 0 5px; */
+    width: 125px;
 }
 
 .default-form-table > tbody > tr:hover > td, .default-form-table > tbody > tr:hover > th {
@@ -1422,7 +1423,7 @@ th, td {
 }
 
 table td.absorbing-column {
-    width: 70%;
+    width: 108%;
 }
 
 .row.null-margins {

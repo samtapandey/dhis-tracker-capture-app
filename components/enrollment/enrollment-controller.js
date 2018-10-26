@@ -16,6 +16,68 @@ trackerCapture.controller('EnrollmentController',
                 ModalService,
                 NotificationService,
                 AuthorityService) {
+
+                // Custom Changes for UPHMIS
+
+                $scope.currentUserName = '';
+                $scope.isValidProgram = false;
+                $scope.superUserAuthority = "";
+
+                //getting user details
+
+                $scope.currentUserDetail = SessionStorageService.get('USER_PROFILE');
+                $scope.currentUserDetails = $scope.currentUserDetail.userCredentials
+                $scope.currentUserName = $scope.currentUserDetails.username;
+                $scope.currentUserRoles = $scope.currentUserDetails.userRoles;
+                for (var i = 0; i < $scope.currentUserRoles.length; i++) {
+                    $scope.currentUserRoleAuthorities = $scope.currentUserRoles[i].authorities;
+                    for (var j = 0; j < $scope.currentUserRoleAuthorities.length; j++) {
+                        if ($scope.currentUserRoleAuthorities[j] === "ALL") {
+                            //$scope.accessAuthority = true;
+                            $scope.superUserAuthority = "YES";
+                            break;
+                        }
+                    }
+                }
+
+                
+                //Validate Program validation
+
+                $scope.currentProgramDetail = CurrentSelection.currentSelection.pr;
+                var programAttributeLength = $scope.currentProgramDetail.attributeValues.length;
+                for (var i = 0; i < programAttributeLength; i++) {
+                    if ($scope.currentProgramDetail.attributeValues[i].attribute.code === 'pbfProgram' && $scope.currentProgramDetail.attributeValues[i].value === 'true') {
+                        $scope.isValidProgram = true;
+                        break;
+                    }
+                }
+
+                console.log($scope.isValidProgram);
+
+               // Getting user attribute value
+
+                $scope.selectedEntityinstance = CurrentSelection.currentSelection.tei.attributes;
+                for (var i = 0; i < $scope.selectedEntityinstance.length; i++) {
+                    if ($scope.selectedEntityinstance[i].code === "user_name") {
+                        $scope.selectedUserName = $scope.selectedEntityinstance[i].value;
+                        break;
+                    }
+                }
+
+
+                $scope.editProfile = function () {
+                    if ($scope.isValidProgram) {
+                        if ($scope.currentUserName === $scope.selectedUserName || $scope.currentUserName === "admin" || $scope.superUserAuthority === "YES") {
+                            return true
+                        }
+                        else {
+                            return false
+                        }
+
+                    }
+                }
+
+                // End of CUSTOM Changes
     
         var selections;
         $scope.userAuthority = AuthorityService.getUserAuthorities(SessionStorageService.get('USER_PROFILE'));

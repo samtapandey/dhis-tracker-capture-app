@@ -13,61 +13,63 @@
         </span>
     </div>
 
-    <div ng-show="dataentryTabularWidget.expand" class="panel-body dashboard-widget-container">
-        <div ng-if="selectedEnrollment && selectedEnrollment.enrollment">
-            <div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="list-group" style="width: 10%; float: left;">
-                            <a ng-repeat="stage in tabularEntryStages" class="list-group-item cursor-pointer" ng-class="{true: 'active'} [stage.id === currentStage.id]" ng-click="setCurrentStage(stage, true)">
-                                {{stage.displayName}}
-                            </a>
-                        </div>
-                        <div id="tabelContainer" style="width: 87%; float: left; padding-left: 12px; padding-right: 12px; overflow-x: scroll; overflow-y: hidden;">
-                            <div ng-if="model.showLegend">
-                                <div ng-include="'components/dataentry/event-legend.html'"></div>
+    <div ng-if="editProfile()">
+        <div ng-show="dataentryTabularWidget.expand" class="panel-body dashboard-widget-container">
+            <div ng-if="selectedEnrollment && selectedEnrollment.enrollment">
+                <div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="list-group" style="width: 10%; float: left;">
+                                <a ng-repeat="stage in tabularEntryStages" class="list-group-item cursor-pointer" ng-class="{true: 'active'} [stage.id === currentStage.id]" ng-click="setCurrentStage(stage, true)">
+                                    {{stage.displayName}}
+                                </a>
                             </div>
-                            <div ng-if="currentStage && currentStage.id && eventsLoaded" class="container-fluid">
-                                <div ng-include="'components/dataentry/tabular-horizontal-layout.html'"></div>
-                                <div ng-if="!eventsByStage[currentStage.id] || eventsByStage[currentStage.id].length === 0">
-                                    <div class="alert alert-warning">{{'no_event_exists'| translate}}</div>
-                                </div>                                    
-                                <div ng-if="currentEvent" class="long-vertical-spacing" ng-include="'components/dataentry/dataentry-notes.html'"></div>                                    
+                            <div id="tabelContainer" style="width: 87%; float: left; padding-left: 12px; padding-right: 12px; overflow-x: scroll; overflow-y: hidden;">
+                                <div ng-if="model.showLegend">
+                                    <div ng-include="'components/dataentry/event-legend.html'"></div>
+                                </div>
+                                <div ng-if="currentStage && currentStage.id && eventsLoaded" class="container-fluid">
+                                    <div ng-include="'components/dataentry/tabular-horizontal-layout.html'"></div>
+                                    <div ng-if="!eventsByStage[currentStage.id] || eventsByStage[currentStage.id].length === 0">
+                                        <div class="alert alert-warning">{{'no_event_exists'| translate}}</div>
+                                    </div>                                    
+                                    <div ng-if="currentEvent" class="long-vertical-spacing" ng-include="'components/dataentry/dataentry-notes.html'"></div>                                    
+                                </div>
+                                <div ng-if="!eventsLoaded">
+                                    <img src="../images/ajax-loader-bar.gif" alt="{{'loading'| translate}}"/>
+                                </div>
                             </div>
-                            <div ng-if="!eventsLoaded">
-                                <img src="../images/ajax-loader-bar.gif" alt="{{'loading'| translate}}"/>
-                            </div>
-                        </div>
-                        <div style="width: 3%; float: left;" ng-hide="stagesNotShowingInStageTasks[currentStage.id] || !currentStage">
-                            <button type="button"
-                                    ng-attr-title="{{'add_new_event'|translate}}"
-                                    class="btn btn-primary" 
-                                    ng-click="showCreateEvent(currentStage, eventCreationActions.add)"
-                                    ng-disabled="selectedEntity.inactive || selectedEnrollment.status !== 'ACTIVE' || selectedOrgUnit.closedStatus">
-                                <i class="fa fa-plus"></i>
-                            </button>
-                            <button type="button" 
-                                    ng-attr-title="{{'schedule_new_event'|translate}}"
-                                    class="btn btn-info long-vertical-spacing" 
-                                    ng-click="showCreateEvent(currentStage, eventCreationActions.schedule)"
-                                    ng-disabled="selectedEntity.inactive || selectedEnrollment.status !== 'ACTIVE' || selectedOrgUnit.closedStatus || currentStage.hideDueDate || currentStage.periodType">
-                                <i class="fa fa-calendar"></i>
-                            </button>
-                            <button type="button" 
-                                    ng-attr-title="{{'make_referral'| translate}}"
-                                    class="btn btn-warning long-vertical-spacing" 
-                                    ng-click="useMainMenu ? showCreateEventIfStageNeedsEvent(selectedMainMenuStage, eventCreationActions.referral, false, true) : showCreateEvent(null, eventCreationActions.referral)"
-                                    ng-disabled="selectedEntity.inactive || selectedEnrollment.status !== 'ACTIVE' || selectedOrgUnit.closedStatus || currentStage.hideDueDate || currentStage.periodType">
-                                <i class="fa fa-share"></i>
-                            </button>
-                        </div>                            
-                    </div>                        
+                            <div style="width: 3%; float: left;" ng-hide="stagesNotShowingInStageTasks[currentStage.id] || !currentStage">
+                                <button type="button"
+                                        ng-attr-title="{{'add_new_event'|translate}}"
+                                        class="btn btn-primary" 
+                                        ng-click="showCreateEvent(currentStage, eventCreationActions.add)"
+                                        ng-disabled="selectedEntity.inactive || selectedEnrollment.status !== 'ACTIVE' || selectedOrgUnit.closedStatus">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                                <button type="button" 
+                                        ng-attr-title="{{'schedule_new_event'|translate}}"
+                                        class="btn btn-info long-vertical-spacing" 
+                                        ng-click="showCreateEvent(currentStage, eventCreationActions.schedule)"
+                                        ng-disabled="selectedEntity.inactive || selectedEnrollment.status !== 'ACTIVE' || selectedOrgUnit.closedStatus || currentStage.hideDueDate || currentStage.periodType">
+                                    <i class="fa fa-calendar"></i>
+                                </button>
+                                <button type="button" 
+                                        ng-attr-title="{{'make_referral'| translate}}"
+                                        class="btn btn-warning long-vertical-spacing" 
+                                        ng-click="useMainMenu ? showCreateEventIfStageNeedsEvent(selectedMainMenuStage, eventCreationActions.referral, false, true) : showCreateEvent(null, eventCreationActions.referral)"
+                                        ng-disabled="selectedEntity.inactive || selectedEnrollment.status !== 'ACTIVE' || selectedOrgUnit.closedStatus || currentStage.hideDueDate || currentStage.periodType">
+                                    <i class="fa fa-share"></i>
+                                </button>
+                            </div>                            
+                        </div>                        
+                    </div>
                 </div>
             </div>
-        </div>
-        <div ng-if="!selectedEnrollment">
-            <div class="alert alert-warning">{{'no_active_enrollment'| translate}}</div>
-        </div>
-        <div ng-if="selectedEnrollment && !selectedEnrollment.enrollment" class="alert alert-danger">{{notEnrolledLabel}}</div>
-    </div>    
+            <div ng-if="!selectedEnrollment">
+                <div class="alert alert-warning">{{'no_active_enrollment'| translate}}</div>
+            </div>
+            <div ng-if="selectedEnrollment && !selectedEnrollment.enrollment" class="alert alert-danger">{{notEnrolledLabel}}</div>
+        </div>    
+    </div>
 </div>

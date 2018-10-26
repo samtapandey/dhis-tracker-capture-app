@@ -3,7 +3,7 @@
 </div>
 <table class="dhis2-list-table-striped default-form-table">
     <tr ng-if="trackedEntityTypes.selected && !hiddenFields[attribute.id] && ((editingDisabled  && attribute.show) || !editingDisabled)" ng-repeat="attribute in attributes | filter: {attribute: 'true'} ">
-        <td>
+        <td  ng-show="attribute.code != 'user_name'">
             <span d2-pop-over
                 details="{{'details'| translate}}"
                 content="attribute"
@@ -18,7 +18,23 @@
             </span>
             <span ng-if="attributeIsRequired(attribute)" class="required">*</span>
         </td>
-        <td class="absorbing-column">
+        <td  ng-hide="attribute.code === 'user_name'">
+            <span d2-pop-over
+                ng-hide="true"
+                details="{{'details'| translate}}"
+                content="attribute"
+                class="popover-label hideInPrint small-horizontal-spacing"
+                template="attribute-details.html"
+                trigger="click"
+                placement="right">
+                <a href ng-attr-title="{{'details'| translate}}" class="wrap-text" tabindex="-1">{{attribute.displayName}}</a>
+            </span>
+            <span class="not-for-screen" ng-hide="true">
+                {{attribute.displayName}}
+            </span>
+            <span ng-if="attributeIsRequired(attribute)" class="required" ng-hide="true">*</span>
+        </td>
+        <td class="absorbing-column"  ng-hide="attribute.code === 'user_name'">
             <ng-form name="innerForm">
                 <span ng-if="attribute.optionSetValue">
                     <span class="hideInPrint" ng-if="!attribute.renderOptionsAsRadio || optionSets[attributesById[attribute.id].optionSet.id].options.length >= 7">
@@ -347,7 +363,7 @@
                                 d2-orgunit-names="orgUnitNames">
                         </d2-org-unit-tree>
                     </span>
-                    <span ng-switch-when="TEXT">
+                    <span ng-switch-when="TEXT" && ng-if="attribute.code != 'user_name'">
                         <input type="text"
                                name="foo" 
                                class="form-control"
@@ -361,6 +377,23 @@
                                ng-disabled="attributeFieldDisabled(attribute)"
                                ng-blur="teiValueUpdated(selectedTei, attribute.id)"
                                ng-required="attributeIsRequired(attribute)"/>
+                    </span>
+                    <span ng-switch-when="TEXT" && ng-if="attribute.code === 'user_name'" && ng-hide="true">
+                        <input type="text"
+                               name="foo" 
+                               class="form-control"
+                               ng-model="selectedTei[attribute.id]" 
+                               ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
+                               d2-attribute-validator
+                               selected-tet={{trackedEntityTypes.selected.id}}
+                               attribute-data={{attribute}}
+                               selected-program-id={{selectedProgram.id}}  
+                               selected-tei-id={{selectedTei.trackedEntityInstance}}  
+                               ng-disabled="attributeFieldDisabled(attribute)"
+                               ng-blur="teiValueUpdated(selectedTei, attribute.id)"
+                               ng-required="attributeIsRequired(attribute)"
+                               ng-hide="true"
+                               />
                     </span>
                     <span ng-switch-when="PHONE_NUMBER">
                         <input type="text"

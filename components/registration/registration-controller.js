@@ -65,6 +65,12 @@ trackerCapture.controller('RegistrationController',
     //Placeholder till proper settings for time is implemented. Currently hard coded to 24h format.
     $scope.timeFormat = '24h';
 
+    // UPHMIS Custom Changes
+
+    $scope.usernameAttributeId ='GCyx4hTzy3j';
+    $scope.username = '';
+    $scope.matchUsername = '';
+
     if(!$scope.attributesById){
         $scope.attributesById = [];
         AttributesFactory.getAll().then(function(atts){
@@ -105,10 +111,20 @@ trackerCapture.controller('RegistrationController',
         });
     }
     
+    //UPHMIS Custom Changes for User attribute
     
     $scope.isDisabled = function(attribute) {
-        return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
+        if(attribute.code === 'user_name' )
+        {
+            return true;
+        }
+        else
+        {
+            return attribute.generated || $scope.assignedFields[attribute.id] || $scope.editingDisabled;
+        }
     };
+
+    // End of CUSTOM Changes
 
     $scope.selectedEnrollment = {
         enrollmentDate: $scope.today,
@@ -308,6 +324,22 @@ trackerCapture.controller('RegistrationController',
         if($scope.selectedProgram){
             AttributesFactory.getByProgram($scope.selectedProgram).then(function (atts) {
                 $scope.attributes = TEIGridService.generateGridColumns(atts, null, false).columns;
+
+    // Custom Changes for UPHMIS to autopopulate the vaule of current username into User attribute
+
+                $timeout( function (){
+                    var url1= "../api/me.json?";
+                    $.get(url1, function (data1) {
+                        if( !$scope.selectedTei[$scope.usernameAttributeId] && $scope.selectedTei[$scope.usernameAttributeId] == undefined)
+                        {
+                            $scope.selectedTei[$scope.usernameAttributeId] = data1.userCredentials.username;//put default value on load for
+                        }
+                    });
+
+                },0);
+
+    // End of CUSTOM Changes
+    
                 fetchGeneratedAttributes();
                 if ($scope.selectedProgram && $scope.selectedProgram.id) {
                     if ($scope.selectedProgram.dataEntryForm && $scope.selectedProgram.dataEntryForm.htmlCode) {
