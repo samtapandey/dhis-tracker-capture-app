@@ -3401,7 +3401,7 @@ trackerCapture.controller('DataEntryController',
 
     $scope.buttonDisable = function () {
             if ($scope.isValidProgram) {
-                if ($scope.superUserAuthority != "YES") {
+                if ($scope.superUserAuthority != "YES" || $scope.currentUserName != "admin") {
                     $scope.statusValue = $scope.currentEvent.dataValues;
                     for (var a = 0; a < $scope.statusValue.length; a++) {
                         if ($scope.statusValue[a].value === "Approved" || $scope.statusValue[a].value === "Auto-Approved") {
