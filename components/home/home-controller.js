@@ -342,6 +342,7 @@ trackerCapture.controller('HomeController',function(
                     return true
                 }
             }
+            return true
         }
 
 });
