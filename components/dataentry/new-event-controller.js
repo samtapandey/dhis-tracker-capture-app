@@ -33,6 +33,7 @@ trackerCapture.controller('EventCreationController',
                 CurrentSelection,
                 TEIService,
                 TCOrgUnitService,
+                SessionStorageService,
                 UPHMISCustomService) {
     $scope.selectedOrgUnit = orgUnit;
     $scope.selectedEnrollment = enrollment;      
@@ -56,6 +57,7 @@ trackerCapture.controller('EventCreationController',
     $scope.periods = [];
     $scope.hasFuturePeriod = false;
     $scope.today = DateUtils.getToday();
+    $scope.checkUserRoleForDate;
     
     if( $scope.isScheduleEvent ){        
         $scope.stages = $filter('filter')(stages, {hideDueDate: false});
@@ -204,8 +206,7 @@ trackerCapture.controller('EventCreationController',
 
     $scope.save = function () {
 
-        // function checkForDailyStages(currentDate,events){}
-        // function checkForMonthlyStages(currentDate,events){};
+        // Custom function for UPHMIS
         $scope.validEventDate = $scope.dhis2Event.eventDate;
         //
             if (UPHMISCustomService.uphmisCheckIfEventAlreadyExistsForSelDate($scope.validEventDate,$scope.events,dummyEvent.programStage)){
@@ -376,4 +377,57 @@ trackerCapture.controller('EventCreationController',
         orgUnit.hasSelectedProgram = false;
         return false;
      };
+
+     // Custom Changes for UPHMIS
+
+     $scope.currentUserName = '';
+     $scope.isValidProgram = false;
+     $scope.superUserAuthority = "";
+
+     //getting user details
+
+     $scope.currentUserDetail = SessionStorageService.get('USER_PROFILE');
+     $scope.currentUserDetails = $scope.currentUserDetail.userCredentials
+     $scope.currentUserName = $scope.currentUserDetails.username;
+     $scope.currentUserRoles = $scope.currentUserDetails.userRoles;
+     for (var i = 0; i < $scope.currentUserRoles.length; i++) {
+         $scope.currentUserRoleAuthorities = $scope.currentUserRoles[i].authorities;
+         for (var j = 0; j < $scope.currentUserRoleAuthorities.length; j++) {
+             if ($scope.currentUserRoleAuthorities[j] === "ALL") {
+                 //$scope.accessAuthority = true;
+                 $scope.superUserAuthority = "YES";
+                 break;
+             }
+         }
+     }
+
+     if( $scope.superUserAuthority == 'YES'){
+            $scope.checkUserRoleForDate = true;
+        }
+        else
+        {
+            $scope.checkUserRoleForDate = false;
+        }
+
+     //Validate Program validation
+
+     $scope.currentProgramDetail = $scope.selectedProgram;
+     var programAttributeLength = $scope.currentProgramDetail.attributeValues.length;
+     for (var i = 0; i < programAttributeLength; i++) {
+         if ($scope.currentProgramDetail.attributeValues[i].attribute.code === 'pbfProgram' && $scope.currentProgramDetail.attributeValues[i].value === 'true') {
+             $scope.isValidProgram = true;
+             break;
+         }
+     }
+
+     $scope.checkUserRole = function () {
+        if($scope.isValidProgram)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+     }
 });

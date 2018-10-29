@@ -25,7 +25,8 @@ trackerCapture.controller('HomeController',function(
     orderByFilter,
     TEService,
     AccessUtils,
-    TeiAccessApiService) {
+    TeiAccessApiService,
+    SessionStorageService) {
         TeiAccessApiService.setAuditCancelledSettings(null);
         $scope.trackedEntityTypesById ={};
         var previousProgram = null;
@@ -292,54 +293,55 @@ trackerCapture.controller('HomeController',function(
 
         $scope.usernameAttributeId ='GCyx4hTzy3j';
 
+        // $scope.currentUserDetail = SessionStorageService.get('USER_PROFILE');
+        // $scope.currentUserDetails = $scope.currentUserDetail.userCredentials
+        // $scope.currentUserName = $scope.currentUserDetails.username;
+
+        
+
         $http.get('../api/me.json?fields=[id,name,userCredentials]&skipPaging=true')
         .then(function(response) {
             $scope.currentUserName = response.data.userCredentials.username;
         });
-        $.ajax({
-            type: "GET",
-            dataType: "json",
-            async: false,
-            contentType: "application/json",
-            url: '../api/me.json?fields=[id,name,userCredentials]&skipPaging=true',
-            success: function (response) {
-                $scope.currentUsername = response.userCredentials.username;
-            }
-        });
 
-          $scope.hideRegister = function () {
-            if ($scope.selectedOrgUnit != undefined && $scope.currentUserName != undefined) {
-                $.ajax({
-                    type: "GET",
-                    dataType: "json",
-                    async: false,
-                    contentType: "application/json",
-                    url: '../api/trackedEntityInstances.json?fields=trackedEntityInstance&filter=' + $scope.usernameAttributeId + ':EQ:' + $scope.currentUserName + '&ou=' + $scope.selectedOrgUnit.id + '&skipPaging=true',
-                    success: function (responseData) {
-                        $scope.trackedEntities = responseData.trackedEntityInstances;
-                        //alert($scope.trackedEntities);
-                    }
-                });
-            }
-            if ($scope.selectedProgram != undefined) {
+          $scope.hideRegister = function (viewName) {
+              if(viewName === 'Register')
+              {
+                if ($scope.selectedOrgUnit != undefined && $scope.currentUserName != undefined) {
+                    $.ajax({
+                        type: "GET",
+                        dataType: "json",
+                        async: false,
+                        contentType: "application/json",
+                        url: '../api/trackedEntityInstances.json?fields=trackedEntityInstance&filter=' + $scope.usernameAttributeId + ':EQ:' + $scope.currentUserName + '&ou=' + $scope.selectedOrgUnit.id + '&skipPaging=true',
+                        success: function (responseData) {
+                            $scope.trackedEntities = responseData.trackedEntityInstances;
+                            //alert($scope.trackedEntities);
+                        }
+                    });
+                }
+                if ($scope.selectedProgram != undefined) {
 
-                for (var i = 0; i < $scope.selectedProgram.attributeValues.length; i++) {
-                    if ($scope.selectedProgram.attributeValues[i].attribute.code === 'pbfProgram' && $scope.selectedProgram.attributeValues[i].value == "true") {
-                        $scope.isValidProgram = true;
-                        break;
+                    for (var i = 0; i < $scope.selectedProgram.attributeValues.length; i++) {
+                        if ($scope.selectedProgram.attributeValues[i].attribute.code === 'pbfProgram' && $scope.selectedProgram.attributeValues[i].value == "true") {
+                            $scope.isValidProgram = true;
+                            break;
+                        }
+                    }                
+                }
+
+                if($scope.isValidProgram){
+                    if ($scope.trackedEntities.length > 0) {
+                        return false
                     }
-                }                
-            }
-            if($scope.isValidProgram){
-                if ($scope.trackedEntities.length > 0) {
-                    return false
+                    else {
+                        return true
+                    }
                 }
                 else {
                     return true
                 }
             }
-            else {
-                return true
-            }
         }
+
 });
