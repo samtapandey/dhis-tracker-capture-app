@@ -98,7 +98,9 @@
         </div>
 
         <div class="vertical-spacing hideInPrint btn-group" ng-if="registrationMode === 'REGISTRATION'">
-            <button type="button" ng-disabled="model.savingRegistration || selectedOrgUnit.closedStatus" class="btn btn-primary" ng-click="registerEntity('DASHBOARD')">{{'save_and_continue'| translate}}</button>
+            <!--
+			<button type="button" ng-disabled="model.savingRegistration || selectedOrgUnit.closedStatus" class="btn btn-primary" ng-click="registerEntity('DASHBOARD')">{{'save_and_continue'| translate}}</button>
+			-->
             <button type="button" ng-disabled="model.savingRegistration || selectedOrgUnit.closedStatus" class="btn btn-success small-horizontal-spacing" ng-click="registerEntity('SELF')">{{'save_and_add_new'| translate}}</button>
             <button type="button" class="btn btn-info small-horizontal-spacing" onclick="javascript:window.print()">{{'print_form'| translate}}</button>
             <button type="button"  ng-disabled="model.savingRegistration" class="btn btn-default small-horizontal-spacing" ng-click="cancelRegistrationWarning(showRegistration)">{{'cancel'| translate}}</button>
