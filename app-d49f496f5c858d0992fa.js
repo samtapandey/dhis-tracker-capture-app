@@ -9766,7 +9766,7 @@
 	                        };
 	                        if (stage.periodType) {
 	                            var periods = getEventDuePeriod(null, stage, enrollment);
-	                            newEvent.dueDate = DateUtils.formatFromUserToApi(periods[0].endDate);
+	                            newEvent.dueDate = DateUtils.formatFromUserToApi(periods.availablePeriods[0].endDate);
 	                            newEvent.eventDate = newEvent.dueDate;
 	                        } else {
 	                            newEvent.dueDate = DateUtils.formatFromUserToApi(getEventDueDate(null, stage, enrollment));
@@ -38678,4 +38678,4 @@
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app-2f026b702be0219320fb.js.map
+//# sourceMappingURL=app-d49f496f5c858d0992fa.js.map
