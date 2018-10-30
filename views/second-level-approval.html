@@ -29,27 +29,39 @@
         <!-- top bar begins -->
         <div class="top-bar row">
             <div class="col-sm-12">
-                {{'Second Level Approval'| translate}}
+                {{'Records List'| translate}}
             </div>
         </div>
         <!-- top bar ends -->
         <br><br>
         <div class="row">
             <div class="col-sm-12 col-md-10">
-                
-                    <table class="table table-borderless table-striped" style="width:50%">
-                        <tr>
-                            <td style="padding: 20px 10px;">{{'org_unit' | translate}}</td>
-                            <td>
-                                <input type="text" class="form-control" value="{{selectedOrgUnit.displayName || 'please_select'| translate}}"
-                                    ng-disabled="true">
-                            </td>
-                            <td style="padding: 13px 10px;">
-                                <button type="button" class="btn btn-primary center-block" ng-click="filterOptionsShow()">{{'Filter'|translate}}</button>
-                            </td>
-                        </tr>
-                    </table>
-                <div data-ng-init="init()"></div> 
+
+                <table class="table table-borderless table-striped" style="width:100%">
+                    <tr>
+                        <td style="padding: 20px 10px;">{{'org_unit' | translate}}</td>
+                        <td>
+                            <input type="text" class="form-control" value="{{selectedOrgUnit.displayName || 'please_select'| translate}}"
+                                ng-disabled="true">
+                        </td>
+                        <td style="padding: 13px 10px;">
+                            <button type="button" class="btn btn-primary center-block" ng-click="filterOptionsShow()">{{'Filter'|translate}}</button>
+                        </td>
+                        <td style="padding: 13px 10px;">
+                            <button type="button" class="btn btn-primary center-block" ng-click="approvedList()">{{'Accepted
+                                Records'|translate}}</button>
+                        </td>
+                        <td style="padding: 13px 10px;">
+                            <button type="button" class="btn btn-primary center-block" ng-click="rejectedList()">{{'Rejected
+                                Records'|translate}}</button>
+                        </td>
+                        <td style="padding: 13px 10px;">
+                            <button type="button" class="btn btn-primary center-block" ng-click="resentList()">{{'Re-sent
+                                Records'|translate}}</button>
+                        </td>
+                    </tr>
+                </table>
+                <div data-ng-init="init()"></div>
                 <table class="table table-borderless table-striped">
                     <tr ng-show="checked">
                         <td style="padding: 20px 10px;">
@@ -65,7 +77,8 @@
                             {{'program_stage'| translate}}
                         </td>
                         <td>
-                            <select ng-model="selectedProgramStage" class="form-control" ng-disabled="!selectedProgram" ng-options="programStage.name for programStage in programStages | orderBy: 'name'"
+                            <select ng-model="selectedProgramStage" class="form-control" ng-disabled="!selectedProgram"
+                                ng-options="programStage.name for programStage in programStages | orderBy: 'name'"
                                 ng-change="getSelectedProgramStage(selectedProgramStage)">
                                 <option value="">{{'Please select program stage'| translate}}</option>
                             </select>
@@ -102,7 +115,7 @@
         </div>
 
         <div class="loading" id="loader"></div>
-        <table id="tableid" border="1" class="table table-hover" ng-If="showtable" style="width: 100%">
+        <table id="tableid" border="1" class="table table-hover" ng-If="displayingValues.length > 0 && showtable" style="width: 100%">
             <tr>
                 <th ng-repeat="val in displayAttrHeader">{{val}}</th>
             </tr>
@@ -117,4 +130,64 @@
                 </tr>
             </tbody>
         </table>
+        <h2 ng-if="displayingValues.length == 0 && showtable">
+            No records found.
+        </h2>
+
+        <table id="tableid" border="1" class="table table-hover" ng-If="apprDisplayingValues.length > 0 && apprListTable" style="width: 100%">
+            <tr>
+                <th ng-repeat="val in displayAttrHeader">{{val}}</th>
+            </tr>
+            <tbody>
+                <tr ng-repeat="attrVal in apprDisplayingValues track by $index">
+                    <td> {{attrVal.path}} </td>
+                    <td> {{attrVal.patRegNum}} </td>
+                    <td> {{attrVal.dob}} </td>
+                    <td> {{attrVal.amrId}} </td>
+                    <td> {{attrVal.apprRejStatus}} </td>
+                    <td> {{attrVal.reasonOfRej}} </td>
+                </tr>
+            </tbody>
+        </table>
+        <h2 ng-if="apprDisplayingValues.length == 0 && apprListTable">
+            No records found.
+        </h2>
+
+        <table id="tableid" border="1" class="table table-hover" ng-If="rejctDisplayingValues.length > 0 && rejctListTable" style="width: 100%">
+            <tr>
+                <th ng-repeat="val in displayAttrHeader">{{val}}</th>
+            </tr>
+            <tbody>
+                <tr ng-repeat="attrVal in rejctDisplayingValues track by $index">
+                    <td> {{attrVal.path}} </td>
+                    <td> {{attrVal.patRegNum}} </td>
+                    <td> {{attrVal.dob}} </td>
+                    <td> {{attrVal.amrId}} </td>
+                    <td> {{attrVal.apprRejStatus}} </td>
+                    <td> {{attrVal.reasonOfRej}} </td>
+                </tr>
+            </tbody>
+        </table>
+        <h2 ng-if="rejctDisplayingValues.length == 0 && rejctListTable">
+            No records found.
+        </h2>
+
+        <table id="tableid" border="1" class="table table-hover" ng-If="resentDisplayingValues.length > 0 && resentListTable" style="width: 100%">
+            <tr>
+                <th ng-repeat="val in displayAttrHeader">{{val}}</th>
+            </tr>
+            <tbody>
+                <tr ng-repeat="attrVal in resentDisplayingValues track by $index">
+                    <td> {{attrVal.path}} </td>
+                    <td> {{attrVal.patRegNum}} </td>
+                    <td> {{attrVal.dob}} </td>
+                    <td> {{attrVal.amrId}} </td>
+                    <td> {{attrVal.apprRejStatus}} </td>
+                    <td> {{attrVal.reasonOfRej}} </td>
+                </tr>
+            </tbody>
+        </table>
+        <h2 ng-if="resentDisplayingValues.length == 0 && resentListTable">
+            No records found.
+        </h2>
     </div>

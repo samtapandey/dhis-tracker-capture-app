@@ -23,8 +23,8 @@ trackerCapture.controller('LeftBarMenuController',
 
         $scope.validLevel1UserGroup = false;
         $scope.validLevel2UserGroup = false;
-        $scope.level1UserGroupNameCode = 'level_1_approval_users'
-        $scope.level2UserGroupNameCode = 'level_2_approval_users'
+        $scope.level1UserGroupNameCode = 'level_1_approval_users';
+        $scope.level2UserGroupNameCode = 'level_2_approval_users';
 
         //FOR AMR Section Work
         AMRCustomService.getSectionName().then(function (selectedSectionName) {
