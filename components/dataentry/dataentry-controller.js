@@ -93,25 +93,26 @@ trackerCapture.controller('DataEntryController',
         $scope.validLevel2UserGroup = false;
         $scope.level1UserGroupNameCode = 'level_1_approval_users'
         $scope.level2UserGroupNameCode = 'level_2_approval_users'
-        $scope.userLevelHiddenSections = ['Level 1 Approve/Reject', 'Level 2 Approve/Reject'];
-        $scope.level1HiddenSections = 'Level 2 Approve/Reject';
-        $scope.level1EnabledSections = ['Phenotypic Test (Special Test Type)', 'Genotypic Test (Special Test Type)', 'Level 1 Approve/Reject'];
-        $scope.level2EnabledSections = ['Phenotypic Test (Special Test Type)', 'Genotypic Test (Special Test Type)', 'Level 2 Approve/Reject'];
+        $scope.userLevelHiddenSections = ['Level 1 Approval status', 'Level 2 Approval status'];
+        $scope.level1HiddenSections = 'Level 2 Approval status';
+        $scope.level1EnabledSections = ['Phenotypic Test (Special Test Type)', 'Genotypic Test (Special Test Type)', 'Level 1 Approval status'];
+        $scope.level2EnabledSections = ['Phenotypic Test (Special Test Type)', 'Genotypic Test (Special Test Type)', 'Level 2 Approval status'];
         $scope.var1 = 'Phenotypic Test (Special Test Type)';
         $scope.var2 = 'Genotypic Test (Special Test Type)';
-        $scope.var3 = 'Level 1 Approve/Reject';
+        $scope.var3 = 'Level 1 Approval status';
 
         //FOR AMR Section Work
-        AMRCustomService.getSectionName().then(function (selectedSectionName) {
-            var trackdata = selectedSectionName;
-            $scope.customSectionName = trackdata.surname;
-            if (trackdata.userGroups != undefined) {
-                for (var j = 0; j < trackdata.userGroups.length; j++) {
-                    if (trackdata.userGroups[j].code === $scope.level1UserGroupNameCode) {
+
+        $scope.currentUserDetails = SessionStorageService.get('USER_PROFILE');
+
+            $scope.customSectionName = $scope.currentUserDetails.surname;
+            if ($scope.currentUserDetails.userGroups != undefined) {
+                for (var j = 0; j < $scope.currentUserDetails.userGroups.length; j++) {
+                    if ($scope.currentUserDetails.userGroups[j].code === $scope.level1UserGroupNameCode) {
                         $scope.validLevel1UserGroup = true;
                         break;
                     }
-                    else if (trackdata.userGroups[j].code === $scope.level2UserGroupNameCode) {
+                    else if ($scope.currentUserDetails.userGroups[j].code === $scope.level2UserGroupNameCode) {
                         $scope.validLevel2UserGroup = true;
                         break;
                     }
@@ -121,19 +122,29 @@ trackerCapture.controller('DataEntryController',
                     }
                 }
             }
-            console.log($scope.customSectionName);
-        });
 
-        AMRCustomService.getProgramAttributes($scope.currentSelectedProgramUid).then(function (selectedProgram) {
-            if (selectedProgram.attributeValues != undefined) {
-                for (var i = 0; i < selectedProgram.attributeValues.length; i++) {
-                    if (selectedProgram.attributeValues[i].attribute.code === $scope.programAttributeCode && selectedProgram.attributeValues[i].value == "true") {
-                        $scope.validProgram = true;
-                        break;
-                    }
+        //Validate Program validation
+        $scope.currentProgramDetail = CurrentSelection.currentSelection.pr;
+        if ($scope.currentProgramDetail.attributeValues != undefined) {
+            var programAttributeLength = $scope.currentProgramDetail.attributeValues.length;
+            for (var i = 0; i < programAttributeLength; i++) {
+                if ($scope.currentProgramDetail.attributeValues[i].attribute.code === $scope.programAttributeCode && $scope.currentProgramDetail.attributeValues[i].value === 'true') {
+                    $scope.validProgram = true;
+                    break;
                 }
             }
-        });
+            console.log($scope.validProgram);
+        }
+        // AMRCustomService.getProgramAttributes($scope.currentSelectedProgramUid).then(function (selectedProgram) {
+        //     if (selectedProgram.attributeValues != undefined) {
+        //         for (var i = 0; i < selectedProgram.attributeValues.length; i++) {
+        //             if (selectedProgram.attributeValues[i].attribute.code === $scope.programAttributeCode && selectedProgram.attributeValues[i].value == "true") {
+        //                 $scope.validProgram = true;
+        //                 break;
+        //             }
+        //         }
+        //     }
+        // });
 
         //hideTopLineEventsForFormTypes is only used with main menu
         $scope.hideTopLineEventsForFormTypes = { TABLE: true, COMPARE: true };

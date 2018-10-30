@@ -5,9 +5,9 @@
         <!-- For End User Validations -->
         <div ng-if='!validLevel1UserGroup && !validLevel2UserGroup'>
             <table class="dhis2-list-table-striped default-form-table" ng-if='currentEvent && !currentStage.programStageSections.length'>
-                <div ng-hide="section.displayName == 'Level 1 Approve/Reject'">
+                <div ng-hide="section.displayName == 'Level 1 Approval status'">
                     <tr ng-repeat="prStDe in currentStage.programStageDataElements" ng-if="!isHidden(prStDe.dataElement.id, currentEvent)"
-                        ng-hide="section.displayName == 'Level 1 Approve/Reject'">
+                        ng-hide="section.displayName == 'Level 1 Approval status'">
                         <td>
                             <span d2-pop-over class="popover-label hideInPrint small-horizontal-spacing" details="{{'details'| translate}}"
                                 content="prStDe.dataElement" template="dataelement-details.html" trigger="click"
@@ -43,9 +43,9 @@
                     <accordion-group is-open="section.open" ng-repeat="section in currentStage.programStageSections | orderBy: 'sortOrder'"
                         ng-if="!hiddenSections[currentEvent.event][section.id]" style="overflow:visible">
                         <!-- <div ng-repeat="customsection in userLevelHiddenSections"> -->
-                        <div ng-hide="section.displayName === 'Level 1 Approve/Reject' || section.displayName === 'Level 2 Approve/Reject'">
+                        <div ng-hide="section.displayName === 'Level 1 Approval status' || section.displayName === 'Level 2 Approval status'">
                             <accordion-heading>
-                                <div ng-hide="section.displayName === 'Level 1 Approve/Reject' || section.displayName === 'Level 2 Approve/Reject'">
+                                <div ng-hide="section.displayName === 'Level 1 Approval status' || section.displayName === 'Level 2 Approval status'">
                                     {{section.displayName}}
                                 </div>
                             </accordion-heading>
