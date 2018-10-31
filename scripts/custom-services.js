@@ -503,6 +503,15 @@ angular.module('trackerCaptureServices')
                 });
                 return def.promise;
             },
+
+            getChildren: function (orgUnitUid) {
+                var def = $q.defer();
+                $http.get('../api/organisationUnits/' + orgUnitUid + '.json?fields=children[id,name,level]').then(function (response) {
+
+                    def.resolve(response.data);
+                });
+                return def.promise;
+            },
             getUsersId: function (orgUnitUid) {
                 var def = $q.defer();
                 $http.get('../api/organisationUnits/' + orgUnitUid + '.json?fields=users[phoneNumber]').then(function (response) {
@@ -511,6 +520,8 @@ angular.module('trackerCaptureServices')
                 });
                 return def.promise;
             },
+
+            //aes code
             sendMessages: function (msg,phones) {
                 var def = $q.defer();
                 $http.get('http://bulksms.mysmsmantra.com:8080/WebSMS/SMSAPI.jsp?username=hispindia&password=hisp1234&sendername=HSSPIN&mobileno='+phones+'&message='+msg).then(function (response) {
@@ -527,6 +538,7 @@ angular.module('trackerCaptureServices')
                 });
                 return def.promise;
             },
+            // aes code
             getDataValues: function (eventc, tei) {
                 var def = $q.defer();
                 $http.get('../api/events/'+eventc+'.json?trackedEntityInstance='+tei).then(function (response) {
