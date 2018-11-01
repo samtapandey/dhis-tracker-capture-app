@@ -38,12 +38,18 @@ angular.module('trackerCaptureServices')
                 }
             },
             checkForMonthlyStages: function (currentDate, events, programStage) {
+                var todayMonth = new Date().getMonth();
+                var todayYear = new Date().getFullYear();
+
+                var gettingMonth = new Date(currentDate).getMonth();
+                var gettingYear = new Date(currentDate).getFullYear();
+
                 if (monthlyProgramStagesUIDs.indexOf(programStage) > -1) {
-                    for (var i = 0; i < events.length; i++) {
-                        if (events[i].eventDate === currentDate) {
+                    // for (var i = 0; i < events.length; i++) {
+                        if (new Date(gettingYear, gettingMonth).valueOf() > new Date(todayYear, todayMonth).valueOf()) {
                             return true;
                         }
-                    }
+                    // }
                     return false;
                 }
             }

@@ -211,7 +211,7 @@ trackerCapture.controller('EventCreationController',
         //
             if (UPHMISCustomService.uphmisCheckIfEventAlreadyExistsForSelDate($scope.validEventDate,$scope.events,dummyEvent.programStage)){
 
-                alert('Event of selected date already exist!');
+                alert('Unable to create a new event!!');
             }
             else{
                 $scope.lockButton = true;
