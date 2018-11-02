@@ -115,7 +115,7 @@
         </div>
 
         <div class="loading" id="loader"></div>
-        <table id="tableid" border="1" class="table table-hover" ng-If="displayingValues.length > 0 && showtable" style="width: 100%">
+        <table id="tableid" border="1" class="table table-hover" ng-If="displayingValues.length > 0 && showtable && !validdataEntryUser" style="width: 100%">
             <tr>
                 <th ng-repeat="val in displayAttrHeader">{{val}}</th>
             </tr>
@@ -130,7 +130,26 @@
                 </tr>
             </tbody>
         </table>
-        <h2 ng-if="displayingValues.length == 0 && showtable">
+        <h2 ng-if="displayingValues.length == 0 && showtable && !validdataEntryUser">
+            No records found.
+        </h2>
+
+        <table id="tableid" border="1" class="table table-hover" ng-If="displayingValues.length > 0 && showtable && validdataEntryUser" style="width: 100%">
+            <tr>
+                <th ng-repeat="val in displayAttrHeader">{{val}}</th>
+            </tr>
+            <tbody>
+                <tr ng-repeat="attrVal in displayingValues track by $index" id="appr">
+                    <td> {{attrVal.path}} </td>
+                    <td> {{attrVal.patRegNum}} </td>
+                    <td> {{attrVal.dob}} </td>
+                    <td> {{attrVal.amrId}} </td>
+                    <td> {{attrVal.apprRejStatus}} </td>
+                    <td> {{attrVal.reasonOfRej}} </td>
+                </tr>
+            </tbody>
+        </table>
+        <h2 ng-if="displayingValues.length == 0 && showtable && validdataEntryUser">
             No records found.
         </h2>
 

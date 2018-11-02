@@ -139,12 +139,8 @@ trackerCapture.controller('FirstLevelApprovalController',
         var getEvents = function (allEvents, selectedProgram) {
             $scope.teiList = []; $scope.apprTeiList = []; $scope.rejctTeiList = []; $scope.resentTeiList = []; $scope.displayingValues = [];
             $scope.apprDisplayingValues = []; $scope.rejctDisplayingValues = []; $scope.resentDisplayingValues = [];
-            if ($scope.validdataEntryUser == false) {
-                $scope.showtable = true; $scope.apprListTable = false; $scope.rejctListTable = false; $scope.resentListTable = false;
-            }
-            else {
-                $scope.showtable = false; $scope.apprListTable = true; $scope.rejctListTable = false; $scope.resentListTable = false;
-            }
+            $scope.showtable = true; $scope.apprListTable = false; $scope.rejctListTable = false; $scope.resentListTable = false;
+            
             allEvents.forEach(function (evDetails) {
                 $scope.eventDV = []; $scope.deExist = false; $scope.approveRejectStatus = '';
                 evDetails.dataValues.forEach(function (evDV) {
@@ -158,9 +154,7 @@ trackerCapture.controller('FirstLevelApprovalController',
                 }
                 if ((evDetails.status === "COMPLETED" && $scope.approveRejectStatus != 'Approved') || (evDetails.status === "COMPLETED" && $scope.deExist === true) ||
                     (evDetails.status === "ACTIVE" && $scope.approveRejectStatus != 'Approved') || (evDetails.status === "ACTIVE" && $scope.deExist === true)) {
-                    if ($scope.validdataEntryUser == false) {
-                        $scope.teiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit, prgId: evDetails.program, prgStgId: evDetails.programStage, evDV: evDetails.dataValues });
-                    }
+                    $scope.teiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit, prgId: evDetails.program, prgStgId: evDetails.programStage, evDV: evDetails.dataValues });
                 }
                 else if ($scope.approveRejectStatus == 'Approved') {
                     $scope.apprTeiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit, prgId: evDetails.program, prgStgId: evDetails.programStage, evDV: evDetails.dataValues });
@@ -173,35 +167,33 @@ trackerCapture.controller('FirstLevelApprovalController',
                 }
             });
 
-            if ($scope.validdataEntryUser == false) {
-                $scope.teiList.forEach(function (evData) {
-                    AMRCustomService.getTEIData(evData, selectedProgram).then(function (response) {
-                        response.attributes.forEach(function (attr) {
-                            if (attr.code == 'amr_id') {
-                                $scope.amr_id = attr.value;
-                            }
-                            if (attr.code == 'patient_registration_number') {
-                                $scope.patientRegNum = attr.value;
-                            }
-                            if (attr.code == 'dob') {
-                                $scope.dOb = attr.value;
-                            }
-                        });
-                        evData.evDV.forEach(function (de) {
-                            if (de.dataElement == 'ZL2TKQz6TKF') {
-                                $scope.approveRejectStatus = de.value;
-                            }
-                            if (de.dataElement == 'PI65n9eD9jh') {
-                                $scope.reasonOfRejection = de.value;
-                            }
-                        });
-                        $scope.displayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, reasonOfRej: $scope.reasonOfRejection });
-                        $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = ''; $scope.approveRejectStatus = ''; $scope.reasonOfRejection = '';
+            $scope.teiList.forEach(function (evData) {
+                AMRCustomService.getTEIData(evData, selectedProgram).then(function (response) {
+                    response.attributes.forEach(function (attr) {
+                        if (attr.code == 'amr_id') {
+                            $scope.amr_id = attr.value;
+                        }
+                        if (attr.code == 'patient_registration_number') {
+                            $scope.patientRegNum = attr.value;
+                        }
+                        if (attr.code == 'dob') {
+                            $scope.dOb = attr.value;
+                        }
                     });
+                    evData.evDV.forEach(function (de) {
+                        if (de.dataElement == 'ZL2TKQz6TKF') {
+                            $scope.approveRejectStatus = de.value;
+                        }
+                        if (de.dataElement == 'PI65n9eD9jh') {
+                            $scope.reasonOfRejection = de.value;
+                        }
+                    });
+                    $scope.displayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, reasonOfRej: $scope.reasonOfRejection });
+                    $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = ''; $scope.approveRejectStatus = ''; $scope.reasonOfRejection = '';
                 });
-                console.log($scope.displayingValues);
-            }
-            
+            });
+            console.log($scope.displayingValues);
+
             //Approved List//
             $scope.apprTeiList.forEach(function (evData) {
                 AMRCustomService.getTEIData(evData, selectedProgram).then(function (response) {

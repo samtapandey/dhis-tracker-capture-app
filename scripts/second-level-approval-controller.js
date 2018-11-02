@@ -137,13 +137,8 @@ trackerCapture.controller('SecondLevelApprovalController',
 
         var getEvents = function (allEvents, selectedProgram) {
             $scope.teiList = []; $scope.apprTeiList = []; $scope.rejctTeiList = []; $scope.resentTeiList = []; $scope.displayingValues = [];
-            $scope.apprDisplayingValues = []; $scope.rejctDisplayingValues = []; $scope.resentDisplayingValues = [];
-            if ($scope.validdataEntryUser == false) {
-                $scope.showtable = true; $scope.apprListTable = false; $scope.rejctListTable = false; $scope.resentListTable = false;
-            }
-            else {
-                $scope.showtable = false; $scope.apprListTable = true; $scope.rejctListTable = false; $scope.resentListTable = false;
-            }
+            $scope.apprDisplayingValues = []; $scope.rejctDisplayingValues = []; $scope.resentDisplayingValues = [];      
+            $scope.showtable = true; $scope.apprListTable = false; $scope.rejctListTable = false; $scope.resentListTable = false;
             allEvents.forEach(function (evDetails) {
                 $scope.eventDV = []; $scope.approveRejectStatus = ''; $scope.approveRejectStatus2;
                 evDetails.dataValues.forEach(function (evDV) {
@@ -155,9 +150,7 @@ trackerCapture.controller('SecondLevelApprovalController',
                     }
                 });
                 if ((evDetails.status === "COMPLETED" && $scope.approveRejectStatus === 'Approved') || (evDetails.status === "ACTIVE" && $scope.approveRejectStatus === 'Approved')) {
-                    if ($scope.validdataEntryUser == false) {
-                        $scope.teiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit, prgId: evDetails.program, prgStgId: evDetails.programStage, evDV: evDetails.dataValues });
-                    }
+                        $scope.teiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit, prgId: evDetails.program, prgStgId: evDetails.programStage, evDV: evDetails.dataValues });   
                 }
                 else if ($scope.approveRejectStatus2 == 'Approved') {
                     $scope.apprTeiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit, prgId: evDetails.program, prgStgId: evDetails.programStage, evDV: evDetails.dataValues });
@@ -170,7 +163,7 @@ trackerCapture.controller('SecondLevelApprovalController',
                 }
             });
 
-            if ($scope.validdataEntryUser == false) {
+            
                 $scope.teiList.forEach(function (evData) {
                     AMRCustomService.getTEIData(evData, selectedProgram).then(function (response) {
                         response.attributes.forEach(function (attr) {
@@ -198,7 +191,6 @@ trackerCapture.controller('SecondLevelApprovalController',
                     $scope.showtable = true;
                 });
                 console.log($scope.displayingValues);
-            }
 
             //Approved List//
             $scope.apprTeiList.forEach(function (evData) {
