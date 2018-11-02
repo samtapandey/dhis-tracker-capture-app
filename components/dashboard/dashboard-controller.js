@@ -324,6 +324,7 @@ trackerCapture.controller('DashboardController',
                                                 return false
                                             }
                                         }
+                                        return true;
                                     }
                             
                                 //End of Custom Changes for UPHMIS

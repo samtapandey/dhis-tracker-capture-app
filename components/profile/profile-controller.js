@@ -151,6 +151,7 @@ trackerCapture.controller('ProfileController',
                 }
 
             }
+            return true;
         }
 
         // End of CUSTOM Changes

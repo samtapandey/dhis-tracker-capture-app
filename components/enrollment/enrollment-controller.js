@@ -75,6 +75,7 @@ trackerCapture.controller('EnrollmentController',
                         }
 
                     }
+                    return true;
                 }
 
                 // End of CUSTOM Changes

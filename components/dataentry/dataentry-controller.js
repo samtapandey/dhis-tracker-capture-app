@@ -142,6 +142,7 @@ trackerCapture.controller('DataEntryController',
                         }
 
                     }
+                    return true;
                 }
 
                 $scope.myValidation = function () {
