@@ -152,13 +152,13 @@ trackerCapture.controller('SecondLevelApprovalController',
                 if ((evDetails.status === "COMPLETED" && $scope.approveRejectStatus === 'Approved') || (evDetails.status === "ACTIVE" && $scope.approveRejectStatus === 'Approved')) {
                         $scope.teiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit, prgId: evDetails.program, prgStgId: evDetails.programStage, evDV: evDetails.dataValues });   
                 }
-                else if ($scope.approveRejectStatus2 == 'Approved') {
+                if ($scope.approveRejectStatus2 == 'Approved') {
                     $scope.apprTeiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit, prgId: evDetails.program, prgStgId: evDetails.programStage, evDV: evDetails.dataValues });
                 }
-                else if ($scope.approveRejectStatus2 == 'Rejected') {
+                if ($scope.approveRejectStatus2 == 'Rejected') {
                     $scope.rejctTeiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit, prgId: evDetails.program, prgStgId: evDetails.programStage, evDV: evDetails.dataValues });
                 }
-                else if ($scope.approveRejectStatus2 == 'Resend') {
+                if ($scope.approveRejectStatus2 == 'Resend') {
                     $scope.resentTeiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit, prgId: evDetails.program, prgStgId: evDetails.programStage, evDV: evDetails.dataValues });
                 }
             });

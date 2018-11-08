@@ -12,6 +12,7 @@ trackerCapture.controller('FirstLevelApprovalController',
         $timeout) {
         var previousProgram = null;
         $scope.showtable = false;
+        $scope.validatedListTable = false;
         $scope.apprListTable = false;
         $scope.rejctListTable = false;
         $scope.resentListTable = false;
@@ -97,20 +98,30 @@ trackerCapture.controller('FirstLevelApprovalController',
             });
         }
 
+        $scope.validatedList = function (){
+            $scope.showtable = false;
+            $scope.validatedListTable = true;
+            $scope.apprListTable = false;
+            $scope.rejctListTable = false;
+            $scope.resentListTable = false;
+        }
         $scope.approvedList = function () {
             $scope.showtable = false;
+            $scope.validatedListTable = false;
             $scope.apprListTable = true;
             $scope.rejctListTable = false;
             $scope.resentListTable = false;
         }
         $scope.rejectedList = function () {
             $scope.showtable = false;
+            $scope.validatedListTable = false;
             $scope.apprListTable = false;
             $scope.rejctListTable = true;
             $scope.resentListTable = false;
         }
         $scope.resentList = function () {
             $scope.showtable = false;
+            $scope.validatedListTable = false;
             $scope.apprListTable = false;
             $scope.rejctListTable = false;
             $scope.resentListTable = true;
@@ -137,9 +148,9 @@ trackerCapture.controller('FirstLevelApprovalController',
         }
 
         var getEvents = function (allEvents, selectedProgram) {
-            $scope.teiList = []; $scope.apprTeiList = []; $scope.rejctTeiList = []; $scope.resentTeiList = []; $scope.displayingValues = [];
-            $scope.apprDisplayingValues = []; $scope.rejctDisplayingValues = []; $scope.resentDisplayingValues = [];
-            $scope.showtable = true; $scope.apprListTable = false; $scope.rejctListTable = false; $scope.resentListTable = false;
+            $scope.teiList = [];$scope.validatedteiList = [];$scope.apprTeiList = []; $scope.rejctTeiList = []; $scope.resentTeiList = []; $scope.displayingValues = [];
+            $scope.validateddisplayingValues = [];$scope.apprDisplayingValues = []; $scope.rejctDisplayingValues = []; $scope.resentDisplayingValues = [];
+            $scope.showtable = true; $scope.validatedListTable = false;$scope.apprListTable = false; $scope.rejctListTable = false; $scope.resentListTable = false;
             
             allEvents.forEach(function (evDetails) {
                 $scope.eventDV = []; $scope.deExist = false; $scope.approveRejectStatus = '';
@@ -156,13 +167,16 @@ trackerCapture.controller('FirstLevelApprovalController',
                     (evDetails.status === "ACTIVE" && $scope.approveRejectStatus != 'Approved') || (evDetails.status === "ACTIVE" && $scope.deExist === true)) {
                     $scope.teiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit, prgId: evDetails.program, prgStgId: evDetails.programStage, evDV: evDetails.dataValues });
                 }
-                else if ($scope.approveRejectStatus == 'Approved') {
+                if ((evDetails.status === "COMPLETED" && $scope.deExist === true) || (evDetails.status === "ACTIVE" && $scope.deExist === true)){
+                    $scope.validatedteiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit, prgId: evDetails.program, prgStgId: evDetails.programStage, evDV: evDetails.dataValues });
+                }
+                if ($scope.approveRejectStatus == 'Approved') {
                     $scope.apprTeiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit, prgId: evDetails.program, prgStgId: evDetails.programStage, evDV: evDetails.dataValues });
                 }
-                else if ($scope.approveRejectStatus == 'Rejected') {
+                if ($scope.approveRejectStatus == 'Rejected') {
                     $scope.rejctTeiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit, prgId: evDetails.program, prgStgId: evDetails.programStage, evDV: evDetails.dataValues });
                 }
-                else if ($scope.approveRejectStatus == 'Resend') {
+                if ($scope.approveRejectStatus == 'Resend') {
                     $scope.resentTeiList.push({ tei: evDetails.trackedEntityInstance, eventId: evDetails.event, ou: evDetails.orgUnit, prgId: evDetails.program, prgStgId: evDetails.programStage, evDV: evDetails.dataValues });
                 }
             });
@@ -193,6 +207,34 @@ trackerCapture.controller('FirstLevelApprovalController',
                 });
             });
             console.log($scope.displayingValues);
+
+            //To be validated//
+            $scope.validatedteiList.forEach(function (evData) {
+                AMRCustomService.getTEIData(evData, selectedProgram).then(function (response) {
+                    response.attributes.forEach(function (attr) {
+                        if (attr.code == 'amr_id') {
+                            $scope.amr_id = attr.value;
+                        }
+                        if (attr.code == 'patient_registration_number') {
+                            $scope.patientRegNum = attr.value;
+                        }
+                        if (attr.code == 'dob') {
+                            $scope.dOb = attr.value;
+                        }
+                    });
+                    evData.evDV.forEach(function (de) {
+                        if (de.dataElement == 'ZL2TKQz6TKF') {
+                            $scope.approveRejectStatus = de.value;
+                        }
+                        if (de.dataElement == 'PI65n9eD9jh') {
+                            $scope.reasonOfRejection = de.value;
+                        }
+                    });
+                    $scope.validateddisplayingValues.push({ tei: evData.tei, eventId: evData.eventId, ouId: evData.ou, prg: evData.prgId, prgStg: evData.prgStgId, path: getPath(evData.ou), amrId: $scope.amr_id, patRegNum: $scope.patientRegNum, dob: $scope.dOb, apprRejStatus: $scope.approveRejectStatus, reasonOfRej: $scope.reasonOfRejection });
+                    $scope.amr_id = '', $scope.patientRegNum = '', $scope.dOb = ''; $scope.approveRejectStatus = ''; $scope.reasonOfRejection = '';
+                });
+            });
+            console.log($scope.validateddisplayingValues);
 
             //Approved List//
             $scope.apprTeiList.forEach(function (evData) {

@@ -47,11 +47,14 @@
                         <td style="padding: 13px 10px;">
                             <button type="button" class="btn btn-primary center-block" ng-click="filterOptionsShow()">{{'Filter'|translate}}</button>
                         </td>
-                        <td style="padding: 13px 10px;">
+                        <td style="width: 185px;padding: 13px 10px;">
+                            <button type="button" class="btn btn-primary center-block" ng-click="validatedList()">{{'Records to be validated'|translate}}</button>
+                        </td>
+                        <td style="width: 150px;padding: 13px 10px;">
                             <button type="button" class="btn btn-primary center-block" ng-click="approvedList()">{{'Accepted
                                 Records'|translate}}</button>
                         </td>
-                        <td style="padding: 13px 10px;">
+                        <td style="width: 150px;padding: 13px 10px;">
                             <button type="button" class="btn btn-primary center-block" ng-click="rejectedList()">{{'Rejected
                                 Records'|translate}}</button>
                         </td>
@@ -150,6 +153,26 @@
             </tbody>
         </table>
         <h2 ng-if="displayingValues.length == 0 && showtable && validdataEntryUser">
+            No records found.
+        </h2>
+
+        <table id="tableid" border="1" class="table table-hover" ng-If="validateddisplayingValues.length > 0 && validatedListTable"
+            style="width: 100%">
+            <tr>
+                <th ng-repeat="val in displayAttrHeader">{{val}}</th>
+            </tr>
+            <tbody>
+                <tr ng-repeat="attrVal in validateddisplayingValues track by $index">
+                    <td> {{attrVal.path}} </td>
+                    <td> {{attrVal.patRegNum}} </td>
+                    <td> {{attrVal.dob}} </td>
+                    <td> {{attrVal.amrId}} </td>
+                    <td> {{attrVal.apprRejStatus}} </td>
+                    <td> {{attrVal.reasonOfRej}} </td>
+                </tr>
+            </tbody>
+        </table>
+        <h2 ng-if="validateddisplayingValues.length == 0 && validatedListTable">
             No records found.
         </h2>
 
