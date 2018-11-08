@@ -85,7 +85,7 @@ trackerCapture.controller('DataEntryController',
 
         //AMR Custom Variables
 
-        $scope.customSectionName = '';
+        $scope.customSectionName = 'Genotypic Test (Special Test Type)';
         $scope.currentSelectedProgramUid = CurrentSelection.currentSelection.pr.id;
         $scope.validProgram = false;
         $scope.programAttributeCode = 'AMRProgram';
@@ -105,7 +105,7 @@ trackerCapture.controller('DataEntryController',
 
         $scope.currentUserDetails = SessionStorageService.get('USER_PROFILE');
 
-            $scope.customSectionName = $scope.currentUserDetails.surname;
+           // $scope.customSectionName = $scope.currentUserDetails.surname;
             if ($scope.currentUserDetails.userGroups != undefined) {
                 for (var j = 0; j < $scope.currentUserDetails.userGroups.length; j++) {
                     if ($scope.currentUserDetails.userGroups[j].code === $scope.level1UserGroupNameCode) {
