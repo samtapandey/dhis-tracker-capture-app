@@ -73,9 +73,9 @@
             <div>
                 <ul class="nav nav-pills small-vertical-spacing hideInPrint" style="padding-left:15px;">
                     <li ng-repeat="view in views" ng-class="{'active' : view.name === currentView.name}" ng-click="setCurrentView(view)" ng-if="!view.disabled">
-                        <div ng-if = "hideRegister(view.name)">
-                            <a href="">{{view.name}}</a>
-                        </div>
+                        <!-- <span ng-if = "hideRegister(view.name)" > -->
+                            <a ng-if = "hideRegister(view.name)" href="">{{view.name}}</a>
+                        <!-- </span> -->
                     </li>
                 </ul>
             </div>

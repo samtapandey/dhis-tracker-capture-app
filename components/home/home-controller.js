@@ -38,7 +38,7 @@ trackerCapture.controller('HomeController',function(
     // $scope.isValidProgram = false;
 
 
-    // $scope.isValidProgram = false;
+    $scope.isValidProgram = false;
 
 
         var viewsByType = {
@@ -323,7 +323,7 @@ trackerCapture.controller('HomeController',function(
                     });
                 }
                 if ($scope.selectedProgram != undefined) {
-
+                    $scope.isValidProgram = false;
                     for (var i = 0; i < $scope.selectedProgram.attributeValues.length; i++) {
                         if ($scope.selectedProgram.attributeValues[i].attribute.code === 'pbfProgram' && $scope.selectedProgram.attributeValues[i].value == "true") {
                             $scope.isValidProgram = true;
@@ -331,20 +331,23 @@ trackerCapture.controller('HomeController',function(
                         }
                     }                
                 }
-
-                if($scope.isValidProgram){
-                    if ($scope.trackedEntities.length > 0) {
-                        return false
+                if ($scope.selectedProgram != undefined) {
+                    if($scope.isValidProgram){
+                        if ($scope.trackedEntities.length > 0) {
+                            return false
+                        }
+                        else {
+                            return true
+                        }
                     }
                     else {
                         return true
                     }
-                }
-                else {
-                    return true
-                }
+                }   
             }
-            return true
+            else if(viewName != 'Register'){
+                    return true
+            }
         }
 
 });
