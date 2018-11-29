@@ -24,7 +24,8 @@ function($rootScope,
          TEIService,
          EventReportService,
          TCStorageService,
-         GridColumnService) {
+         GridColumnService,
+         CustomService) {
     var savedAdvancedSeachOptions = null;
     var defaultColumn = {
         id: 'created',
@@ -216,6 +217,8 @@ function($rootScope,
                 resetParams();
                 //$scope.doSearch = true;
                 $scope.loadPrograms($scope.selectedOrgUnit);
+                $scope.loadInQueue($scope.selectedOrgUnit);
+                $scope.loadOutQueue($scope.selectedOrgUnit);
             });
         }
     });
@@ -770,4 +773,161 @@ function($rootScope,
     $scope.exportEnabled = function() {
         return $scope.trackedEntityList && $scope.trackedEntityList.length > 0 ;
     };
+
+
+    var getAllEvents = function (tei) {
+        var data5 = "";
+        $.ajax({
+            async: false,
+            type: "GET",
+            url: "../api/events.json?program=L78QzNqadTV&trackedEntityInstance=" + tei + "&order=eventDate:ASC&skipPaging=false",
+            success: function (data) {
+                data5 = data;
+            }
+        });
+        return data5;
+    };
+
+    var getTeiData = function (tei) {
+		var teidata = "";
+		$.ajax({
+			async: false,
+			type: "GET",
+			url: '../api/trackedEntityInstances/' + tei + '.json',
+			success: function (data) {
+				teidata = data;
+			}
+		});
+
+		return teidata;
+	};
+
+    var teiMap = function (data) {
+        var mappedteis = [];
+        var k = 0;
+        for (var i = 0; i < data.events.length; i++) {
+            if (mappedteis.indexOf(data.events[i].trackedEntityInstance) == -1) {
+                mappedteis[k] = data.events[i].trackedEntityInstance;
+                k++;
+            }
+        }
+        return mappedteis;
+
+    };
+
+    $scope.inflag = false;
+    $scope.outflag = false;
+
+    $scope.loadInQueue = function (ou) {
+        var filtered_data = [];
+        var incoming_count = 0;
+        if (ou.id !== undefined && !$scope.inflag) {
+            CustomService.getOuLevel(ou.id).then(function (oudata) {
+
+                //checking ou level
+                if (oudata.level == 6) {
+                    //getting all events on selected ou
+                    CustomService.getAllEvents(ou.id).then(function (eventsdata) {
+                        
+                        //getting unique teis from all events occuring on selected ou
+                        var allTeis = teiMap(eventsdata);
+
+                        for (var j = 0, len = allTeis.length; j < len; j++) {
+                            var tei = allTeis[j];
+
+                            //getting all events on one tei
+                            var teieventsd = getAllEvents(tei);
+                            var teievents = teieventsd.events;
+                            for (var y = 0, lenn = teievents.length - 1; y < lenn; y++) {
+
+                                //checking ou of two consecutive events and checking for refferals
+                                if (teievents[y].orgUnit != ou.id && teievents[y + 1].orgUnit == ou.id && teievents[y + 1].status != "COMPLETED") {
+                                    // var returnedDdata = getTeiData(tei);
+                                    var psd = "";
+                                    var ps = teievents[y + 1].programStage;
+
+                                    //checking and filtering for program stage
+                                    if (ps == "zLxGw3kEplq") { psd = "ART-HIV Counselling and Testing"; }
+                                    else if (ps == "YRSdePjzzfs") { psd = "ART Follow-up"; }
+                                    else {
+                                        var psd = "";
+                                    }
+
+                                    //pushing all data to tei object
+                                    if (psd != "") {
+                                        incoming_count++;
+                                    }
+
+                                }
+
+                            }
+                            if(j == allTeis.length - 1){
+                                document.getElementById("incoming_count").innerHTML = incoming_count;
+                                $scope.inflag = true;
+                                return;
+                            }
+                        }
+
+                    });
+                }
+            });
+        }
+        
+    };
+
+    $scope.loadOutQueue = function (ou) {
+        var outgoing_count = 0;
+		var filtered_data = [];
+		CustomService.getOuLevel(ou.id).then(function (response) {
+
+			//checking ou level
+			if (response.level == 6 && !$scope.outflag) {
+				//getting all events on selected ou
+				CustomService.getAllEvents(ou.id).then(function (eventsdata) {
+                    
+					//getting unique teis from all events occuring on selected ou
+					var allTeis = teiMap(eventsdata);
+
+					for (var j = 0, len = allTeis.length; j < len; j++) {
+						var tei = allTeis[j];
+
+						//getting all events on one tei
+						var teieventsd = getAllEvents(tei);
+						var teievents = teieventsd.events;
+						for (var y = 0, lenn = teievents.length - 1; y < lenn; y++) {
+
+							//checking ou of two consecutive events and checking for refferals
+							if (teievents[y].orgUnit == ou.id && teievents[y + 1].orgUnit != ou.id && teievents[y + 1].status != "COMPLETED") {
+
+								//getting data of particular tei
+								
+								var psd = "";
+								var ps = teievents[y + 1].programStage;
+
+								//checking and filtering for program stage
+								if (ps == "zLxGw3kEplq") { psd = "ART-HIV Counselling and Testing"; }
+								else if (ps == "YRSdePjzzfs") { psd = "ART Follow-up"; }
+								else {
+									var psd = "";
+								}
+
+								//pushing all data to tei object
+								if (psd != "") {
+									outgoing_count++;
+								}
+
+							}
+                        }
+                        if(j == allTeis.length - 1){
+                            document.getElementById("outgoing_count").innerHTML = outgoing_count;
+                            $scope.outflag = true;
+                            return;
+                        }
+					}
+				});
+			}
+		});
+        
+	};
+    // $scope.loadQueue();
 });
