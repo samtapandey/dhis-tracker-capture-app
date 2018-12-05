@@ -114,6 +114,8 @@ trackerCapture.controller('TEIAddController',
 
     
     $scope.today = DateUtils.getToday();
+	$scope.familymemberid = 'Dnm1mq6iq2d';
+        $scope.householdid = 'uHv60gjn2gp';
     $scope.relationshipTypes = relationshipTypes;
     $scope.addingRelationship = addingRelationship;
     $scope.selectedAttribute = selectedAttribute;
@@ -699,7 +701,83 @@ trackerCapture.controller('TEIAddController',
         $scope.trackedEntityTypes.available = entities;   
         $scope.trackedEntityTypes.selected = $scope.trackedEntityTypes.available[0];
     });
-    
+    // new intpart age function
+		$scope.ageInYears = 'iIf1gJ4FVdR'; 
+	  $scope.dateofbirth = 'kelN057pfhq';	
+		 $scope.dobToAge = function (inputDob) {
+        if(inputDob != undefined && inputDob!= ''){
+        
+            var selectedDOBObject = new Date(inputDob);
+
+            var currentDateObject = new Date();
+
+            var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+            
+            var diffDays = Math.round(Math.abs((currentDateObject.getTime() - selectedDOBObject.getTime()) / (oneDay)));
+
+            var diffYear = diffDays/365;
+            
+            $scope.selectedTei[$scope.ageInYears] = ( Math.round(diffYear*100))/100;//put calculated value in month text box
+        }
+        else{
+            $scope.selectedTei[$scope.ageInYears] = '';
+        }
+    };
+ $scope.ageToDob = function (inputAge) {
+        if(inputAge != undefined && inputAge!= ''){
+
+        var coustomDate = new Date();
+        var coustomYear = coustomDate.getFullYear();
+
+        var yearOfDob = parseInt( coustomYear ) - parseInt( inputAge )
+        
+        $scope.selectedTei[$scope.dateofbirth] = yearOfDob + '-07-01';//put calculated value in month text box
+        }
+        else{
+            $scope.selectedTei[$scope.dateofbirth] = '';
+        }
+    };
+	
+	$scope.autogenerate= function(trackvalues,b){
+	var seriesofmember=trackvalues.UqhbFTbVeSD;
+	var typeofhouse=trackvalues.dCer94znEuY;
+	var nameoffamily=trackvalues.xalnzkNfD77;
+	
+	var household =trackvalues.YFjB0zhySP6;
+	if(seriesofmember && typeofhouse && nameoffamily)
+	{
+		var uppercasename=nameoffamily.toUpperCase();
+		household=household.substring(0,4);
+		var mergedata='CHD25/'+household+typeofhouse+'/'+uppercasename.substring(0,4)+'/'+seriesofmember;
+		$scope.selectedTei[$scope.familymemberid]=mergedata;
+		
+		
+	}
+	else
+		alert("Please fill neccessary deatils.");
+	
+}
+
+$scope.autogeneratehouse= function(trackvalues,b){
+	
+	var typeofhouse=trackvalues.dCer94znEuY;
+	var headoffamily=trackvalues.FML9pARILz5;
+	
+	var household =trackvalues.ZQMF7taSAw8;
+	if(household && typeofhouse && headoffamily)
+	{
+		var uppercaseheadname=headoffamily.toUpperCase();
+		household=household.substring(0,4);
+		var mergedata='CHD25/'+household+typeofhouse+'/'+uppercaseheadname.substring(0,4)+'/H1';
+		$scope.selectedTei[$scope.householdid]=mergedata;
+		
+		
+	}
+	else
+		alert("Please fill neccessary deatils.");
+	
+}
+	
     $scope.registerEntity = function(){
         
         //check for form validity
