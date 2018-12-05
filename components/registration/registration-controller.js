@@ -1051,12 +1051,30 @@ $timeout(function(){
                 }
             }
         });
-        return modalInstance.result.then(function (res) {
+         modalInstance.result.then(function (res) {
             if (res && res.id) {
-                //Send object with tei id and program id
-                $scope.selectedTei[selectedAttribute.id] = res.id;
+                $scope.selectedTei[selectedAttribute.id] = res.ZQMF7taSAw8;        // value for household        
+				if(res.MV4wWoZBrJS)
+				{
+				$scope.selectedTei["MV4wWoZBrJS"] = res.MV4wWoZBrJS;                         // value for locality
+				}
+				if(res.yDCO4KM4WVA)     
+				{
+				$scope.selectedTei["yDCO4KM4WVA"] = res.yDCO4KM4WVA;                            // value of anm 
+				}
+				if(res.ZmH0W6XHS9S)     
+				{
+				$scope.selectedTei["ZmH0W6XHS9S"] = res.ZmH0W6XHS9S;                            // value of Religion 
+				}
+				if(res.vbUue5poEcT)     
+				{
+				$scope.selectedTei["vbUue5poEcT"] = res.vbUue5poEcT;                            // value of caste 
+				}
+				if(res.dCer94znEuY)     
+				{
+				$scope.selectedTei["dCer94znEuY"] = res.dCer94znEuY;                            // value of type of house 
+				}
             }
-            return res;
         });
     };
 
