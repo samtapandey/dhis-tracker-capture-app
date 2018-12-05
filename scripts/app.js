@@ -20,6 +20,7 @@ import '../scripts/display-mode-controller.js';
 import '../scripts/sticky.min.js';
 import '../scripts/ng-csv.js';
 import '../components/dashboard/dashboard-controller.js';
+import '../scripts/dueperson/dueperson.js';
 import '../components/dashboard/dashboard-widgets-controller.js';
 import '../components/registration/registration-controller.js';
 import '../components/enrollment/enrollment-controller.js';
@@ -101,7 +102,10 @@ angular.module('trackerCapture')
     }).when('/overdue-events',{
         templateUrl:'components/report/overdue-events.html',
         controller: 'OverdueEventsController'
-    }).when('/upcoming-events',{
+    }).when('/dueperson',{
+        templateUrl:'views/dueperson.html',
+	controller: 'duepersonController'
+	}).when('/upcoming-events',{
         templateUrl:'components/report/upcoming-events.html',
         controller: 'UpcomingEventsController'
     }).otherwise({
