@@ -13,6 +13,7 @@ trackerCapture.controller('RelationshipController',
                 OrgUnitFactory,
                 ProgramFactory,
                 EnrollmentService,
+				RegistrationService,
                 ModalService,
                 CommonUtils) {
     $rootScope.showAddRelationshipDiv = false;
