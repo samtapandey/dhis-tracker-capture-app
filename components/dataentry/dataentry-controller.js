@@ -1636,6 +1636,30 @@ trackerCapture.controller('DataEntryController',
 	
 	
 	*/
+	
+	///Assign value to option set 
+	$timeout(function(){
+		 var url = window.location.href;
+			 var params = url.split('=');
+			 var per =params[1];
+			var per_check=per.split('&');
+           var perfirst=per_check[0];
+	 if(perfirst==undefined)
+		 return false ;
+			 //var finperr=perr.split('&');
+	var programidd=perfirst;
+			
+			var npcdcs="jC8Gprj4pWV";
+			if(npcdcs==programidd){
+		if(($scope.currentEvent.name ==="NPCDCS examination"||$scope.currentEvent.name ==="NPCDCS Follow up")&&($scope.currentEvent.GNIBMkEsKgs ===undefined)){
+			 $scope.currentEvent.GNIBMkEsKgs ="On Follow-up";  
+		
+		}
+			}
+		
+		},3000);
+	
+	
     $scope.saveDataValueForRadio = function(prStDe, event, value){
         
         var def = $q.defer();
@@ -1839,7 +1863,26 @@ trackerCapture.controller('DataEntryController',
     };
 
     $scope.saveEventDateForEvent = function (eventToSave, reOrder) {
-        if(!eventToSave.eventDate) {
+       
+      //Assign value to option set 
+		     var url = window.location.href;
+			 var params = url.split('=');
+			 var per =params[1];
+	   var per_check=per.split('&');
+      var perfirst=per_check[0];
+	 if(perfirst==undefined)
+		 return false ;
+	var programidd=perfirst;
+			
+			var npcdcs="jC8Gprj4pWV";
+			if(npcdcs==programidd){
+		if(($scope.currentEvent.name ==="NPCDCS examination"||$scope.currentEvent.name ==="NPCDCS Follow up")&&($scope.currentEvent.GNIBMkEsKgs ===undefined)){
+			 $scope.currentEvent.GNIBMkEsKgs ="On Follow-up";  
+		
+		}
+			}
+
+	   if(!eventToSave.eventDate) {
             return;
         }
         $scope.eventDateSaved = false;
