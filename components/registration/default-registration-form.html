@@ -1,3 +1,35 @@
+<style>
+
+.search-box,btn btn-info btn-sm{
+	position: relative;
+	padding: 6px 12px;
+}
+
+.search-box {
+font-family: sans-serif;
+font-size: 14px;
+    color: #555;
+	width:85%;
+	height:35px;
+	border: 1px solid #ccc;
+  outline: 0;
+  border-radius: 15px;
+}
+.search-box:focus {
+	box-shadow: 0 0 15px 5px #b0e0ee;
+	border: 2px solid #bebede;
+}
+ .btncolor {
+      background-color:#FC6700;
+	  color:white;
+    }
+	.btncolorgenerate{
+	 background-color:#FC0008;
+	  color:white;
+	
+	}
+
+</style>
 <div ng-if="widget !== 'PROFILE' && trackedEntityTypes.selected" class="section-label section-spacing vertical-spacing">
     {{'profile'| translate}}
 </div>
@@ -48,7 +80,7 @@
                 </span> 
 
                 <span ng-if="!attribute.optionSetValue" ng-switch="attribute.valueType">
-                    <span ng-switch-when="DATE">
+                    <span ng-switch-when="DATE" && ng-if="attribute.id != 'kelN057pfhq'">
                         <input type="text"
                                ng-attr-placeholder="{{dhis2CalendarFormat.keyDateFormat}}" 
                                name="foo" 
@@ -66,6 +98,26 @@
                                ng-disabled="attributeFieldDisabled(attribute)"
                                blur-or-change="teiValueUpdated(selectedTei, attribute.id)"
                                ng-required="attributeIsRequired(attribute.id, attribute.mandatory)"/>
+                    </span>
+					 <span ng-switch-when="DATE" && ng-if="attribute.id === 'kelN057pfhq'">
+                        <input type="text"
+                               ng-attr-placeholder="{{dhis2CalendarFormat.keyDateFormat}}" 
+                               name="foo" 
+                               class="form-control"
+                               d2-date
+                               d2-date-validator 
+                               max-date="attribute.allowFutureDate ? '' : 0"
+                               ng-model="selectedTei[attribute.id]"                               
+                               ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
+                               d2-attribute-validator
+                               selected-tet={{trackedEntityTypes.selected.id}}
+                               attribute-data={{attribute}}
+                               selected-program-id={{selectedProgram.id}}  
+                               selected-tei-id={{selectedTei.trackedEntityInstance}}  
+                               ng-disabled="attributeFieldDisabled(attribute)"
+                               blur-or-change="teiValueUpdated(selectedTei, attribute.id)"
+                               ng-required="attributeIsRequired(attribute.id, attribute.mandatory)"
+							   ng-change="dobToAge(selectedTei[attribute.id])"/>
                     </span>
                     <span ng-switch-when="DATETIME">
                         <d2-date-time datetime-model="selectedTei"
@@ -124,7 +176,7 @@
                             <label class="radio-inline"><input type="radio" ng-attr-value="false" ng-model="selectedTei[attribute.id]" >{{'no' | translate}}</label>
                         </span>
                     </span>                    
-                    <span ng-switch-when="NUMBER">
+                    <span ng-switch-when="NUMBER" && ng-if="attribute.id != 'iIf1gJ4FVdR'">
                         <span class="hideInPrint">
                             <input type="number"
                                    name="foo" 
@@ -141,6 +193,29 @@
                                    ng-disabled="attributeFieldDisabled(attribute)"
                                    ng-blur="teiValueUpdated(selectedTei, attribute.id)"
                                    ng-required="attributeIsRequired(attribute.id, attribute.mandatory)"/>
+                        </span>
+                        <span class="not-for-screen">
+                            <input type="text" class="form-control" ng-attr-value={{selectedTei[attribute.id]}}>
+                        </span>
+                    </span>
+					 <span ng-switch-when="NUMBER" && ng-if="attribute.id === 'iIf1gJ4FVdR'">
+                        <span class="hideInPrint">
+                            <input type="number"
+                                   name="foo" 
+                                   class="form-control"
+                                   ng-model="selectedTei[attribute.id]"
+                                   ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
+                                   d2-attribute-validator 
+                                   selected-tet={{trackedEntityTypes.selected.id}}
+                                   attribute-data={{attribute}}
+                                   selected-program-id={{selectedProgram.id}}  
+                                   selected-tei-id={{selectedTei.trackedEntityInstance}}  
+                                   d2-number-validator 
+                                   number-type={{attribute.valueType}} 
+                                   ng-disabled="attributeFieldDisabled(attribute)"
+                                   ng-blur="teiValueUpdated(selectedTei, attribute.id)"
+                                   ng-required="attributeIsRequired(attribute.id, attribute.mandatory)"
+								   ng-change="ageToDob(selectedTei[attribute.id])"/>
                         </span>
                         <span class="not-for-screen">
                             <input type="text" class="form-control" ng-attr-value={{selectedTei[attribute.id]}}>
@@ -360,7 +435,36 @@
                                selected-tei-id={{selectedTei.trackedEntityInstance}}  
                                ng-disabled="attributeFieldDisabled(attribute)"
                                ng-blur="teiValueUpdated(selectedTei, attribute.id)"
-                               ng-required="attributeIsRequired(attribute.id, attribute.mandatory)"/>
+                               ng-required="attributeIsRequired(attribute.id, attribute.mandatory)"
+							   ng-change="validate(selectedTei, attribute.id)"/>
+							   <button  ng-show="attribute.id=='NTm8KwaUAkq'"  id="patientid" class="btncolor" ng-click="dhis2_to_openmrs(selectedTei[attribute.id])">
+                                     Link to openMrs
+                                  </button> 
+								  <button  ng-show="attribute.id=='Dnm1mq6iq2d'"  id="familyid" class="btncolorgenerate" ng-click="autogenerate(selectedTei, attribute.id)">
+                                     Generate
+                                  </button>
+								   <button  ng-show="attribute.id=='uHv60gjn2gp'"  id="houseid" class="btncolorgenerate" ng-click="autogeneratehouse(selectedTei, attribute.id)">
+                                     Generate
+                                  </button>
+						<p ng-show="attribute.id=='uHv60gjn2gp'  &&  selectedTei.uHv60gjn2gp.length > 20"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  class="help-block" >House ID is too Long</p>
+					   <p ng-show="attribute.id=='uHv60gjn2gp' && selectedTei.uHv60gjn2gp.length < 20"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  >House ID is too Short</p>		  
+						<p ng-show="attribute.id=='Dnm1mq6iq2d'  &&  selectedTei.Dnm1mq6iq2d.length > 21"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  class="help-block" >Family Member ID is too Long</p>
+					   <p ng-show="attribute.id=='Dnm1mq6iq2d' && selectedTei.Dnm1mq6iq2d.length < 21"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  >Family Member ID is too Short</p>		  
+					  <p ng-show="attribute.id=='gZAFVJdEgIQ'  && selectedTei.gZAFVJdEgIQ.length > 18"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  class="help-block" >MTCS ID is too Long</p>
+					   <p ng-show="attribute.id=='gZAFVJdEgIQ' && selectedTei.gZAFVJdEgIQ.length < 18"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  >MTCS ID is too Short</p>
+                      <p ng-show="attribute.id=='AiPFBqutPYy'  && selectedTei.AiPFBqutPYy.length > 18"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  class="help-block" >MTCS ID is too Long</p>
+					   <p ng-show="attribute.id=='AiPFBqutPYy' && selectedTei.AiPFBqutPYy.length < 18"  style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  >MTCS ID is too Short</p>
+					   
+					   <!------rch id-->
+					    <p ng-show="attribute.id=='nxYjIIBWcao'  && selectedTei.nxYjIIBWcao.length > 12"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  class="help-block" >RCH ID is too Long</p>
+					   <p ng-show="attribute.id=='nxYjIIBWcao' && selectedTei.nxYjIIBWcao.length < 12"  style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  >RCH ID is too Short</p>
+					   <p ng-show="attribute.id=='DGlvE3h58kz'  && selectedTei.DGlvE3h58kz.length > 12"   style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  class="help-block" >RCH ID is too Long</p>
+					   <p ng-show="attribute.id=='DGlvE3h58kz' && selectedTei.DGlvE3h58kz.length < 12"  style="color:red;font-size: 15px;border:1px solid #f00;background-color:#F8E0D0"  >RCH ID is too Short</p>
+					   
+					   <!---- help block------>
+					  <p ng-show="attribute.id=='uHv60gjn2gp'"  class="help-block" style="color:green;">Hint :Facility/Houseno/Type of house/Head of family</p>
+					<p ng-show="attribute.id=='Dnm1mq6iq2d'"  class="help-block" style="color:green;">Hint :Facility/Houseno/Type of house/Name/Series</p>
+						
                     </span>
                     <span ng-switch-when="PHONE_NUMBER">
                         <input type="text"

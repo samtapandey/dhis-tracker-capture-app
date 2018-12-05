@@ -35,6 +35,11 @@ trackerCapture.controller('RegistrationController',
                 SessionStorageService,
                 AttributeUtils,
                 TCOrgUnitService) {
+					 $scope.ageInYears = 'iIf1gJ4FVdR'; 
+	  $scope.dateofbirth = 'kelN057pfhq'; 
+	   $scope.familymemberid = 'Dnm1mq6iq2d';
+        $scope.householdid = 'uHv60gjn2gp'; 
+		$scope.mothernameid='zNTlzse3eoz';
     var prefilledTet = null;
     $scope.today = DateUtils.getToday();
     $scope.trackedEntityForm = null;
@@ -637,7 +642,226 @@ trackerCapture.controller('RegistrationController',
         }
         return false;
     };
+	 $scope.dobToAge = function (inputDob) {
+        if(inputDob != undefined && inputDob!= ''){
+        
+            var selectedDOBObject = new Date(inputDob);
 
+            var currentDateObject = new Date();
+
+            var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+            
+            var diffDays = Math.round(Math.abs((currentDateObject.getTime() - selectedDOBObject.getTime()) / (oneDay)));
+
+            var diffYear = diffDays/365;
+            
+            $scope.selectedTei[$scope.ageInYears] = ( Math.round(diffYear*100))/100;//put calculated value in month text box
+        }
+        else{
+            $scope.selectedTei[$scope.ageInYears] = '';
+        }
+    };
+ $scope.ageToDob = function (inputAge) {
+        if(inputAge != undefined && inputAge!= ''){
+
+        var coustomDate = new Date();
+        var coustomYear = coustomDate.getFullYear();
+
+        var yearOfDob = parseInt( coustomYear ) - parseInt( inputAge )
+        
+        $scope.selectedTei[$scope.dateofbirth] = yearOfDob + '-07-01';//put calculated value in month text box
+        }
+        else{
+            $scope.selectedTei[$scope.dateofbirth] = '';
+        }
+    };
+	
+	$scope.autogenerate= function(trackvalues,b){
+	var seriesofmember=trackvalues.UqhbFTbVeSD;
+	var typeofhouse=trackvalues.dCer94znEuY;
+	var nameoffamily=trackvalues.xalnzkNfD77;
+	
+	var household =trackvalues.YFjB0zhySP6;
+	if(seriesofmember && typeofhouse && nameoffamily && household)
+	{
+		var uppercasename=nameoffamily.toUpperCase();
+		household=household.substring(0,4);
+		var mergedata='CHD25/'+household+typeofhouse+'/'+uppercasename.substring(0,4)+'/'+seriesofmember;
+		$scope.selectedTei[$scope.familymemberid]=mergedata;
+		
+		
+	}
+	else
+		alert("Please fill neccessary deatils.");
+	
+}
+
+		
+$scope.autogeneratehouse= function(trackvalues,b){
+	
+	var typeofhouse=trackvalues.dCer94znEuY;
+	var headoffamily=trackvalues.FML9pARILz5;
+	
+	var household =trackvalues.ZQMF7taSAw8;
+	if(household && typeofhouse && headoffamily)
+	{
+		var uppercaseheadname=headoffamily.toUpperCase();
+		household=household.substring(0,4);
+		var mergedata='CHD25/'+household+typeofhouse+'/'+uppercaseheadname.substring(0,4)+'/H1';
+		$scope.selectedTei[$scope.householdid]=mergedata;
+		
+		
+	}
+	else
+		alert("Please fill neccessary deatils.");
+	
+}
+
+$scope.dhis2_to_openmrs = function(patentid){
+	 var uniqueidofpatient= patentid
+	 if(uniqueidofpatient){
+     var url=document.location.href='http://192.168.1.10/emr/module/patientdashboard/main.htm?identifier='+uniqueidofpatient+'&opdId=3713&referralId=945';
+	 }
+	 else
+		 alert("Please enter openmrs id");
+}
+
+
+	  $scope.validate = function (tei, field) {
+		console.log(tei);
+		$scope.mtcsid0fchild=tei.gZAFVJdEgIQ;
+		$scope.mtcsid0fmother=tei.AiPFBqutPYy;
+		$scope.house_unniqueid=tei.uHv60gjn2gp;
+		$scope.familymember_unniqueid=tei.Dnm1mq6iq2d;
+		$scope.rch_id_mother=tei.nxYjIIBWcao;
+		$scope.rch_id_child=tei.DGlvE3h58kz;
+		if(field=="gZAFVJdEgIQ"){
+		if($scope.mtcsid0fchild.length>18 ||$scope.mtcsid0fchild.length <18 ){
+			
+			//alert("please check value");
+			document.getElementById("gZAFVJdEgIQ").style.backgroundColor = "#FF6760";
+		}
+		else if($scope.mtcsid0fchild.length==18){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("gZAFVJdEgIQ").style.backgroundColor = "white";
+		}
+		}else if(field=="AiPFBqutPYy"){
+		 if($scope.mtcsid0fmother.length>18 ||$scope.mtcsid0fmother.length <18 ){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("AiPFBqutPYy").style.backgroundColor = "#FF6760";
+		}
+		else if($scope.mtcsid0fmother.length==18){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("AiPFBqutPYy").style.backgroundColor = "white";
+		}
+		}
+		else if(field=="Dnm1mq6iq2d"){
+		 if($scope.familymember_unniqueid.length>21 ||$scope.familymember_unniqueid.length <21 ){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("Dnm1mq6iq2d").style.backgroundColor = "#FF6760";
+		}
+		else if($scope.familymember_unniqueid.length==21){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("Dnm1mq6iq2d").style.backgroundColor = "white";
+		}
+		}
+			else if(field=="uHv60gjn2gp"){
+		 if($scope.house_unniqueid.length>20 ||$scope.house_unniqueid.length <20 ){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("uHv60gjn2gp").style.backgroundColor = "#FF6760";
+		}
+		else if($scope.house_unniqueid.length==20){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("uHv60gjn2gp").style.backgroundColor = "white";
+		}
+		}
+		
+			else if(field=="nxYjIIBWcao"){
+		 if($scope.rch_id_mother.length>12 ||$scope.rch_id_mother.length <12 ){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("nxYjIIBWcao").style.backgroundColor = "#FF6760";
+		}
+		else if($scope.rch_id_mother.length==12){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("nxYjIIBWcao").style.backgroundColor = "white";
+		}
+		}
+       	else if(field=="DGlvE3h58kz"){
+		 if($scope.rch_id_child.length>12 ||$scope.rch_id_child.length <12 ){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("DGlvE3h58kz").style.backgroundColor = "#FF6760";
+		}
+		else if($scope.rch_id_child.length==12){
+			// block the save button
+			//alert("please check value");
+			document.getElementById("DGlvE3h58kz").style.backgroundColor = "white";
+		}
+		}
+    };
+	
+	
+	
+	
+	//fetching name from realtionship  and assign to mother name
+$timeout(function(){
+               var url = window.location.href;
+			 var params = url.split('=');
+			 var per =params[1];
+			 var finper=per.split('&');
+	var trackid=finper[0];
+	 var perr =params[2];
+	 if(perr==undefined)
+		 return false ;
+			 var finperr=perr.split('&');
+	var programidd=finperr[0];
+			
+			var childid="JdZ3gv6cx54";
+			if(childid==programidd){
+	 
+	  $.get("../api/trackedEntityInstances.json?ou=lZtSBQjZCaX&program=JdZ3gv6cx54&trackedEntityInstance="+trackid+"&skipPaging=true&fields=[relationships]", function (data1) {
+			  var trackdata=data1;
+			 
+			  			  for(var i=0;i<trackdata.trackedEntityInstances[0].relationships.length;i++)
+				{
+			            
+						if(trackdata.trackedEntityInstances[0].relationships[i].displayName=="Mother - child"){
+						
+						var relativelength=trackdata.trackedEntityInstances[0].relationships[i].relative;
+						
+						
+						var dataval=relativelength.attributes;
+						
+						  for(var q=0;q<dataval.length;q++){
+						  if(dataval[q].attribute=="xalnzkNfD77"){
+						  var mothername=dataval[q].value;
+						  	console.log(mothername);
+				$scope.selectedTei[$scope.mothernameid] = mothername;
+				
+				$scope.registerEntity(null);
+						  }
+						  }
+						
+						}
+				  }
+				
+			    }); 
+	  }
+	  else
+	 return false ;
+                       },3000);
+					   
+	
+	
     $scope.teiValueUpdated = function (tei, field) {
         getMatchingTeisCount(tei,field)
         .then(function()

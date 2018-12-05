@@ -1554,7 +1554,7 @@ trackerCapture.controller('DataEntryController',
         
         var period = {event: $scope.currentEvent.event, stage: $scope.currentEvent.programStage, name: $scope.currentEvent.sortingDate};
         $scope.currentPeriod[$scope.currentEvent.programStage] = period;        
-        
+        // $scope.calculateDataElementValue(orgid, pid, trackid);
         //Because of separatae dataentry-controllers for tabular and timeline data entry,
         //the rule effects might already be in place:
         processRuleEffect($scope.currentEvent.event);
@@ -1569,6 +1569,73 @@ trackerCapture.controller('DataEntryController',
         $scope.saveDataValueForEvent(prStDe, field, $scope.currentEvent, false);
     };
     
+	/* $scope.calculateDataElementValue = function (orgid, pid, trackid) {
+	        var val = 0;
+	        var val1 = 0;
+	        var sum1 = 0;
+	        var sum2 = 0;
+	        // $scope.sumcal = 0;
+	        // $scope.sumIFA = 0;  
+	        $.ajax({
+	            async: false,
+	            type: "GET",
+	            dataType: "json",
+	            contentType: "application/json",
+	
+	            url: "../api/events.json?orgUnit=" + orgid + "&program=" + pid + "&trackedEntityInstance=" + trackid + "&skipPaging=false",
+	            success: function success(data22) {
+	
+	                for (var i = 0; i < data22.events.length; i++) {
+	                    var pstage = data22.events;
+	                    // console.log(pstage);
+	
+	
+	                    var m = pstage[i];
+	                    var stageid = m.programStage;
+	
+	                    for (var k = 0; k < m.dataValues.length; k++) {
+	                        var dataval = m.dataValues[k];
+	                        var dataEle = dataval.dataElement;
+	                        if (dataEle == "lFGbeZ6Ybir") //calcium
+	                            {
+	                                val = dataval.value;
+	
+	                                sum1 = sum1 + parseInt(val);
+	                            }
+	                        if (dataEle == "H9lATKmEgQu") // IFA
+	                            {
+	                                val1 = dataval.value;
+	
+	                                sum2 = sum2 + parseInt(val1);
+	                            }
+	                    }
+	                }
+	
+	                $scope.sumcal = 0;
+	                $scope.sumIFA = 0;
+	                $scope.sumcal = sum1;
+	                $scope.sumIFA = sum2;
+	
+	                // return $scope.sumIFA;
+	                console.log("cal =" + $scope.sumcal);
+	                console.log("IFA = " + $scope.sumIFA);
+	                console.log("program" + $scope.namepro);
+	
+	                if ($scope.sumcal == 360 || $scope.sumcal > 360) {
+	                    $('.cal').css('background-color', 'red');
+	                    // document.getElementsByClassName("info-container").style.background= "red";
+	                }
+	                if ($scope.sumIFA == 180 || $scope.sumIFA > 180) {
+	                    $('.ifa').css('background-color', 'red');
+	                    //                                document.getElementsByClassName("info-container").style.background= "red";
+	                }
+	            },
+	            error: function error(response) {}
+	        });
+	    };
+	
+	
+	*/
     $scope.saveDataValueForRadio = function(prStDe, event, value){
         
         var def = $q.defer();
@@ -1656,6 +1723,49 @@ trackerCapture.controller('DataEntryController',
                 ]
             };
             return DHIS2EventFactory.updateForSingleValue(ev).then(function (response) {
+				/* if (response.httpStatus === "OK") {
+	
+	                    if (prStDe.dataElement.id == "H9lATKmEgQu") // IFA
+	                        {
+	                            var url = window.location.href;
+	                            var params = url.split('=');
+	                            var per = params[1];
+	                            var proid = params[2];
+	                            var progid = proid.split('&');
+	                            var pid = progid[0];
+	                            var orgid = params[3];
+	
+	                            var finper = per.split('&');
+	                            var trackid = finper[0];
+	                            //window.alert("IFA");
+	                            $timeout(function () {
+	                                $scope.calculateDataElementValue(orgid, pid, trackid);
+	                            }, 100);
+	                        }
+	
+	                    if (prStDe.dataElement.id == "lFGbeZ6Ybir") // calcium
+	                        {
+	                            var url = window.location.href;
+	                            var params = url.split('=');
+	                            var per = params[1];
+	                            var proid = params[2];
+	                            var progid = proid.split('&');
+	                            var pid = progid[0];
+	                            var orgid = params[3];
+	
+	                            var finper = per.split('&');
+	                            var trackid = finper[0];
+	                            // window.alert("Calcium");
+	
+	                            $timeout(function () {
+	                                $scope.calculateDataElementValue(orgid, pid, trackid);
+	                            }, 100);
+	                        }
+	                }   */            
+
+				
+				
+				
                 if(!response) {
                     if(!backgroundUpdate) {
                         $scope.currentElement.saved = false;
