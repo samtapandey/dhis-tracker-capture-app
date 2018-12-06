@@ -270,6 +270,7 @@ $("[data-toggle='popover']").popover('destroy');
 	
 	
 };
+
         var loadOptionSets = function(){
             if(!$scope.base.optionSets){
                 $scope.base.optionSets = $scope.optionSets = {};
@@ -298,7 +299,7 @@ $("[data-toggle='popover']").popover('destroy');
         }
         var loadCanRegister = function(){
             if($scope.selectedProgram){
-				if($scope.selectedProgram.id=="TcaMMqHJxK5" || $scope.selectedProgram.id=="BgTTdBNKHwc")
+				if($scope.selectedProgram.id=="TcaMMqHJxK5" || $scope.selectedProgram=="BgTTdBNKHwc")
         $scope.views = [viewsByType.lists, viewsByType.search, viewsByType.registration];
 			else
 				$scope.views = [viewsByType.lists, viewsByType.search];
