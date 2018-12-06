@@ -3,7 +3,7 @@
         <table class="table table-striped dhis2-table-hover table-bordered">               
             <thead>                        
                 <tr>
-				  <td><b>Visit Number</b></td> 
+				  <td ng-show="selectcustomprogram=='SUCUF657zNe'"><b>Visit Number</b></td>
                     <th ng-repeat="gridColumn in gridColumns| filter:{show: true}" class='mouse-pointer' ng-click="sortGrid(gridColumn)">                            
                         <!-- sort icon begins -->                                
                         <span ng-hide="gridColumn.showFilter" class="bold pointer" title="{{'sort'| translate}}" class="fa fa-sort">
@@ -22,8 +22,8 @@
                     ng-click="onTeiClickedInternal(tei)"
                     ng-class="{true: 'inactive-tei'} [tei.inactive]"
                     title="{{mainTei.trackedEntityInstance ? 'select' : 'go_to_dashboard'| translate}}">
-					<td>
-					{{mainTei}}
+					<td ng-show="selectcustomprogram=='SUCUF657zNe'">
+					
 					<button  
                  
               
@@ -34,7 +34,7 @@
           
        
      
-       </td>
+       </td>{{selectedProgram}}
                     <td ng-repeat="gridColumn in gridColumns| filter:{show: true}">
                         <span ng-switch="gridColumn.valueType">
                             <span ng-switch-when="BOOLEAN">
