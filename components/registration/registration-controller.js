@@ -34,7 +34,8 @@ trackerCapture.controller('RegistrationController',
                 AuthorityService,
                 SessionStorageService,
                 AttributeUtils,
-                TCOrgUnitService) {
+                TCOrgUnitService,
+                ProgramFactory) {
 					 $scope.ageInYears = 'iIf1gJ4FVdR'; 
 	  $scope.dateofbirth = 'kelN057pfhq'; 
 	   $scope.familymemberid = 'Dnm1mq6iq2d';
@@ -1019,62 +1020,67 @@ $timeout(function(){
         return status;
     };
 
+    var allPrograms = null;
+    var getAllPrograms = function () {
+        var def = $q.defer();
+        if(allPrograms) {
+            def.resolve(allPrograms);
+        }else{
+            ProgramFactory.getAll().then(function(result) {
+                allPrograms = result.programs;
+                def.resolve(allPrograms);
+            });
+        }
+
+        return def.promise;
+
+    }
+
+
     $scope.getTrackerAssociate = function (selectedAttribute, existingAssociateUid) {
-        var modalInstance = $modal.open({
-            templateUrl: 'components/teiadd/tei-add.html',
-            controller: 'TEIAddController',
-            windowClass: 'modal-full-window',
-            resolve: {
-                relationshipTypes: function () {
-                    return $scope.relationshipTypes;
-                },
-                addingRelationship: function () {
-                    return false;
-                },
-                selections: function () {
-                    return CurrentSelection.get();
-                },
-                selectedTei: function () {
-                    return $scope.selectedTei;
-                },
-                selectedAttribute: function () {
-                    return selectedAttribute;
-                },
-                existingAssociateUid: function () {
-                    return existingAssociateUid;
-                },
-                selectedProgram: function () {
-                    return $scope.selectedProgram;
-                },
-                relatedProgramRelationship: function () {
-                    return $scope.relatedProgramRelationship;
+        return getAllPrograms().then(function(allProgramsResult){
+            var modalInstance = $modal.open({
+                templateUrl: 'components/teiadd/tei-add.html',
+                controller: 'TEIAddController',
+                windowClass: 'modal-full-window',
+                resolve: {
+                    relationshipTypes: function () {
+                        return $scope.relationshipTypes;
+                    },
+                    addingRelationship: function () {
+                        return false;
+                    },
+                    selections: function () {
+                        return CurrentSelection.get();
+                    },
+                    selectedTei: function () {
+                        return $scope.selectedTei;
+                    },
+                    selectedAttribute: function () {
+                        return selectedAttribute;
+                    },
+                    existingAssociateUid: function () {
+                        return existingAssociateUid;
+                    },
+                    selectedProgram: function () {
+                        return $scope.selectedProgram;
+                    },
+                    relatedProgramRelationship: function () {
+                        return $scope.relatedProgramRelationship;
+                    },
+                    allPrograms: function () {
+                        return allProgramsResult;
+                    },
                 }
-            }
-        });
-         modalInstance.result.then(function (res) {
-            if (res && res.id) {
-                $scope.selectedTei[selectedAttribute.id] = res.ZQMF7taSAw8;        // value for household        
-				if(res.MV4wWoZBrJS)
-				{
-				$scope.selectedTei["MV4wWoZBrJS"] = res.MV4wWoZBrJS;                         // value for locality
-				}
-				if(res.yDCO4KM4WVA)     
-				{
-				$scope.selectedTei["yDCO4KM4WVA"] = res.yDCO4KM4WVA;                            // value of anm 
-				}
-				if(res.ZmH0W6XHS9S)     
-				{
-				$scope.selectedTei["ZmH0W6XHS9S"] = res.ZmH0W6XHS9S;                            // value of Religion 
-				}
-				if(res.vbUue5poEcT)     
-				{
-				$scope.selectedTei["vbUue5poEcT"] = res.vbUue5poEcT;                            // value of caste 
-				}
-				if(res.dCer94znEuY)     
-				{
-				$scope.selectedTei["dCer94znEuY"] = res.dCer94znEuY;                            // value of type of house 
-				}
-            }
+            });
+            return modalInstance.result.then(function (res) {
+                if (res && res.id) {
+                    //Send object with tei id and program id
+                    $scope.selectedTei[selectedAttribute.id] = res.id;
+                }
+                return res;
+            });
+
         });
     };
 
