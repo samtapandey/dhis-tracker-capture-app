@@ -40,7 +40,8 @@ trackerCapture.controller('RegistrationController',
 	  $scope.dateofbirth = 'kelN057pfhq'; 
 	   $scope.familymemberid = 'Dnm1mq6iq2d';
         $scope.householdid = 'uHv60gjn2gp'; 
-		$scope.mothernameid='zNTlzse3eoz';
+        $scope.mothernameid='zNTlzse3eoz';
+        $scope.custom_assosiate_value;
     var prefilledTet = null;
     $scope.today = DateUtils.getToday();
     $scope.trackedEntityForm = null;
@@ -1076,13 +1077,41 @@ $timeout(function(){
             return modalInstance.result.then(function (res) {
                 if (res && res.id) {
                     //Send object with tei id and program id
-                    $scope.selectedTei[selectedAttribute.id] = res.id;
+					$scope.custom_assosiate_value = res.ZQMF7taSAw8;
+                    $scope.selectedTei[selectedAttribute.id] = res.id;        // value for household        
+				if(res.MV4wWoZBrJS)
+				{
+				$scope.selectedTei["MV4wWoZBrJS"] = res.MV4wWoZBrJS;                         // value for locality
+				}
+				if(res.yDCO4KM4WVA)     
+				{
+				$scope.selectedTei["yDCO4KM4WVA"] = res.yDCO4KM4WVA;                            // value of anm 
+				}
+				
+				if(res.ZmH0W6XHS9S)     
+				{
+				$scope.selectedTei["ZmH0W6XHS9S"] = res.ZmH0W6XHS9S;                            // value of Religion 
+				}
+				if(res.vbUue5poEcT)     
+				{
+				$scope.selectedTei["vbUue5poEcT"] = res.vbUue5poEcT;                            // value of caste 
+				}
+				if(res.dCer94znEuY)     
+				{
+				$scope.selectedTei["dCer94znEuY"] = res.dCer94znEuY;                            // value of type of house 
+				}
                 }
+                $scope.update_assosiatevalue();
                 return res;
             });
 
         });
     };
+    
+    $scope.update_assosiatevalue= function (){
+        $scope.selectedTei['YFjB0zhySP6'] = $scope.custom_assosiate_value;  // Update Value in the household
+       
+   };
 
     $scope.cancelRegistrationWarning = function (cancelFunction, inDashboard) {
         var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById);
