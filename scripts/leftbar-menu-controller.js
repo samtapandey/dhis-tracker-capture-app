@@ -7,7 +7,9 @@ trackerCapture.controller('LeftBarMenuController',
         selection.load();
         $location.path('/').search();
     }; 
-    
+    $scope.showduepersonInterface = function(){
+        $location.path('/dueperson').search();
+    };
     $scope.showReportTypes = function(){
         $location.path('/report-types').search();
     };

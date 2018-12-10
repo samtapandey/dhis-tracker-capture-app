@@ -47,9 +47,10 @@
             <div class="alert alert-warning">{{'search_input_required'| translate}}</div>
         </div>
     </div>    
-    
+  
     <!--- Error display for search ends -->    
     <tracker-tei-list 
+        tei-programuid="currentTrackedEntityList.config.program.id"
         tei-data="currentTrackedEntityList.data" 
         tei-pager="pager" 
         tei-sort-column="currentTrackedEntityList.sortColumn"

@@ -1554,7 +1554,7 @@ trackerCapture.controller('DataEntryController',
         
         var period = {event: $scope.currentEvent.event, stage: $scope.currentEvent.programStage, name: $scope.currentEvent.sortingDate};
         $scope.currentPeriod[$scope.currentEvent.programStage] = period;        
-        
+        // $scope.calculateDataElementValue(orgid, pid, trackid);
         //Because of separatae dataentry-controllers for tabular and timeline data entry,
         //the rule effects might already be in place:
         processRuleEffect($scope.currentEvent.event);
@@ -1569,6 +1569,97 @@ trackerCapture.controller('DataEntryController',
         $scope.saveDataValueForEvent(prStDe, field, $scope.currentEvent, false);
     };
     
+	/* $scope.calculateDataElementValue = function (orgid, pid, trackid) {
+	        var val = 0;
+	        var val1 = 0;
+	        var sum1 = 0;
+	        var sum2 = 0;
+	        // $scope.sumcal = 0;
+	        // $scope.sumIFA = 0;  
+	        $.ajax({
+	            async: false,
+	            type: "GET",
+	            dataType: "json",
+	            contentType: "application/json",
+	
+	            url: "../api/events.json?orgUnit=" + orgid + "&program=" + pid + "&trackedEntityInstance=" + trackid + "&skipPaging=false",
+	            success: function success(data22) {
+	
+	                for (var i = 0; i < data22.events.length; i++) {
+	                    var pstage = data22.events;
+	                    // console.log(pstage);
+	
+	
+	                    var m = pstage[i];
+	                    var stageid = m.programStage;
+	
+	                    for (var k = 0; k < m.dataValues.length; k++) {
+	                        var dataval = m.dataValues[k];
+	                        var dataEle = dataval.dataElement;
+	                        if (dataEle == "lFGbeZ6Ybir") //calcium
+	                            {
+	                                val = dataval.value;
+	
+	                                sum1 = sum1 + parseInt(val);
+	                            }
+	                        if (dataEle == "H9lATKmEgQu") // IFA
+	                            {
+	                                val1 = dataval.value;
+	
+	                                sum2 = sum2 + parseInt(val1);
+	                            }
+	                    }
+	                }
+	
+	                $scope.sumcal = 0;
+	                $scope.sumIFA = 0;
+	                $scope.sumcal = sum1;
+	                $scope.sumIFA = sum2;
+	
+	                // return $scope.sumIFA;
+	                console.log("cal =" + $scope.sumcal);
+	                console.log("IFA = " + $scope.sumIFA);
+	                console.log("program" + $scope.namepro);
+	
+	                if ($scope.sumcal == 360 || $scope.sumcal > 360) {
+	                    $('.cal').css('background-color', 'red');
+	                    // document.getElementsByClassName("info-container").style.background= "red";
+	                }
+	                if ($scope.sumIFA == 180 || $scope.sumIFA > 180) {
+	                    $('.ifa').css('background-color', 'red');
+	                    //                                document.getElementsByClassName("info-container").style.background= "red";
+	                }
+	            },
+	            error: function error(response) {}
+	        });
+	    };
+	
+	
+	*/
+	
+	///Assign value to option set 
+	$timeout(function(){
+		 var url = window.location.href;
+			 var params = url.split('=');
+			 var per =params[1];
+			var per_check=per.split('&');
+           var perfirst=per_check[0];
+	 if(perfirst==undefined)
+		 return false ;
+			 //var finperr=perr.split('&');
+	var programidd=perfirst;
+			
+			var npcdcs="jC8Gprj4pWV";
+			if(npcdcs==programidd){
+		if(($scope.currentEvent.name ==="NPCDCS examination"||$scope.currentEvent.name ==="NPCDCS Follow up")&&($scope.currentEvent.GNIBMkEsKgs ===undefined)){
+			 $scope.currentEvent.GNIBMkEsKgs ="On Follow-up";  
+		
+		}
+			}
+		
+		},3000);
+	
+	
     $scope.saveDataValueForRadio = function(prStDe, event, value){
         
         var def = $q.defer();
@@ -1656,6 +1747,49 @@ trackerCapture.controller('DataEntryController',
                 ]
             };
             return DHIS2EventFactory.updateForSingleValue(ev).then(function (response) {
+				/* if (response.httpStatus === "OK") {
+	
+	                    if (prStDe.dataElement.id == "H9lATKmEgQu") // IFA
+	                        {
+	                            var url = window.location.href;
+	                            var params = url.split('=');
+	                            var per = params[1];
+	                            var proid = params[2];
+	                            var progid = proid.split('&');
+	                            var pid = progid[0];
+	                            var orgid = params[3];
+	
+	                            var finper = per.split('&');
+	                            var trackid = finper[0];
+	                            //window.alert("IFA");
+	                            $timeout(function () {
+	                                $scope.calculateDataElementValue(orgid, pid, trackid);
+	                            }, 100);
+	                        }
+	
+	                    if (prStDe.dataElement.id == "lFGbeZ6Ybir") // calcium
+	                        {
+	                            var url = window.location.href;
+	                            var params = url.split('=');
+	                            var per = params[1];
+	                            var proid = params[2];
+	                            var progid = proid.split('&');
+	                            var pid = progid[0];
+	                            var orgid = params[3];
+	
+	                            var finper = per.split('&');
+	                            var trackid = finper[0];
+	                            // window.alert("Calcium");
+	
+	                            $timeout(function () {
+	                                $scope.calculateDataElementValue(orgid, pid, trackid);
+	                            }, 100);
+	                        }
+	                }   */            
+
+				
+				
+				
                 if(!response) {
                     if(!backgroundUpdate) {
                         $scope.currentElement.saved = false;
@@ -1729,7 +1863,26 @@ trackerCapture.controller('DataEntryController',
     };
 
     $scope.saveEventDateForEvent = function (eventToSave, reOrder) {
-        if(!eventToSave.eventDate) {
+       
+      //Assign value to option set 
+		     var url = window.location.href;
+			 var params = url.split('=');
+			 var per =params[1];
+	   var per_check=per.split('&');
+      var perfirst=per_check[0];
+	 if(perfirst==undefined)
+		 return false ;
+	var programidd=perfirst;
+			
+			var npcdcs="jC8Gprj4pWV";
+			if(npcdcs==programidd){
+		if(($scope.currentEvent.name ==="NPCDCS examination"||$scope.currentEvent.name ==="NPCDCS Follow up")&&($scope.currentEvent.GNIBMkEsKgs ===undefined)){
+			 $scope.currentEvent.GNIBMkEsKgs ="On Follow-up";  
+		
+		}
+			}
+
+	   if(!eventToSave.eventDate) {
             return;
         }
         $scope.eventDateSaved = false;
@@ -1993,18 +2146,6 @@ trackerCapture.controller('DataEntryController',
         return 'form-control';
     };
 
-    var completeEnrollmentAllowed = function(ignoreEventId){
-        for(var i = 0; i < $scope.programStages.length; i++ ) {
-            for(var e = 0; e < $scope.eventsByStage[$scope.programStages[i].id].length; e++) {
-                if($scope.eventsByStage[$scope.programStages[i].id][e].status ==='ACTIVE' && $scope.eventsByStage[$scope.programStages[i].id][e].event !== ignoreEventId){
-                    return false;
-                }
-            }
-        }
-        return true;
-    };
-    
-    
     var completeEnrollment = function () {
         $scope.deleteScheduleAndOverdueEvents().then(function(result){
             
@@ -2149,24 +2290,15 @@ trackerCapture.controller('DataEntryController',
         }
         ModalService.showModal(modalDefaults, modalOptions).then(function (modalResult) {
             if(modalResult===modalCompleteIncompleteActions.completeEnrollment){
-                if(!completeEnrollmentAllowed(dhis2Event.event)){
-                    modalOptions = {
-                        actionButtonText: 'OK',
-                        headerText: 'complete_enrollment_failed',
-                        bodyText: 'complete_active_events_before_completing_enrollment'
-                    };
-                    ModalService.showModal({},modalOptions);
-                }else{
-                    modalOptions = {
-                        closeButtonText: 'cancel',
-                        actionButtonText: 'complete',
-                        headerText: 'complete_enrollment',
-                        bodyText: 'are_you_sure_to_complete_enrollment_delete_schedule'
-                    };
-                    ModalService.showModal({},modalOptions).then(function(){
-                        $scope.executeCompleteIncompleteEvent(dhis2Event,modalResult);
-                    });
-                }
+                modalOptions = {
+                    closeButtonText: 'cancel',
+                    actionButtonText: 'complete',
+                    headerText: 'complete_enrollment',
+                    bodyText: 'are_you_sure_to_complete_enrollment_delete_schedule'
+                };
+                ModalService.showModal({},modalOptions).then(function(){
+                    $scope.executeCompleteIncompleteEvent(dhis2Event,modalResult);
+                });
             }else{
                 $scope.executeCompleteIncompleteEvent(dhis2Event,modalResult);               
             }
@@ -2282,6 +2414,156 @@ trackerCapture.controller('DataEntryController',
         
     };
     
+	//For Intpart
+	
+	
+	    $scope.sendsms = function () {
+	        var mobile;
+	        var objatt = [];
+	        var namee;
+	        var url = window.location.href;
+	        var params = url.split('=');
+	        var per = params[1];
+	        var finper = per.split('&');
+	        var trackid = finper[0];
+	
+	        var housedetailss = ["Lt9ZrfgAMuw"];
+	        var perr = params[2];
+	        var finperr = perr.split('&');
+	        var programidd = finperr[0];
+	        //alert(programidd);
+	        var npcdcsid = "jC8Gprj4pWV";
+	        if (programidd == npcdcsid) {
+	
+	            var url1 = "../api/trackedEntityInstances/" + trackid + ".json?";
+	            $.get(url1, function (data1) {
+	
+	                var trackdata = data1;
+	                // console.log(trackdata);
+	
+	
+	                for (var q = 0; q < trackdata.attributes.length; q++) {
+	                    var idd = trackdata.attributes[q].attribute;
+	                    // objatt.push(idd);	
+	                    objatt.push(idd);
+	
+	                    if (trackdata.attributes[q].attribute == "Lt9ZrfgAMuw") //mobile number
+	                        {
+	
+	                            var aa = trackdata.attributes[q].value;
+	                            mobile = aa;
+	                        } else if (trackdata.attributes[q].attribute == "xalnzkNfD77") //name of family member   
+	                        {
+	
+	                            var aa = trackdata.attributes[q].value;
+	                            namee = aa;
+	                        }
+	                }
+	                var array3 = housedetailss.filter(function (obj) {
+	                    return objatt.indexOf(obj) == -1;
+	                });
+	                for (var t = 0; t < array3.length; t++) {
+	                    if (array3[t] == "Lt9ZrfgAMuw") mobile = "NA";else if (array3[t] == "xalnzkNfD77") namee = "NA";
+	                }
+	
+	                objatt = [];
+	
+	                //objatt=[];
+	            });
+	
+	            $.get("../api/events.json?orgUnit=lZtSBQjZCaX&program=jC8Gprj4pWV&&trackedEntityInstance=" + trackid + "&skipPaging=true", function (data22) {
+	
+	                var eventdata = data22;
+	                // console.log(eventdata);
+	                for (var j = 0; j < eventdata.events.length; j++) {
+	                    var eventdatee = eventdata.events[j].eventDate;
+	                    var eventdattee = eventdatee.substr(0, 10);
+	                    var dataval = eventdata.events[j].dataValues;
+	                    var trackinstanceid = eventdata.events[j].trackedEntityInstance;
+	                    for (var q = 0; q < dataval.length; q++) {
+	                        var id = dataval[q].dataElement;
+	
+	                        if (id == "FSD6mDILc7l") //HTN
+	                            {
+	                                $scope.sendsmss("&#2344;&#2350;&#2360;&#2381;&#2340;&#2375; " + namee + " , &#2342;&#2367;&#2344;&#2366;&#2306;&#2325; " + eventdattee + " &#2325;&#2379; 25 &#2360;&#2375;&#2325;&#2381;&#2335;&#2352; &#2325;&#2368; &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2350;&#2375;&#2306; &#2332;&#2366;&#2305;&#2330; &#2325;&#2375; &#2342;&#2380;&#2352;&#2366;&#2344; &#2310;&#2346; &#2350;&#2375;&#2306; &#2348;&#2381;&#2354;&#2337; &#2346;&#2381;&#2352;&#2375;&#2358;&#2352; &#2325;&#2368; &#2348;&#2368;&#2350;&#2366;&#2352;&#2368; &#2346;&#2366;&#2312; &#2327;&#2351;&#2368;  &#2361;&#2376; | &#2311;&#2360; &#2325;&#2375; &#2346;&#2369;&#2359;&#2381;&#2335;&#2367;&#2325;&#2352;&#2339; &#2325;&#2375; &#2354;&#2367;&#2319; 1 &#2360;&#2346;&#2381;&#2340;&#2366;&#2361; &#2348;&#2366;&#2342; &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2350;&#2375;&#2306; &#2310;&#2325;&#2352; &#2346;&#2369;&#2344;: &#2332;&#2366;&#2305;&#2330; &#2325;&#2352;&#2357;&#2366;&#2351;&#2375;&#2306; | &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2360;&#2369;&#2348;&#2361; 9 &#2348;&#2332;&#2375; &#2360;&#2375;  &#2342;&#2379;&#2346;&#2361;&#2352; 2 &#2348;&#2332;&#2375; &#2340;&#2325; &#2326;&#2369;&#2354;&#2368; &#2361;&#2379;&#2340;&#2368; &#2361;&#2376; |", mobile);
+	                                alert("Message sent for HTN to " + mobile);
+	                            } else if (id == "C4YdSPG3Mr0") //Breast CA
+	                            {
+	                                $scope.sendsmss("&#2344;&#2350;&#2360;&#2381;&#2340;&#2375; " + namee + " , &#2342;&#2367;&#2344;&#2366;&#2306;&#2325; " + eventdattee + " &#2325;&#2379; 25 &#2360;&#2375;&#2325;&#2381;&#2335;&#2352; &#2325;&#2368; &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2350;&#2375;&#2306; &#2332;&#2366;&#2305;&#2330; &#2325;&#2375; &#2342;&#2380;&#2352;&#2366;&#2344; &#2310;&#2346; &#2350;&#2375;&#2306; &#2360;&#2381;&#2340;&#2344; &#2325;&#2373;&#2344;&#2381;&#2360;&#2352; &#2325;&#2368; &#2348;&#2368;&#2350;&#2366;&#2352;&#2368; &#2346;&#2366;&#2312; &#2327;&#2351;&#2368;  &#2361;&#2376; | &#2311;&#2360; &#2325;&#2375; &#2346;&#2369;&#2359;&#2381;&#2335;&#2367;&#2325;&#2352;&#2339; &#2325;&#2375; &#2354;&#2367;&#2319; 1 &#2360;&#2346;&#2381;&#2340;&#2366;&#2361; &#2348;&#2366;&#2342; &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2350;&#2375;&#2306; &#2310;&#2325;&#2352; &#2346;&#2369;&#2344;: &#2332;&#2366;&#2305;&#2330; &#2325;&#2352;&#2357;&#2366;&#2351;&#2375;&#2306; | &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2360;&#2369;&#2348;&#2361; 9 &#2348;&#2332;&#2375; &#2360;&#2375;  &#2342;&#2379;&#2346;&#2361;&#2352; 2 &#2348;&#2332;&#2375; &#2340;&#2325; &#2326;&#2369;&#2354;&#2368; &#2361;&#2379;&#2340;&#2368; &#2361;&#2376; |", mobile);
+	                                alert("Message sent for Breast CA to  " + mobile);
+	                            } else if (id == "gpJWjauP93y") //Cervical CA
+	                            {
+	                                $scope.sendsmss("&#2344;&#2350;&#2360;&#2381;&#2340;&#2375; " + namee + " , &#2342;&#2367;&#2344;&#2366;&#2306;&#2325; " + eventdattee + " &#2325;&#2379; 25 &#2360;&#2375;&#2325;&#2381;&#2335;&#2352; &#2325;&#2368; &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2350;&#2375;&#2306; &#2332;&#2366;&#2305;&#2330; &#2325;&#2375; &#2342;&#2380;&#2352;&#2366;&#2344; &#2310;&#2346; &#2350;&#2375;&#2306; &#2360;&#2352;&#2381;&#2357;&#2366;&#2311;&#2325;&#2354; &#2325;&#2376;&#2306;&#2360;&#2352; &#2325;&#2368; &#2348;&#2368;&#2350;&#2366;&#2352;&#2368; &#2346;&#2366;&#2312; &#2327;&#2351;&#2368;  &#2361;&#2376; | &#2311;&#2360; &#2325;&#2375; &#2346;&#2369;&#2359;&#2381;&#2335;&#2367;&#2325;&#2352;&#2339; &#2325;&#2375; &#2354;&#2367;&#2319; 1 &#2360;&#2346;&#2381;&#2340;&#2366;&#2361; &#2348;&#2366;&#2342; &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2350;&#2375;&#2306; &#2310;&#2325;&#2352; &#2346;&#2369;&#2344;: &#2332;&#2366;&#2305;&#2330; &#2325;&#2352;&#2357;&#2366;&#2351;&#2375;&#2306; | &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2360;&#2369;&#2348;&#2361; 9 &#2348;&#2332;&#2375; &#2360;&#2375;  &#2342;&#2379;&#2346;&#2361;&#2352; 2 &#2348;&#2332;&#2375; &#2340;&#2325; &#2326;&#2369;&#2354;&#2368; &#2361;&#2379;&#2340;&#2368; &#2361;&#2376; | ", mobile);
+	                                alert("Message sent for Cervical CA to  " + mobile);
+	                            } else if (id == "ObkhLek0zZf") //Oral CA
+	                            {
+	                                $scope.sendsmss("&#2344;&#2350;&#2360;&#2381;&#2340;&#2375; " + namee + " , &#2342;&#2367;&#2344;&#2366;&#2306;&#2325; " + eventdattee + " &#2325;&#2379; 25 &#2360;&#2375;&#2325;&#2381;&#2335;&#2352; &#2325;&#2368; &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2350;&#2375;&#2306; &#2332;&#2366;&#2305;&#2330; &#2325;&#2375; &#2342;&#2380;&#2352;&#2366;&#2344; &#2310;&#2346; &#2350;&#2375;&#2306; &#2350;&#2370;&#2361; &#2325;&#2366; &#2325;&#2373;&#2344;&#2381;&#2360;&#2352; &#2325;&#2368; &#2348;&#2368;&#2350;&#2366;&#2352;&#2368; &#2346;&#2366;&#2312; &#2327;&#2351;&#2368;  &#2361;&#2376; | &#2311;&#2360; &#2325;&#2375; &#2346;&#2369;&#2359;&#2381;&#2335;&#2367;&#2325;&#2352;&#2339; &#2325;&#2375; &#2354;&#2367;&#2319; 1 &#2360;&#2346;&#2381;&#2340;&#2366;&#2361; &#2348;&#2366;&#2342; &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2350;&#2375;&#2306; &#2310;&#2325;&#2352; &#2346;&#2369;&#2344;: &#2332;&#2366;&#2305;&#2330; &#2325;&#2352;&#2357;&#2366;&#2351;&#2375;&#2306; | &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2360;&#2369;&#2348;&#2361; 9 &#2348;&#2332;&#2375; &#2360;&#2375;  &#2342;&#2379;&#2346;&#2361;&#2352; 2 &#2348;&#2332;&#2375; &#2340;&#2325; &#2326;&#2369;&#2354;&#2368; &#2361;&#2379;&#2340;&#2368; &#2361;&#2376; | ", mobile);
+	                                alert("Message sent for Oral CA to  " + mobile);
+	                            } else if (id == "Fay65bFZIkC") //CKD
+	                            {
+	                                $scope.sendsmss("&#2344;&#2350;&#2360;&#2381;&#2340;&#2375; " + namee + " , &#2342;&#2367;&#2344;&#2366;&#2306;&#2325; " + eventdattee + " &#2325;&#2379; 25 &#2360;&#2375;&#2325;&#2381;&#2335;&#2352; &#2325;&#2368; &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2350;&#2375;&#2306; &#2332;&#2366;&#2305;&#2330; &#2325;&#2375; &#2342;&#2380;&#2352;&#2366;&#2344; &#2310;&#2346; &#2350;&#2375;&#2306; &#2350;&#2370;&#2361; &#2325;&#2366; &#2325;&#2373;&#2344;&#2381;&#2360;&#2352; &#2325;&#2368; &#2348;&#2368;&#2350;&#2366;&#2352;&#2368; &#2346;&#2366;&#2312; &#2327;&#2351;&#2368;  &#2361;&#2376; | &#2311;&#2360; &#2325;&#2375; &#2346;&#2369;&#2359;&#2381;&#2335;&#2367;&#2325;&#2352;&#2339; &#2325;&#2375; &#2354;&#2367;&#2319; 1 &#2360;&#2346;&#2381;&#2340;&#2366;&#2361; &#2348;&#2366;&#2342; &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2350;&#2375;&#2306; &#2310;&#2325;&#2352; &#2346;&#2369;&#2344;: &#2332;&#2366;&#2305;&#2330; &#2325;&#2352;&#2357;&#2366;&#2351;&#2375;&#2306; | &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2360;&#2369;&#2348;&#2361; 9 &#2348;&#2332;&#2375; &#2360;&#2375;  &#2342;&#2379;&#2346;&#2361;&#2352; 2 &#2348;&#2332;&#2375; &#2340;&#2325; &#2326;&#2369;&#2354;&#2368; &#2361;&#2379;&#2340;&#2368; &#2361;&#2376; ", mobile);
+	                                alert("Message sent for CKD to  " + mobile);
+	                            } else if (id == "xFhzzBJ4Z6K") //RF
+	                            {
+	                                $scope.sendsmss("&#2344;&#2350;&#2360;&#2381;&#2340;&#2375; " + namee + " , &#2342;&#2367;&#2344;&#2366;&#2306;&#2325; " + eventdattee + " &#2325;&#2379; 25 &#2360;&#2375;&#2325;&#2381;&#2335;&#2352; &#2325;&#2368; &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2350;&#2375;&#2306; &#2332;&#2366;&#2305;&#2330; &#2325;&#2375; &#2342;&#2380;&#2352;&#2366;&#2344; &#2310;&#2346; &#2350;&#2375;&#2306; &#2352;&#2369;&#2350;&#2375;&#2335;&#2367;&#2325; &#2348;&#2369;&#2326;&#2366;&#2352; &#2325;&#2368; &#2348;&#2368;&#2350;&#2366;&#2352;&#2368; &#2346;&#2366;&#2312; &#2327;&#2351;&#2368;  &#2361;&#2376; | &#2311;&#2360; &#2325;&#2375; &#2346;&#2369;&#2359;&#2381;&#2335;&#2367;&#2325;&#2352;&#2339; &#2325;&#2375; &#2354;&#2367;&#2319; 1 &#2360;&#2346;&#2381;&#2340;&#2366;&#2361; &#2348;&#2366;&#2342; &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2350;&#2375;&#2306; &#2310;&#2325;&#2352; &#2346;&#2369;&#2344;: &#2332;&#2366;&#2305;&#2330; &#2325;&#2352;&#2357;&#2366;&#2351;&#2375;&#2306; | &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2360;&#2369;&#2348;&#2361; 9 &#2348;&#2332;&#2375; &#2360;&#2375;  &#2342;&#2379;&#2346;&#2361;&#2352; 2 &#2348;&#2332;&#2375; &#2340;&#2325; &#2326;&#2369;&#2354;&#2368; &#2361;&#2379;&#2340;&#2368; &#2361;&#2376; | ", mobile);
+	                                alert("Message sent for RF to  " + mobile);
+	                            } else if (id == "doZmhIPTR2O") //COPD
+	                            {
+	                                $scope.sendsmss("&#2344;&#2350;&#2360;&#2381;&#2340;&#2375; " + namee + " , &#2342;&#2367;&#2344;&#2366;&#2306;&#2325; " + eventdattee + " &#2325;&#2379; 25 &#2360;&#2375;&#2325;&#2381;&#2335;&#2352; &#2325;&#2368; &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2350;&#2375;&#2306; &#2332;&#2366;&#2305;&#2330; &#2325;&#2375; &#2342;&#2380;&#2352;&#2366;&#2344; &#2310;&#2346; &#2350;&#2375;&#2306; &#2360;&#2366;&#2306;&#2360; &#2325;&#2368; &#2348;&#2368;&#2350;&#2366;&#2352;&#2368; &#2346;&#2366;&#2312; &#2327;&#2351;&#2368;  &#2361;&#2376; | &#2311;&#2360; &#2325;&#2375; &#2346;&#2369;&#2359;&#2381;&#2335;&#2367;&#2325;&#2352;&#2339; &#2325;&#2375; &#2354;&#2367;&#2319; 1 &#2360;&#2346;&#2381;&#2340;&#2366;&#2361; &#2348;&#2366;&#2342; &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2350;&#2375;&#2306; &#2310;&#2325;&#2352; &#2346;&#2369;&#2344;: &#2332;&#2366;&#2305;&#2330; &#2325;&#2352;&#2357;&#2366;&#2351;&#2375;&#2306; | &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2360;&#2369;&#2348;&#2361; 9 &#2348;&#2332;&#2375; &#2360;&#2375;  &#2342;&#2379;&#2346;&#2361;&#2352; 2 &#2348;&#2332;&#2375; &#2340;&#2325; &#2326;&#2369;&#2354;&#2368; &#2361;&#2379;&#2340;&#2368; &#2361;&#2376; |", mobile);
+	                                alert("Message sent for COPD to  " + mobile);
+	                            }
+	                        if (id == "GREEuTukX3P") //DM
+	                            {
+	                                $scope.sendsmss("&#2344;&#2350;&#2360;&#2381;&#2340;&#2375; " + namee + " , &#2342;&#2367;&#2344;&#2366;&#2306;&#2325; " + eventdattee + " &#2325;&#2379; 25 &#2360;&#2375;&#2325;&#2381;&#2335;&#2352; &#2325;&#2368; &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2350;&#2375;&#2306; &#2332;&#2366;&#2305;&#2330; &#2325;&#2375; &#2342;&#2380;&#2352;&#2366;&#2344; &#2310;&#2346; &#2350;&#2375;&#2306; &#2358;&#2369;&#2327;&#2352; &#2325;&#2368; &#2348;&#2368;&#2350;&#2366;&#2352;&#2368; &#2346;&#2366;&#2312; &#2327;&#2351;&#2368;  &#2361;&#2376; | &#2311;&#2360; &#2325;&#2375; &#2346;&#2369;&#2359;&#2381;&#2335;&#2367;&#2325;&#2352;&#2339; &#2325;&#2375; &#2354;&#2367;&#2319; 1 &#2360;&#2346;&#2381;&#2340;&#2366;&#2361; &#2348;&#2366;&#2342; &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2350;&#2375;&#2306; &#2310;&#2325;&#2352; &#2346;&#2369;&#2344;: &#2332;&#2366;&#2305;&#2330; &#2325;&#2352;&#2357;&#2366;&#2351;&#2375;&#2306; | &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2360;&#2369;&#2348;&#2361; 9 &#2348;&#2332;&#2375; &#2360;&#2375;  &#2342;&#2379;&#2346;&#2361;&#2352; 2 &#2348;&#2332;&#2375; &#2340;&#2325; &#2326;&#2369;&#2354;&#2368; &#2361;&#2379;&#2340;&#2368; &#2361;&#2376; |", mobile);
+	                                alert("Message sent for DM to  " + mobile);
+	                            } else if (id == "m63ulx9T3Ri") //CVD1 
+	                            {
+	                                $scope.sendsmss("&#2344;&#2350;&#2360;&#2381;&#2340;&#2375; " + namee + " , &#2342;&#2367;&#2344;&#2366;&#2306;&#2325; " + eventdattee + " &#2325;&#2379; 25 &#2360;&#2375;&#2325;&#2381;&#2335;&#2352; &#2325;&#2368; &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2350;&#2375;&#2306; &#2332;&#2366;&#2305;&#2330; &#2325;&#2375; &#2342;&#2380;&#2352;&#2366;&#2344; &#2310;&#2346; &#2350;&#2375;&#2306; &#2361;&#2371;&#2342;&#2381;&#2351;&#2366; &#2352;&#2379;&#2327; &#2325;&#2368; &#2348;&#2368;&#2350;&#2366;&#2352;&#2368; &#2346;&#2366;&#2312; &#2327;&#2351;&#2368;  &#2361;&#2376; | &#2311;&#2360; &#2325;&#2375; &#2346;&#2369;&#2359;&#2381;&#2335;&#2367;&#2325;&#2352;&#2339; &#2325;&#2375; &#2354;&#2367;&#2319; 1 &#2360;&#2346;&#2381;&#2340;&#2366;&#2361; &#2348;&#2366;&#2342; &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2350;&#2375;&#2306; &#2310;&#2325;&#2352; &#2346;&#2369;&#2344;: &#2332;&#2366;&#2305;&#2330; &#2325;&#2352;&#2357;&#2366;&#2351;&#2375;&#2306; | &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2360;&#2369;&#2348;&#2361; 9 &#2348;&#2332;&#2375; &#2360;&#2375;  &#2342;&#2379;&#2346;&#2361;&#2352; 2 &#2348;&#2332;&#2375; &#2340;&#2325; &#2326;&#2369;&#2354;&#2368; &#2361;&#2379;&#2340;&#2368; &#2361;&#2376; |", mobile);
+	                                alert("Message sent for CVD1 to  " + mobile);
+	                            } else if (id == "bv7PMXbyOZD") //CA-Other
+	                            {
+	                                $scope.sendsmss("&#2344;&#2350;&#2360;&#2381;&#2340;&#2375; " + namee + " , &#2342;&#2367;&#2344;&#2366;&#2306;&#2325; " + eventdattee + " &#2325;&#2379; 25 &#2360;&#2375;&#2325;&#2381;&#2335;&#2352; &#2325;&#2368; &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2350;&#2375;&#2306; &#2332;&#2366;&#2305;&#2330; &#2325;&#2375; &#2342;&#2380;&#2352;&#2366;&#2344; &#2310;&#2346; &#2350;&#2375;&#2306; &#2309;&#2344;&#2381;&#2351; &#2325;&#2373;&#2344;&#2381;&#2360;&#2352; &#2325;&#2368; &#2348;&#2368;&#2350;&#2366;&#2352;&#2368; &#2346;&#2366;&#2312; &#2327;&#2351;&#2368;  &#2361;&#2376; | &#2311;&#2360; &#2325;&#2375; &#2346;&#2369;&#2359;&#2381;&#2335;&#2367;&#2325;&#2352;&#2339; &#2325;&#2375; &#2354;&#2367;&#2319; 1 &#2350;&#2361;&#2368;&#2344;&#2375; &#2348;&#2366;&#2342; &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2350;&#2375;&#2306; &#2310;&#2325;&#2352; &#2346;&#2369;&#2344;: &#2332;&#2366;&#2305;&#2330; &#2325;&#2352;&#2357;&#2366;&#2351;&#2375;&#2306; | &#2337;&#2367;&#2360;&#2381;&#2346;&#2375;&#2306;&#2360;&#2352;&#2368; &#2360;&#2369;&#2348;&#2361; 9 &#2348;&#2332;&#2375; &#2360;&#2375;  &#2342;&#2379;&#2346;&#2361;&#2352; 2 &#2348;&#2332;&#2375; &#2340;&#2325; &#2326;&#2369;&#2354;&#2368; &#2361;&#2379;&#2340;&#2368; &#2361;&#2376; ", mobile);
+	                                alert("Message sent for CA-Other to  " + mobile);
+	                            }
+	                    }
+	                }
+	            });
+	        } else {
+	            window.alert("Under development for this program");
+	        }
+	    };
+		
+		
+		
+	    $scope.sendsmss = function (smscontent, mobile) {
+	        //alert("its working");
+	        var finalcontent = encodeURIComponent(smscontent);
+				$.ajax({
+url: "https://msdgweb.mgov.gov.in/esms/sendsmsrequest", // server url
+type: 'POST', //POST or GET 
+data: "username=PHD25PGIMER&password=sph@25&smsservicetype=unicodemsg&content="+finalcontent+"&mobileno="+mobile+"&senderid=PGIMER", // data to send in ajax format or querystring format
+datatype: 'json',
+beforeSend: function() {
+alert('sending message');
+// do some loading options
+},
+success: function(data) {
+var responsevalue=data.substring(0, 3);
+console.log(responsevalue);
+
+},
+error: function(xhr, status, error) {
+
+}
+});
+
+
+
+	    };
+	
+	
+	
+	
 
     var setStatusColor = function () {
         var statusColor = EventUtils.getEventStatusColor($scope.currentEvent);

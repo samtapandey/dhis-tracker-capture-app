@@ -17,9 +17,34 @@
             <a ng-show="userAuthority.canAdministerDashboard || !lockedList[selectedProgram.id]" class="small-horizontal-spacing" href ng-click="removeWidget(relationshipsWidget)" ng-attr-title="{{removeLabel}}"><i class="fa fa-times-circle"></i></a>            
         </span>        
     </div>
+	
+	  <!--For Intpart-->
+    <div class="modal fade" id="myModalhouse" role="dialog">
+        <div class="modal-dialog" style="width:800px">
+        
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h2 class="modal-title"><h2<b>Household Members..</b></h2>
+            </div>
+            <div class="modal-body">
+              <p><table id="tablehouse" class="reporthouse" style="width:100%"> </table></p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+	
+	
+	
     <div ng-show="relationshipsWidget.expand" class="panel-body dashboard-widget-container">
         <div>
-            <div ng-show="selectedTei && !selectedTei.relationships || selectedTei.relationships.length < 1" class="alert alert-warning">{{noRelationshipLabel}}</div> 
+		    <div ng-show="selectedTei && !selectedTei.relationships || selectedTei.relationships.length < 1 && selectedProgram.id=='BgTTdBNKHwc'"ng-click="householdmembers()" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-home"></span>Household Relation</div>
+            <div ng-show="selectedTei && !selectedTei.relationships || selectedTei.relationships.length < 1 && selectedProgram.id !='BgTTdBNKHwc'" class="alert alert-warning">{{noRelationshipLabel}}</div> 
             <div ng-show="!selectedTei" class="alert alert-danger">{{'relationship_not_possible'| translate}}</div> 
 
             <div ng-if="relatedTeis.length > 0">

@@ -58,8 +58,22 @@ trackerCapture.controller('HomeController',function(
             },
 
         }
+		
+		 var loadPrograms = function(){
+            return ProgramFactory.getProgramsByOu($scope.selectedOrgUnit,true, previousProgram).then(function(response){
+                $scope.programs = response.programs;
+				$scope.checkloaded_program=response.selectedProgram.id;		
+			if($scope.checkloaded_program=="TcaMMqHJxK5" || $scope.checkloaded_program=="BgTTdBNKHwc")
         $scope.views = [viewsByType.lists, viewsByType.search, viewsByType.registration];
-
+			else
+				$scope.views = [viewsByType.lists, viewsByType.search];
+                $scope.setProgram(response.selectedProgram);
+            });
+        }
+		 
+		
+	
+		
         var mapOuLevelsToId = function(){
             $scope.base.ouLevelsByLevel = {};
             angular.forEach(ouLevels, function(ouLevel){
@@ -142,12 +156,12 @@ trackerCapture.controller('HomeController',function(
             return resolvedEmptyPromise();
         }
 
-        var loadPrograms = function(){
+        /*var loadPrograms = function(){
             return ProgramFactory.getProgramsByOu($scope.selectedOrgUnit,true, previousProgram).then(function(response){
                 $scope.programs = response.programs;
                 $scope.setProgram(response.selectedProgram);
             });
-        }
+        }*/
 
         var loadCachedData = function(){
             var frontPageData = CurrentSelection.getFrontPageData();
@@ -178,6 +192,7 @@ trackerCapture.controller('HomeController',function(
             return deferred.promise;
         }
 
+
         var loadOptionSets = function(){
             if(!$scope.base.optionSets){
                 $scope.base.optionSets = $scope.optionSets = {};
@@ -206,6 +221,10 @@ trackerCapture.controller('HomeController',function(
         }
         var loadCanRegister = function(){
             if($scope.selectedProgram){
+				if($scope.selectedProgram.id=="TcaMMqHJxK5" || $scope.selectedProgram.id=="BgTTdBNKHwc")
+        $scope.views = [viewsByType.lists, viewsByType.search, viewsByType.registration];
+			else
+				$scope.views = [viewsByType.lists, viewsByType.search];
                 var tet = $scope.trackedEntityTypesById[$scope.selectedProgram.trackedEntityType.id];
                 var promise;
                 if(tet){
