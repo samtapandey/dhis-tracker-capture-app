@@ -238,6 +238,19 @@ trackerCapture.controller('DataEntryController',
         $scope.printEmptyForm = false;
     };
 
+	
+	$scope.printslip=function(eventvale,printdivname){
+		
+		var printContents = document.getElementById(printdivname).innerHTML;
+ var w=window.open();
+ w.document.write(printContents);
+ w.document.write('<style>.boxHeaderslip {background-color: #1aac9b;color: white;display: block;padding: 2px;}.box, .boxHeaderslip{border: 1px solid #1aac9b;width: 100%;padding: 5px 2px 5px 2px; text-align: left; margin-left: auto;margin-right: auto;}</style>');
+ w.print();
+ w.close();
+		
+		
+	};
+	
     $scope.toggleCompForm = function() {
         if($scope.currentStage.timelineDataEntryMode !== $scope.timelineDataEntryModes.COMPAREALLDATAENTRYFORM) {
             $scope.currentStage.timelineDataEntryMode = $scope.timelineDataEntryModes.COMPAREALLDATAENTRYFORM;
