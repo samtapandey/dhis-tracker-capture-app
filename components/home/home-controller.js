@@ -221,7 +221,7 @@ trackerCapture.controller('HomeController',function(
         }
         var loadCanRegister = function(){
             if($scope.selectedProgram){
-				if($scope.selectedProgram.id=="TcaMMqHJxK5" || $scope.selectedProgram=="BgTTdBNKHwc")
+				if($scope.selectedProgram.id=="TcaMMqHJxK5" || $scope.selectedProgram.id=="BgTTdBNKHwc")
         $scope.views = [viewsByType.lists, viewsByType.search, viewsByType.registration];
 			else
 				$scope.views = [viewsByType.lists, viewsByType.search];
