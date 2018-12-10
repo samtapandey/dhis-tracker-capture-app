@@ -1927,6 +1927,9 @@ a.disable-link-effects:focus {
     width: 35px;    
 }
 
+.btn.btn-default.dashboard-info-btn-left-back {
+    width: 63px;
+}
 .dashboard-info-btn-right-two-buttons{
     float:right;
     display:inline-block;

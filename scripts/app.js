@@ -21,6 +21,7 @@ import '../scripts/sticky.min.js';
 import '../scripts/ng-csv.js';
 import '../components/dashboard/dashboard-controller.js';
 import '../scripts/dueperson/dueperson.js';
+import '../scripts/queue/waitingqueue.js';
 import '../components/dashboard/dashboard-widgets-controller.js';
 import '../components/registration/registration-controller.js';
 import '../components/enrollment/enrollment-controller.js';
@@ -105,7 +106,10 @@ angular.module('trackerCapture')
     }).when('/dueperson',{
         templateUrl:'views/dueperson.html',
 	controller: 'duepersonController'
-	}).when('/upcoming-events',{
+	}).when('/waitingqueue',{
+        templateUrl:'views/waitingqueue.html',
+        controller: 'waitingqueueController'
+    }).when('/upcoming-events',{
         templateUrl:'components/report/upcoming-events.html',
         controller: 'UpcomingEventsController'
     }).otherwise({
