@@ -802,9 +802,9 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                                     }
                                     if (index > -1) {
                                         xmlData += '<attribute id="' + attrNamesIdMap[itemName] + '" ' +
-                                            'name="' + itemName + '" value="' + value + '"></attribute>';
+                                            'name="' + itemName + '" ng-attr-value="' + value + '"></attribute>';
                                     } else {
-                                        xmlData += '<' + headers[j].name + ' value="' + value + '"></' + headers[j].name + '>';
+                                        xmlData += '<' + headers[j].name + ' ng-attr-value="' + value + '"></' + headers[j].name + '>';
                                     }
 
                                 }
@@ -830,9 +830,11 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
         },                
         update: function(tei, optionSets, attributesById){
             var formattedTei = angular.copy(tei);
+            var attributes = [];
             angular.forEach(formattedTei.attributes, function(att){
-                att.value = CommonUtils.formatDataValue(null, att.value, attributesById[att.attribute], optionSets, 'API');
+                attributes.push({attribute: att.attribute, value: CommonUtils.formatDataValue(null, att.value, attributesById[att.attribute], optionSets, 'API')});
             });
+            formattedTei.attributes = attributes;
             var promise = $http.put( DHIS2URL + '/trackedEntityInstances/' + formattedTei.trackedEntityInstance , formattedTei ).then(function(response){                    
                 return response.data;
             }, function(response){

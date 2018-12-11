@@ -72,10 +72,9 @@
 </script>
 
 <span id="showLeftBar" class="hideInPrint">
-    <a href="javascript:dhis2.leftBar.showAnimated()" title="$i18n.getString('show_menu' )">
-        <i class="fa fa-arrow-right leftBarIcon"></i>
-    </a>
+    <a href="javascript:dhis2.leftBar.showAnimated()" ng-attr-title="$i18n.getString('show_menu' )"><i class="fa fa-arrow-right leftBarIcon"></i></a>
 </span>
+
 
 <div id="leftBar">
     <d2-left-bar class="ouhide"></d2-left-bar>
@@ -119,15 +118,17 @@
 
             <!-- program selection begins -->
             <div class="col-md-4 small-vertical-spacing hideInPrint">
-                <ui-select ng-model="model.selectedProgram" theme="select2" on-select="getProgramAttributes(model.selectedProgram)" style="width:100%;">
-                    <ui-select-match allow-clear="true" class="form-control-ui-select" placeholder="{{'select_or_search' | translate}}">{{$select.selected.displayName || $select.selected}}</ui-select-match>
-                    <ui-select-choices repeat="program in programs | filter: $select.search | limitTo:maxOptionSize">
+                <ui-select ng-model="model.selectedProgram"
+                           theme="select2"
+                           on-select="getProgramAttributes(model.selectedProgram)"
+                           style="width:100%;">
+                    <ui-select-match allow-clear="true" class="form-control-ui-select" ng-attr-placeholder="{{'select_or_search' | translate}}">{{$select.selected.displayName  || $select.selected}}</ui-select-match>
+                    <ui-select-choices  repeat="program in programs | filter: $select.search | limitTo:maxOptionSize">
                         <span ng-bind-html="program.displayName | highlight: $select.search"></span>
                     </ui-select-choices>
                 </ui-select>
             </div>
             <!-- program selection ends -->
-
             <!-- simple/advanced search begins -->
             <div id="searchDropDownParent" class="input-group col-md-4 hideInPrint blurr">
                 <input type="text" ng-if="selectedOrgUnit.id" placeholder="{{searchCriteriaLabel}}" ng-model="model.searchText" class="form-control expanded"
@@ -206,7 +207,7 @@
                         btn-radio="'CANCELLED'" title="{{cancelledEnrollmentsLabel}}" ng-click='filterByEnrollmentStatus("CANCELLED")'>
                         <i class="fa fa-times mouse-pointer"></i>
                     </label>
-                </span>
+                   </span>
                 <span ng-if="teiFetched && enrollmentStatus!== 'TODAY' && pager.total">
                     {{'total'| translate}}: {{pager.total}}
                 </span>
@@ -230,7 +231,7 @@
                         </li>
                     </ul>
                 </span>
-                <label class="horizontal-spacing btn btn-default" ng-click="showHideColumns()" title="{{'show_hide_columns'| translate}}">
+                <label class="horizontal-spacing btn btn-default" ng-click="showHideColumns()" ng-attr-title="{{'show_hide_columns'| translate}}">
                     <i class="fa fa-table"></i>
                 </label>
             </span>
