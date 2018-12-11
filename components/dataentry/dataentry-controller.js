@@ -94,6 +94,30 @@ trackerCapture.controller('DataEntryController',
     $scope.optionGroupsById = CurrentSelection.getOptionGroupsById();
 
     $scope.userAuthority = AuthorityService.getUserAuthorities(SessionStorageService.get('USER_PROFILE'));
+	
+		//get attribute of user
+	  ///Assign value to option set 
+	$.get("../api/me.json?fields=userCredentials[openId]", function (data1) {
+			  var trackdata=data1;
+			 $scope.custom_section_name=[];
+			 
+			 
+	                      
+							//var eventdata=trackdata.attributeValues[i].attribute;
+							
+							 //var section_id=eventdata.id;
+							  var section_name=trackdata.userCredentials.openId;
+							    var section_array = section_name.split(',');
+							 // var json_section_name={"id":section_id,"displayName":section_name};
+							  $scope.custom_section_name=section_array;
+							  console.log($scope.custom_section_name);
+							
+                             							
+			        
+					 
+			   
+			    });
+	
     if(!$scope.attributesById){
         $scope.attributesById = [];
         AttributesFactory.getAll().then(function(atts){
