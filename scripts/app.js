@@ -16,6 +16,9 @@ import '../scripts/directives.js';
 import '../scripts/leftbar-menu-controller.js';
 import '../scripts/report-types-controller.js';
 import '../scripts/display-mode-controller.js';
+import '../scripts/amr-custom-service.js';
+import '../scripts/first-level-approval-controller.js';
+import '../scripts/second-level-approval-controller.js';
 import '../scripts/sticky.min.js';
 import '../scripts/ng-csv.js';
 import '../components/dashboard/dashboard-controller.js';
@@ -83,6 +86,12 @@ angular.module('trackerCapture')
     }).when('/report-types',{
         templateUrl:'views/report-types.html',
         controller: 'ReportTypesController'
+    }).when('/first-level-approval',{
+        templateUrl:'views/first-level-approval.html',
+        controller: 'FirstLevelApprovalController'
+    }).when('/second-level-approval',{
+        templateUrl:'views/second-level-approval.html',
+        controller: 'SecondLevelApprovalController'
     }).when('/program-summary',{
         templateUrl:'components/report/program-summary.html',
         controller: 'ProgramSummaryController'

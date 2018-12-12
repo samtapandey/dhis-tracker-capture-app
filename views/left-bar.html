@@ -7,6 +7,8 @@
     <ul class="nav nav-pills nav-stacked">
         <li><a href ng-click="showHome()">{{'registration_and_data_entry'| translate}}</a></li>
         <li><a href ng-click="showReportTypes()">{{'reports'| translate}}</a></li>
+        <li ng-if="validLevel1UserGroup"><a  href ng-click="firstLevelApproval();loadData();">{{'Records List'| translate}}</a></li>
+        <li ng-if="validLevel2UserGroup"><a  href ng-click="secondLevelApproval();loadData();">{{'Records List'| translate}}</a></li>
     </ul>
 </div>
 <div style="margin-top:20px">

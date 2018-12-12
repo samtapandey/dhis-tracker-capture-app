@@ -1,0 +1,212 @@
+<span id="showLeftBar" class="hideInPrint">
+    <a href="javascript:dhis2.leftBar.showAnimated()" title="$i18n.getString('show_menu' )"><i class="fa fa-arrow-right leftBarIcon"></i></a>
+</span>
+<div id="leftBar">
+    <d2-left-bar></d2-left-bar>
+
+    <div id="orgUnitTree">
+        <ul>
+        </ul>
+    </div>
+
+    <img id="ouwt_loader" src="../images/ajax-loader-bar.gif" alt="{{'in_progress'| translate}}" />
+
+    <div class="small-horizontal-spacing" ng-if="!treeLoaded">
+        {{'loading_tree'| translate}}
+    </div>
+</div>
+<div class="page add-default-right-padding" id="mainPage">
+    <!--- selected org unit begins -->
+    <input type="text" selected-org-unit ng-model="selectedOrgUnit.displayName" ng-hide=true>
+    <!--- selected org unit ends  -->
+
+    <div ng-if="treeLoaded && !selectedOrgUnit" class="row col-sm-12">
+        <img src="../images/ajax-loader-bar.gif" alt="{{'in_progress'| translate}}" /><br>
+        {{'loading_metadata'| translate}}
+    </div>
+
+    <div ng-show="selectedOrgUnit && selectedOrgUnit.id">
+        <!-- top bar begins -->
+        <div class="top-bar row">
+            <div class="col-sm-12">
+                {{'Records List'| translate}}
+            </div>
+        </div>
+        <!-- top bar ends -->
+        <br><br>
+        <div class="row">
+            <div class="col-sm-12 col-md-10">
+
+                <table class="table table-borderless table-striped" style="width:100%">
+                    <tr>
+                        <td style="padding: 20px 10px;">{{'org_unit' | translate}}</td>
+                        <td>
+                            <input type="text" class="form-control" value="{{selectedOrgUnit.displayName || 'please_select'| translate}}"
+                                ng-disabled="true">
+                        </td>
+                        <td style="padding: 13px 10px;">
+                            <button type="button" class="btn btn-primary center-block" ng-click="filterOptionsShow()">{{'Filter'|translate}}</button>
+                        </td>
+                        <td style="padding: 13px 10px;">
+                            <button type="button" class="btn btn-primary center-block" ng-click="approvedList()">{{'Accepted
+                                Records'|translate}}</button>
+                        </td>
+                        <td style="padding: 13px 10px;">
+                            <button type="button" class="btn btn-primary center-block" ng-click="rejectedList()">{{'Rejected
+                                Records'|translate}}</button>
+                        </td>
+                        <td style="padding: 13px 10px;">
+                            <button type="button" class="btn btn-primary center-block" ng-click="resentList()">{{'Re-sent
+                                Records'|translate}}</button>
+                        </td>
+                    </tr>
+                </table>
+                <div data-ng-init="init()"></div>
+                <table class="table table-borderless table-striped">
+                    <tr ng-show="checked">
+                        <td style="padding: 20px 10px;">
+                            {{'program'| translate}}
+                        </td>
+                        <td>
+                            <select ng-model="selectedProgram" class="form-control" ng-options="program.name for program in programs | orderBy: 'name'"
+                                ng-change="getProgramStages(selectedProgram)">
+                                <option value="">{{'Please select program'| translate}}</option>
+                            </select>
+                        </td>
+                        <td style="padding: 20px 25px;">
+                            {{'program_stage'| translate}}
+                        </td>
+                        <td>
+                            <select ng-model="selectedProgramStage" class="form-control" ng-disabled="!selectedProgram"
+                                ng-options="programStage.name for programStage in programStages | orderBy: 'name'"
+                                ng-change="getSelectedProgramStage(selectedProgramStage)">
+                                <option value="">{{'Please select program stage'| translate}}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr ng-show="checked">
+                        <td style="padding: 20px 10px;">
+                            <label>Start Date </label>
+                        </td>
+                        <td>
+                            <input type="text" ng-attr-placeholder="{{dhis2CalendarFormat.keyDateFormat}}" name="foo"
+                                class="form-control" d2-date d2-date-validator max-date="attribute.allowFutureDate ? '' : 0"
+                                ng-model="startDate" id="startDate" ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
+                                required />
+
+                        </td>
+                        <td style="padding: 20px 25px;">
+                            <label>End Date </label>
+                        </td>
+                        <td>
+                            <input type="text" ng-attr-placeholder="{{dhis2CalendarFormat.keyDateFormat}}" name="foo"
+                                class="form-control" d2-date d2-date-validator max-date="attribute.allowFutureDate ? '' : 0"
+                                ng-model="endDate" id="endDate" ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
+                                required />
+                        </td>
+                    </tr>
+
+                </table>
+                <div class="col-md-12 trim" ng-show="checked">
+                    <button type="button" class="btn btn-primary center-block" ng-click="fetchData(selectedProgram,selectedProgramStage,startDate,endDate);showLoad();"
+                        ng-disabled="((!selectedProgram) || (!selectedProgramStage))">{{'Fetch Records'| translate}}</button>
+                </div><br><br><br>
+            </div>
+        </div>
+
+        <div class="loading" id="loader"></div>
+        <table id="tableid" border="1" class="table table-hover" ng-If="displayingValues.length > 0 && showtable && !validdataEntryUser" style="width: 100%">
+            <tr>
+                <th ng-repeat="val in displayAttrHeader">{{val}}</th>
+            </tr>
+            <tbody>
+                <tr ng-repeat="attrVal in displayingValues track by $index" id="appr" title="Go to dashboard" ng-click="approvalDashboard(attrVal.tei,attrVal.eventId,attrVal.prg,attrVal.prgStg,attrVal.ouId)">
+                    <td> {{attrVal.path}} </td>
+                    <td> {{attrVal.patRegNum}} </td>
+                    <td> {{attrVal.dob}} </td>
+                    <td> {{attrVal.amrId}} </td>
+                    <td> {{attrVal.apprRejStatus}} </td>
+                    <td> {{attrVal.reasonOfRej}} </td>
+                </tr>
+            </tbody>
+        </table>
+        <h2 ng-if="displayingValues.length == 0 && showtable && !validdataEntryUser">
+            No records found.
+        </h2>
+
+        <table id="tableid" border="1" class="table table-hover" ng-If="displayingValues.length > 0 && showtable && validdataEntryUser" style="width: 100%">
+            <tr>
+                <th ng-repeat="val in displayAttrHeader">{{val}}</th>
+            </tr>
+            <tbody>
+                <tr ng-repeat="attrVal in displayingValues track by $index" id="appr">
+                    <td> {{attrVal.path}} </td>
+                    <td> {{attrVal.patRegNum}} </td>
+                    <td> {{attrVal.dob}} </td>
+                    <td> {{attrVal.amrId}} </td>
+                    <td> {{attrVal.apprRejStatus}} </td>
+                    <td> {{attrVal.reasonOfRej}} </td>
+                </tr>
+            </tbody>
+        </table>
+        <h2 ng-if="displayingValues.length == 0 && showtable && validdataEntryUser">
+            No records found.
+        </h2>
+
+        <table id="tableid" border="1" class="table table-hover" ng-If="apprDisplayingValues.length > 0 && apprListTable" style="width: 100%">
+            <tr>
+                <th ng-repeat="val in displayAttrHeader">{{val}}</th>
+            </tr>
+            <tbody>
+                <tr ng-repeat="attrVal in apprDisplayingValues track by $index">
+                    <td> {{attrVal.path}} </td>
+                    <td> {{attrVal.patRegNum}} </td>
+                    <td> {{attrVal.dob}} </td>
+                    <td> {{attrVal.amrId}} </td>
+                    <td> {{attrVal.apprRejStatus}} </td>
+                    <td> {{attrVal.reasonOfRej}} </td>
+                </tr>
+            </tbody>
+        </table>
+        <h2 ng-if="apprDisplayingValues.length == 0 && apprListTable">
+            No records found.
+        </h2>
+
+        <table id="tableid" border="1" class="table table-hover" ng-If="rejctDisplayingValues.length > 0 && rejctListTable" style="width: 100%">
+            <tr>
+                <th ng-repeat="val in displayAttrHeader">{{val}}</th>
+            </tr>
+            <tbody>
+                <tr ng-repeat="attrVal in rejctDisplayingValues track by $index">
+                    <td> {{attrVal.path}} </td>
+                    <td> {{attrVal.patRegNum}} </td>
+                    <td> {{attrVal.dob}} </td>
+                    <td> {{attrVal.amrId}} </td>
+                    <td> {{attrVal.apprRejStatus}} </td>
+                    <td> {{attrVal.reasonOfRej}} </td>
+                </tr>
+            </tbody>
+        </table>
+        <h2 ng-if="rejctDisplayingValues.length == 0 && rejctListTable">
+            No records found.
+        </h2>
+
+        <table id="tableid" border="1" class="table table-hover" ng-If="resentDisplayingValues.length > 0 && resentListTable" style="width: 100%">
+            <tr>
+                <th ng-repeat="val in displayAttrHeader">{{val}}</th>
+            </tr>
+            <tbody>
+                <tr ng-repeat="attrVal in resentDisplayingValues track by $index">
+                    <td> {{attrVal.path}} </td>
+                    <td> {{attrVal.patRegNum}} </td>
+                    <td> {{attrVal.dob}} </td>
+                    <td> {{attrVal.amrId}} </td>
+                    <td> {{attrVal.apprRejStatus}} </td>
+                    <td> {{attrVal.reasonOfRej}} </td>
+                </tr>
+            </tbody>
+        </table>
+        <h2 ng-if="resentDisplayingValues.length == 0 && resentListTable">
+            No records found.
+        </h2>
+    </div>
