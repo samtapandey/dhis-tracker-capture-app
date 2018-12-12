@@ -217,8 +217,9 @@ function($rootScope,
                 resetParams();
                 //$scope.doSearch = true;
                 $scope.loadPrograms($scope.selectedOrgUnit);
-                $scope.loadInQueue($scope.selectedOrgUnit);
-                $scope.loadOutQueue($scope.selectedOrgUnit);
+
+                //$scope.loadInQueue($scope.selectedOrgUnit);
+                //$scope.loadOutQueue($scope.selectedOrgUnit);
             });
         }
     });
