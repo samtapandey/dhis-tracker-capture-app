@@ -149,7 +149,7 @@ trackerCapture.controller('outgoingController', ["$rootScope", "$scope", "$timeo
 		CustomService.getOuLevel($scope.selectedOrgUnitUid).then(function (response) {
 
 			//checking ou level
-			if (response.level == 5) {
+			if (response.level == 6) {
 				//getting all events on selected ou
 				CustomService.getAllEvents($scope.selectedOrgUnitUid).then(function (eventsdata) {
 					//getting unique teis from all events occuring on selected ou
