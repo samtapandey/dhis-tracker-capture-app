@@ -1478,7 +1478,39 @@ trackerCapture.controller('DataEntryController',
                 $scope.updateSuccess = false;
                 $scope.currentElement = {id: prStDe.dataElement.id, event: eventToSave.event, saved: false, failed:false, pending:true};            
             }
-            
+            // custom chnage for optionSet's options for cause of maternal death in odisha
+            if ( prStDe.dataElement.id === 'KnXcuizf0Lu' ){
+                $scope.selectedOptionSetOption = value;
+                $.ajax({
+                    type: "GET",
+                    async: 'false',
+                    url: "../api/optionSets.json?fields=id,name,displayName,code,options[id,name,code,optionSet]&paging=false",
+                    data: JSON,
+                    success: function (data) {
+                        $scope.optionarray= [];
+                        //console.log(data);
+                        for (var j = 0; j < data.optionSets.length; j++) {
+                            if($scope.selectedOptionSetOption === data.optionSets[j].code){
+                                $(data.optionSets[j].options).each(function (index, item1) {
+                                    $scope.name = item1.name;
+                                    $scope.id = item1.id;
+                                    $scope.code = item1.code;
+                                    $scope.obj = { code: $scope.code, id: $scope.id, displayName: $scope.name };
+                                    $scope.optionarray.push($scope.obj);
+                                    //console.log($scope.obj);
+                                    $scope.optionSets.rqX0kutA3zU.options = $scope.optionarray;
+                                    return;
+                                });
+                            }
+                            else{
+                                $scope.optionSets.rqX0kutA3zU.options = $scope.optionarray;
+                            }
+                        }
+                        //alert( $scope.optionarray.length );
+                    }
+                });
+            }
+            // end custom change
             var ev = {event: eventToSave.event,
                 orgUnit: eventToSave.orgUnit,
                 program: eventToSave.program,
