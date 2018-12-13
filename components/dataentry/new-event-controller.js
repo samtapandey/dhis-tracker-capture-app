@@ -258,18 +258,18 @@ trackerCapture.controller('EventCreationController',
                         newEvent.dueDate = DateUtils.formatFromUserToApi($scope.dhis2Event.dueDate);
                     }
                 }
-        
                 newEvent.status = newEvent.eventDate ? 'ACTIVE' : 'SCHEDULE';
-                
+        
                 //for saving category combo
                 if ($scope.selectedProgram.categoryCombo && !$scope.selectedProgram.categoryCombo.isDefault) {
                     if ($scope.selectedOptions.length !== $scope.selectedCategories.length) {
+                        $scope.lockButton = false;
                         NotificationService.showNotifcationDialog($translate.instant("error"), $translate.instant("fill_all_category_options"));
                         return;
                     }
                     newEvent.attributeCategoryOptions = $scope.selectedOptions.join(';');
                 }
-        
+                
                 newEvents.events.push(newEvent);
                 DHIS2EventFactory.create(newEvents).then(function (response) {
                     if (response && response.response && response.response.importSummaries[0].status === 'SUCCESS') {
@@ -282,7 +282,6 @@ trackerCapture.controller('EventCreationController',
                 });
             }
     };
-
     //Start referral logic
     $scope.setSelectedSearchingOrgUnit = function(orgUnit){
         $scope.selectedSearchingOrgUnit = orgUnit;
