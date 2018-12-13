@@ -1,3 +1,7 @@
+<!-- <script src="components/lib/commons/ouwt/ouwt1.js"></script> -->
+<!-- <script src="../dhis-web-commons/ouwt/ouwt.js"></script> -->
+
+<link type="text/css" rel="stylesheet" media="screen" href="styles/custom.css">
 <div ng-if="widget !== 'PROFILE' && trackedEntityTypes.selected" class="section-label section-spacing vertical-spacing">
     {{'profile'| translate}}
 </div>
@@ -21,6 +25,7 @@
         <td  ng-hide="attribute.code === 'user_name'">
             <span d2-pop-over
                 ng-hide="true"
+               
                 details="{{'details'| translate}}"
                 content="attribute"
                 class="popover-label hideInPrint small-horizontal-spacing"
@@ -34,12 +39,16 @@
             </span>
             <span ng-if="attributeIsRequired(attribute)" class="required" ng-hide="true">*</span>
         </td>
+
+        
         <td class="absorbing-column"  ng-hide="attribute.code === 'user_name'">
             <ng-form name="innerForm">
-                <span ng-if="attribute.optionSetValue">
-                    <span class="hideInPrint" ng-if="!attribute.renderOptionsAsRadio || optionSets[attributesById[attribute.id].optionSet.id].options.length >= 7">
+                <span ng-if="attribute.optionSetValue" && "attribute.optionSet.id == 'IsSMYQkdppA'">
+                    <span class="hideInPrint" ng-if="!attribute.renderOptionsAsRadio || optionSets[attributesById[attribute.id].optionSet.id].options.length >= 7" && "attribute.optionSet.id == 'IsSMYQkdppA'">
                         <d2-option-list d2-model="selectedTei"
                                         d2-model-id="attribute.id"
+                                        ng-click="validate(optionSets[attributesById[attribute.id].optionSet.id].options,selectedTei[attribute.id])"
+                                           
                                         d2-required="attributeIsRequired(attribute.id, attribute.mandatory)"
                                         d2-disabled="attributeFieldDisabled(attribute)"
                                         d2-change="teiValueUpdated(selectedTei,attribute.id)"
@@ -62,6 +71,8 @@
                         <input type="text" ng-attr-value={{selectedTei[attribute.id]}}>
                     </span>        
                 </span> 
+
+
 
                 <span ng-if="!attribute.optionSetValue" ng-switch="attribute.valueType">
                     <span ng-switch-when="DATE">
@@ -395,6 +406,7 @@
                                ng-hide="true"
                                />
                     </span>
+
                     <span ng-switch-when="PHONE_NUMBER">
                         <input type="text"
                                name="foo" 
