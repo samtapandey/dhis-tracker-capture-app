@@ -31,6 +31,7 @@ trackerCapture.controller('DataEntryController',
                 TrackerRulesFactory,
                 EventCreationService,
                 AuthorityService,
+                AMRCustomService,
                 AccessUtils,
                 TCOrgUnitService) {
     
@@ -80,7 +81,71 @@ trackerCapture.controller('DataEntryController',
     $scope.useMainMenu = false;
     $scope.mainMenuStages = [];
     $scope.useBottomLine = false; 
-    
+
+    //AMR Custom Variables
+    $scope.customSectionName = 'Genotypic Test (Special Test Type)';
+	
+    $scope.currentSelectedProgramUid = CurrentSelection.currentSelection.pr.id;
+    $scope.validProgram = false;
+    $scope.programAttributeCode = 'AMRProgram';
+    $scope.validLevel1UserGroup = false;
+    $scope.validLevel2UserGroup = false;
+    $scope.level1UserGroupNameCode = 'Level 1 Approval Users'
+    $scope.level2UserGroupNameCode = 'Level 2 Approval Users'
+    $scope.userLevelHiddenSections = ['Level 1 Approval status', 'Level 2 Approval status'];
+    $scope.level1HiddenSections = 'Level 2 Approval status';
+    $scope.level1EnabledSections = ['Phenotypic Test (Special Test Type)', 'Genotypic Test (Special Test Type)', 'Level 1 Approval status'];
+    $scope.level2EnabledSections = ['Phenotypic Test (Special Test Type)', 'Genotypic Test (Special Test Type)', 'Level 2 Approval status'];
+    $scope.var1 = 'Phenotypic Test (Special Test Type)';
+    $scope.var2 = 'Genotypic Test (Special Test Type)';
+    $scope.var3 = 'Level 1 Approval status';
+
+    //FOR AMR Section Work
+
+    $scope.currentUserDetails = SessionStorageService.get('USER_PROFILE');
+
+    // $scope.customSectionName = $scope.currentUserDetails.surname;
+     if ($scope.currentUserDetails.userGroups != undefined) {
+         for (var j = 0; j < $scope.currentUserDetails.userGroups.length; j++) {
+             if ($scope.currentUserDetails.userGroups[j].name === $scope.level1UserGroupNameCode) {
+                 $scope.validLevel1UserGroup = true;
+                 break;
+             }
+             else if ($scope.currentUserDetails.userGroups[j].name === $scope.level2UserGroupNameCode) {
+                 $scope.validLevel2UserGroup = true;
+                 break;
+             }
+             else {
+                 $scope.validLevel1UserGroup = false;
+                 $scope.validLevel2UserGroup = false;
+             }
+         }
+     }
+
+    //Validate Program validation
+    $scope.currentProgramDetail = CurrentSelection.currentSelection.pr;
+    if ($scope.currentProgramDetail.attributeValues != undefined) {
+        var programAttributeLength = $scope.currentProgramDetail.attributeValues.length;
+        for (var i = 0; i < programAttributeLength; i++) {
+            if ($scope.currentProgramDetail.attributeValues[i].attribute.code === $scope.programAttributeCode && $scope.currentProgramDetail.attributeValues[i].value === 'true') {
+                $scope.validProgram = true;
+                break;
+            }
+        }
+        console.log($scope.validProgram);
+    }
+    // AMRCustomService.getProgramAttributes($scope.currentSelectedProgramUid).then(function (selectedProgram) {
+    //     if (selectedProgram.attributeValues != undefined) {
+    //         for (var i = 0; i < selectedProgram.attributeValues.length; i++) {
+    //             if (selectedProgram.attributeValues[i].attribute.code === $scope.programAttributeCode && selectedProgram.attributeValues[i].value == "true") {
+    //                 $scope.validProgram = true;
+    //                 break;
+    //             }
+    //         }
+    //     }
+    // });
+
+
     //hideTopLineEventsForFormTypes is only used with main menu
     $scope.hideTopLineEventsForFormTypes = {TABLE: true, COMPARE: true};
     $scope.timelineDataEntryModes = { DATAENTRYFORM: 1, COMPAREPREVIOUSDATAENTRYFORM: 2,COMPAREALLDATAENTRYFORM: 3, TABLEDATAENTRYFORM: 4};
@@ -768,7 +833,17 @@ trackerCapture.controller('DataEntryController',
                 });
 
                 $scope.programStages = orderByFilter($scope.programStages, '-sortOrder').reverse();
-                if (!$scope.currentStage) {
+                //Custom changes for going to the selected program stage for approval//
+				var apprURL1 = window.location.href;
+
+                if (apprURL1.indexOf("&ev") >= 0) {
+                    var apprURL2 = apprURL1.split('=');
+                    var apprURL = apprURL2[apprURL2.length - 1];
+                    AMRCustomService.getPrgStg(apprURL).then(function (response) {
+                        $scope.currentStage = response;
+                    }); 
+                }
+                else if (!$scope.currentStage) {
                     $scope.currentStage = $scope.programStages[0];
                 }
 

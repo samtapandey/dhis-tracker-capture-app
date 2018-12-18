@@ -2363,6 +2363,16 @@ button.list-group-item-danger.active:focus {
     overflow-x: scroll;
 }
 
+td.apprtr{
+    padding: 20px 0px;
+}
+
+tr#appr{
+    background-color:#dbf0fd;
+    cursor: pointer;
+    height: 30px;
+}
+
 .search-ui-select{
     height: 34px;
     margin-top: 5px;

@@ -2,7 +2,8 @@
 var trackerCapture = angular.module('trackerCapture');
 trackerCapture.controller('ReportTypesController',
         function($scope,
-                $location) {    
+                $location,
+                AMRCustomService) {    
     $scope.programSummary = function(){
         selection.load();
         $location.path('/program-summary').search();

@@ -2,7 +2,8 @@
 var trackerCapture = angular.module('trackerCapture');
 trackerCapture.controller('LeftBarMenuController',
         function($scope,
-                $location) {
+                $location,
+                AMRCustomService) {
     $scope.showHome = function(){
         selection.load();
         $location.path('/').search();
@@ -22,8 +23,8 @@ trackerCapture.controller('LeftBarMenuController',
 
     $scope.validLevel1UserGroup = false;
     $scope.validLevel2UserGroup = false;
-    $scope.level1UserGroupNameCode = 'level_1_approval_users';
-    $scope.level2UserGroupNameCode = 'level_2_approval_users';
+    $scope.level1UserGroupNameCode = 'Level 1 Approval Users';
+    $scope.level2UserGroupNameCode = 'Level 2 Approval Users';
 
     //FOR AMR Section Work
     AMRCustomService.getSectionName().then(function (selectedSectionName) {
@@ -31,10 +32,10 @@ trackerCapture.controller('LeftBarMenuController',
         $scope.customSectionName = trackdata.surname;
         if (trackdata.userGroups != undefined) {
             for (var j = 0; j < trackdata.userGroups.length; j++) {
-                if (trackdata.userGroups[j].code === $scope.level1UserGroupNameCode) {
+                if (trackdata.userGroups[j].name === $scope.level1UserGroupNameCode) {
                     $scope.validLevel1UserGroup = true;
                 }
-                else if (trackdata.userGroups[j].code === $scope.level2UserGroupNameCode) {
+                else if (trackdata.userGroups[j].name === $scope.level2UserGroupNameCode) {
                     $scope.validLevel2UserGroup = true;
                 }
                 else {

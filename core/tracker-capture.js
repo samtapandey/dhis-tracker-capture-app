@@ -208,7 +208,7 @@ function getUserProfile()
        return; 
     }
     
-    return dhis2.tracker.getTrackerObject(null, 'USER_PROFILE', DHIS2URL + '/me.json', 'fields=id,displayName,userCredentials[username,userRoles[id,programs,authorities]],organisationUnits[id,displayName,programs[id],level,code,path,children[id,displayName,programs[id],level,children[id]]],dataViewOrganisationUnits[id,displayName,programs[id],level,path,code,children[id,displayName,programs[id],level,children[id]]],teiSearchOrganisationUnits[id,displayName,programs[id],level,path,code,children[id,displayName,programs[id],level,children[id]]]', 'sessionStorage', dhis2.tc.store);
+    return dhis2.tracker.getTrackerObject(null, 'USER_PROFILE', DHIS2URL + '/me.json', 'fields=id,displayName,userCredentials[username,userRoles[id,programs,authorities]],attributeValues[attribute[id,code,name]],userGroups[id,code,name],organisationUnits[id,displayName,programs[id],level,code,path,children[id,displayName,programs[id],level,children[id]]],dataViewOrganisationUnits[id,displayName,programs[id],level,path,code,children[id,displayName,programs[id],level,children[id]]],teiSearchOrganisationUnits[id,displayName,programs[id],level,path,code,children[id,displayName,programs[id],level,children[id]]]', 'sessionStorage', dhis2.tc.store);
 }
 
 function getConstants()
@@ -352,7 +352,7 @@ function getBatchPrograms( programs, batch )
     $.ajax( {
         url: DHIS2URL + '/programs.json',
         type: 'GET',
-        data: 'fields=*,dataEntryForm[*],relatedProgram[id,displayName],relationshipType[id,displayName],trackedEntityType[id,displayName],categoryCombo[id,displayName,isDefault,categories[id,displayName,categoryOptions[id,displayName,organisationUnits[id]]]],organisationUnits[id,displayName],userRoles[id,displayName],programStages[*,dataEntryForm[*],programStageSections[id,displayName,description,sortOrder,dataElements[id]],programStageDataElements[*,dataElement[*,optionSet[id]]]],programTrackedEntityAttributes[*,trackedEntityAttribute[id,unique,orgunitScope]],minAttributesRequiredToSearch,maxTeiCountToReturn&paging=false&filter=id:in:' + ids
+        data: 'fields=*,attributeValues[*,attribute[id,code]],dataEntryForm[*],relatedProgram[id,displayName],relationshipType[id,displayName],trackedEntityType[id,displayName],categoryCombo[id,displayName,isDefault,categories[id,displayName,categoryOptions[id,displayName,organisationUnits[id]]]],organisationUnits[id,displayName],userRoles[id,displayName],programStages[*,dataEntryForm[*],programStageSections[id,displayName,description,sortOrder,dataElements[id]],programStageDataElements[*,dataElement[*,optionSet[id]]]],programTrackedEntityAttributes[*,trackedEntityAttribute[id,unique,orgunitScope]],minAttributesRequiredToSearch,maxTeiCountToReturn&paging=false&filter=id:in:' + ids
     }).done( function( response ){
 
         if(response.programs){
