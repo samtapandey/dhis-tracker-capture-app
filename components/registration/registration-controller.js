@@ -62,6 +62,7 @@ trackerCapture.controller('RegistrationController',
 
     //Placeholder till proper settings for time is implemented. Currently hard coded to 24h format.
     $scope.timeFormat = '24h';
+    $scope.district = 'OkKucSXfbQ2';
 
     if(!$scope.attributesById){
         $scope.attributesById = [];
@@ -825,6 +826,39 @@ trackerCapture.controller('RegistrationController',
             return res;
         });
     };
+
+    // custom methods
+    $scope.getDistrictList = function (stateName) {
+        //alert( stateName );
+        $.ajax({
+            type: "GET",
+            async: 'false',
+            url: "../api/optionSets.json?fields=id,name,displayName,code,options[id,name,code]&filter=code:eq:"+stateName+"&rootJunction=OR&paging=false",
+            data: JSON,
+            success: function (data) {
+                $scope.optionarray= [];
+                $scope.selectedTei[$scope.district] = "";
+                //console.log(data);
+                if(data.optionSets[0].options != undefined){
+                    $(data.optionSets[0].options).each(function (index, item1) {
+                        $scope.name = item1.name;
+                        $scope.id = item1.id;
+                        $scope.code = item1.code;
+                        $scope.obj = { code: $scope.code, id: $scope.id, displayName: $scope.name };
+                        $scope.optionarray.push($scope.obj);
+                        //console.log($scope.obj);
+                        $scope.optionSets.hRHti3LG2H9.options = $scope.optionarray;
+                    });
+                }
+                else{
+                    $scope.selectedTei[$scope.district] = "";
+                    $scope.optionSets.hRHti3LG2H9.options = $scope.optionarray;
+                }
+                //alert( $scope.optionarray.length );
+            }
+        });
+    };
+
 
     $scope.cancelRegistrationWarning = function (cancelFunction, inDashboard) {
         var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById);
