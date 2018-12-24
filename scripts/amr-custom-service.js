@@ -69,3 +69,68 @@ angular.module('trackerCaptureServices')
             }
         }
     })
+
+    .service('EventDataValueService', function ( DHIS2EventFactory,$timeout,$rootScope) {
+        return {
+
+            saveTrackedEntityDataValue: function ( eventForSave, organismGroup, organismGroupValue, organismSubGroup, organismSubGroupValue ) {
+                var def = $.Deferred();
+                var teiDataValue = {event: eventForSave.event,
+                    orgUnit: eventForSave.orgUnit,
+                    program: eventForSave.program,
+                    programStage: eventForSave.programStage,
+                    status: eventForSave.status,
+                    trackedEntityInstance: eventForSave.trackedEntityInstance,
+                    dataValues: [
+                        {
+                            dataElement: organismGroup,
+                            value: organismGroupValue,
+                            providedElsewhere: eventForSave.providedElsewhere[organismGroup] ? true : false
+                        },
+                        {
+                            dataElement: organismSubGroup,
+                            value: organismSubGroupValue,
+                            providedElsewhere: eventForSave.providedElsewhere[organismSubGroup] ? true : false
+                        }
+                    ]
+                };
+
+                DHIS2EventFactory.updateForSingleValue(teiDataValue).then(function ( dataValueSaveResponse ) {
+
+                    if( dataValueSaveResponse.httpStatus === "OK")
+                    {
+                        def.resolve( dataValueSaveResponse );
+                    }
+                });
+
+                return def;
+            },
+            saveSingleTrackedEntityDataValue: function ( eventForSave, dataElementId, dataValue ) {
+                var def = $.Deferred();
+                var teiDataValue = {event: eventForSave.event,
+                    orgUnit: eventForSave.orgUnit,
+                    program: eventForSave.program,
+                    programStage: eventForSave.programStage,
+                    status: eventForSave.status,
+                    trackedEntityInstance: eventForSave.trackedEntityInstance,
+                    dataValues: [
+                        {
+                            dataElement: dataElementId,
+                            value: dataValue,
+                            providedElsewhere: eventForSave.providedElsewhere[dataElementId] ? true : false
+                        }
+                    ]
+                };
+
+                DHIS2EventFactory.updateForSingleValue(teiDataValue).then(function ( dataValueSaveResponse ) {
+
+                    if( dataValueSaveResponse.httpStatus === "OK")
+                    {
+                        def.resolve( dataValueSaveResponse );
+                    }
+                });
+
+                return def;
+            }
+        }
+    });
