@@ -33,7 +33,8 @@ trackerCapture.controller('DataEntryController',
                 AuthorityService,
                 AMRCustomService,
                 AccessUtils,
-                TCOrgUnitService) {
+                TCOrgUnitService,
+                EventDataValueService) {
     
     //Unique instance id for the controller:
     $scope.instanceId = Math.floor(Math.random() * 1000000000);
@@ -99,6 +100,14 @@ trackerCapture.controller('DataEntryController',
     $scope.var1 = 'Phenotypic Test (Special Test Type)';
     $scope.var2 = 'Genotypic Test (Special Test Type)';
     $scope.var3 = 'Level 1 Approval status';
+    $scope.organismList = [];
+    $scope.organismGroupMap = [];
+    $scope.organismSubGroupMap = [];
+    $scope.organismGroup ='rivfiFsOinL';
+    $scope.organismSubGroup = 'Rt9NrmlR1Ln';
+    $scope.amrCustomId = 'lIkk661BLpG';
+    $scope.amrProgramId = 'ecIoUziI2Gb';
+    $scope.amrProgramStageId = 'dDxm1Z4oOUO';
 
     //FOR AMR Section Work
 
@@ -144,7 +153,51 @@ trackerCapture.controller('DataEntryController',
     //         }
     //     }
     // });
+    //$scope.orgUnitId = 'ANGhR1pa8I5';
+    $.ajax({
+        async: false,
+        type: "GET",
+        dataType: "json",
+        contentType: "application/json",
+        url: "../api/enrollments.json?&program=GjFZmYa8pOD&ou="+ CurrentSelection.currentSelection.orgUnit.id +"&ouMode=DESCENDANTS&skipPaging=true",
+        success: function (data) {
+            for (var i = 0; i < data.enrollments.length; i++) {
+                var trackEntityInstanceid = data.enrollments[i].trackedEntityInstance;
+                console.log("tt " + trackEntityInstanceid);
+                $.ajax({
+                    async: false,
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json",
+                    url: "../api/trackedEntityInstances/" + trackEntityInstanceid + ".json",
+                    success: function (data) {
+                        for (var j = 0; j < data.attributes.length; j++) {
+                            if (data.attributes[j].displayName == "Organism") {
+                                $scope.organismList.push(data.attributes[j].value);
+                                for (var k = 0; k < data.attributes.length; k++) {
+                                    if (data.attributes[k].displayName == "Organism group") {
+                                        $scope.organismGroupMap[data.attributes[j].value] = data.attributes[k].value;
+                                    }
+                                    else if (data.attributes[k].displayName == "Organism subgroup") {
+                                        $scope.organismSubGroupMap[data.attributes[j].value] = data.attributes[k].value;
+                                    }
+                                }
+                            }
+                            /*
+                            if (data.attributes[j].displayName == "Organism group") {
+                                medicineCodeAttr.push(data.attributes[j].value);
+                            }
 
+                            if (data.attributes[j].displayName == "Medicine Name") {
+                                medicineNameAttr.push(data.attributes[j].value);
+                            }
+                            */
+                        }
+                    }
+                })
+            }
+        }
+    })
 
     //hideTopLineEventsForFormTypes is only used with main menu
     $scope.hideTopLineEventsForFormTypes = {TABLE: true, COMPARE: true};
@@ -1506,7 +1559,54 @@ trackerCapture.controller('DataEntryController',
         angular.forEach($scope.currentStage.programStageSections, function (section) {
             section.open = true;
         });
-        
+
+        // generate AMR-ID
+        //alert( $scope.currentEvent.event + " date -- "  + $scope.currentEvent.eventDate );
+        if( $scope.currentEvent.program === $scope.amrProgramId && $scope.currentEvent.programStage === $scope.amrProgramStageId ) {
+            $timeout( function (){
+                var date = new Date();
+                var year = date.getFullYear();
+                var org_id = $scope.currentEvent.orgUnit;
+                $.getJSON("../api/organisationUnits/"+ org_id +".json?fields=id,displayName,code,parent[id,displayName]", function (data) {
+                    $scope.orgUnitCode = data.code;
+                    $scope.idPostFix = Math.floor(Math.random() * (99999 - 10000 + 1) ) + 10000;
+
+                    if( !$scope.currentEvent[$scope.amrCustomId] && $scope.currentEvent[$scope.amrCustomId] == undefined)
+                    {
+                        $scope.currentEvent[$scope.amrCustomId] = $scope.orgUnitCode + $scope.idPostFix;//put AMR ID in dataElement
+                        $timeout(function() {
+
+                            EventDataValueService.saveSingleTrackedEntityDataValue( $scope.currentEvent, $scope.amrCustomId, $scope.orgUnitCode + $scope.idPostFix ).then(function(responseSavedValue) {
+                                console.log( $scope.orgUnitCode + $scope.idPostFix +  "-- "+ " value Saved  -- " + responseSavedValue);
+                            });
+
+                        }, 0);
+                    }
+                });
+
+            },0);
+        }
+
+        // end custom id generation code
+        //put map value in OrganismGroup and sunGroup
+        $scope.getOrganismGroupAndSubGroup = function (organismValue) {
+            //alert($scope.currentEvent[organismValue.dataElement.id]);
+            $scope.organismGroupValue = $scope.organismGroupMap[$scope.currentEvent[organismValue.dataElement.id]];
+            $scope.organismSubGroupValue = $scope.organismSubGroupMap[$scope.currentEvent[organismValue.dataElement.id]];
+
+            $scope.currentEvent[$scope.organismGroup] = $scope.organismGroupValue; //put map value in text box
+            $scope.currentEvent[$scope.organismSubGroup] = $scope.organismSubGroupValue; //put map value in  box
+            $timeout(function() {
+
+                EventDataValueService.saveTrackedEntityDataValue( $scope.currentEvent, $scope.organismGroup, $scope.organismGroupValue, $scope.organismSubGroup, $scope.organismSubGroupValue ).then(function(responseSavedValue) {
+                    console.log( organismGroupValue + + "-- " + $scope.organismSubGroupValue + " value Saved  -- " + responseSavedValue);
+                });
+
+            }, 0);
+
+        };
+        // end code
+
         $scope.setDisplayTypeForStage($scope.currentStage);
         $scope.customDataEntryForm = CustomFormService.getForProgramStage($scope.currentStage, $scope.prStDes);        
         if ($scope.customDataEntryForm) {
@@ -2534,7 +2634,6 @@ trackerCapture.controller('DataEntryController',
     };
 
     $scope.showDataEntryForEvent = function (event) {
-
         var period = {event: event.event, stage: event.programStage, name: event.sortingDate};
         $scope.currentPeriod[event.programStage] = period;
 
