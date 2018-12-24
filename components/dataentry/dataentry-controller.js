@@ -84,7 +84,7 @@ trackerCapture.controller('DataEntryController',
     $scope.useBottomLine = false; 
 
     //AMR Custom Variables
-    $scope.customSectionName = 'Genotypic Test (Special Test Type)';
+    $scope.customSectionName = 'Special tests - Genotypic tests';
 	
     $scope.currentSelectedProgramUid = CurrentSelection.currentSelection.pr.id;
     $scope.validProgram = false;
@@ -95,10 +95,10 @@ trackerCapture.controller('DataEntryController',
     $scope.level2UserGroupNameCode = 'Level 2 Approval Users'
     $scope.userLevelHiddenSections = ['Level 1 Approval status', 'Level 2 Approval status'];
     $scope.level1HiddenSections = 'Level 2 Approval status';
-    $scope.level1EnabledSections = ['Phenotypic Test (Special Test Type)', 'Genotypic Test (Special Test Type)', 'Level 1 Approval status'];
-    $scope.level2EnabledSections = ['Phenotypic Test (Special Test Type)', 'Genotypic Test (Special Test Type)', 'Level 2 Approval status'];
-    $scope.var1 = 'Phenotypic Test (Special Test Type)';
-    $scope.var2 = 'Genotypic Test (Special Test Type)';
+    $scope.level1EnabledSections = ['Special tests - Phenotypic tests', 'Special tests - Genotypic tests', 'Level 1 Approval status'];
+    $scope.level2EnabledSections = ['Special tests - Phenotypic tests', 'Special tests - Genotypic tests', 'Level 2 Approval status'];
+    $scope.var1 = 'Special tests - Phenotypic tests';
+    $scope.var2 = 'Special tests - Genotypic tests';
     $scope.var3 = 'Level 1 Approval status';
     $scope.organismList = [];
     $scope.organismGroupMap = [];
@@ -886,17 +886,7 @@ trackerCapture.controller('DataEntryController',
                 });
 
                 $scope.programStages = orderByFilter($scope.programStages, '-sortOrder').reverse();
-                //Custom changes for going to the selected program stage for approval//
-				var apprURL1 = window.location.href;
-
-                if (apprURL1.indexOf("&ev") >= 0) {
-                    var apprURL2 = apprURL1.split('=');
-                    var apprURL = apprURL2[apprURL2.length - 1];
-                    AMRCustomService.getPrgStg(apprURL).then(function (response) {
-                        $scope.currentStage = response;
-                    }); 
-                }
-                else if (!$scope.currentStage) {
+                if (!$scope.currentStage) {
                     $scope.currentStage = $scope.programStages[0];
                 }
 
@@ -1001,7 +991,22 @@ trackerCapture.controller('DataEntryController',
             $scope.fileNames = CurrentSelection.getFileNames();
             $scope.allEventsSorted = orderByFilter($scope.allEventsSorted, '-sortingDate').reverse();
             sortEventsByStage(null);
+            //Custom changes for going to the selected Event for approval//
+				var apprURL1 = window.location.href;
+                if (apprURL1.indexOf("&ev") >= 0) {
+                    var apprURL2 = apprURL1.split('=');
+                    var apprURL = apprURL2[apprURL2.length - 1];
+                    if($scope.allEventsSorted.length > 0){
+                        angular.forEach($scope.allEventsSorted, function(allEv){
+                            if(allEv.event === apprURL){
+                                $scope.currentEvent = allEv
+                                $scope.showDataEntry($scope.currentEvent, true, true);
+                            }
+                        })
+                    }
+                }else{
             $scope.showDataEntry($scope.currentEvent, true, true);
+                }
             $scope.eventsLoaded = true;
         }
         else {

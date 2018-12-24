@@ -3,7 +3,7 @@
 
     <!-- Validation for Level 1 approval user -->
     <div ng-if="validProgram && validLevel1UserGroup && !validLevel2UserGroup">
-        <div ng-if="section.displayName != customSectionName && section.displayName !=  'Phenotypic Test (Special Test Type)' && section.displayName !=  'Level 1 Approval status' ">
+        <div ng-if="section.displayName != customSectionName && section.displayName !=  'Special tests - Phenotypic tests' && section.displayName !=  'Level 1 Approval status' ">
             <div ng-if="prStDes[de.id].dataElement.optionSetValue">
                 <div class="hideInPrint">
                     <div ng-if="!prStDes[de.id].renderOptionsAsRadio || optionSets[prStDes[de.id].dataElement.optionSet.id].options.length >= 7">
@@ -423,7 +423,7 @@
             </div>
         </div>
     </div>
-    <div ng-if="(validProgram && validLevel1UserGroup && !validLevel2UserGroup && section.displayName == 'Phenotypic Test (Special Test Type)' ) || (validProgram && validLevel1UserGroup && !validLevel2UserGroup && section.displayName == 'Genotypic Test (Special Test Type)' ) || (validProgram && validLevel1UserGroup && !validLevel2UserGroup && section.displayName == 'Level 1 Approval status' ) ">
+    <div ng-if="(validProgram && validLevel1UserGroup && !validLevel2UserGroup && section.displayName == 'Special tests - Phenotypic tests' ) || (validProgram && validLevel1UserGroup && !validLevel2UserGroup && section.displayName == 'Special tests - Genotypic tests' ) || (validProgram && validLevel1UserGroup && !validLevel2UserGroup && section.displayName == 'Level 1 Approval status' ) ">
         <div>
             <div ng-if="prStDes[de.id].dataElement.optionSetValue">
                 <div class="hideInPrint">
@@ -846,7 +846,7 @@
     </div>
     <!-- Validation for Level 2 approval user -->
     <div ng-if="validProgram && !validLevel1UserGroup && validLevel2UserGroup">
-        <div ng-if="section.displayName != 'Phenotypic Test (Special Test Type)' && section.displayName != 'Genotypic Test (Special Test Type)' && section.displayName != 'Level 2 Approval status'">
+        <div ng-if="section.displayName != 'Special tests - Phenotypic tests' && section.displayName != 'Special tests - Genotypic tests' && section.displayName != 'Level 2 Approval status'">
             <div ng-if="prStDes[de.id].dataElement.optionSetValue">
                 <div class="hideInPrint">
                     <div ng-if="!prStDes[de.id].renderOptionsAsRadio || optionSets[prStDes[de.id].dataElement.optionSet.id].options.length >= 7">
@@ -1266,7 +1266,7 @@
             </div>
         </div>
     </div>
-    <div ng-if="(validProgram && !validLevel1UserGroup && validLevel2UserGroup && section.displayName == 'Phenotypic Test (Special Test Type)' ) || (validProgram && !validLevel1UserGroup && validLevel2UserGroup && section.displayName == 'Genotypic Test (Special Test Type)' ) || (validProgram && !validLevel1UserGroup && validLevel2UserGroup && section.displayName == 'Level 2 Approval status' ) ">
+    <div ng-if="(validProgram && !validLevel1UserGroup && validLevel2UserGroup && section.displayName == 'Special tests - Phenotypic tests' ) || (validProgram && !validLevel1UserGroup && validLevel2UserGroup && section.displayName == 'Special tests - Genotypic tests' ) || (validProgram && !validLevel1UserGroup && validLevel2UserGroup && section.displayName == 'Level 2 Approval status' ) ">
         <div>
             <div ng-if="prStDes[de.id].dataElement.optionSetValue">
                 <div class="hideInPrint">
