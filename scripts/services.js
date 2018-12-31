@@ -1764,6 +1764,42 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
     };
 })
 
+.service("MetaDataService", function($http){
+    return{
+        showdataElement:function(){
+              var def = $.Deferred();
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    async:false,
+                    contentType: "application/json",
+                    url: "../api/sqlViews/GraqAPjVi3A/data",
+                    success: function (data) {
+                        def.resolve(data);
+                    }
+                });
+                return def;
+           
+        },
+        showOptionSet:function(){
+            var def = $.Deferred();
+              $.ajax({
+                  type: "GET",
+                  dataType: "json",
+                  async:false,
+                  contentType: "application/json",
+                  url: "../api/optionSets/tdtBR9OdXMJ.json?fields=displayName,options[id,name]&skipPaging=true",
+                  success: function (data) {
+                      def.resolve(data);
+                  }
+              });
+              return def;
+         
+      }
+    }
+    
+})
+
 .service('TEIGridService', function(OptionSetService, CommonUtils, CurrentSelection, DateUtils, $location, $translate, $filter){
     var setShowGridColumn = function(column, columnIndex, config, savedGridColumnsKeyMap){
         if(config.showAll){

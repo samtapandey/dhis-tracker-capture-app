@@ -556,8 +556,35 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
         },
 
         
-        controller: function($scope, Paginator,TEIGridService, CurrentSelection,$location){
+        controller: function($scope,MetaDataService, Paginator,TEIGridService, CurrentSelection,$location,dataStoreService){
             var attributesById = CurrentSelection.getAttributesById();
+             // Get the modal
+             var modal = document.getElementById('myModal');
+             // Get the <span> element that closes the modal
+             var span = document.getElementsByClassName("close")[0];
+             // When the user clicks on <span> (x), close the modal
+             span.onclick = function() {
+             modal.style.display = "none";
+             }
+            MetaDataService.showdataElement().then(function(data){
+                $scope.dataElementName=[],$scope.deNameValue=[];
+                data.rows.map((value)=>{
+                    $scope.deNameValue.push(value[1]);
+                    $scope.dataElementName[value[1]]=[];
+                })
+                $scope.UniquedeNameValue= $scope.deNameValue.filter((value, index, self)=> { 
+                    return self.indexOf(value) === index;
+                })
+                  data.rows.forEach((value)=>{
+                    for(let key in $scope.dataElementName){
+                        if(key==value[1])
+                        $scope.dataElementName[key].push({name:value[2],id:value[3]})
+                    }
+                  })
+            });
+            MetaDataService.showOptionSet().then(function(data){
+                $scope.optionSetValues=data.options;
+            });
             $scope.$watch("pager", function(){
                 if($scope.pager){
                     Paginator.setPage($scope.pager.page);
@@ -570,7 +597,32 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
             $scope.$watch("data", function(){
                 setGridColumns();
             });
+            $scope.showPopUp = function(tei,organism_name){
+                $scope.tei=tei,$scope.organism=organism_name;
+                var modal = document.getElementById('myModal');
 
+                // Get the button that opens the modal
+                modal.style.display = "block";
+            }
+
+            $scope.postDeData=function(){
+                this.organism
+                
+                $scope.storeSectionPayload = {
+                    "id":  $scope.tei,
+                    "name": $scope.organism,
+                    "sample_Type":this.sampleType,
+                    "Disk_Diffusion":this.diskDiff,
+                    "MIC":this.mic,
+                    "Results":this.result,
+                    "Special_tests_Genotypic_tests":this.stGeno,
+                    "Special_tests_Phenotypic_tests":this.stPeno,
+                    }
+                    dataStoreService.saveInDataStore($scope.storeSectionPayload).then(function (response) {
+                        console.log(response);
+                    });
+                
+                }
             var setGridColumns = function(){
                 if($scope.data && !$scope.gridColumns){
                     var columnAttributes = [];

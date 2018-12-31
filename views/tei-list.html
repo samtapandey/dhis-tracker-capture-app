@@ -45,7 +45,7 @@
                         </span>
                     </td>
                     <td class="noAction">
-                        <button class="meddelanden" data-toggle="popover" ng-click="onRedirect(tei.id,tei.iBc2wcKg2Ba)">
+                            <button class="meddelanden" id="showPopUp" data-toggle="popover" ng-click="showPopUp(tei.id,tei.iBc2wcKg2Ba)">
                             <span class="glyphicon glyphicon-star"></span></button>
                     </td>
                 </tr>
@@ -75,3 +75,45 @@
         <serverside-paginator></serverside-paginator>
     </div>
 </div>
+
+<div id="myModal" class="modal">
+    <div id="mainPage">
+    <div class="modal-content">
+            <div class="modal-header">
+                    <span class="close">&times;</span>
+                    <h2>Assign Data Elements</h2>
+             </div>
+            <div class="modal-body">
+            <form  ng-submit="postDeData(event)">
+                <div class="form-group">
+                  <label for="name">Organism name:</label>
+                  <input type="text" ng-model="organism" class="form-control" id="name">
+                </div>
+                <div class="form-group">
+                  <label for="pwd">Sample type:</label>
+                  <select class="form-control" ng-model='sampleType' ng-options='os.name for os in optionSetValues' multiple>
+                   </select>
+                </div>
+                <div class="form-group">
+                        <label for="pwd">Disk Diffusion</label>
+                        <select class="form-control" ng-model='diskDiff' ng-options="deval.name for deval in dataElementName['Disk Diffusion']" multiple></select>
+                </div>
+                <div class="form-group">
+                    <label for="pwd">MIC</label>
+                    <select class="form-control" ng-model='mic' ng-options="deval.name for deval in dataElementName['MIC']" multiple></select>
+                </div>
+                <div class="form-group">
+                    <label for="pwd">Results</label>
+                    <select class="form-control" ng-model='result' ng-options="deval.name for deval in dataElementName['Results']" multiple></select>
+                </div>
+                <div class="form-group">
+                    <label for="pwd">Special tests - Genotypic tests</label>
+                    <select class="form-control" ng-model='stGeno' ng-options="deval.name for deval in dataElementName['Special tests - Genotypic tests']" multiple></select>
+                </div>
+                <div class="form-group">
+                    <label for="pwd">Special tests - Phenotypic tests</label>
+                    <select class="form-control" ng-model='stPeno' ng-options="deval.name for deval in dataElementName['Special tests - Phenotypic tests']" multiple></select>
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+              </form>
+          </div></div></div></div>

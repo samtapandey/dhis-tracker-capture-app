@@ -1605,12 +1605,18 @@ trackerCapture.controller('DataEntryController',
                 var selectedSampleType = $scope.currentEvent[$scope.sampleTypeDe];
                 dataStoreService.getFromDataStore(teiVal).then(function (response) {
                     console.log(response);
-                    response.SampleType.forEach(function (st) {
+                    response.sample_Type.forEach(function (st) {
                         angular.forEach($scope.currentStage.programStageSections, function (section) {
                             if (st.name === selectedSampleType) {
                                 var key = Object.keys(response);
+                                var displayNameVal=section.displayName.split(" ").filter((val)=>(val=="/"||val=="-")?false:val)
+                                let fdisplayNameVal="";
+                                for(var i=0;i<displayNameVal.length;i++)
+                                    fdisplayNameVal=fdisplayNameVal+displayNameVal[i]+"_";
+                                var namede=fdisplayNameVal.substring(0,fdisplayNameVal.length-1)
+                                    
                                 for (var i = 0; i < key.length; i++) {
-                                    if (key[i] == section.displayName) {
+                                    if (key[i] == namede) {
                                         for (var j = 0; j < response[key[i]].length; j++) {
                                             console.log(response[key[i]][j].id);
                                             $scope.storedData.push({ "id": response[key[i]][j].id });
