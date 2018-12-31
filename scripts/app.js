@@ -19,6 +19,7 @@ import '../scripts/display-mode-controller.js';
 import '../scripts/amr-custom-service.js';
 import '../scripts/first-level-approval-controller.js';
 import '../scripts/second-level-approval-controller.js';
+import '../scripts/custom-Data-Store-controller.js';
 import '../scripts/sticky.min.js';
 import '../scripts/ng-csv.js';
 import '../components/dashboard/dashboard-controller.js';
@@ -92,6 +93,9 @@ angular.module('trackerCapture')
     }).when('/second-level-approval',{
         templateUrl:'views/second-level-approval.html',
         controller: 'SecondLevelApprovalController'
+    }).when('/custom-Data-Store',{
+        templateUrl:'views/custom-Data-Store.html',
+        controller: 'CustomDataStore'
     }).when('/program-summary',{
         templateUrl:'components/report/program-summary.html',
         controller: 'ProgramSummaryController'

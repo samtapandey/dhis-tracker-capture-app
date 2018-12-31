@@ -5,7 +5,6 @@
 /* Directives */
 
 var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
-
 .directive('stringToNumber', function () {
     return {
         require: 'ngModel',
@@ -553,11 +552,11 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
             sortColumn: "=?teiSortColumn",
             gridColumns: "=?teiGridColumns",
             refetchData: "&teiRefetchData",
-            onTeiClicked: "&onTeiClicked",
+            onTeiClicked: "&onTeiClicked"
         },
 
         
-        controller: function($scope, Paginator,TEIGridService, CurrentSelection){
+        controller: function($scope, Paginator,TEIGridService, CurrentSelection,$location){
             var attributesById = CurrentSelection.getAttributesById();
             $scope.$watch("pager", function(){
                 if($scope.pager){
@@ -603,6 +602,10 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
 
             $scope.onTeiClickedInternal = function(tei){
                 $scope.onTeiClicked({tei : tei});
+            }
+
+            $scope.onRedirect = function(tei,organismName){
+                $location.path('/custom-Data-Store').search({tei: tei,organismName:organismName });
             }
             
             $scope.getPage = function(page){

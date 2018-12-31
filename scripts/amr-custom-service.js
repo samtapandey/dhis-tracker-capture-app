@@ -20,7 +20,7 @@ angular.module('trackerCaptureServices')
                 return def.promise;
             },
             //Check the available attributes value
-            getProgramAttributes: function(programUid){
+            getProgramAttributes: function (programUid) {
                 var def = $q.defer();
                 $http.get('../api/programs/' + programUid + '.json?fields=id,name,shortName,code,displayName,attributeValues[attribute[id,code,name],value],programStages[id,name,programStageDataElements[id,dataElement[id,name,optionSet[options[code,displayName]],sortOrder]]]&paging=false').then(function (response) {
                     def.resolve(response.data);
@@ -28,15 +28,15 @@ angular.module('trackerCaptureServices')
                 return def.promise;
             },
 
-            getEventsWithoutFilter: function(selectedOrgUnit,selectedProgram){
+            getEventsWithoutFilter: function (selectedOrgUnit, selectedProgram) {
                 var def = $q.defer();
-                $http.get(DHIS2URL + "/events.json?orgUnit=" + selectedOrgUnit.id + "&program=" + selectedProgram.id +  "&skipPaging=true").then(function (response) {
+                $http.get(DHIS2URL + "/events.json?orgUnit=" + selectedOrgUnit.id + "&program=" + selectedProgram.id + "&skipPaging=true").then(function (response) {
                     def.resolve(response.data);
                 });
                 return def.promise;
             },
 
-            getEventsWithoutFilterForSecLevel: function(selectedOrgUnit,selectedProgram){
+            getEventsWithoutFilterForSecLevel: function (selectedOrgUnit, selectedProgram) {
                 var def = $q.defer();
                 $http.get(DHIS2URL + "/events.json?orgUnit=" + selectedOrgUnit.id + "&ouMode=DESCENDANTS&program=" + selectedProgram.id + "&skipPaging=true").then(function (response) {
                     def.resolve(response.data);
@@ -44,7 +44,7 @@ angular.module('trackerCaptureServices')
                 return def.promise;
             },
 
-            getEventsWithFilter: function(selectedOrgUnit,selectedProgram,selectedProgramStage,startDate,endDate){
+            getEventsWithFilter: function (selectedOrgUnit, selectedProgram, selectedProgramStage, startDate, endDate) {
                 var def = $q.defer();
                 $http.get(DHIS2URL + "/events.json?orgUnit=" + selectedOrgUnit.id + "&ouMode=DESCENDANTS&program=" + selectedProgram.id + "&programStage=" + selectedProgramStage.id + "&startDate=" + startDate + "&endDate=" + endDate + "&skipPaging=true").then(function (response) {
                     def.resolve(response.data);
@@ -52,17 +52,17 @@ angular.module('trackerCaptureServices')
                 return def.promise;
             },
 
-            getTEIData: function(evData,selectedProgram){
+            getTEIData: function (evData, selectedProgram) {
                 var def = $q.defer();
-                $http.get(DHIS2URL + "/trackedEntityInstances/" + evData.tei + ".json?fields=trackedEntityInstance,orgUnit,created,attributes[attribute,displayName,value,code]&ou=" + evData.ou + "&ouMode=DESCENDANTSprogram=" + selectedProgram.id +  "&skipPaging=true").then(function (response) {
+                $http.get(DHIS2URL + "/trackedEntityInstances/" + evData.tei + ".json?fields=trackedEntityInstance,orgUnit,created,attributes[attribute,displayName,value,code]&ou=" + evData.ou + "&ouMode=DESCENDANTSprogram=" + selectedProgram.id + "&skipPaging=true").then(function (response) {
                     def.resolve(response.data);
                 });
                 return def.promise;
             },
 
-            getPrgStg: function(prgstg){
+            getPrgStg: function (prgstg) {
                 var def = $q.defer();
-                $http.get( DHIS2URL + "/programStages/" + prgstg + ".json").then(function (response) {
+                $http.get(DHIS2URL + "/programStages/" + prgstg + ".json").then(function (response) {
                     def.resolve(response.data);
                 });
                 return def.promise;
@@ -70,12 +70,13 @@ angular.module('trackerCaptureServices')
         }
     })
 
-    .service('EventDataValueService', function ( DHIS2EventFactory,$timeout,$rootScope) {
+    .service('EventDataValueService', function (DHIS2EventFactory, $timeout, $rootScope) {
         return {
 
-            saveTrackedEntityDataValue: function ( eventForSave, organismGroup, organismGroupValue, organismSubGroup, organismSubGroupValue ) {
+            saveTrackedEntityDataValue: function (eventForSave, organismGroup, organismGroupValue, organismSubGroup, organismSubGroupValue) {
                 var def = $.Deferred();
-                var teiDataValue = {event: eventForSave.event,
+                var teiDataValue = {
+                    event: eventForSave.event,
                     orgUnit: eventForSave.orgUnit,
                     program: eventForSave.program,
                     programStage: eventForSave.programStage,
@@ -95,19 +96,19 @@ angular.module('trackerCaptureServices')
                     ]
                 };
 
-                DHIS2EventFactory.updateForSingleValue(teiDataValue).then(function ( dataValueSaveResponse ) {
+                DHIS2EventFactory.updateForSingleValue(teiDataValue).then(function (dataValueSaveResponse) {
 
-                    if( dataValueSaveResponse.httpStatus === "OK")
-                    {
-                        def.resolve( dataValueSaveResponse );
+                    if (dataValueSaveResponse.httpStatus === "OK") {
+                        def.resolve(dataValueSaveResponse);
                     }
                 });
 
                 return def;
             },
-            saveSingleTrackedEntityDataValue: function ( eventForSave, dataElementId, dataValue ) {
+            saveSingleTrackedEntityDataValue: function (eventForSave, dataElementId, dataValue) {
                 var def = $.Deferred();
-                var teiDataValue = {event: eventForSave.event,
+                var teiDataValue = {
+                    event: eventForSave.event,
                     orgUnit: eventForSave.orgUnit,
                     program: eventForSave.program,
                     programStage: eventForSave.programStage,
@@ -122,15 +123,38 @@ angular.module('trackerCaptureServices')
                     ]
                 };
 
-                DHIS2EventFactory.updateForSingleValue(teiDataValue).then(function ( dataValueSaveResponse ) {
+                DHIS2EventFactory.updateForSingleValue(teiDataValue).then(function (dataValueSaveResponse) {
 
-                    if( dataValueSaveResponse.httpStatus === "OK")
-                    {
-                        def.resolve( dataValueSaveResponse );
+                    if (dataValueSaveResponse.httpStatus === "OK") {
+                        def.resolve(dataValueSaveResponse);
                     }
                 });
 
                 return def;
             }
         }
+    })
+
+    // save report app section and get all section
+    .service('dataStoreService', function ($http,$q) {
+        return {
+            saveInDataStore: function (value) {
+                var def = $q.defer();
+                var key = value.id;
+                var value = JSON.stringify(value);
+                var url = '../api/dataStore/id/' + key;
+                $http.post(url, value).then(function (response) {
+                    def.resolve(response.data);
+                });
+                return def.promise;
+            },
+            getFromDataStore: function (teiKey) {
+                var def = $q.defer();
+                var url = '../api/dataStore/id/' + teiKey;
+                $http.get(url).then(function (response) {
+                    def.resolve(response.data);
+                });
+                return def.promise;
+            }
+        };
     });

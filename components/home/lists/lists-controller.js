@@ -21,6 +21,13 @@ trackerCapture.controller('ListsController',function(
     UserDataStoreService,
     ProgramWorkingListService,
     OperatorFactory) {
+
+        $('table tr td.noAction').on('click', function() {
+            // if ($(this).index() == 2) {
+              return false; // disable 3rd column
+            // }
+          });
+        
         var ouModes = [{name: 'SELECTED'}, {name: 'CHILDREN'}, {name: 'DESCENDANTS'}, {name: 'ACCESSIBLE'}];
         var userGridColumns = null;
         var defaultCustomWorkingListValues = { ouMode: ouModes[0], programStatus: ""};
@@ -136,7 +143,6 @@ trackerCapture.controller('ListsController',function(
                 program: $scope.base.selectedProgram ? $scope.base.selectedProgram.id: null,
                 ou: $scope.selectedOrgUnit.id});
         }
-    
 
         $scope.getWorkingListButtonClass = function(workingList){
             if(workingList.name ==="custom" && $scope.showCustomWorkingListInline) return "active";
