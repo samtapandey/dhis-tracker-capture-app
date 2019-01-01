@@ -599,6 +599,16 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
             });
             $scope.showPopUp = function(tei,organism_name){
                 $scope.tei=tei,$scope.organism=organism_name;
+                var optionsvalue=[...document.getElementById("sampleType").options,
+                                    ...document.getElementById("diskDiff").options,
+                                    ...document.getElementById("mic").options,
+                                    ...document.getElementById("result").options,
+                                    ...document.getElementById("stGeno").options,
+                                    ...document.getElementById("stPeno").options];
+                for (var i=0; i<optionsvalue.length; i++){
+                if (optionsvalue[i].selected === true )
+                optionsvalue[i].selected=false;
+                }
                 var modal = document.getElementById('myModal');
 
                 // Get the button that opens the modal
@@ -619,7 +629,11 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                     "Special_tests_Phenotypic_tests":this.stPeno,
                     }
                     dataStoreService.saveInDataStore($scope.storeSectionPayload).then(function (response) {
-                        console.log(response);
+                        if(response.httpStatusCode==201)
+                        document.getElementById("displayresponse").innerHTML=response.httpStatus;
+                        if(response.status==409)
+                        document.getElementById("displayresponse").innerHTML="Existing";
+                        //console.log(response);
                     });
                 
                 }

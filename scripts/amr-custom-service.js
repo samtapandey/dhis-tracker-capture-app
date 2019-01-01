@@ -145,7 +145,7 @@ angular.module('trackerCaptureServices')
                 var url = '../api/dataStore/id/' + key;
                 $http.post(url, value).then(function (response) {
                     def.resolve(response.data);
-                });
+                }).catch((err)=>def.resolve(err))
                 return def.promise;
             },
             getFromDataStore: function (teiKey) {

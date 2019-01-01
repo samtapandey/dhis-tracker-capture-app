@@ -1616,17 +1616,22 @@ trackerCapture.controller('DataEntryController',
                                 var namede=fdisplayNameVal.substring(0,fdisplayNameVal.length-1)
                                     
                                 for (var i = 0; i < key.length; i++) {
-                                    if (key[i] == namede) {
+                                    if (key[i] == namede) {                                
+                                        $scope.storedData = [];
                                         for (var j = 0; j < response[key[i]].length; j++) {
                                             console.log(response[key[i]][j].id);
                                             $scope.storedData.push({ "id": response[key[i]][j].id });
-                                        }
-                                        section.dataElements = $scope.storedData;
+                                            
+                                        }                             
                                         section.open = true;
+                                        section.dataElements = $scope.storedData;
                                     }
+                                    
                                 }
                             }
+                            
                         });
+                        
                     });
                 });
 
