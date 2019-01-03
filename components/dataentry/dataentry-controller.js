@@ -32,7 +32,7 @@ trackerCapture.controller('DataEntryController',
         EventCreationService,
         AuthorityService,
         AMRCustomService,
-        dataStoreService,
+        DataStoreService,
         AccessUtils,
         TCOrgUnitService,
         EventDataValueService) {
@@ -112,6 +112,7 @@ trackerCapture.controller('DataEntryController',
         $scope.amrCustomId = 'lIkk661BLpG';
         $scope.amrProgramId = 'ecIoUziI2Gb';
         $scope.amrProgramStageId = 'dDxm1Z4oOUO';
+        $scope.rootOrgUnitUId = 'ANGhR1pa8I5';
 
         //FOR AMR Section Work
 
@@ -157,13 +158,12 @@ trackerCapture.controller('DataEntryController',
         //         }
         //     }
         // });
-        //$scope.orgUnitId = 'ANGhR1pa8I5';
         $.ajax({
             async: false,
             type: "GET",
             dataType: "json",
             contentType: "application/json",
-            url: "../api/enrollments.json?&program=GjFZmYa8pOD&ou=" + CurrentSelection.currentSelection.orgUnit.id + "&ouMode=DESCENDANTS&skipPaging=true",
+            url: "../api/enrollments.json?&program=GjFZmYa8pOD&ou=" + $scope.rootOrgUnitUId + "&ouMode=DESCENDANTS&skipPaging=true",
             success: function (data) {
                 for (var i = 0; i < data.enrollments.length; i++) {
                     var trackEntityInstanceid = data.enrollments[i].trackedEntityInstance;
@@ -1603,17 +1603,17 @@ trackerCapture.controller('DataEntryController',
 
                 var teiVal = $scope.organismTeiMap[$scope.currentEvent[organismValue.dataElement.id]];
                 var selectedSampleType = $scope.currentEvent[$scope.sampleTypeDe];
-                dataStoreService.getFromDataStore(teiVal).then(function (response) {
+                DataStoreService.getFromDataStore(teiVal).then(function (response) {
                     console.log(response);
                     response.sample_Type.forEach(function (st) {
                         angular.forEach($scope.currentStage.programStageSections, function (section) {
-                            if (st.name === selectedSampleType) {
+                            if ( st.name === selectedSampleType) {
                                 var key = Object.keys(response);
-                                var displayNameVal=section.displayName.split(" ").filter((val)=>(val=="/"||val=="-")?false:val)
-                                let fdisplayNameVal="";
+                                var displayNameVal=section.displayName.split(" ").filter((val)=>(val=="/"||val=="-")?false:val);
+                                let fdisplayNameVal = "";
                                 for(var i=0;i<displayNameVal.length;i++)
                                     fdisplayNameVal=fdisplayNameVal+displayNameVal[i]+"_";
-                                var namede=fdisplayNameVal.substring(0,fdisplayNameVal.length-1)
+                                var namede = fdisplayNameVal.substring(0,fdisplayNameVal.length-1);
                                     
                                 for (var i = 0; i < key.length; i++) {
                                     if (key[i] == namede) {                                
@@ -1621,7 +1621,6 @@ trackerCapture.controller('DataEntryController',
                                         for (var j = 0; j < response[key[i]].length; j++) {
                                             console.log(response[key[i]][j].id);
                                             $scope.storedData.push({ "id": response[key[i]][j].id });
-                                            
                                         }                             
                                         section.open = true;
                                         section.dataElements = $scope.storedData;

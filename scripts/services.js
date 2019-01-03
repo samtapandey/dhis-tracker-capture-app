@@ -1773,7 +1773,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                     dataType: "json",
                     async:false,
                     contentType: "application/json",
-                    url: "../api/sqlViews/GraqAPjVi3A/data",
+                    url: "../api/sqlViews/QQrvXbDpYqA/data",
                     success: function (data) {
                         def.resolve(data);
                     }

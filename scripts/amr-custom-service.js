@@ -136,7 +136,7 @@ angular.module('trackerCaptureServices')
     })
 
     // save report app section and get all section
-    .service('dataStoreService', function ($http,$q) {
+    .service('DataStoreService', function ($http,$q) {
         return {
             saveInDataStore: function (value) {
                 var def = $q.defer();
@@ -146,12 +146,21 @@ angular.module('trackerCaptureServices')
                 $http.post(url, value).then(function (response) {
                     def.resolve(response.data);
                 }).catch((err)=>def.resolve(err))
+
                 return def.promise;
             },
             getFromDataStore: function (teiKey) {
                 var def = $q.defer();
                 var url = '../api/dataStore/id/' + teiKey;
                 $http.get(url).then(function (response) {
+                    def.resolve(response.data);
+                }).catch((error)=>def.resolve(error))
+                return def.promise;
+            },
+            deleteFromDataStore: function (teiKey) {
+                var def = $q.defer();
+                var url = '../api/dataStore/id/' + teiKey;
+                $http.delete(url).then(function (response) {
                     def.resolve(response.data);
                 });
                 return def.promise;

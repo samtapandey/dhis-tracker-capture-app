@@ -556,7 +556,7 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
         },
 
         
-        controller: function($scope,MetaDataService, Paginator,TEIGridService, CurrentSelection,$location,dataStoreService){
+        controller: function($scope,MetaDataService, Paginator,TEIGridService, CurrentSelection,$location,DataStoreService,$timeout){
             var attributesById = CurrentSelection.getAttributesById();
              // Get the modal
              var modal = document.getElementById('myModal');
@@ -571,7 +571,7 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                 data.rows.map((value)=>{
                     $scope.deNameValue.push(value[1]);
                     $scope.dataElementName[value[1]]=[];
-                })
+                });
                 $scope.UniquedeNameValue= $scope.deNameValue.filter((value, index, self)=> { 
                     return self.indexOf(value) === index;
                 })
@@ -598,6 +598,24 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                 setGridColumns();
             });
             $scope.showPopUp = function(tei,organism_name){
+                document.getElementById("displayresponse").innerHTML= "";
+                $scope.organismName = organism_name;
+                $timeout(function () {
+
+                    DataStoreService.getFromDataStore($scope.tei ).then(function (responseDataStore) {
+                        if(responseDataStore.id === tei && responseDataStore.name === organism_name){
+                            document.getElementById("displayresponse").innerHTML="Existing";
+                            document.getElementById('delete-data-store').style.display = "block";
+                        }
+                        else if( responseDataStore.status === 404 ){
+                            document.getElementById("displayresponse").innerHTML="Not-Existing";
+                            document.getElementById('delete-data-store').style.display = "none";
+                        }
+                        console.log( responseDataStore );
+                    });
+
+                }, 0);
+
                 $scope.tei=tei,$scope.organism=organism_name;
                 var optionsvalue=[...document.getElementById("sampleType").options,
                                     ...document.getElementById("diskDiff").options,
@@ -617,7 +635,7 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
 
             $scope.postDeData=function(){
                 this.organism
-                
+
                 $scope.storeSectionPayload = {
                     "id":  $scope.tei,
                     "name": $scope.organism,
@@ -626,17 +644,46 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                     "MIC":this.mic,
                     "Results":this.result,
                     "Special_tests_Genotypic_tests":this.stGeno,
-                    "Special_tests_Phenotypic_tests":this.stPeno,
-                    }
-                    dataStoreService.saveInDataStore($scope.storeSectionPayload).then(function (response) {
+                    "Special_tests_Phenotypic_tests":this.stPeno
+                    };
+                    DataStoreService.saveInDataStore($scope.storeSectionPayload).then(function (response) {
+                        /*
                         if(response.httpStatusCode==201)
                         document.getElementById("displayresponse").innerHTML=response.httpStatus;
                         if(response.status==409)
                         document.getElementById("displayresponse").innerHTML="Existing";
-                        //console.log(response);
+                        */
+                        var modal = document.getElementById('myModal');
+                        // Get the button that opens the modal
+                        modal.style.display = "none";
+                        console.log(response);
                     });
                 
-                }
+                };
+
+            // close popUp Window
+            $scope.closeWindow = function () {
+                var modal = document.getElementById('myModal');
+                // Get the button that opens the modal
+                modal.style.display = "none";
+            };
+
+            // delete close popUp Window
+            $scope.deleteDataStore = function ( tei, organismName ) {
+                $timeout(function () {
+                    DataStoreService.deleteFromDataStore( tei ).then(function (responseDataStoreDelete) {
+                        if( responseDataStoreDelete.httpStatus === 'OK' && responseDataStoreDelete.httpStatusCode === 200){
+                            alert( "Organism" + organismName +  " -- " +responseDataStoreDelete.message );
+                            var modal = document.getElementById('myModal');
+                            // Get the button that opens the modal
+                            modal.style.display = "none";
+                        }
+                        console.log( responseDataStoreDelete );
+                    });
+
+                }, 0);
+            };
+
             var setGridColumns = function(){
                 if($scope.data && !$scope.gridColumns){
                     var columnAttributes = [];
