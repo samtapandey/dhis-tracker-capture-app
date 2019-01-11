@@ -21,8 +21,9 @@
                 </tr>
             </thead>
             <tbody id="list">
-                <tr ng-repeat="tei in data.rows.own" ng-class="{true: 'inactive-tei'} [tei.inactive]" >
-                    <td id="{{tei.id}}" ng-click="onTeiClickedInternal(tei)" ng-repeat="gridColumn in gridColumns| filter:{show: true}" ng-attr-title="{{mainTei.trackedEntityInstance ? 'select' : 'go_to_dashboard'| translate}}">
+                <tr ng-repeat="tei in data.rows.own" ng-class="{true: 'inactive-tei'} [tei.inactive]">
+                    <td id="{{tei.id}}" ng-click="onTeiClickedInternal(tei)" ng-repeat="gridColumn in gridColumns| filter:{show: true}"
+                        ng-attr-title="{{mainTei.trackedEntityInstance ? 'select' : 'go_to_dashboard'| translate}}">
                         <span ng-switch="gridColumn.valueType">
                             <span ng-switch-when="BOOLEAN">
                                 <span ng-if="tei[gridColumn.id] === 'true'">{{'yes'| translate}}</span>
@@ -45,7 +46,7 @@
                         </span>
                     </td>
                     <td class="noAction">
-                            <button class="meddelanden" id="showPopUp" data-toggle="popover" ng-click="showPopUp(tei.id,tei.iBc2wcKg2Ba)">
+                        <button class="meddelanden" id="showPopUp" data-toggle="popover" ng-click="showPopUp(tei.id,tei.iBc2wcKg2Ba)">
                             <span class="glyphicon glyphicon-star"></span></button>
                     </td>
                 </tr>
@@ -75,57 +76,156 @@
         <serverside-paginator></serverside-paginator>
     </div>
 </div>
-
 <div id="myModal" class="modal">
-    <div id="mainPage">
-        <div class="modal-content">
-                <div class="modal-header">
-                        <span class="close">&times;</span>
-                        <h2>Assign Data Elements</h2>
-                 </div>
-                <div>
-                    <div class="form-group">
-                        {{organismName}}: <label style="color:red" id="displayresponse"></label>&nbsp;&nbsp;&nbsp;&nbsp;
-                        <button class="btn btn-default" id = "delete-data-store" data-ng-click="deleteDataStore( tei, organismName )">{{'delete'| translate}}</button>
+    
+        <div id="mainPage">
+                <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>Assign Data Elements</h2>
+            </div>
+            <div style="padding: 20px;">
+                <div class="form-group">
+                    {{organismName}}: <label style="color:red" id="displayresponse"></label>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button class="btn btn-default" id="delete-data-store" data-ng-click="deleteDataStore( tei, organismName )">{{'delete'|
+                        translate}}</button>
+                </div>
+                <div class="form-group">
+                    <label for="name">Organism name:</label>
+                    <input type="text" ng-model="organism" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <div class="panel panel-default" style="height: 200px">
+                        <div class="panel-heading">Sample type:</div>
+                        <div class="panel-body">
+                            <div style="height: 150px; overflow-y: scroll;">
+                                <table id="customers">
+                                    <tr ng-repeat="deval in optionSetValues">
+                                        <td><input type="checkbox" data-ng-click="selectCheck(this)" class="form-control"
+                                                style="width: 13px;"></td>
+                                        <td>{{deval.name}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="panel panel-default" style="height: 200px">
+                        <div class="panel-heading">Disk Diffusion</div>
+                        <div class="panel-body">
+                            <div style="height: 150px; overflow-y: scroll;">
+                                <table id="customers">
+                                    <tr>
+                                        <th>Select</th>
+                                        <th>Disk Diffusion</th>
+                                        <th>Susceptible</th>
+                                        <th>Intermediate High</th>
+                                        <th>Intermediate Low</th>
+                                        <th>Resistant</th>
+                                    </tr>
+                                    <tr ng-repeat="deval in dataElementName['Disk Diffusion']">
+                                        <td><input ng-class="createClass(deval.key,deval.id)" type="checkbox" data-ng-click="checkAll(this)"
+                                                class="form-control" style="width: 13px;"></td>
+                                        <td>{{deval.name}}</td>
+                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" id="1" ng-change="inputChange1(this)" ng-model="models[deval.key+'_'+deval.id+'_1']"  class="form-control" disabled></td>
+                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" id="2" ng-change="inputChange2(this)" ng-model="models[deval.key+'_'+deval.id +'_2']"   class="form-control" disabled></td>
+                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" id="3" ng-change="inputChange3(this)" ng-model="models[deval.key+'_'+deval.id +'_3']"   class="form-control" disabled></td>
+                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" id="4" ng-change="inputChange4(this)" ng-model="models[deval.key+'_'+deval.id+'_4']"   class="form-control" disabled></td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="panel panel-default" style="height: 200px">
+                        <div class="panel-heading">MIC</div>
+                        <div class="panel-body">
+                            <div style="height: 150px; overflow-y: scroll;">
+                                <table id="customers">
+                                    <tr>
+                                        <th>Select</th>
+                                        <th>MIC</th>
+                                        <th>Susceptible</th>
+                                        <th>Intermediate High</th>
+                                        <th>Intermediate Low</th>
+                                        <th>Resistant</th>
+                                    </tr>
+                                    <tr ng-repeat="deval in dataElementName['MIC']">
+                                        <td><input type="checkbox" ng-class="createClass(deval.key,deval.id)" data-ng-click="checkAll(this)"
+                                                class="form-control" style="width: 13px;"></td>
+                                        <td>{{deval.name}}</td>
+                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
+                                            id="1" ng-change="inputChange1(this)" ng-model="models[deval.key+'_'+deval.id+'_1']" disabled></td>
+                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
+                                            id="2" ng-change="inputChange2(this)" ng-model="models[deval.key+'_'+deval.id+'_2']" disabled></td>
+                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
+                                            id="3" ng-change="inputChange3(this)" ng-model="models[deval.key+'_'+deval.id+'_3']" disabled></td>
+                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
+                                            id="4" ng-change="inputChange4(this)" ng-model="models[deval.key+'_'+deval.id+'_4']" disabled></td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <div class="panel panel-default" style="height: 200px">
+                        <div class="panel-heading">Results</div>
+                        <div class="panel-body">
+                            <div style="height: 150px; overflow-y: scroll;">
+                                <table id="customers">
+                                    <tr ng-repeat="deval in dataElementName['Results']">
+                                        <td><input type="checkbox" data-ng-click="selectCheck(this)" class="form-control" style="width: 13px;"></td>
+                                        <td>{{deval.name}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="panel panel-default" style="height: 200px">
+                        <div class="panel-heading">Special tests - Genotypic tests</div>
+                        <div class="panel-body">
+                            <div style="height: 150px; overflow-y: scroll;">
+                                <table id="customers">
+                                    <tr ng-repeat="deval in dataElementName['Special tests - Genotypic tests']">
+                                        <td><input type="checkbox" data-ng-click="selectCheck(this)" class="form-control" style="width: 13px;"></td>
+                                        <td>{{deval.name}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
 
-                <div class="modal-body">
-                <form >
+                <div class="form-group">
+                    <div class="panel panel-default" style="height: 200px">
+                        <div class="panel-heading">Special tests - Phenotypic tests</div>
+                        <div class="panel-body">
+                            <div style="height: 150px; overflow-y: scroll;">
+                                <table id="customers">
+                                    <tr ng-repeat="deval in dataElementName['Special tests - Phenotypic tests']">
+                                        <td><input type="checkbox" data-ng-click="selectCheck(this)" class="form-control" style="width: 13px;"></td>
+                                        <td>{{deval.name}}</td>
+                                    </tr>
+                                </table>
+                            </div>
 
-                    <div class="form-group">
-                      <label for="name">Organism name:</label>
-                      <input type="text" ng-model="organism" class="form-control" id="name" readonly>
+                        </div>
                     </div>
-                    <div class="form-group">
-                      <label for="pwd">Sample type:</label>
-                      <select class="form-control" id="sampleType" ng-model='sampleType' ng-options='os.name for os in optionSetValues' multiple>
-                       </select>
-                    </div>
-                    <div class="form-group">
-                            <label for="pwd">Disk Diffusion</label>
-                            <select class="form-control" id="diskDiff" ng-model='diskDiff' ng-options="deval.name for deval in dataElementName['Disk Diffusion']" multiple></select>
-                    </div>
-                    <div class="form-group">
-                        <label for="pwd">MIC</label>
-                        <select class="form-control" id="mic" ng-model='mic' ng-options="deval.name for deval in dataElementName['MIC']" multiple></select>
-                    </div>
-                    <div class="form-group">
-                        <label for="pwd">Results</label>
-                        <select class="form-control" id="result" ng-model='result' ng-options="deval.name for deval in dataElementName['Results']" multiple></select>
-                    </div>
-                    <div class="form-group">
-                        <label for="pwd">Special tests - Genotypic tests</label>
-                        <select class="form-control" id="stGeno" ng-model='stGeno' ng-options="deval.name for deval in dataElementName['Special tests - Genotypic tests']" multiple></select>
-                    </div>
-                    <div class="form-group">
-                        <label for="pwd">Special tests - Phenotypic tests</label>
-                        <select class="form-control" id="stPeno" ng-model='stPeno' ng-options="deval.name for deval in dataElementName['Special tests - Phenotypic tests']" multiple></select>
-                    </div>
-                    <button type="button" data-ng-click="postDeData()" class="btn btn-default">Submit</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button class="btn btn-default" data-ng-click="closeWindow()">{{'close'| translate}}</button>
-                  </form>
-              </div>
+                </div>
+                <button type="button" data-ng-click="postDeData()" class="btn btn-default">Submit</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="btn btn-default" data-ng-click="closeWindow()">{{'close'| translate}}</button>
+            </div>
         </div>
     </div>
 </div>

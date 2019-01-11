@@ -10,6 +10,7 @@ import 'd2-tracker/lib/dhis2.angular.controllers.js';
 import 'd2-tracker/lib/dhis2.angular.templates.js';
 
 // App files
+import '../scripts/multiselect.js';
 import '../scripts/services.js';
 import '../scripts/filters.js';
 import '../scripts/directives.js';
@@ -48,6 +49,9 @@ import '../components/home/lists/lists-controller.js';
 import '../components/home/search/search-controller.js';
 import '../components/topbar/topbar-controller.js';
 
+//datatables
+
+
 import L from 'leaflet';
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -58,6 +62,7 @@ L.Icon.Default.mergeOptions({
 });
 import 'leaflet-contextmenu';
 import 'd2-tracker/lib/Google.js';
+
 
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
 import 'leaflet-control-geocoder/dist/Control.Geocoder.js';

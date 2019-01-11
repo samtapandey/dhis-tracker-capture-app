@@ -31,7 +31,7 @@ trackerCapture.controller('CustomDataStore',
             var apprURL2 = apprURL1.split('=');
             var organismName = apprURL2[apprURL2.length - 1];
         }
-        console.log(tei, organismName);
+
 
         var data = {
                     "id": tei,
