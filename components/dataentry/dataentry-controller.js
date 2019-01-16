@@ -1616,7 +1616,7 @@ trackerCapture.controller('DataEntryController',
                 DataStoreService.getFromDataStore(teiVal).then(function (response) {
                     console.log(response);
                     if ( response.status != 404 && response.data.status != 'ERROR') {
-                        response.Sample_Type.forEach(function (st) {
+                        response.Sample_type.forEach(function (st) {
                             angular.forEach($scope.currentStage.programStageSections, function (section) {
                                 if (st.name === selectedSampleType) {
                                     var key = Object.keys(response);

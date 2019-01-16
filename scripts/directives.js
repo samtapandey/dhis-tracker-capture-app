@@ -757,7 +757,7 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                     modal.style.display = "block";
 
                 }
-                $scope.UniquedeNameValue = [];
+                $scope.UniquedeNameValue = {}
 
                 $scope.selectCheck = function (ele) {
                     var obj = Object.keys($scope.UniquedeNameValue)
