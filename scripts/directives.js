@@ -562,7 +562,7 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                 $scope.models = {};
 
                 $scope.UniquedeNameValueNew = [];
-                
+
 
 
                 $scope.$watch("pager", function () {
@@ -672,10 +672,28 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                     }, 0);
                 };
 
+                $scope.checkUpdateValue = function (tei, organism_name) {
+                    DataStoreService.getFromDataStore(tei).then(function (res) {
+                        let getdatakeys = Object.keys(res);
+                        for (var i = 0; i < getdatakeys.length; i++) {
+                            for (var j = 0; j < res[getdatakeys[i]].length; j++) {
+                                let dataele = res[getdatakeys[i]][j],
+                                    element = document.getElementsByClassName(getdatakeys[i] + "_" + dataele.id);
+                                element[0].checked = true
+                                if (getdatakeys[i] === "MIC" || getdatakeys[i] === "Disk_Diffusion") {
+                                    element[1].value = dataele.Susceptible;
+                                    element[2].value = dataele.Intermediate_High;
+                                    element[3].value = dataele.Intermediate_Low;
+                                    element[4].value = dataele.Resistant;
+                                }
+                            }
 
+
+                        }
+                       })
+                }
 
                 $scope.showPopUp = function (tei, organism_name) {
-
                     $scope.dataElementName = [];
                     $scope.deNameValue = [];
 
@@ -690,7 +708,6 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                                 let fdisplayNameVal = "";
                                 for (var i = 0; i < displayNameVal.length; i++)
                                     fdisplayNameVal = fdisplayNameVal + displayNameVal[i] + "_";
-                                //$scope.UniquedeNameValue[fdisplayNameVal.substring(0, fdisplayNameVal.length - 1)] = []
                             }
 
                         })
@@ -719,15 +736,12 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                                 for (var i = 0; i < displayNameVal.length; i++)
                                     fdisplayNameVal = fdisplayNameVal + displayNameVal[i] + "_";
                                 if (key == value[1])
-                                    $scope.dataElementName[key].push({ name: value[2], id: value[3], key: fdisplayNameVal.substring(0, fdisplayNameVal.length - 1) })
+                                    $scope.dataElementName[key].push({ name: value[2], id: value[3], key: fdisplayNameVal.substring(0, fdisplayNameVal.length - 1),value:"" })
                             }
                         })
 
 
 
-                        console.log($scope.dataElementName);
-                        console.log($scope.deNameValue);
-                        console.log($scope.UniquedeNameValue);
                     });
 
 
@@ -755,7 +769,9 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
 
                     // Get the button that opens the modal
                     modal.style.display = "block";
-
+                    setTimeout(() => {
+                        $scope.checkUpdateValue(tei, organism_name)
+                    }, 1000);
                 }
                 $scope.UniquedeNameValue = {}
 
@@ -772,6 +788,13 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                         if (ele.deval.key == key)
                             $scope.UniquedeNameValue[ele.deval.key].push({ id: ele.deval.id, name: ele.deval.name })
                     }
+                    var tdvalue = document.getElementsByClassName(ele.deval.key + "_" + ele.deval.id);
+                    if (tdvalue[0].checked == false) {
+                        for (var i = $scope.UniquedeNameValue[ele.deval.key].length-1; i >0 ; i--) {
+                            if ($scope.UniquedeNameValue[ele.deval.key][i].name === ele.deval.name) 
+                                $scope.UniquedeNameValue[ele.deval.key].splice(i, 1)
+                         }
+                    }
                 }
                 $scope.checkAll = function (ele) {
                     var obj = Object.keys($scope.UniquedeNameValue)
@@ -781,7 +804,6 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                     }
                     if (obj.indexOf(ele.deval.key) == -1)
                         $scope.UniquedeNameValue[ele.deval.key] = [];
-
                     for (var key in $scope.UniquedeNameValue) {
                         if (ele.deval.key == key)
                             $scope.UniquedeNameValue[ele.deval.key].push({ id: ele.deval.id, name: ele.deval.name })
@@ -798,6 +820,13 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                         for (var i = 1; i < tdvalue.length; i++) {
                             if (tdvalue[i].disabled == false) {
                                 tdvalue[i].disabled = true;
+                                for(var k=1;k<tdvalue.length;k++)
+                                tdvalue[k].value="";
+                                for (var i = $scope.UniquedeNameValue[ele.deval.key].length-1; i >0 ; i--) {
+                                    if ($scope.UniquedeNameValue[ele.deval.key][i].name === ele.deval.name) {
+                                        $scope.UniquedeNameValue[ele.deval.key].splice(i, 1)
+                                    }
+                                }
                             }
                         }
                     }
@@ -806,57 +835,57 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
 
                 $scope.inputChange1 = function (ele) {
                     var inputbox = document.getElementsByClassName(ele.deval.key + '_' + ele.deval.id)
-                    var selinputbox=[]
+                    var selinputbox = []
                     for (var i = 1; i < inputbox.length; i++) {
-                         if (inputbox[i].id === "1") 
+                        if (inputbox[i].id === "1")
                             selinputbox.push(inputbox[i])
-                       }
-                    $scope.UniquedeNameValue[ele.deval.key].map((val,index)=>{
-                        if (val.id == ele.deval.id) 
-                            $scope.UniquedeNameValue[ele.deval.key][index].Susceptible = selinputbox[0].value;
-                        })
                     }
+                    $scope.UniquedeNameValue[ele.deval.key].map((val, index) => {
+                        if (val.id == ele.deval.id)
+                            $scope.UniquedeNameValue[ele.deval.key][index].Susceptible = selinputbox[0].value;
+                    })
+                }
                 $scope.inputChange2 = function (ele) {
                     var inputbox = document.getElementsByClassName(ele.deval.key + '_' + ele.deval.id);
-                    var selinputbox=[]
+                    var selinputbox = []
                     for (var i = 1; i < inputbox.length; i++) {
-                        if (inputbox[i].id === "2") 
+                        if (inputbox[i].id === "2")
                             selinputbox.push(inputbox[i])
                     }
-                    $scope.UniquedeNameValue[ele.deval.key].map((val,index)=>{
+                    $scope.UniquedeNameValue[ele.deval.key].map((val, index) => {
                         if (val.id == ele.deval.id)
                             $scope.UniquedeNameValue[ele.deval.key][index].Intermediate_High = selinputbox[0].value;
-                       })
-                    }
+                    })
+                }
                 $scope.inputChange3 = function (ele) {
                     var inputbox = document.getElementsByClassName(ele.deval.key + '_' + ele.deval.id)
-                    var selinputbox=[]
+                    var selinputbox = []
                     for (var i = 1; i < inputbox.length; i++) {
-                        if (inputbox[i].id === "3") 
+                        if (inputbox[i].id === "3")
                             selinputbox.push(inputbox[i])
                     }
-                    $scope.UniquedeNameValue[ele.deval.key].map((val,index)=>{
+                    $scope.UniquedeNameValue[ele.deval.key].map((val, index) => {
                         if (val.id == ele.deval.id)
                             $scope.UniquedeNameValue[ele.deval.key][index].Intermediate_Low = selinputbox[0].value;
-                        })
-                    }
+                    })
+                }
                 $scope.inputChange4 = function (ele) {
                     var inputbox = document.getElementsByClassName(ele.deval.key + '_' + ele.deval.id)
-                    var selinputbox=[]
+                    var selinputbox = []
                     for (var i = 1; i < inputbox.length; i++) {
-                        if (inputbox[i].id === "4") 
+                        if (inputbox[i].id === "4")
                             selinputbox.push(inputbox[i])
                     }
-                    $scope.UniquedeNameValue[ele.deval.key].map((val,index)=>{
-                        if (val.id == ele.deval.id) 
+                    $scope.UniquedeNameValue[ele.deval.key].map((val, index) => {
+                        if (val.id == ele.deval.id)
                             $scope.UniquedeNameValue[ele.deval.key][index].Resistant = selinputbox[0].value;
-                     })
+                    })
                 }
 
                 $scope.postDeData = function () {
                     this.organism
-                    $scope.UniquedeNameValue.id=$scope.tei;
-                    $scope.UniquedeNameValue.name=$scope.organism;
+                    $scope.UniquedeNameValue.id = $scope.tei;
+                    $scope.UniquedeNameValue.name = $scope.organism;
                     DataStoreService.saveInDataStore($scope.UniquedeNameValue).then(function (response) {
 
                         var modal = document.getElementById('myModal');
