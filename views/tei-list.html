@@ -101,9 +101,9 @@
                             <div style="height: 150px; overflow-y: scroll;">
                                 <table id="customers">
                                     <tr ng-repeat="deval in optionSetValues">
-                                        <td><input type="checkbox" data-ng-click="selectCheck(this)" class="form-control"
+                                        <td><input type="checkbox" data-ng-click="selectCheck(this)" ng-class="createClass(deval.key,deval.id)" class="form-control"
                                                 style="width: 13px;"></td>
-                                        <td>{{deval.name}}</td>
+                                        <td >{{deval.name}}</td>
                                     </tr>
                                 </table>
                             </div>
@@ -129,10 +129,10 @@
                                         <td><input ng-class="createClass(deval.key,deval.id)" type="checkbox" data-ng-click="checkAll(this)"
                                                 class="form-control" style="width: 13px;"></td>
                                         <td>{{deval.name}}</td>
-                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" id="1" ng-change="inputChange1(this)" ng-model="models[deval.key+'_'+deval.id+'_1']"  class="form-control" disabled></td>
-                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" id="2" ng-change="inputChange2(this)" ng-model="models[deval.key+'_'+deval.id +'_2']"   class="form-control" disabled></td>
-                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" id="3" ng-change="inputChange3(this)" ng-model="models[deval.key+'_'+deval.id +'_3']"   class="form-control" disabled></td>
-                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" id="4" ng-change="inputChange4(this)" ng-model="models[deval.key+'_'+deval.id+'_4']"   class="form-control" disabled></td>
+                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" id="1" value='deval.value' ng-change="inputChange1(this)" ng-model="models[deval.key+'_'+deval.id+'_1']"  class="form-control" disabled></td>
+                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" id="2" value='deval.value' ng-change="inputChange2(this)" ng-model="models[deval.key+'_'+deval.id +'_2']"   class="form-control" disabled></td>
+                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" id="3" value='deval.value' ng-change="inputChange3(this)" ng-model="models[deval.key+'_'+deval.id +'_3']"   class="form-control" disabled></td>
+                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" id="4" value='deval.value' ng-change="inputChange4(this)" ng-model="models[deval.key+'_'+deval.id+'_4']"   class="form-control" disabled></td>
                                     </tr>
                                 </table>
                             </div>
@@ -159,13 +159,13 @@
                                                 class="form-control" style="width: 13px;"></td>
                                         <td>{{deval.name}}</td>
                                         <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
-                                            id="1" ng-change="inputChange1(this)" ng-model="models[deval.key+'_'+deval.id+'_1']" disabled></td>
+                                            id="1" ng-change="inputChange1(this)" ng-model="models[deval.key+'_'+deval.id+'_1']" value="deval.value" disabled></td>
                                         <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
-                                            id="2" ng-change="inputChange2(this)" ng-model="models[deval.key+'_'+deval.id+'_2']" disabled></td>
+                                            id="2" ng-change="inputChange2(this)" ng-model="models[deval.key+'_'+deval.id+'_2']" value='deval.value' disabled></td>
                                         <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
-                                            id="3" ng-change="inputChange3(this)" ng-model="models[deval.key+'_'+deval.id+'_3']" disabled></td>
+                                            id="3" ng-change="inputChange3(this)" ng-model="models[deval.key+'_'+deval.id+'_3']" value='deval.value' disabled></td>
                                         <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
-                                            id="4" ng-change="inputChange4(this)" ng-model="models[deval.key+'_'+deval.id+'_4']" disabled></td>
+                                            id="4" ng-change="inputChange4(this)" ng-model="models[deval.key+'_'+deval.id+'_4']" value='deval.value' disabled></td>
                                     </tr>
                                 </table>
                             </div>
@@ -181,7 +181,7 @@
                             <div style="height: 150px; overflow-y: scroll;">
                                 <table id="customers">
                                     <tr ng-repeat="deval in dataElementName['Results']">
-                                        <td><input type="checkbox" data-ng-click="selectCheck(this)" class="form-control" style="width: 13px;"></td>
+                                        <td><input type="checkbox" data-ng-click="selectCheck(this)" ng-class="createClass(deval.key,deval.id)" class="form-control" style="width: 13px;"></td>
                                         <td>{{deval.name}}</td>
                                     </tr>
                                 </table>
@@ -197,7 +197,7 @@
                             <div style="height: 150px; overflow-y: scroll;">
                                 <table id="customers">
                                     <tr ng-repeat="deval in dataElementName['Special tests - Genotypic tests']">
-                                        <td><input type="checkbox" data-ng-click="selectCheck(this)" class="form-control" style="width: 13px;"></td>
+                                        <td><input type="checkbox" data-ng-click="selectCheck(this)" ng-class="createClass(deval.key,deval.id)"  class="form-control" style="width: 13px;"></td>
                                         <td>{{deval.name}}</td>
                                     </tr>
                                 </table>
@@ -214,7 +214,7 @@
                             <div style="height: 150px; overflow-y: scroll;">
                                 <table id="customers">
                                     <tr ng-repeat="deval in dataElementName['Special tests - Phenotypic tests']">
-                                        <td><input type="checkbox" data-ng-click="selectCheck(this)" class="form-control" style="width: 13px;"></td>
+                                        <td><input type="checkbox" data-ng-click="selectCheck(this)" ng-class="createClass(deval.key,deval.id)" class="form-control" style="width: 13px;"></td>
                                         <td>{{deval.name}}</td>
                                     </tr>
                                 </table>
