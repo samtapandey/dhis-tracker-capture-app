@@ -167,7 +167,7 @@ trackerCapture.controller('DataEntryController',
             success: function (data) {
                 for (var i = 0; i < data.enrollments.length; i++) {
                     var trackEntityInstanceid = data.enrollments[i].trackedEntityInstance;
-                    console.log("tt " + trackEntityInstanceid);
+                    //console.log("tt " + trackEntityInstanceid);
                     $.ajax({
                         async: false,
                         type: "GET",
@@ -1564,7 +1564,17 @@ trackerCapture.controller('DataEntryController',
             $scope.currentStageEvents = $scope.eventsByStage[$scope.currentEvent.programStage];
 
             angular.forEach($scope.currentStage.programStageSections, function (section) {
-                section.open = true;
+                if( section.displayName === 'MIC' || section.displayName === 'Disk Diffusion'
+                    || section.displayName === 'Special tests - Phenotypic tests' || section.displayName === 'Special tests - Genotypic tests'
+                    || section.displayName === 'Results' ){
+                    section.open = false;
+                    console.log( "hide -- " + section.displayName + "-- " + " dataElementSize  -- " + section.dataElements.length );
+                }
+                else {
+                    section.open = true;
+                    console.log( "show -- " + section.displayName + "-- " + " dataElementSize  -- " + section.dataElements.length );
+                }
+
             });
 
 
@@ -1605,33 +1615,36 @@ trackerCapture.controller('DataEntryController',
                 var selectedSampleType = $scope.currentEvent[$scope.sampleTypeDe];
                 DataStoreService.getFromDataStore(teiVal).then(function (response) {
                     console.log(response);
-                    response.sample_Type.forEach(function (st) {
-                        angular.forEach($scope.currentStage.programStageSections, function (section) {
-                            if ( st.name === selectedSampleType) {
-                                var key = Object.keys(response);
-                                var displayNameVal=section.displayName.split(" ").filter((val)=>(val=="/"||val=="-")?false:val);
-                                let fdisplayNameVal = "";
-                                for(var i=0;i<displayNameVal.length;i++)
-                                    fdisplayNameVal=fdisplayNameVal+displayNameVal[i]+"_";
-                                var namede = fdisplayNameVal.substring(0,fdisplayNameVal.length-1);
-                                    
-                                for (var i = 0; i < key.length; i++) {
-                                    if (key[i] == namede) {                                
-                                        $scope.storedData = [];
-                                        for (var j = 0; j < response[key[i]].length; j++) {
-                                            console.log(response[key[i]][j].id);
-                                            $scope.storedData.push({ "id": response[key[i]][j].id });
-                                        }                             
-                                        section.open = true;
-                                        section.dataElements = $scope.storedData;
+                    if ( response.status != 404 && response.data.status != 'ERROR') {
+                        response.Sample_Type.forEach(function (st) {
+                            angular.forEach($scope.currentStage.programStageSections, function (section) {
+                                if (st.name === selectedSampleType) {
+                                    var key = Object.keys(response);
+                                    var displayNameVal = section.displayName.split(" ").filter((val) => (val == "/" || val == "-") ? false : val
+                                )
+                                    ;
+                                    let fdisplayNameVal = "";
+                                    for (var i = 0; i < displayNameVal.length; i++)
+                                        fdisplayNameVal = fdisplayNameVal + displayNameVal[i] + "_";
+                                    var namede = fdisplayNameVal.substring(0, fdisplayNameVal.length - 1);
+
+                                    for (var i = 0; i < key.length; i++) {
+                                        if (key[i] == namede) {
+                                            $scope.storedData = [];
+                                            for (var j = 0; j < response[key[i]].length; j++) {
+                                                console.log(response[key[i]][j].id);
+                                                $scope.storedData.push({"id": response[key[i]][j].id});
+                                            }
+                                            section.open = true;
+                                            section.dataElements = $scope.storedData;
+                                        }
                                     }
-                                    
                                 }
-                            }
-                            
+
+                            });
+
                         });
-                        
-                    });
+                    }
                 });
 
                 $scope.currentEvent[$scope.organismGroup] = $scope.organismGroupValue; //put map value in text box
