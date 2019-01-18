@@ -681,9 +681,9 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                     $scope.inputBox1 = ""; $scope.inputBox2 = ""; $scope.inputBox3 = ""; $scope.inputBox4 = "";
                     DataStoreService.getFromDataStore(tei).then(function (res) {
                         if (res.status != 404) {
-                            $scope.UniquedeNameValue=res;
+                            $scope.UniquedeNameValue = res;
                             let getdatakeys = Object.keys(res);
-                            for (var i = 0; i < getdatakeys.length -2; i++) {
+                            for (var i = 0; i < getdatakeys.length - 2; i++) {
                                 for (var j = 0; j < res[getdatakeys[i]].length; j++) {
                                     let dataele = res[getdatakeys[i]][j],
                                         element = document.getElementsByClassName(getdatakeys[i] + "_" + dataele.id);
@@ -693,21 +693,17 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                                         element[2].value = dataele.Intermediate_High;
                                         element[3].value = dataele.Intermediate_Low;
                                         element[4].value = dataele.Resistant;
-                                        for (let i = 0; i < element.length; i++){
+                                        for (let i = 0; i < element.length; i++) {
                                             element[i].disabled = false;
-                                            if(element[i].value=="undefined"){
-                                                element[i].value="";
+                                            if (element[i].value == "undefined") {
+                                                element[i].value = "";
                                             }
                                         }
-                                            
+
                                     }
                                 }
                             }
-
-                            document.getElementById("submit").style.display="none";
-                            document.getElementById("update").style.display="initial";
                         }
-
                     })
                 }
 
@@ -767,10 +763,14 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                             if (responseDataStore.id === tei && responseDataStore.name === organism_name) {
                                 document.getElementById("displayresponse").innerHTML = "Existing";
                                 document.getElementById('delete-data-store').style.display = "block";
+                                document.getElementById("submit").style.display = "none";
+                                document.getElementById("update").style.display = "initial";
                             }
                             else if (responseDataStore.status === 404) {
                                 document.getElementById("displayresponse").innerHTML = "Not-Existing";
                                 document.getElementById('delete-data-store').style.display = "none";
+                                document.getElementById("submit").style.display = "initial";
+                                document.getElementById("update").style.display = "none";
                             }
                             console.log(responseDataStore);
                         });
@@ -787,7 +787,7 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                         $scope.checkUpdateValue(tei, organism_name)
                     }, 1000);
                 }
-                
+
 
                 $scope.selectCheck = function (ele) {
                     var obj = Object.keys($scope.UniquedeNameValue)
@@ -896,7 +896,7 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                             $scope.UniquedeNameValue[ele.deval.key][index].Resistant = selinputbox[0].value;
                     })
                 }
-                
+
                 $scope.postDeData = function () {
                     $scope.UniquedeNameValue.id = $scope.tei;
                     $scope.UniquedeNameValue.name = $scope.organism;
