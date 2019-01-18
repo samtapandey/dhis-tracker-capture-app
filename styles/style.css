@@ -2096,6 +2096,10 @@ a.disable-link-effects:focus {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
 }
+.panel-body{
+    padding: 6px;
+}
+
 
 .panel-default-custom {
     border-color: #ddd
@@ -2438,14 +2442,15 @@ tr#appr{
   
   .close:hover,
   .close:focus {
-    color: #000;
+    color: white;
     text-decoration: none;
     cursor: pointer;
   }
   
   .modal-header {
     padding: 2px 16px;
-    background-color: #2F588D;
+    background-color: #376B9A;
+    text-align: center;
     color: white;
   }
   
@@ -2459,10 +2464,19 @@ tr#appr{
     border-collapse: collapse;
     width: 100%;
   }
-  
+#delete-data-store{
+    display:initial !important
+}
+  .panel-heading{
+    background-color: #376B9A !important;
+    font-size: 15px;
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    color: white !important;
+    font-weight: bold; 
+  }
 
 
-  #customers {
+  .deDisplay {
     font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
     border-collapse: collapse;
     width: 100%;
@@ -2470,14 +2484,15 @@ tr#appr{
   
   
   
-  #customers tr:nth-child(even){background-color: #f2f2f2;}
+  .deDisplay tr:nth-child(even){background-color: #f2f2f2;}
   
-  #customers tr:hover {background-color: #ddd;}
+  .deDisplay tr:hover {background-color: #ddd;}
   
-  #customers th {
+  .deDisplay th {
     padding-top: 6px;
     padding-bottom: 6px;
     text-align: left;
-    background-color: #376B9A;
+    background-color: #3e78ad;
+    text-align: center;
     color: white;
   }

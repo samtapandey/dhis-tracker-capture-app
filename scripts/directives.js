@@ -655,7 +655,7 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                     modal.style.display = "none";
                 };
 
-
+                $scope.UniquedeNameValue = {}
                 // delete close popUp Window
                 $scope.deleteDataStore = function (tei, organismName) {
                     $timeout(function () {
@@ -671,32 +671,50 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
 
                     }, 0);
                 };
-
+                $scope.createClass = function (key, id) {
+                    return key + "_" + id;
+                }
+                $scope.createModel = function (ele) {
+                    return ele;
+                }
                 $scope.checkUpdateValue = function (tei, organism_name) {
+                    $scope.inputBox1 = ""; $scope.inputBox2 = ""; $scope.inputBox3 = ""; $scope.inputBox4 = "";
                     DataStoreService.getFromDataStore(tei).then(function (res) {
-                        let getdatakeys = Object.keys(res);
-                        for (var i = 0; i < getdatakeys.length; i++) {
-                            for (var j = 0; j < res[getdatakeys[i]].length; j++) {
-                                let dataele = res[getdatakeys[i]][j],
-                                    element = document.getElementsByClassName(getdatakeys[i] + "_" + dataele.id);
-                                element[0].checked = true
-                                if (getdatakeys[i] === "MIC" || getdatakeys[i] === "Disk_Diffusion") {
-                                    element[1].value = dataele.Susceptible;
-                                    element[2].value = dataele.Intermediate_High;
-                                    element[3].value = dataele.Intermediate_Low;
-                                    element[4].value = dataele.Resistant;
+                        if (res.status != 404) {
+                            $scope.UniquedeNameValue=res;
+                            let getdatakeys = Object.keys(res);
+                            for (var i = 0; i < getdatakeys.length -2; i++) {
+                                for (var j = 0; j < res[getdatakeys[i]].length; j++) {
+                                    let dataele = res[getdatakeys[i]][j],
+                                        element = document.getElementsByClassName(getdatakeys[i] + "_" + dataele.id);
+                                    element[0].checked = true
+                                    if (getdatakeys[i] === "MIC" || getdatakeys[i] === "Disk_Diffusion") {
+                                        element[1].value = dataele.Susceptible;
+                                        element[2].value = dataele.Intermediate_High;
+                                        element[3].value = dataele.Intermediate_Low;
+                                        element[4].value = dataele.Resistant;
+                                        for (let i = 0; i < element.length; i++){
+                                            element[i].disabled = false;
+                                            if(element[i].value=="undefined"){
+                                                element[i].value="";
+                                            }
+                                        }
+                                            
+                                    }
                                 }
                             }
 
-
+                            document.getElementById("submit").style.display="none";
+                            document.getElementById("update").style.display="initial";
                         }
-                       })
+
+                    })
                 }
 
-                $scope.showPopUp = function (tei, organism_name) {
+                $scope.showPopUp = function (tei, organism_name, thiz) {
                     $scope.dataElementName = [];
                     $scope.deNameValue = [];
-
+                    $scope.allDeNameValue = $scope.deNameValue;
                     MetaDataService.showdataElement().then(function (data) {
                         data.rows.map((value) => {
                             $scope.deNameValue.push(value[1]);
@@ -723,12 +741,6 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
 
 
                         var attributesById = CurrentSelection.getAttributesById();
-
-                        $scope.createClass = function (key, id) {
-                            return key + "_" + id;
-                        }
-
-
                         data.rows.forEach((value) => {
                             for (let key in $scope.dataElementName) {
                                 var displayNameVal = key.split(" ").filter((val) => (val == "/" || val == "-") ? false : val);
@@ -736,11 +748,13 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                                 for (var i = 0; i < displayNameVal.length; i++)
                                     fdisplayNameVal = fdisplayNameVal + displayNameVal[i] + "_";
                                 if (key == value[1])
-                                    $scope.dataElementName[key].push({ name: value[2], id: value[3], key: fdisplayNameVal.substring(0, fdisplayNameVal.length - 1),value:"" })
+                                    $scope.dataElementName[key].push({ name: value[2], id: value[3], key: fdisplayNameVal.substring(0, fdisplayNameVal.length - 1), value: "" })
                             }
                         })
-
-
+                        var allDeNameValue = $scope.allDeNameValue.filter((val, index) => $scope.allDeNameValue.indexOf(val) >= index)
+                        allDeNameValue.forEach((v, i) =>
+                            $scope.dataElementName[v].sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0))
+                        )
 
                     });
 
@@ -773,7 +787,7 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                         $scope.checkUpdateValue(tei, organism_name)
                     }, 1000);
                 }
-                $scope.UniquedeNameValue = {}
+                
 
                 $scope.selectCheck = function (ele) {
                     var obj = Object.keys($scope.UniquedeNameValue)
@@ -790,10 +804,10 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                     }
                     var tdvalue = document.getElementsByClassName(ele.deval.key + "_" + ele.deval.id);
                     if (tdvalue[0].checked == false) {
-                        for (var i = $scope.UniquedeNameValue[ele.deval.key].length-1; i >0 ; i--) {
-                            if ($scope.UniquedeNameValue[ele.deval.key][i].name === ele.deval.name) 
+                        for (var i = $scope.UniquedeNameValue[ele.deval.key].length - 1; i > 0; i--) {
+                            if ($scope.UniquedeNameValue[ele.deval.key][i].name === ele.deval.name)
                                 $scope.UniquedeNameValue[ele.deval.key].splice(i, 1)
-                         }
+                        }
                     }
                 }
                 $scope.checkAll = function (ele) {
@@ -820,9 +834,9 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                         for (var i = 1; i < tdvalue.length; i++) {
                             if (tdvalue[i].disabled == false) {
                                 tdvalue[i].disabled = true;
-                                for(var k=1;k<tdvalue.length;k++)
-                                tdvalue[k].value="";
-                                for (var i = $scope.UniquedeNameValue[ele.deval.key].length-1; i >0 ; i--) {
+                                for (var k = 1; k < tdvalue.length; k++)
+                                    tdvalue[k].value = "";
+                                for (var i = $scope.UniquedeNameValue[ele.deval.key].length - 1; i > 0; i--) {
                                     if ($scope.UniquedeNameValue[ele.deval.key][i].name === ele.deval.name) {
                                         $scope.UniquedeNameValue[ele.deval.key].splice(i, 1)
                                     }
@@ -831,6 +845,7 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                         }
                     }
                 }
+
 
 
                 $scope.inputChange1 = function (ele) {
@@ -881,11 +896,11 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                             $scope.UniquedeNameValue[ele.deval.key][index].Resistant = selinputbox[0].value;
                     })
                 }
-
+                
                 $scope.postDeData = function () {
-                    this.organism
                     $scope.UniquedeNameValue.id = $scope.tei;
                     $scope.UniquedeNameValue.name = $scope.organism;
+
                     DataStoreService.saveInDataStore($scope.UniquedeNameValue).then(function (response) {
 
                         var modal = document.getElementById('myModal');
@@ -895,6 +910,58 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                     });
 
                 };
+
+                $scope.postDeUpdatedData = function () {
+                    DataStoreService.updateInDataStore($scope.UniquedeNameValue).then(function (response) {
+
+                        var modal = document.getElementById('myModal');
+                        // Get the button that opens the modal
+                        modal.style.display = "none";
+                        console.log(response);
+                    });
+                }
+
+                $("#search1").on("keyup", function () {
+                    var value = $(this).val().toLowerCase();
+                    $("#Sample_type tr").filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+
+                $("#search2").on("keyup", function () {
+                    var value = $(this).val().toLowerCase();
+                    $("#Disk_Diffusion tr").filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+
+                $("#search3").on("keyup", function () {
+                    var value = $(this).val().toLowerCase();
+                    $("#MIC tr").filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+
+                $("#search4").on("keyup", function () {
+                    var value = $(this).val().toLowerCase();
+                    $("#Results tr").filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+
+                $("#search5").on("keyup", function () {
+                    var value = $(this).val().toLowerCase();
+                    $("#Genotypic_tests tr").filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+
+                $("#search6").on("keyup", function () {
+                    var value = $(this).val().toLowerCase();
+                    $("#Phenotypic_tests tr").filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
 
             }
         }

@@ -149,6 +149,17 @@ angular.module('trackerCaptureServices')
 
                 return def.promise;
             },
+            updateInDataStore: function (value) {
+                var def = $q.defer();
+                var key = value.id;
+                var value = JSON.stringify(value);
+                var url = '../api/dataStore/id/' + key;
+                $http.put(url, value).then(function (response) {
+                    def.resolve(response.data);
+                }).catch((err)=>def.resolve(err))
+
+                return def.promise;
+            },
             getFromDataStore: function (teiKey) {
                 var def = $q.defer();
                 var url = '../api/dataStore/id/' + teiKey;
