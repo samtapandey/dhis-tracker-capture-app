@@ -185,14 +185,16 @@ trackerCapture.controller('RelationshipController',
 			var housemember_obj_anm_name=[];
             var count=1;
 			var housemember_locality=[];
+			var obj_altertivenumber=[];
             var objatt=[];
             var namee=[];
             var adharnumber=[];
             var familyuniqueid=[];
+			var alternative_housenumber=[];
             var sex=[];
             var dateofbirth=[];
             var maritalstatus=[];
-            var housedetailss=["xalnzkNfD77","nHR1zCU0maL","Dnm1mq6iq2d","PbEhJPnon0o","kelN057pfhq","zLsKdtlBCIx","yDCO4KM4WVA","MV4wWoZBrJS","ZmH0W6XHS9S"];
+            var housedetailss=["xalnzkNfD77","sQkCGHnMRYE","rad0NDmyYj8","nHR1zCU0maL","Dnm1mq6iq2d","PbEhJPnon0o","kelN057pfhq","zLsKdtlBCIx","yDCO4KM4WVA","MV4wWoZBrJS","ZmH0W6XHS9S"];
             // selct_date=document.getElementById('Start').value;
             var url = window.location.href;
                 var params = url.split('=');
@@ -253,6 +255,12 @@ trackerCapture.controller('RelationshipController',
                     obj_asha_name.push(typehouse);
                 
                     }	
+					 else if(trackdata.attributes[q].attribute=="rad0NDmyYj8")//Alternative house  name
+                    {
+                    var alternativenumber=trackdata.attributes[q].value;
+                    obj_altertivenumber.push(alternativenumber);
+                
+                    }
                   else if(trackdata.attributes[q].attribute=="ZmH0W6XHS9S")//Religion
                     {
                     var typehouse=trackdata.attributes[q].value;
@@ -401,6 +409,27 @@ trackerCapture.controller('RelationshipController',
 				
                     
                     }
+					else if(trackdata.attributes[q].attribute=="rad0NDmyYj8")//Alternative house number   
+                    {
+                    
+                    var aa=trackdata.attributes[q].value;
+                   
+						if(aa==obj_altertivenumber[0]){
+                    alternative_housenumber.push(aa);
+					}
+				else 
+				{
+					trackdata.attributes[q].value=obj_altertivenumber[0];
+                    RegistrationService.registerOrUpdate(trackdata,$scope.optionSets, $scope.attributesById).then(function(response){
+                        if (response.response.status == "SUCCESS"){  
+							return;
+                        } 
+                    });
+				}
+				
+				
+                    
+                    }
                    else if(trackdata.attributes[q].attribute==="yDCO4KM4WVA")//ANM name
                     {
                     var aa=trackdata.attributes[q].value;
@@ -442,7 +471,15 @@ trackerCapture.controller('RelationshipController',
 			  value: obj_locality[0],
 			  valueType: "TEXT"
                 };
-				
+				   var tei_value_lalternativenumber= {
+              attribute: "rad0NDmyYj8",
+			  created: "2018-06-08T12:18:52.971",
+			  displayName: "Alternative House Number",
+			  lastUpdated: "2018-06-08T12:18:52.971",
+			  storedBy: "dilroop",
+			  value: obj_altertivenumber[0],
+			  valueType: "TEXT"
+                };
 			
                     var array3 = housedetailss.filter(function(obj) { return objatt.indexOf(obj) == -1; });
                     for(var t=0;t<array3.length;t++)
@@ -471,6 +508,15 @@ trackerCapture.controller('RelationshipController',
 					   else if(array3[t]=="MV4wWoZBrJS"){
                        // housemember_locality.push("NA");
 					   	trackdata.attributes.push(tei_value_locality);
+                    RegistrationService.registerOrUpdate(trackdata,$scope.optionSets, $scope.attributesById).then(function(response){
+                        if (response.response.status == "SUCCESS"){  
+							return;
+                        } 
+                    });
+					   }
+					    else if(array3[t]=="rad0NDmyYj8"){
+                       // Alternative house number
+					   	trackdata.attributes.push(tei_value_lalternativenumber);
                     RegistrationService.registerOrUpdate(trackdata,$scope.optionSets, $scope.attributesById).then(function(response){
                         if (response.response.status == "SUCCESS"){  
 							return;
