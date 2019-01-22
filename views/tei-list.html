@@ -77,7 +77,6 @@
     </div>
 </div>
 <div id="myModal" class="modal">
-
     <div id="mainPage">
         <div class="modal-content">
             <div class="modal-header">
@@ -89,20 +88,23 @@
                     <label for="name" style="font-size: 15px; font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif; font-weight: bold;">Organism
                         name:&nbsp;
                         <label style="color:red" id="displayresponse"></label>&nbsp;
-                        <button class="btn btn-default" id="delete-data-store" 
-                            data-ng-click="deleteDataStore( tei, organismName )">{{'delete'|
+                        <button class="btn btn-default" id="delete-data-store" data-ng-click="deleteDataStore( tei, organismName )">{{'delete'|
                             translate}}</button></label>
                     <input type="text" ng-model="organism" class="form-control" readonly>
                 </div>
                 <div class="form-group">
                     <div class="panel panel-default" style="height: 250px">
-                        <div class="panel-heading">Sample type</div>
-                        <div class="panel-body">
+                        <div class="panel-heading pheading">Sample type</div>
+                        <div class="panel-body pbody">
                             <input type="text" id="search1" class="form-control" ng-model="searchBox1" placeholder="Search for names.."
-                                title="Type in a name">
-                            <div style="height: 160px; overflow-y: scroll;">
+                                title="Type in a name" style="width: 40%;float: left;">
+                            <input type="button" class="form-control" value="Unselect" data-ng-click="unselectAllcheckbox(this,'Sample type')"
+                                style="width: 15%;float: right;" />
+                            <input type="button" class="form-control" value="Select All" data-ng-click="selectAllcheckbox(this,'Sample type')"
+                                style="width: 15%;float: right;margin: 6px;" />
+                            <div style="height: 160px; overflow-y: scroll; width: 100%;">
                                 <table class="deDisplay" id="Sample_type">
-                                    <tr ng-repeat="deval in optionSetValues">
+                                    <tr ng-repeat="deval in dataElementName['Sample type']">
                                         <td><input type="checkbox" data-ng-click="selectCheck(this)" ng-class="createClass(deval.key,deval.id)"
                                                 class="form-control" style="width: 13px;"></td>
                                         <td>{{deval.name}}</td>
@@ -115,137 +117,172 @@
                 </div>
                 <div class="form-group">
                     <div class="panel panel-default" style="height: 250px">
-                        <div class="panel-heading">Disk Diffusion</div>
-                        <div class="panel-body">
+                        <div class="panel-heading pheading">Disk Diffusion</div>
+                        <div class="panel-body pbody">
                             <input type="text" id="search2" class="form-control" ng-model="searchBox2" placeholder="Search for names.."
-                                title="Type in a name">
-                            <div style="height: 160px; overflow-y: scroll;">
-                                <table class="deDisplay" id="Disk_Diffusion">
-                                    <tr>
-                                        <th></th>
-                                        <th></th>
-                                        <th>Susceptible</th>
-                                        <th>Intermediate High</th>
-                                        <th>Intermediate Low</th>
-                                        <th>Resistant</th>
-                                    </tr>
-                                    <tr ng-repeat="deval in dataElementName['Disk Diffusion']">
-                                        <td><input type="checkbox" ng-class="createClass(deval.key,deval.id)"
-                                                data-ng-click="checkAll(this)" class="form-control" style="width: 13px;"></td>
-                                        <td>{{deval.name}}</td>
-                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
-                                                id="1" ng-change="inputChange1(this)" ng-model="inputBox1" disabled></td>
-                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
-                                                id="2" ng-change="inputChange2(this)" ng-model="inputBox2" disabled></td>
-                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
-                                                id="3" ng-change="inputChange3(this)" ng-model="inputBox3" disabled></td>
-                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
-                                                id="4" ng-change="inputChange4(this)" ng-model="inputBox4" disabled></td>
-                                    </tr>
-                                </table>
+                                title="Type in a name" style="width: 40%;float: left;">
+                            <input type="button" class="form-control" value="Unselect" data-ng-click="unselectAllcheckbox(this,'Disk Diffusion')"
+                                style="width: 15%;float: right;" />
+                            <input type="button" class="form-control" value="Select All" data-ng-click="selectAllcheckbox(this,'Disk Diffusion')"
+                                style="width: 15%;float: right;margin: 6px;" />
+                            <div style="height: 160px; overflow-y: scroll; width: 100%;">
+                                <div style="height: 160px; overflow-y: scroll;">
+                                    <table class="deDisplay" id="Disk_Diffusion">
+                                        <tr>
+                                            <th></th>
+                                            <th></th>
+                                            <th>Susceptible</th>
+                                            <th>Intermediate High</th>
+                                            <th>Intermediate Low</th>
+                                            <th>Resistant</th>
+                                        </tr>
+                                        <tr ng-repeat="deval in dataElementName['Disk Diffusion']">
+                                            <td><input type="checkbox" ng-class="createClass(deval.key,deval.id)"
+                                                    data-ng-click="checkAll(this)" class="form-control" style="width: 13px;"></td>
+                                            <td>{{deval.name}}</td>
+                                            <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
+                                                    id="1" ng-change="inputChange1(this)" ng-model="inputBox1" disabled></td>
+                                            <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
+                                                    id="2" ng-change="inputChange2(this)" ng-model="inputBox2" disabled></td>
+                                            <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
+                                                    id="3" ng-change="inputChange3(this)" ng-model="inputBox3" disabled></td>
+                                            <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
+                                                    id="4" ng-change="inputChange4(this)" ng-model="inputBox4" disabled></td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="panel panel-default" style="height: 250px">
+                            <div class="panel-heading pheading">MIC</div>
+                            <div class="panel-body pbody">
+                                <input type="text" id="search3" ng-model="searchBox3" class="form-control" placeholder="Search for names.."
+                                    title="Type in a name" style="width: 40%;float: left;">
+                                <input type="button" class="form-control" value="Unselect" data-ng-click="unselectAllcheckbox(this,'MIC')"
+                                    style="width: 15%;float: right;" />
+                                <input type="button" class="form-control" value="Select All" data-ng-click="selectAllcheckbox(this,'MIC')"
+                                    style="width: 15%;float: right;margin: 6px;" />
+                                <div style="height: 160px; overflow-y: scroll; width: 100%;">
+                                    <div style="height: 160px; overflow-y: scroll;">
+                                        <table class="deDisplay" id="MIC">
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th>Susceptible</th>
+                                                <th>Intermediate High</th>
+                                                <th>Intermediate Low</th>
+                                                <th>Resistant</th>
+                                            </tr>
+                                            <tr ng-repeat="deval in dataElementName['MIC']">
+                                                <td><input type="checkbox" ng-class="createClass(deval.key,deval.id)"
+                                                        data-ng-click="checkAll(this)" class="form-control" style="width: 13px;"></td>
+                                                <td>{{deval.name}}</td>
+                                                <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
+                                                        id="1" ng-change="inputChange1(this)" ng-model="inputBox1"
+                                                        disabled></td>
+                                                <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
+                                                        id="2" ng-change="inputChange2(this)" ng-model="inputBox2"
+                                                        disabled></td>
+                                                <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
+                                                        id="3" ng-change="inputChange3(this)" ng-model="inputBox3"
+                                                        disabled></td>
+                                                <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
+                                                        id="4" ng-change="inputChange4(this)" ng-model="inputBox4"
+                                                        disabled></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+                                </div>
                             </div>
 
                         </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="panel panel-default" style="height: 250px">
-                        <div class="panel-heading">MIC</div>
-                        <div class="panel-body">
-                            <input type="text" id="search3" ng-model="searchBox3" class="form-control" placeholder="Search for names.."
-                                title="Type in a name">
-                            <div style="height: 160px; overflow-y: scroll;">
-                                <table class="deDisplay" id="MIC">
-                                    <tr>
-                                        <th></th>
-                                        <th></th>
-                                        <th>Susceptible</th>
-                                        <th>Intermediate High</th>
-                                        <th>Intermediate Low</th>
-                                        <th>Resistant</th>
-                                    </tr>
-                                    <tr ng-repeat="deval in dataElementName['MIC']">
-                                        <td><input type="checkbox" ng-class="createClass(deval.key,deval.id)"
-                                                data-ng-click="checkAll(this)" class="form-control" style="width: 13px;"></td>
-                                        <td>{{deval.name}}</td>
-                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
-                                                id="1" ng-change="inputChange1(this)" ng-model="inputBox1" disabled></td>
-                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
-                                                id="2" ng-change="inputChange2(this)" ng-model="inputBox2" disabled></td>
-                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
-                                                id="3" ng-change="inputChange3(this)" ng-model="inputBox3" disabled></td>
-                                        <td><input type="text" ng-class="createClass(deval.key,deval.id)" class="form-control"
-                                                id="4" ng-change="inputChange4(this)" ng-model="inputBox4" disabled></td>
-                                    </tr>
-                                </table>
-                            </div>
+                        <div class="form-group">
+                            <div class="panel panel-default" style="height: 250px">
+                                <div class="panel-heading pheading">Results</div>
+                                <div class="panel-body pbody">
+                                    <input type="text" id="search4" ng-model="searchBox4" class="form-control" style="width: 40%;float: left;"
+                                        placeholder="Search for names.." title="Type in a name">
+                                    <input type="button" class="form-control" value="Unselect" data-ng-click="unselectAllcheckbox(this,'Results')"
+                                        style="width: 15%;float: right;" />
+                                    <input type="button" class="form-control" value="Select All" data-ng-click="selectAllcheckbox(this,'Results')"
+                                        style="width: 15%;float: right;margin: 6px;" />
+                                    <div style="height: 160px; overflow-y: scroll; width: 100%;">
+                                        <div style="height: 160px; overflow-y: scroll;">
+                                            <table class="deDisplay" id="Results">
+                                                <tr ng-repeat="deval in dataElementName['Results']">
+                                                    <td><input type="checkbox" data-ng-click="selectCheck(this)"
+                                                            ng-class="createClass(deval.key,deval.id)" class="form-control"
+                                                            style="width: 13px;"></td>
+                                                    <td>{{deval.name}}</td>
+                                                </tr>
+                                            </table>
+                                        </div>
 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="panel panel-default" style="height: 250px">
+                                    <div class="panel-heading pheading">Special tests - Genotypic tests</div>
+                                    <div class="panel-body pbody">
+                                        <input type="text" id="search5" ng-model="searchBox5" class="form-control"
+                                            style="width: 40%;float: left;" placeholder="Search for names.." title="Type in a name">
+                                        <input type="button" class="form-control" value="Unselect" data-ng-click="unselectAllcheckbox(this,'Special tests - Genotypic tests')"
+                                            style="width: 15%;float: right;" />
+                                        <input type="button" class="form-control" value="Select All" data-ng-click="selectAllcheckbox(this,'Special tests - Genotypic tests')"
+                                            style="width: 15%;float: right;margin: 6px;" />
+                                        <div style="height: 160px; overflow-y: scroll; width: 100%;">
+                                            <div style="height: 160px; overflow-y: scroll;">
+                                                <table class="deDisplay" id="Genotypic_tests">
+                                                    <tr ng-repeat="deval in dataElementName['Special tests - Genotypic tests']">
+                                                        <td><input type="checkbox" data-ng-click="selectCheck(this)"
+                                                                ng-class="createClass(deval.key,deval.id)" class="form-control"
+                                                                style="width: 13px;"></td>
+                                                        <td>{{deval.name}}</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="panel panel-default" style="height: 250px">
+                                        <div class="panel-heading pheading">Special tests - Phenotypic tests</div>
+                                        <div class="panel-body pbody">
+                                            <input type="text" id="search6" ng-model="searchBox6" class="form-control"
+                                                style="width: 40%;float: left;" placeholder="Search for names.." title="Type in a name">
+                                            <input type="button" class="form-control" value="Unselect" data-ng-click="unselectAllcheckbox(this,'Special tests - Phenotypic tests')"
+                                                style="width: 15%;float: right;" />
+                                            <input type="button" class="form-control" value="Select All" data-ng-click="selectAllcheckbox(this,'Special tests - Phenotypic tests')"
+                                                style="width: 15%;float: right;margin: 6px;" />
+                                            <div style="height: 160px; overflow-y: scroll; width: 100%;">
+                                                <div style="height: 160px; overflow-y: scroll;">
+                                                    <table class="deDisplay" id="Phenotypic_tests">
+                                                        <tr ng-repeat="deval in dataElementName['Special tests - Phenotypic tests']">
+                                                            <td><input type="checkbox" data-ng-click="selectCheck(this)"
+                                                                    ng-class="createClass(deval.key,deval.id)" class="form-control"
+                                                                    style="width: 13px;"></td>
+                                                            <td>{{deval.name}}</td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="button" id="submit" data-ng-click="postDeData()" class="btn btn-default"
+                                        style="display:initial">Submit</button>
+                                    <button type="button" id="update" data-ng-click="postDeUpdatedData()" class="btn btn-default"
+                                        style="display:none">Update</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <button class="btn btn-default" data-ng-click="closeWindow()">{{'close'|
+                                        translate}}</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                </div>
-                <div class="form-group">
-                    <div class="panel panel-default" style="height: 250px">
-                        <div class="panel-heading">Results</div>
-                        <div class="panel-body">
-                            <input type="text" id="search4" ng-model="searchBox4" class="form-control" placeholder="Search for names.."
-                                title="Type in a name">
-                            <div style="height: 160px; overflow-y: scroll;">
-                                <table class="deDisplay" id="Results">
-                                    <tr ng-repeat="deval in dataElementName['Results']">
-                                        <td><input type="checkbox" data-ng-click="selectCheck(this)" ng-class="createClass(deval.key,deval.id)"
-                                                class="form-control" style="width: 13px;"></td>
-                                        <td>{{deval.name}}</td>
-                                    </tr>
-                                </table>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="panel panel-default" style="height: 250px">
-                        <div class="panel-heading">Special tests - Genotypic tests</div>
-                        <div class="panel-body">
-                            <input type="text" id="search5" ng-model="searchBox5" class="form-control" placeholder="Search for names.."
-                                title="Type in a name">
-                            <div style="height: 160px; overflow-y: scroll;">
-                                <table class="deDisplay" id="Genotypic_tests">
-                                    <tr ng-repeat="deval in dataElementName['Special tests - Genotypic tests']">
-                                        <td><input type="checkbox" data-ng-click="selectCheck(this)" ng-class="createClass(deval.key,deval.id)"
-                                                class="form-control" style="width: 13px;"></td>
-                                        <td>{{deval.name}}</td>
-                                    </tr>
-                                </table>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="panel panel-default" style="height: 250px">
-                        <div class="panel-heading">Special tests - Phenotypic tests</div>
-                        <div class="panel-body">
-                            <input type="text" id="search6" ng-model="searchBox6" class="form-control" placeholder="Search for names.."
-                                title="Type in a name">
-                            <div style="height: 160px; overflow-y: scroll;">
-                                <table class="deDisplay" id="Phenotypic_tests">
-                                    <tr ng-repeat="deval in dataElementName['Special tests - Phenotypic tests']">
-                                        <td><input type="checkbox" data-ng-click="selectCheck(this)" ng-class="createClass(deval.key,deval.id)"
-                                                class="form-control" style="width: 13px;"></td>
-                                        <td>{{deval.name}}</td>
-                                    </tr>
-                                </table>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <button type="button" id="submit" data-ng-click="postDeData()" class="btn btn-default" style="display:initial">Submit</button>
-                <button type="button" id="update" data-ng-click="postDeUpdatedData()" class="btn btn-default" style="display:none">Update</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                <button class="btn btn-default" data-ng-click="closeWindow()">{{'close'| translate}}</button>
-            </div>
-        </div>
-    </div>
-</div>

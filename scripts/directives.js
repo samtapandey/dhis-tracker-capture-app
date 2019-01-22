@@ -562,7 +562,7 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                 $scope.models = {};
 
                 $scope.UniquedeNameValueNew = [];
-
+                $scope.selectedDeNameValue = {};
 
 
                 $scope.$watch("pager", function () {
@@ -636,8 +636,11 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                 };
 
 
-                // code of modal popup and check box enable
-
+                Object.assign(String.prototype, {
+                    deSum() {
+                        return (this.split(" ").filter((val) => (val == "/" || val == "-") ? false : val)).reduce((total, val) => total + "_" + val);
+                    }
+                });
 
                 // Get the modal
                 var modal = document.getElementById('myModal');
@@ -655,7 +658,7 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                     modal.style.display = "none";
                 };
 
-                $scope.UniquedeNameValue = {}
+                $scope.UniquedeNameValue = {};
                 // delete close popUp Window
                 $scope.deleteDataStore = function (tei, organismName) {
                     $timeout(function () {
@@ -694,7 +697,13 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                                         element[3].value = dataele.Intermediate_Low;
                                         element[4].value = dataele.Resistant;
                                         for (let i = 0; i < element.length; i++) {
-                                            element[i].disabled = false;
+                                            if (dataele.display) {
+                                                element[i].disabled = false;
+                                            }
+                                            else {
+                                                element[0].checked = true;
+                                                element[0].checked = false;
+                                            }
                                             if (element[i].value == "undefined") {
                                                 element[i].value = "";
                                             }
@@ -708,6 +717,7 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                 }
 
                 $scope.showPopUp = function (tei, organism_name, thiz) {
+                    $scope.UniquedeNameValue = {};
                     $scope.dataElementName = [];
                     $scope.deNameValue = [];
                     $scope.allDeNameValue = $scope.deNameValue;
@@ -717,21 +727,15 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                             $scope.dataElementName[value[1]] = [];
                         });
                         $scope.deNameValue.filter((value, index, self) => {
-                            if (self.indexOf(value) === index) {
-                                var displayNameVal = value.split(" ").filter((val) => (val == "/" || val == "-") ? false : val);
-                                let fdisplayNameVal = "";
-                                for (var i = 0; i < displayNameVal.length; i++)
-                                    fdisplayNameVal = fdisplayNameVal + displayNameVal[i] + "_";
-                            }
-
+                            if (self.indexOf(value) === index)
+                                value.deSum();
                         })
 
                         MetaDataService.showOptionSet().then(function (data) {
-                            var fdisplayNameVal = "", displayNameVal = data.displayName.split(" "); $scope.optionSetValues = [];
-                            for (var i = 0; i < displayNameVal.length; i++)
-                                fdisplayNameVal += displayNameVal[i] + "_";
+                            let fdisplayNameVal = data.displayName.deSum();
+                            $scope.dataElementName[data.displayName] = []
                             for (var i = 0; i < data.options.length; i++)
-                                $scope.optionSetValues.push({ id: data.options[i].id, name: data.options[i].name, key: fdisplayNameVal.substring(0, fdisplayNameVal.length - 1) })
+                                $scope.dataElementName[data.displayName].push({ id: data.options[i].id, name: data.options[i].name, key: fdisplayNameVal })
 
                         });
 
@@ -739,12 +743,9 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                         var attributesById = CurrentSelection.getAttributesById();
                         data.rows.forEach((value) => {
                             for (let key in $scope.dataElementName) {
-                                var displayNameVal = key.split(" ").filter((val) => (val == "/" || val == "-") ? false : val);
-                                let fdisplayNameVal = "";
-                                for (var i = 0; i < displayNameVal.length; i++)
-                                    fdisplayNameVal = fdisplayNameVal + displayNameVal[i] + "_";
+                                let fdisplayNameVal = key.deSum()
                                 if (key == value[1])
-                                    $scope.dataElementName[key].push({ name: value[2], id: value[3], key: fdisplayNameVal.substring(0, fdisplayNameVal.length - 1), value: "" })
+                                    $scope.dataElementName[key].push({ name: value[2], id: value[3], key: fdisplayNameVal, value: "" })
                             }
                         })
                         var allDeNameValue = $scope.allDeNameValue.filter((val, index) => $scope.allDeNameValue.indexOf(val) >= index)
@@ -800,7 +801,7 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
 
                     for (var key in $scope.UniquedeNameValue) {
                         if (ele.deval.key == key)
-                            $scope.UniquedeNameValue[ele.deval.key].push({ id: ele.deval.id, name: ele.deval.name })
+                            $scope.UniquedeNameValue[ele.deval.key].push({ id: ele.deval.id, name: ele.deval.name, display: true })
                     }
                     var tdvalue = document.getElementsByClassName(ele.deval.key + "_" + ele.deval.id);
                     if (tdvalue[0].checked == false) {
@@ -820,29 +821,51 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                         $scope.UniquedeNameValue[ele.deval.key] = [];
                     for (var key in $scope.UniquedeNameValue) {
                         if (ele.deval.key == key)
-                            $scope.UniquedeNameValue[ele.deval.key].push({ id: ele.deval.id, name: ele.deval.name })
+                            $scope.UniquedeNameValue[ele.deval.key].push({ id: ele.deval.id, name: ele.deval.name, display: true })
                     }
                     var tdvalue = document.getElementsByClassName(ele.deval.key + "_" + ele.deval.id);
                     if (tdvalue[0].checked == true) {
-                        for (var i = 1; i < tdvalue.length; i++) {
-                            if (tdvalue[i].disabled == true) {
+                        if (ele.deval.key === "MIC" || ele.deval.key === "Disk_Diffusion") {
+                            for (var i = 1; i < tdvalue.length; i++)
                                 tdvalue[i].disabled = false;
+                            $scope.UniquedeNameValue[ele.deval.key].pop()
+                            for (var i = 0; i < $scope.UniquedeNameValue[ele.deval.key].length; i++) {
+                                if ($scope.UniquedeNameValue[ele.deval.key][i].name === ele.deval.name) {
+                                    $scope.UniquedeNameValue[ele.deval.key][i].display = true;
+                                }
                             }
+                        } else {
+                            for (var i = 1; i < tdvalue.length; i++)
+                                tdvalue[i].disabled = false;
                         }
                     }
                     else {
-                        for (var i = 1; i < tdvalue.length; i++) {
-                            if (tdvalue[i].disabled == false) {
+                        if (ele.deval.key === "MIC" || ele.deval.key === "Disk_Diffusion") {
+                            for (var i = 1; i < tdvalue.length; i++)
                                 tdvalue[i].disabled = true;
-                                for (var k = 1; k < tdvalue.length; k++)
-                                    tdvalue[k].value = "";
+                            $scope.UniquedeNameValue[ele.deval.key].pop()
+                            for (var i = 0; i < $scope.UniquedeNameValue[ele.deval.key].length; i++) {
+                                if ($scope.UniquedeNameValue[ele.deval.key][i].name === ele.deval.name) {
+                                    $scope.UniquedeNameValue[ele.deval.key][i].display = false;
+                                }
+                            }
+                        } else {
+                            for (var i = 1; i < tdvalue.length; i++) {
+                                if (tdvalue[i].disabled == false) {
+                                    tdvalue[i].disabled = true;
+                                    // for (var k = 1; k < tdvalue.length; k++){
+                                    //     tdvalue[k].value = ""; }
+                                }
                                 for (var i = $scope.UniquedeNameValue[ele.deval.key].length - 1; i > 0; i--) {
                                     if ($scope.UniquedeNameValue[ele.deval.key][i].name === ele.deval.name) {
                                         $scope.UniquedeNameValue[ele.deval.key].splice(i, 1)
                                     }
+
                                 }
+
                             }
                         }
+
                     }
                 }
 
@@ -902,7 +925,6 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                     $scope.UniquedeNameValue.name = $scope.organism;
 
                     DataStoreService.saveInDataStore($scope.UniquedeNameValue).then(function (response) {
-
                         var modal = document.getElementById('myModal');
                         // Get the button that opens the modal
                         modal.style.display = "none";
@@ -913,12 +935,59 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
 
                 $scope.postDeUpdatedData = function () {
                     DataStoreService.updateInDataStore($scope.UniquedeNameValue).then(function (response) {
-
                         var modal = document.getElementById('myModal');
-                        // Get the button that opens the modal
                         modal.style.display = "none";
                         console.log(response);
                     });
+                }
+
+                $scope.selectAllcheckbox = function (thiz, param) {
+                    let dekey = param.deSum();
+                    var obj = Object.keys($scope.UniquedeNameValue)
+                    if (obj.length == 0) {
+                        $scope.UniquedeNameValue[dekey] = [];
+                        obj = Object.keys($scope.UniquedeNameValue)
+                    }
+                    if (obj.indexOf(dekey) == -1)
+                        $scope.UniquedeNameValue[dekey] = [];
+
+                    let dataElement = thiz.dataElementName[param];
+                    for (let i = 0; i < dataElement.length; i++) {
+                        let checkBox = document.getElementsByClassName(dataElement[i].key + '_' + dataElement[i].id);
+                        if (!checkBox[0].checked) {
+                            checkBox[0].checked = true;
+                            $scope.UniquedeNameValue[dekey].push({ id: dataElement[i].id, name: dataElement[i].name })
+                        }
+                        if (param === "MIC" || param === "Disk Diffusion") {
+                            for (let i = 1; i < checkBox.length; i++) {
+                                if (checkBox[i].disabled) {
+                                    checkBox[i].disabled = false;
+                                }
+                            }
+                        }
+                    }
+                }
+                $scope.unselectAllcheckbox = function (thiz, param) {
+                    let dekey = param.deSum(),
+                        dataElement = thiz.dataElementName[param];
+                    if (param === "MIC" || param === "Disk Diffusion") {
+                        for (let i = 0; i < $scope.UniquedeNameValue[dekey].length; i++) {
+                            $scope.UniquedeNameValue[dekey][i].display = false;
+                        }
+                    }
+                    else { $scope.UniquedeNameValue[dekey] = []; }
+                    for (let i = 0; i < dataElement.length; i++) {
+                        let checkBox = document.getElementsByClassName(dataElement[i].key + '_' + dataElement[i].id)
+                        if (checkBox[0].checked)
+                            checkBox[0].checked = false;
+                        if (param === "MIC" || param === "Disk Diffusion") {
+                            for (let i = 1; i < checkBox.length; i++) {
+                                if (!checkBox[i].disabled) {
+                                    checkBox[i].disabled = true;
+                                }
+                            }
+                        }
+                    }
                 }
 
                 $("#search1").on("keyup", function () {

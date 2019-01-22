@@ -2096,9 +2096,7 @@ a.disable-link-effects:focus {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
 }
-.panel-body{
-    padding: 6px;
-}
+
 
 
 .panel-default-custom {
@@ -2467,14 +2465,16 @@ tr#appr{
 #delete-data-store{
     display:initial !important
 }
-  .panel-heading{
+  .pheading{
     background-color: #376B9A !important;
     font-size: 15px;
     font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
     color: white !important;
     font-weight: bold; 
   }
-
+.pbody{
+    padding: 6px;
+}
 
   .deDisplay {
     font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
