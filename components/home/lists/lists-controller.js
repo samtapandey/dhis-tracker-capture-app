@@ -282,7 +282,7 @@ trackerCapture.controller('ListsController',function(
             }
             fetchTeis();
         };
-
+//tei.id,tei.iBc2wcKg2Ba,this
         $scope.showHideListColumns = function(){    
             return $modal.open({
                 templateUrl: 'components/home/lists/grid-columns-modal.html',

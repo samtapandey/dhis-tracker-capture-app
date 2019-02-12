@@ -3230,6 +3230,41 @@ i
             });
         });
     }
+})
+.service("MetaDataService", function($http){
+    return{
+        showdataElement:function(){
+              var def = $.Deferred();
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    async:false,
+                    contentType: "application/json",
+                    url: "../api/sqlViews/QQrvXbDpYqA/data?paging=false",
+                    success: function (data) {
+                        def.resolve(data);
+                    }
+                });
+                return def;
+           
+        },
+        showOptionSet:function(){
+            var def = $.Deferred();
+              $.ajax({
+                  type: "GET",
+                  dataType: "json",
+                  async:false,
+                  contentType: "application/json",
+                  url: "../api/optionSets/tdtBR9OdXMJ.json?fields=id,displayName,options[id,name]&skipPaging=true",
+                  success: function (data) {
+                      def.resolve(data);
+                  }
+              });
+              return def;
+         
+      }
+    }
+    
 });
 
 

@@ -1,27 +1,27 @@
 <div ng-if="data">
     <div class="tei-list-scroll">
-        <table class="table table-striped dhis2-table-hover table-bordered">               
-            <thead>                        
+        <table class="table table-striped dhis2-table-hover table-bordered">
+            <thead>
                 <tr>
-                    <th ng-repeat="gridColumn in gridColumns| filter:{show: true}" class='mouse-pointer' ng-click="sortGrid(gridColumn)">                            
-                        <!-- sort icon begins -->                                
+                    <th ng-repeat="gridColumn in gridColumns| filter:{show: true}" class='mouse-pointer' ng-click="sortGrid(gridColumn)">
+                        <!-- sort icon begins -->
                         <span ng-hide="gridColumn.showFilter" class="bold pointer" title="{{'sort'| translate}}" class="fa fa-sort">
                             <span class="fa-stack">
-                                <span ng-class="{true: 'red'} [sortColumn.id === gridColumn.id && sortColumn.direction === 'asc']"><i class="fa fa-sort-asc fa-stack-1x"></i></span>
-                                <span ng-class="{true: 'red'} [sortColumn.id === gridColumn.id && sortColumn.direction === 'desc']"><i class="fa fa-sort-desc fa-stack-1x"></i></span>
+                                <span ng-class="{true: 'red'} [sortColumn.id === gridColumn.id && sortColumn.direction === 'asc']"><i
+                                        class="fa fa-sort-asc fa-stack-1x"></i></span>
+                                <span ng-class="{true: 'red'} [sortColumn.id === gridColumn.id && sortColumn.direction === 'desc']"><i
+                                        class="fa fa-sort-desc fa-stack-1x"></i></span>
                             </span>
                             {{gridColumn.displayName}}
                         </span>
-                        <!-- sort icon ends -->                            
-                    </th>                              
-                </tr>                        
+                        <!-- sort icon ends -->
+                    </th>
+                    <th><b>Custom Data Store</b></th>
+                </tr>
             </thead>
             <tbody id="list">
-                <tr ng-repeat="tei in data.rows.own" 
-                    ng-click="onTeiClickedInternal(tei)"
-                    ng-class="{true: 'inactive-tei'} [tei.inactive]"
-                    title="{{mainTei.trackedEntityInstance ? 'select' : 'go_to_dashboard'| translate}}">
-                    <td ng-repeat="gridColumn in gridColumns| filter:{show: true}">
+                <tr ng-repeat="tei in data.rows.own" ng-class="{true: 'inactive-tei'} [tei.inactive]" title="{{mainTei.trackedEntityInstance ? 'select' : 'go_to_dashboard'| translate}}">
+                    <td ng-repeat="gridColumn in gridColumns| filter:{show: true}" ng-click="onTeiClickedInternal(tei)">
                         <span ng-switch="gridColumn.valueType">
                             <span ng-switch-when="BOOLEAN">
                                 <span ng-if="tei[gridColumn.id] === 'true'">{{'yes'| translate}}</span>
@@ -31,22 +31,24 @@
                                 <span ng-if="tei[gridColumn.id] === 'true'"><i class="fa fa-check"></i></span>
                             </span>
                             <span ng-switch-when="ORGANISATION_UNIT">
-                                {{tei[gridColumn.id] && orgUnitNames[tei[gridColumn.id]] ? orgUnitNames[tei[gridColumn.id]] : tei[gridColumn.id]}}
+                                {{tei[gridColumn.id] && orgUnitNames[tei[gridColumn.id]] ?
+                                orgUnitNames[tei[gridColumn.id]] : tei[gridColumn.id]}}
                             </span>
                             <span ng-switch-when="IMAGE">
                                 <div ng-if="tei[gridColumn.id]">
-                                    <d2-image-in-list d2-tei="tei"
-                                            d2-attribute-id="gridColumn.id">
+                                    <d2-image-in-list d2-tei="tei" d2-attribute-id="gridColumn.id">
                                     </d2-image-in-list>
                                 </div>
                             </span>
                             <span ng-switch-default>{{tei[gridColumn.id]}}</span>
                         </span>
                     </td>
+                    <td class="noAction">
+                        <button class="meddelanden" id="showPopUp" data-toggle="popover" ng-click="onRedirect(tei.id,tei.iBc2wcKg2Ba)">
+                            <span class="glyphicon glyphicon-star"></span></button>
+                    </td>
                 </tr>
-                <tr ng-repeat="tei in data.rows.other" 
-                    ng-click="onTeiClickedInternal(tei)"
-                    ng-class="{true: 'inactive-tei'} [tei.inactive]"
+                <tr ng-repeat="tei in data.rows.other" ng-click="onTeiClickedInternal(tei)" ng-class="{true: 'inactive-tei'} [tei.inactive]"
                     title="{{mainTei.trackedEntityInstance ? 'select' : 'go_to_dashboard'| translate}}">
                     <td ng-repeat="gridColumn in gridColumns| filter:{show: true}">
                         <span ng-switch="gridColumn.valueType">
@@ -58,17 +60,172 @@
                                 <span ng-if="tei[gridColumn.id] === 'true'"><i class="fa fa-check"></i></span>
                             </span>
                             <span ng-switch-when="ORGANISATION_UNIT">
-                                {{tei[gridColumn.id] && orgUnitNames[tei[gridColumn.id]] ? orgUnitNames[tei[gridColumn.id]] : tei[gridColumn.id]}}
+                                {{tei[gridColumn.id] && orgUnitNames[tei[gridColumn.id]] ?
+                                orgUnitNames[tei[gridColumn.id]] : tei[gridColumn.id]}}
                             </span>
                             <span ng-switch-default>{{tei[gridColumn.id]}}</span>
                         </span>
                     </td>
                 </tr>
-            </tbody>        
+            </tbody>
         </table>
     </div>
     <div class="hideInPrint" ng-if="pager">
         <serverside-paginator></serverside-paginator>
     </div>
 </div>
+
+
+
+<!-- <div id="myModal" class="modal">
+    <div id="mainPage">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h1 style="color:white">Assign Data Elements</h1>
+            </div>
+            <div style="padding: 20px;">
+                <div>
+                    
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active myTabs"><a href="#home" aria-controls="home" role="tab"
+                                data-toggle="tab">Home</a></li>
+                        <li role="presentation" class="myTabs"><a href="#profile" aria-controls="profile" role="tab"
+                                data-toggle="tab">Profile</a></li>
+                        <li role="presentation" class="myTabs"><a href="#messages" aria-controls="messages" role="tab"
+                                data-toggle="tab">Messages</a></li>
+                        <li role="presentation" class="myTabs"><a href="#settings" aria-controls="settings" role="tab"
+                                data-toggle="tab">Settings</a></li>
+                    </ul>
+                    
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="home">
+                            <div class="form-group">
+                                <label for="name" style="font-size: 15px; font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif; font-weight: bold;">Organism
+                                    name:&nbsp;<label style="color:red" id="displayresponse"></label>&nbsp;
+                                    <button class="btn btn-default" id="delete-data-store" data-ng-click="deleteDataStore( tei, organismName )">{{'delete'|translate}}</button></label>
+                                <input type="text" ng-model="organism" class="form-control" readonly>
+                            </div>
+                            <div class="form-group" ng-repeat="dename in deNameValue">
+                                <div ng-switch="dename">
+
+                                    <div ng-switch-when="MIC" class="panel panel-default" style="height: 250px">
+                                        <div class="panel-heading pheading">{{dename}}</div>
+                                        <div class="panel-body pbody">
+                                            <input type="text" id="search3" ng-model="searchBox3" class="form-control"
+                                                placeholder="Search for names.." title="Type in a name" style="width: 40%;float: left;">
+                                            <input type="button" class="form-control" value="Unselect" data-ng-click="unselectAllcheckbox(this,'MIC')"
+                                                style="width: 15%;float: right;" />
+                                            <input type="button" class="form-control" value="Select All" data-ng-click="selectAllcheckbox(this,'MIC')"
+                                                style="width: 15%;float: right;margin: 6px;" />
+                                            <div style="height: 160px; overflow-y: scroll; width: 100%;">
+                                                <div style="height: 160px; overflow-y: scroll;">
+                                                    <table class="deDisplay" id="MIC">
+                                                        <tr>
+                                                            <th></th>
+                                                            <th></th>
+                                                            <th>Susceptible</th>
+                                                            <th>Intermediate High</th>
+                                                            <th>Intermediate Low</th>
+                                                            <th>Resistant</th>
+                                                        </tr>
+                                                        <tr ng-repeat="deval in dataElementName[dename]">
+                                                            <td><input type="checkbox" ng-class="createClass(deval.key,deval.id)"
+                                                                    data-ng-click="checkAll(this)" class="form-control"
+                                                                    style="width: 13px;"></td>
+                                                            <td>{{deval.name}}</td>
+                                                            <td><input type="text" ng-class="createClass(deval.key,deval.id)"
+                                                                    class="form-control" id="1" ng-change="inputChange1(this)"
+                                                                    ng-model="inputBox1" disabled></td>
+                                                            <td><input type="text" ng-class="createClass(deval.key,deval.id)"
+                                                                    class="form-control" id="2" ng-change="inputChange2(this)"
+                                                                    ng-model="inputBox2" disabled></td>
+                                                            <td><input type="text" ng-class="createClass(deval.key,deval.id)"
+                                                                    class="form-control" id="3" ng-change="inputChange3(this)"
+                                                                    ng-model="inputBox3" disabled></td>
+                                                            <td><input type="text" ng-class="createClass(deval.key,deval.id)"
+                                                                    class="form-control" id="4" ng-change="inputChange4(this)"
+                                                                    ng-model="inputBox4" disabled></td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div ng-switch-when="Disk Diffusion" class="panel panel-default" style="height: 250px">
+                                            <div class="panel-heading pheading">{{dename}}</div>
+                                            <div class="panel-body pbody">
+                                                <input type="text" id="search3" ng-model="searchBox3" class="form-control"
+                                                    placeholder="Search for names.." title="Type in a name" style="width: 40%;float: left;">
+                                                <input type="button" class="form-control" value="Unselect" data-ng-click="unselectAllcheckbox(this,'MIC')"
+                                                    style="width: 15%;float: right;" />
+                                                <input type="button" class="form-control" value="Select All" data-ng-click="selectAllcheckbox(this,'MIC')"
+                                                    style="width: 15%;float: right;margin: 6px;" />
+                                                <div style="height: 160px; overflow-y: scroll; width: 100%;">
+                                                    <div style="height: 160px; overflow-y: scroll;">
+                                                        <table class="deDisplay" id="MIC">
+                                                            <tr>
+                                                                <th></th>
+                                                                <th></th>
+                                                                <th>Susceptible</th>
+                                                                <th>Intermediate High</th>
+                                                                <th>Intermediate Low</th>
+                                                                <th>Resistant</th>
+                                                            </tr>
+                                                            <tr ng-repeat="deval in dataElementName[dename]">
+                                                                <td><input type="checkbox" ng-class="createClass(deval.key,deval.id)"
+                                                                        data-ng-click="checkAll(this)" class="form-control"
+                                                                        style="width: 13px;"></td>
+                                                                <td>{{deval.name}}</td>
+                                                                <td><input type="text" ng-class="createClass(deval.key,deval.id)"
+                                                                        class="form-control" id="1" ng-change="inputChange1(this)"
+                                                                        ng-model="inputBox1" disabled></td>
+                                                                <td><input type="text" ng-class="createClass(deval.key,deval.id)"
+                                                                        class="form-control" id="2" ng-change="inputChange2(this)"
+                                                                        ng-model="inputBox2" disabled></td>
+                                                                <td><input type="text" ng-class="createClass(deval.key,deval.id)"
+                                                                        class="form-control" id="3" ng-change="inputChange3(this)"
+                                                                        ng-model="inputBox3" disabled></td>
+                                                                <td><input type="text" ng-class="createClass(deval.key,deval.id)"
+                                                                        class="form-control" id="4" ng-change="inputChange4(this)"
+                                                                        ng-model="inputBox4" disabled></td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <div ng-switch-default class="panel panel-default" style="height: 250px">
+                                        <div class="panel-heading pheading">{{dename}}</div>
+                                            <div class="panel-body pbody">
+                                                <input type="text" id="search1" class="form-control" ng-model="searchBox1"
+                                                    placeholder="Search for names.." title="Type in a name" style="width: 40%;float: left;">
+                                                <input type="button" class="form-control" value="Unselect"
+                                                    data-ng-click="unselectAllcheckbox(this,'Sample type')" style="width: 15%;float: right;" />
+                                                <input type="button" class="form-control" value="Select All"
+                                                    data-ng-click="selectAllcheckbox(this,'Sample type')" style="width: 15%;float: right;margin: 6px;" />
+                                                <div style="height: 160px; overflow-y: scroll; width: 100%;">
+                                                <table ng-if="" class="deDisplay" id="Sample_type">
+                                                    <tr ng-repeat="deval in dataElementName[dename]">
+                                                        <td><input type="checkbox" data-ng-click="selectCheck(this)"
+                                                                ng-class="createClass(deval.key,deval.id)" class="form-control"
+                                                                style="width: 13px;"></td>
+                                                        <td>{{deval.name}}</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="profile">.how..</div>
+                        <div role="tabpanel" class="tab-pane" id="messages">.are..</div>
+                        <div role="tabpanel" class="tab-pane" id="settings">.you..</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->
 

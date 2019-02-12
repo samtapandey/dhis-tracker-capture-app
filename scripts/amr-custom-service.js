@@ -69,3 +69,59 @@ angular.module('trackerCaptureServices')
             }
         }
     })
+
+    // save report app section and get all section
+    .service('DataStoreService', function ($http,$q) {
+        return {
+            saveInDataStore: function (value) {
+                var def = $q.defer();
+                var key = value.id;
+                var value = JSON.stringify(value);
+                var url = '../api/dataStore/id/' + key;
+                $http.post(url, value).then(function (response) {
+                    def.resolve(response.data);
+                }).catch((err)=>def.resolve(err))
+
+                return def.promise;
+            },
+            updateInDataStore: function (value) {
+                var def = $q.defer();
+                var key = value.id;
+                var value = JSON.stringify(value);
+                var url = '../api/dataStore/id/' + key;
+                $http.put(url, value).then(function (response) {
+                    def.resolve(response.data);
+                }).catch((err)=>def.resolve(err))
+
+                return def.promise;
+            },
+            getFromDataStore: function (teiKey) {
+                var def = $.Deferred();
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    async:false,
+                    contentType: "application/json",
+                    url: '../api/dataStore/id/' + teiKey,
+                    success: function (data) {
+                        def.resolve(data);
+                    }
+                }).catch((error)=>def.resolve(error));
+                return def
+            },
+            deleteFromDataStore: function (teiKey) {
+                var def = $.Deferred();
+                $.ajax({
+                    type: "DELETE",
+                    dataType: "json",
+                    async:false,
+                    contentType: "application/json",
+                    url: '../api/dataStore/id/' + teiKey,
+                    success: function (data) {
+                        def.resolve(data);
+                    }
+                }).catch((error)=>def.resolve(error));
+                return def
+            }
+        };
+    });
