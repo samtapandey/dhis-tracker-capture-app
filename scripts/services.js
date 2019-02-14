@@ -3255,13 +3255,12 @@ i
                   dataType: "json",
                   async:false,
                   contentType: "application/json",
-                  url: "../api/optionSets/tdtBR9OdXMJ.json?fields=id,displayName,options[id,name]&skipPaging=true",
+                  url: "../api/optionGroupSets/qKTJ7LvXH1E.json?fields=id,name,optionGroups[id,name,options[id,name]]",
                   success: function (data) {
                       def.resolve(data);
                   }
               });
               return def;
-         
       }
     }
     

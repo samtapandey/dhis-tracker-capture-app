@@ -65,9 +65,9 @@ trackerCapture.controller('CustomDataStore',
 
 
         MetaDataService.showOptionSet().then(function (data) {
-            $scope.dataElementName[data.displayName.deSum()] = { name: data.displayName, de: [] };
-            for (var i = 0; i < data.options.length; i++)
-                $scope.dataElementName[data.displayName.deSum()].de.push({ id: data.options[i].id, name: data.options[i].name })
+            $scope.dataElementName[data.name.deSum()] = { name: data.name, de: [] };
+            for (var i = 0; i < data.optionGroups.length; i++)
+                $scope.dataElementName[data.name.deSum()].de.push({ id: data.optionGroups[i].id, name: data.optionGroups[i].name ,options:data.optionGroups[i].options })
         });
         MetaDataService.showdataElement().then(function (data) {
             let deElemtuids = { hVypvMfCrFy: true, ua4lNScEMe3: true, BTbb8ir12WL: true, vTi9yXbQ1Cw: true, JJuF3vE7xB9: true, tdtBR9OdXMJ: true }
@@ -230,7 +230,7 @@ trackerCapture.controller('CustomDataStore',
         $(document).on("click", "input[name='submit']", function (e) {
             $scope.UniquedeNameValue.id = $scope.tei;
             $scope.UniquedeNameValue.name = $scope.organism;
-
+            $scope.UniquedeNameValue.Sample_type = $scope.optionValue.undefined;
             DataStoreService.saveInDataStore($scope.UniquedeNameValue).then(function (response) {
                 var modal = document.getElementById('myModal');
                 // Get the button that opens the modal
