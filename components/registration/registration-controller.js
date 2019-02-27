@@ -587,7 +587,7 @@ $scope.selectedTei[$scope.selected_ou] =  $scope.orgSel;
         var selections = CurrentSelection.get();
         CurrentSelection.set({
             tei: $scope.selectedTei,
-            te: $scope.selectedTei.trackedEntityType,
+            te: selections.te,
             prs: selections.prs,
             pr: $scope.selectedProgram,
             prNames: selections.prNames,
@@ -616,7 +616,7 @@ $scope.selectedTei[$scope.selected_ou] =  $scope.orgSel;
     });
 
     var performRegistration = function (destination) {
-        if (destination === "DASHBOARD" || destination === "SELF") {
+        if (destination === "DASHBOARD" || destination === "SELF" || destination === "ENROLLMENT") {
            $scope.model.savingRegistration = true;
         }
 
@@ -664,10 +664,12 @@ $scope.selectedTei[$scope.selected_ou] =  $scope.orgSel;
                         }
 
                         EnrollmentService.enroll(enrollment).then(function (enrollmentResponse) {
-                            $scope.model.savingRegistration = false;
                             if(enrollmentResponse) {
                                 var en = enrollmentResponse.response;
                                 if (en.status === 'SUCCESS') {
+                                    if($scope.registrationMode !== 'ENROLLMENT') {
+                                        $scope.model.savingRegistration = false;
+                                    }
                                     enrollment.enrollment = en.importSummaries[0].reference;
                                     $scope.selectedEnrollment = enrollment;
                                     var avilableEvent = $scope.currentEvent && $scope.currentEvent.event ? $scope.currentEvent : null;
@@ -682,6 +684,7 @@ $scope.selectedTei[$scope.selected_ou] =  $scope.orgSel;
                                 }
                                 else {
                                     //enrollment has failed
+                                    $scope.model.savingRegistration = false;
                                     NotificationService.showNotifcationDialog($translate.instant("enrollment_error"), enrollmentResponse.message);
                                     return;
                                 }
