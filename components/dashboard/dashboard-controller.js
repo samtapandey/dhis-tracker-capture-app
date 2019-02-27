@@ -339,7 +339,7 @@ trackerCapture.controller('DashboardController',
         $scope.orderChanged = false;
         
         DashboardLayoutService.getLockedList().then(function(r){
-            if(!r || r === '') {
+            if(!r ||r === '') {
                 $scope.lockedList = {};
             } else {
                 $scope.lockedList = r;                

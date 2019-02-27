@@ -1,4 +1,3 @@
-
 /* global trackerCapture, angular */
 
 var trackerCapture = angular.module('trackerCapture');
@@ -84,7 +83,8 @@ trackerCapture.controller('EventCreationController',
             $scope.referenceOffset = angular.copy( dummyEvent.periodOffset );
             $scope.hasFuturePeriod = angular.copy( dummyEvent.hasFuturePeriod );
             $scope.dhis2Event.selectedPeriod = dummyEvent.periods[0];
-            $scope.periods = PeriodService.managePeriods($scope.periods, $scope.isNewEvent);
+            console.log($scope.isNewEvent);
+            $scope.periods = PeriodService.managePeriods(dummyEvent.periods, $scope.isNewEvent);
         }
     };
     
@@ -325,7 +325,7 @@ trackerCapture.controller('EventCreationController',
             return;
         }
         
-        $scope.periodOffset = period === 'NEXT' ? $scope.periodOffset + 1 : $scope.periodOffset - 1;
+        $scope.periodOffset = period === 'NEXT' ? $scope.periodOffset + 2 : $scope.periodOffset - 2;
         $scope.dhis2Event.selectedPeriod = null;
         
         var prds = PeriodService.getPeriods(eventsByStage[stage.id], $scope.model.selectedStage, $scope.selectedEnrollment, $scope.periodOffset);

@@ -45,11 +45,12 @@ angular.module('trackerCaptureServices')
                 var gettingYear = new Date(currentDate).getFullYear();
 
                 if (monthlyProgramStagesUIDs.indexOf(programStage) > -1) {
-                    // for (var i = 0; i < events.length; i++) {
+                     //for (var i = 0; i < events.length; i++) {
+                     alert("today Month "+todayMonth+" getting Month "+gettingMonth)
                         if (new Date(gettingYear, gettingMonth).valueOf() > new Date(todayYear, todayMonth).valueOf()) {
                             return true;
-                        }
-                    // }
+                        //}
+                    }
                     return false;
                 }
             }
