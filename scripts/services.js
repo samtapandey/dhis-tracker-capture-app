@@ -574,12 +574,12 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
     };
 
     return {
-        registerOrUpdate: function(tei, optionSets, attributesById){
+        registerOrUpdate: function(tei, optionSets, attributesById, programId){
             var apiTei = convertFromUserToApi(angular.copy(tei));
             if(apiTei){
                 var def = $q.defer();
                 if(apiTei.trackedEntityInstance){
-                    TEIService.update(apiTei, optionSets, attributesById).then(function(response){
+                    TEIService.update(apiTei, optionSets, attributesById, programId).then(function(response){
                         def.resolve(response);
                     });
                 }
@@ -1139,14 +1139,15 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             });
             return deferred.promise;
         },
-        update: function(tei, optionSets, attributesById){
+        update: function(tei, optionSets, attributesById, programId){
             var formattedTei = convertFromUserToApi(angular.copy(tei));
             var attributes = [];
             angular.forEach(formattedTei.attributes, function(att){
                 attributes.push({attribute: att.attribute, value: CommonUtils.formatDataValue(null, att.value, attributesById[att.attribute], optionSets, 'API')});
             });
             formattedTei.attributes = attributes;
-            var promise = $http.put( DHIS2URL + '/trackedEntityInstances/' + formattedTei.trackedEntityInstance , formattedTei ).then(function(response){
+            var programFilter = programId ? "?program=" + programId : "";
+            var promise = $http.put( DHIS2URL + '/trackedEntityInstances/' + formattedTei.trackedEntityInstance + programFilter, formattedTei ).then(function(response){
                 return response.data;
             }, function(response){
                 NotificationService.showNotifcationDialog($translate.instant('update_error'), $translate.instant('failed_to_update_tei'), response);
@@ -2548,6 +2549,7 @@ i
         var modalInstance = $modal.open({
             templateUrl: 'components/dataentry/new-event.html',
             controller: 'EventCreationController',
+            windowClass: 'modal-new-event-window',
             resolve: {
                 eventsByStage: function () {
                     return eventsByStage;
