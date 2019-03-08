@@ -429,7 +429,7 @@ trackerCapture.controller('RegistrationController',
         var selections = CurrentSelection.get();
         CurrentSelection.set({
             tei: $scope.selectedTei,
-            te: $scope.selectedTei.trackedEntityType,
+            te: selections.te,
             prs: selections.prs,
             pr: $scope.selectedProgram,
             prNames: selections.prNames,
@@ -458,7 +458,7 @@ trackerCapture.controller('RegistrationController',
     });
 
     var performRegistration = function (destination) {
-        if (destination === "DASHBOARD" || destination === "SELF") {
+        if (destination === "DASHBOARD" || destination === "SELF" || destination === "ENROLLMENT") {
            $scope.model.savingRegistration = true;
         }
 
@@ -472,7 +472,7 @@ trackerCapture.controller('RegistrationController',
 
         $scope.tei.attributes = tempAttributes;
 
-        RegistrationService.registerOrUpdate($scope.tei, $scope.optionSets, $scope.attributesById).then(function (regResponse) {
+        RegistrationService.registerOrUpdate($scope.tei, $scope.optionSets, $scope.attributesById, $scope.selectedEnrollment.program).then(function (regResponse) {
             var reg = regResponse.response.responseType ==='ImportSummaries' ? regResponse.response.importSummaries[0] : regResponse.response.responseType === 'ImportSummary' ? regResponse.response : {};
             if (reg.status === 'SUCCESS') {
                 $scope.tei.trackedEntityInstance = reg.reference;
@@ -505,10 +505,12 @@ trackerCapture.controller('RegistrationController',
                         }
 
                         EnrollmentService.enroll(enrollment).then(function (enrollmentResponse) {
-                            $scope.model.savingRegistration = false;
                             if(enrollmentResponse) {
                                 var en = enrollmentResponse.response;
                                 if (en.status === 'SUCCESS') {
+                                    if($scope.registrationMode !== 'ENROLLMENT') {
+                                        $scope.model.savingRegistration = false;
+                                    }
                                     enrollment.enrollment = en.importSummaries[0].reference;
                                     $scope.selectedEnrollment = enrollment;
                                     var avilableEvent = $scope.currentEvent && $scope.currentEvent.event ? $scope.currentEvent : null;
@@ -523,6 +525,7 @@ trackerCapture.controller('RegistrationController',
                                 }
                                 else {
                                     //enrollment has failed
+                                    $scope.model.savingRegistration = false;
                                     NotificationService.showNotifcationDialog($translate.instant("enrollment_error"), enrollmentResponse.message);
                                     return;
                                 }
