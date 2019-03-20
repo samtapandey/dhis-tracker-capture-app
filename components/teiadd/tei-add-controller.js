@@ -158,6 +158,7 @@ trackerCapture.controller('TEIAddController',
 	$scope.familymemberid = 'Dnm1mq6iq2d';
         $scope.householdid = 'uHv60gjn2gp';
     $scope.relationshipTypes = relationshipTypes;
+    $scope.relationshipTypesForSelector = relationshipTypes.filter(function(relationshipType) { return relationshipType.access.data.write });
     $scope.addingRelationship = addingRelationship;
     $scope.selectedAttribute = selectedAttribute;
     $scope.selectedProgram = selectedProgram;
