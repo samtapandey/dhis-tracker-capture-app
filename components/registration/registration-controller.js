@@ -36,12 +36,14 @@ trackerCapture.controller('RegistrationController',
                 AttributeUtils,
                 TCOrgUnitService,
                 ProgramFactory) {
-					 $scope.ageInYears = 'iIf1gJ4FVdR'; 
-	  $scope.dateofbirth = 'kelN057pfhq'; 
-	   $scope.familymemberid = 'Dnm1mq6iq2d';
-        $scope.householdid = 'uHv60gjn2gp'; 
-        $scope.mothernameid='zNTlzse3eoz';
-        $scope.custom_assosiate_value;
+
+    $scope.ageInYears = 'iIf1gJ4FVdR';
+    $scope.dateofbirth = 'kelN057pfhq';
+    $scope.familymemberid = 'Dnm1mq6iq2d';
+    $scope.householdid = 'uHv60gjn2gp';
+    $scope.mothernameid='zNTlzse3eoz';
+    $scope.custom_assosiate_value;
+
     var prefilledTet = null;
     $scope.today = DateUtils.getToday();
     $scope.trackedEntityForm = null;
@@ -429,7 +431,7 @@ trackerCapture.controller('RegistrationController',
         var selections = CurrentSelection.get();
         CurrentSelection.set({
             tei: $scope.selectedTei,
-            te: $scope.selectedTei.trackedEntityType,
+            te: selections.te,
             prs: selections.prs,
             pr: $scope.selectedProgram,
             prNames: selections.prNames,
@@ -458,7 +460,7 @@ trackerCapture.controller('RegistrationController',
     });
 
     var performRegistration = function (destination) {
-        if (destination === "DASHBOARD" || destination === "SELF") {
+        if (destination === "DASHBOARD" || destination === "SELF" || destination === "ENROLLMENT") {
            $scope.model.savingRegistration = true;
         }
 
@@ -472,7 +474,7 @@ trackerCapture.controller('RegistrationController',
 
         $scope.tei.attributes = tempAttributes;
 
-        RegistrationService.registerOrUpdate($scope.tei, $scope.optionSets, $scope.attributesById).then(function (regResponse) {
+        RegistrationService.registerOrUpdate($scope.tei, $scope.optionSets, $scope.attributesById, $scope.selectedEnrollment.program).then(function (regResponse) {
             var reg = regResponse.response.responseType ==='ImportSummaries' ? regResponse.response.importSummaries[0] : regResponse.response.responseType === 'ImportSummary' ? regResponse.response : {};
             if (reg.status === 'SUCCESS') {
                 $scope.tei.trackedEntityInstance = reg.reference;
@@ -505,10 +507,12 @@ trackerCapture.controller('RegistrationController',
                         }
 
                         EnrollmentService.enroll(enrollment).then(function (enrollmentResponse) {
-                            $scope.model.savingRegistration = false;
                             if(enrollmentResponse) {
                                 var en = enrollmentResponse.response;
                                 if (en.status === 'SUCCESS') {
+                                    if($scope.registrationMode !== 'ENROLLMENT') {
+                                        $scope.model.savingRegistration = false;
+                                    }
                                     enrollment.enrollment = en.importSummaries[0].reference;
                                     $scope.selectedEnrollment = enrollment;
                                     var avilableEvent = $scope.currentEvent && $scope.currentEvent.event ? $scope.currentEvent : null;
@@ -523,6 +527,7 @@ trackerCapture.controller('RegistrationController',
                                 }
                                 else {
                                     //enrollment has failed
+                                    $scope.model.savingRegistration = false;
                                     NotificationService.showNotifcationDialog($translate.instant("enrollment_error"), enrollmentResponse.message);
                                     return;
                                 }
@@ -1077,31 +1082,32 @@ $timeout(function(){
             return modalInstance.result.then(function (res) {
                 if (res && res.id) {
                     //Send object with tei id and program id
+
 					$scope.custom_assosiate_value = res.ZQMF7taSAw8;
-                    $scope.selectedTei[selectedAttribute.id] = res.id;        // value for household        
-				if(res.MV4wWoZBrJS)
-				{
-				$scope.selectedTei["MV4wWoZBrJS"] = res.MV4wWoZBrJS;                         // value for locality
-				}
-				if(res.yDCO4KM4WVA)     
-				{
-				$scope.selectedTei["yDCO4KM4WVA"] = res.yDCO4KM4WVA;                            // value of anm 
-				}
-				
-				if(res.ZmH0W6XHS9S)     
-				{
-				$scope.selectedTei["ZmH0W6XHS9S"] = res.ZmH0W6XHS9S;                            // value of Religion 
-				}
-				if(res.vbUue5poEcT)     
-				{
-				$scope.selectedTei["vbUue5poEcT"] = res.vbUue5poEcT;                            // value of caste 
-				}
-				if(res.dCer94znEuY)     
-				{
-				$scope.selectedTei["dCer94znEuY"] = res.dCer94znEuY;                            // value of type of house 
-				}
+					$scope.selectedTei[selectedAttribute.id] = res.id;        // value for household        
+					if(res.MV4wWoZBrJS)
+					{
+						$scope.selectedTei["MV4wWoZBrJS"] = res.MV4wWoZBrJS;                         // value for locality
+					}
+					if(res.yDCO4KM4WVA)     
+					{
+						$scope.selectedTei["yDCO4KM4WVA"] = res.yDCO4KM4WVA;                            // value of anm 
+					}
+					if(res.ZmH0W6XHS9S)     
+					{
+						$scope.selectedTei["ZmH0W6XHS9S"] = res.ZmH0W6XHS9S;                            // value of Religion 
+					}
+					if(res.vbUue5poEcT)     
+					{
+						$scope.selectedTei["vbUue5poEcT"] = res.vbUue5poEcT;                            // value of caste 
+					}
+					if(res.dCer94znEuY)     
+					{
+						$scope.selectedTei["dCer94znEuY"] = res.dCer94znEuY;                            // value of type of house 
+					}
                 }
                 $scope.update_assosiatevalue();
+                $scope.selectedTei[selectedAttribute.id] = res.id;
                 return res;
             });
 
@@ -1179,12 +1185,12 @@ $timeout(function(){
         var refetch;
         if($scope.programSearchScope){
             var tetSearchGroup = SearchGroupService.findValidTetSearchGroup($scope.matchingTeisSearchGroup, $scope.tetSearchConfig, $scope.attributesById);
-            refetch = function() {
-                SearchGroupService.programScopeSearch($scope.matchingTeisSearchGroup,tetSearchGroup, $scope.selectedProgram,$scope.trackedEntityTypes.selected, $scope.selectedOrgUnit,pager);
+            refetch = function(pager) {
+                return SearchGroupService.programScopeSearch($scope.matchingTeisSearchGroup,tetSearchGroup, $scope.selectedProgram,$scope.trackedEntityTypes.selected, $scope.selectedOrgUnit,pager);
             }
         }else{
-            refetch = function(){
-                SearchGroupService.tetScopeSearch($scope.matchingTeisSearchGroup,$scope.trackedEntityTypes.selected, $scope.selectedOrgUnit,pager)
+            refetch = function(pager){
+                return SearchGroupService.tetScopeSearch($scope.matchingTeisSearchGroup,$scope.trackedEntityTypes.selected, $scope.selectedOrgUnit,pager);
             }
         }
         getMatches($scope.matchingTeisSearchGroup).then(function(matches){

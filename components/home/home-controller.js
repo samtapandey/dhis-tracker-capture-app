@@ -30,7 +30,7 @@ trackerCapture.controller('HomeController',function(
         var previousProgram = null;
         $scope.base = {};
         $scope.APIURL = DHIS2URL;
-
+        
         var viewsByType = {
             registration: {
                 name: "Register",
@@ -118,8 +118,6 @@ trackerCapture.controller('HomeController',function(
             });
         });
 
-
-
         $scope.$watch('selectedOrgUnit', function(a,b,c) {
             if( angular.isObject($scope.selectedOrgUnit) && !$scope.selectedOrgUnit.loaded){
                 loadOrgUnit()
@@ -159,7 +157,19 @@ trackerCapture.controller('HomeController',function(
         /*var loadPrograms = function(){
             return ProgramFactory.getProgramsByOu($scope.selectedOrgUnit,true, previousProgram).then(function(response){
                 $scope.programs = response.programs;
-                $scope.setProgram(response.selectedProgram);
+                var programIdFromURL = ($location.search()).program;
+                var fullProgram = null;
+                if(programIdFromURL) {
+                    fullProgram = $scope.programs.find(function(program) {
+                        return program.id === programIdFromURL;
+                      });
+                }
+                
+                if(fullProgram) {
+                    $scope.setProgram(fullProgram);
+                } else {
+                    $scope.setProgram(response.selectedProgram);
+                }
             });
         }*/
 
@@ -215,6 +225,7 @@ trackerCapture.controller('HomeController',function(
             } else {
                 $scope.views[0].disabled = false;
             }
+
             resetView(defaultView);
             loadCanRegister();      
 
@@ -258,6 +269,11 @@ trackerCapture.controller('HomeController',function(
             if(!view.shouldReset){
                 view.loaded = true;
             }
+
+            if($scope.selectedProgram) {
+                $location.path('/').search({program: $scope.selectedProgram.id}); 
+            }
+
             loadCanRegister();
         }
 
