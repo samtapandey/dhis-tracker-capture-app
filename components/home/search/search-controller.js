@@ -233,19 +233,6 @@ trackerCapture.controller('SearchController',function(
                 base: $scope.base
             }
 
-            var refetch;
-            if(currentSearchScope === searchScopes.PROGRAM) {
-                var tetSearchGroup = SearchGroupService.findValidTetSearchGroup(searchGroup, $scope.tetSearchConfig, $scope.base.attributesById);
-                refetch = function(pager) {
-                    return SearchGroupService.programScopeSearch(searchGroup,tetSearchGroup, $scope.base.selectedProgram,$scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, pager);
-                } 
-            } else {
-                refetch = function(pager) {
-                    return SearchGroupService.tetScopeSearch(searchGroup,$scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, pager);
-                };
-
-            }
-
             return $modal.open({
                 templateUrl: 'components/home/search/result-modal.html',
                 controller: function($scope,$modalInstance, TEIGridService,OrgUnitFactory, orgUnit, res, refetchDataFn, internalService, canOpenRegistration, TEIService,NotificationService)
@@ -313,7 +300,7 @@ trackerCapture.controller('SearchController',function(
                 },
                 resolve: {
                     refetchDataFn: function(){
-                        return refetch;
+                        return function(pager,sortColumn){ return SearchGroupService.search(searchGroup, $scope.base.selectedProgram,$scope.trackedEntityTypes.selected, $scope.selectedOrgUnit, pager); }
                     },
 
                     orgUnit: function(){

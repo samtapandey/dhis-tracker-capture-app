@@ -67,8 +67,6 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
 
     defaultLayout['DEFAULT'] = {widgets: w, program: 'DEFAULT'};
 
-    var programStageLayout = {};
-
     var getDefaultLayout = function(customLayout){
         var dashboardLayout = {customLayout: customLayout, defaultLayout: defaultLayout};
         var promise = $http.get(  DHIS2URL + '/dataStore/tracker-capture/keyTrackerDashboardDefaultLayout' ).then(function(response){
@@ -175,12 +173,6 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                 return promise;
             });
             return promise;
-        },
-        getProgramStageLayout: function() {
-            return programStageLayout;
-        },
-        setProgramStageLayout: function(layoutToSet) {
-            programStageLayout = layoutToSet;
         }
     };
 })
@@ -220,8 +212,13 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
         for(var i=0; i<periods.length && index === -1; i++){
             if(moment(periods[i].endDate).isSame(event.sortingDate) ||
                 moment(periods[i].startDate).isSame(event.sortingDate) ||
-                moment(periods[i].endDate).isAfter(event.sortingDate) && moment(event.sortingDate).isAfter(periods[i].endDate)){
+                moment(periods[i].endDate).isBefore(event.sortingDate) && moment(event.sortingDate).isBefore(periods[i].endDate)){
                 index = i;
+                occupied = angular.copy(periods[i]);
+            }
+           if ( moment(periods[i].endDate).isAfter(event.sortingDate) && moment(event.sortingDate).isAfter(periods[i].endDate))
+            {
+            	index = i;
                 occupied = angular.copy(periods[i]);
             }
         }
@@ -257,19 +254,33 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
         else{
 
             var startDate = DateUtils.format( moment(referenceDate, calendarSetting.momentFormat).add(offset, 'days') );
-            var periodOffset = _periodOffset && dhis2.validation.isNumber( _periodOffset ) ? _periodOffset : splitDate(startDate).year - splitDate(DateUtils.getToday()).year;
+            var periodOffset = 0;
+            if((splitDate(startDate).year) < splitDate(DateUtils.getToday()).year)
+            {
+            	periodOffset = _periodOffset && dhis2.validation.isNumber( _periodOffset ) ? _periodOffset : ((splitDate(startDate).year) - splitDate(DateUtils.getToday()).year)+1;
+            	console.log("periodOffset: "+periodOffset);
+            	
+            }
+            else
+            {
+           		 periodOffset = _periodOffset && dhis2.validation.isNumber( _periodOffset ) ? _periodOffset : (splitDate(startDate).year) - splitDate(DateUtils.getToday()).year;
+            
+            }
+             
             var eventDateOffSet = moment(referenceDate, calendarSetting.momentFormat).add('d', offset)._d;
             eventDateOffSet = $filter('date')(eventDateOffSet, calendarSetting.keyDateFormat);
 
             //generate availablePeriods
             var pt = new PeriodType();
             var d2Periods = pt.get(stage.periodType).generatePeriods({offset: periodOffset, filterFuturePeriods: false, reversePeriods: false});
-
+			
             angular.forEach(d2Periods, function(p){
                 p.endDate = DateUtils.formatFromApiToUser(p.endDate);
                 p.startDate = DateUtils.formatFromApiToUser(p.startDate);
-
-                if(moment(p.endDate, calendarSetting.momentFormat).isAfter(moment(eventDateOffSet,calendarSetting.momentFormat))){
+				
+                if(moment(p.endDate, calendarSetting.momentFormat).isBefore(moment(eventDateOffSet,calendarSetting.momentFormat)) || moment(p.endDate, calendarSetting.momentFormat).isAfter(moment(eventDateOffSet,calendarSetting.momentFormat))){
+                  
+                 // console.log("available Period    "+ Object.values(p));  
                     availablePeriods.push( p );
                 }
 
@@ -277,10 +288,11 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                     hasFuturePeriod = true;
                 }
             });
-
+            
             //get occupied periods
             angular.forEach(events, function(event){
                 var ps = processPeriodsForEvent(availablePeriods, event);
+                
                 availablePeriods = ps.available;
                 if(ps.occupied){
                     occupiedPeriods.push(ps.occupied);
@@ -568,12 +580,12 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
     };
 
     return {
-        registerOrUpdate: function(tei, optionSets, attributesById, programId){
+        registerOrUpdate: function(tei, optionSets, attributesById){
             var apiTei = convertFromUserToApi(angular.copy(tei));
             if(apiTei){
                 var def = $q.defer();
                 if(apiTei.trackedEntityInstance){
-                    TEIService.update(apiTei, optionSets, attributesById, programId).then(function(response){
+                    TEIService.update(apiTei, optionSets, attributesById).then(function(response){
                         def.resolve(response);
                     });
                 }
@@ -932,12 +944,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             var pg = pager ? pager.page : 1;
             pgSize = pgSize > 1 ? pgSize  : 1;
             pg = pg > 1 ? pg : 1;
-            url = url + '&pageSize=' + pgSize + '&page=' + pg;
-            if(pager && pager.skipTotalPages) {
-                url+= '&totalPages=false';
-            }else{
-                url+= '&totalPages=true';
-            }
+            url = url + '&pageSize=' + pgSize + '&page=' + pg + '&totalPages=true';
         }
         else{
             url = url + '&paging=false';
@@ -1138,15 +1145,14 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             });
             return deferred.promise;
         },
-        update: function(tei, optionSets, attributesById, programId){
+        update: function(tei, optionSets, attributesById){
             var formattedTei = convertFromUserToApi(angular.copy(tei));
             var attributes = [];
             angular.forEach(formattedTei.attributes, function(att){
                 attributes.push({attribute: att.attribute, value: CommonUtils.formatDataValue(null, att.value, attributesById[att.attribute], optionSets, 'API')});
             });
             formattedTei.attributes = attributes;
-            var programFilter = programId ? "?program=" + programId : "";
-            var promise = $http.put( DHIS2URL + '/trackedEntityInstances/' + formattedTei.trackedEntityInstance + programFilter, formattedTei ).then(function(response){
+            var promise = $http.put( DHIS2URL + '/trackedEntityInstances/' + formattedTei.trackedEntityInstance , formattedTei ).then(function(response){
                 return response.data;
             }, function(response){
                 NotificationService.showNotifcationDialog($translate.instant('update_error'), $translate.instant('failed_to_update_tei'), response);
@@ -2435,7 +2441,7 @@ i
                         };
                         if(stage.periodType){
                             var periods = getEventDuePeriod(null, stage, enrollment);
-                            newEvent.dueDate = DateUtils.formatFromUserToApi(periods[0].endDate);
+                            newEvent.dueDate = DateUtils.formatFromUserToApi(periods.availablePeriods[0].endDate);
                             newEvent.eventDate = newEvent.dueDate;
                         }
                         else{
@@ -2548,7 +2554,6 @@ i
         var modalInstance = $modal.open({
             templateUrl: 'components/dataentry/new-event.html',
             controller: 'EventCreationController',
-            windowClass: 'modal-new-event-window',
             resolve: {
                 eventsByStage: function () {
                     return eventsByStage;
@@ -2949,7 +2954,7 @@ i
                         else{
                             if(query.url){
                                 numberOfSetAttributes++;
-                                if(attr.operator === textOperators[0]){
+                                if(attr.operator === "Eq"){
                                     query.url = query.url + '&filter=' + attr.id + ':EQ:' + value;
                                 }else{
                                     query.url = query.url + '&filter=' + attr.id + ':LIKE:' + value;
@@ -2958,7 +2963,7 @@ i
                             }
                             else{
                                 numberOfSetAttributes++;
-                                if(attr.operator === textOperators[0]){
+                                if(attr.operator === "Eq"){
                                     query.url = 'filter=' + attr.id + ':EQ:' + value;
                                 }else{
                                     query.url = 'filter=' + attr.id + ':LIKE:' + value;
@@ -2974,7 +2979,7 @@ i
             var programOrTETUrl = searchScope === searchScopes.PROGRAM ? "program="+program.id :"trackedEntityType="+trackedEntityType.id;
 
             var searchOrgUnit = searchGroup.orgUnit ? searchGroup.orgUnit : orgUnit;
-            return { orgUnit: searchOrgUnit, ouMode: searchGroup.ouMode.name, programOrTETUrl: programOrTETUrl, queryUrl: query.url, pager: pager, paging: !uniqueSearch, uniqueSearch: uniqueSearch };
+            return { orgUnit: searchOrgUnit, ouMode: searchGroup.ouMode.name, programOrTETUrl: programOrTETUrl, queryUrl: query.url, pager: pager, uniqueSearch: uniqueSearch };
         }
     }
     
@@ -3007,14 +3012,14 @@ i
         return def.promise;
     }
 
-    this.programScopeSearchCount = function(searchGroup,tetSearchGroup, program, trackedEntityType, orgUnit){
-        var params = getSearchParams(searchGroup, program, trackedEntityType, orgUnit, null, searchScopes.PROGRAM);
+    this.programScopeSearchCount = function(searchGroup,tetSearchGroup, program, trackedEntityType, orgUnit, pager){
+        var params = getSearchParams(searchGroup, program, trackedEntityType, orgUnit, pager, searchScopes.PROGRAM);
         if(params){
-            return TEIService.searchCount(params.orgUnit.id, params.ouMode,null, params.programOrTETUrl, params.queryUrl, null, false).then(function(response){
-                if(response || response === 0){
+            return TEIService.searchCount(params.orgUnit.id, params.ouMode,null, params.programOrTETUrl, params.queryUrl, params.pager, true).then(function(response){
+                if(response ||response === 0){
                     return response;
                 }else{
-                    return tetScopeSearchCount(tetSearchGroup, trackedEntityType, orgUnit);
+                    return tetScopeSearchCount(tetSearchGroup, trackedEntityType, orgUnit, pager);
                 }
                 return 0;
             },function(error){
@@ -3026,10 +3031,10 @@ i
             return def.promise;
         }
     }
-    var tetScopeSearchCount = this.tetScopeSearchCount = function(tetSearchGroup, trackedEntityType, orgUnit){
-        var params = getSearchParams(tetSearchGroup, null, trackedEntityType, orgUnit, null, searchScopes.TET);
+    var tetScopeSearchCount = this.tetScopeSearchCount = function(tetSearchGroup, trackedEntityType, orgUnit, pager){
+        var params = getSearchParams(tetSearchGroup, null, trackedEntityType, orgUnit, pager, searchScopes.TET);
         if(params){
-            return TEIService.searchCount(params.orgUnit.id, params.ouMode,null, params.programOrTETUrl, params.queryUrl, null, false).then(function(response){
+            return TEIService.searchCount(params.orgUnit.id, params.ouMode,null, params.programOrTETUrl, params.queryUrl, params.pager, true).then(function(response){
                 if(response){
                     return response;
                 }
@@ -3080,7 +3085,7 @@ i
         if(params){
 
         }
-        return TEIService.search(params.orgUnit.id, params.ouMode,null, params.programOrTETUrl, params.queryUrl, params.pager, params.paging).then(function(response){
+        return TEIService.search(params.orgUnit.id, params.ouMode,null, params.programOrTETUrl, params.queryUrl, params.pager, true).then(function(response){
                 if(response && response.rows && response.rows.length > 0){
                     var result = { data: response, callingScope: searchScopes.PROGRAM, resultScope: searchScopes.PROGRAM };
                     var def = $q.defer();
@@ -3121,7 +3126,7 @@ i
     var tetScopeSearch = this.tetScopeSearch = function(tetSearchGroup,trackedEntityType, orgUnit, pager){
         var params = getSearchParams(tetSearchGroup, null, trackedEntityType, orgUnit, pager, searchScopes.TET);
         if(params){
-            return TEIService.search(params.orgUnit.id, params.ouMode,null, params.programOrTETUrl, params.queryUrl, params.pager, params.paging).then(function(response){
+            return TEIService.search(params.orgUnit.id, params.ouMode,null, params.programOrTETUrl, params.queryUrl, params.pager, true).then(function(response){
                 var result = {data: response, callingScope: searchScopes.TET, resultScope: searchScopes.TET };
                 if(response && response.rows && response.rows.length > 0){
                     if(params.uniqueSearch){

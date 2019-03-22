@@ -10,7 +10,7 @@
             <a ng-show="userAuthority.canAdministerDashboard || !lockedList[selectedProgram.id]" class="small-horizontal-spacing" href ng-click="removeWidget(enrollmentWidget)" ng-attr-title="{{removeLabel}}"><i class="fa fa-times-circle"></i></a>            
         </span>
     </div>
-    <div ng-show="enrollmentWidget.expand" class="panel-body dashboard-widget-container">
+    <div ng-show="enrollmentWidget.expand" class="panel-body dashboard-widget-container" ng-if="editProfile()">
         
         <div>
             <!-- operations on selected enrollment begins -->
@@ -40,21 +40,6 @@
                                         </td>
                                         <td class="absorbing-column">
                                             <input type="text" class="form-control" ng-attr-value={{selectedEnrollment.orgUnitName}} ng-disabled="true"/>
-                                        </td>
-                                    </tr>
-                                    <tr ng-if="selectedProgram.featureType && ['POLYGON','POINT'].includes(selectedProgram.featureType)">
-                                        <td>
-                                            {{'enrollment_'+selectedProgram.featureType.toLowerCase() | translate}}
-                                        </td>
-                                        <td class="absorbing-column">
-                                            <d2-geometry
-                                                d2-object-id="geometry"
-                                                d2-object="enrollmentGeometryState"
-                                                d2-disabled="selectedOrgUnit.closedStatus || !enrollmentGeometryState.editable"
-                                                d2-geometry-type="selectedProgram.featureType"
-                                                d2-callback-function="updateEnrollmentGeometry()"
-                                                >
-                                            </d2-geometry>
                                         </td>
                                     </tr>
                                     <tr>
